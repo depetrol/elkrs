@@ -283,3 +283,49 @@ fn is_hierarchical_layout(a: &LGraphArena, graph: LGraphId) -> bool {
         .get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
         == HierarchyHandling::INCLUDE_CHILDREN
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::phases::IntermediateProcessorStrategy as Ips;
+    use crate::phases::PipelineStep as Step;
+
+    /// The default pipeline for a simple connected graph (no ports, labels,
+    /// self loops, hierarchy; direction RIGHT) — derived by hand from the
+    /// Java configurator and phase configurations.
+    #[test]
+    fn default_pipeline_for_simple_graph() {
+        let mut a = LGraphArena::new();
+        let g = a.create_graph();
+        let pipeline = prepare_graph_for_layout(&mut a, g).unwrap();
+
+        use crate::options_gen::{
+            CrossingMinimizationStrategy, CycleBreakingStrategy, LayeringStrategy,
+            NodePlacementStrategy,
+        };
+        let expected = vec![
+            Step::Intermediate(Ips::EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
+            Step::CycleBreaking(CycleBreakingStrategy::GREEDY),
+            Step::Intermediate(Ips::LAYER_CONSTRAINT_PREPROCESSOR),
+            Step::Layering(LayeringStrategy::NETWORK_SIMPLEX),
+            Step::Intermediate(Ips::LAYER_CONSTRAINT_POSTPROCESSOR),
+            Step::Intermediate(Ips::LONG_EDGE_SPLITTER),
+            Step::Intermediate(Ips::PORT_SIDE_PROCESSOR),
+            Step::Intermediate(Ips::PORT_LIST_SORTER),
+            Step::CrossingMinimization(CrossingMinimizationStrategy::LAYER_SWEEP),
+            // default greedy switch type is TWO_SIDED with activation
+            // threshold 40 (> small graph sizes)
+            Step::Intermediate(Ips::TWO_SIDED_GREEDY_SWITCH),
+            Step::Intermediate(Ips::IN_LAYER_CONSTRAINT_PROCESSOR),
+            Step::Intermediate(Ips::LABEL_AND_NODE_SIZE_PROCESSOR),
+            Step::Intermediate(Ips::INNERMOST_NODE_MARGIN_CALCULATOR),
+            Step::NodePlacement(NodePlacementStrategy::BRANDES_KOEPF),
+            Step::Intermediate(Ips::LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
+            Step::EdgeRouting(elk_core::options::EdgeRouting::ORTHOGONAL),
+            Step::Intermediate(Ips::LONG_EDGE_JOINER),
+            Step::Intermediate(Ips::END_LABEL_SORTER),
+            Step::Intermediate(Ips::REVERSED_EDGE_RESTORER),
+        ];
+        assert_eq!(pipeline, expected);
+    }
+}

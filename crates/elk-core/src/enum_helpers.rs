@@ -1,7 +1,9 @@
 //! Manual ports of methods on the generated option enums
 //! (`PortSide`, `Direction`, `PortConstraints`, ...).
 
-use crate::options_gen::{Direction, PortConstraints, PortSide, SizeConstraint};
+use crate::options_gen::{
+    Direction, NodeLabelPlacement, PortConstraints, PortLabelPlacement, PortSide, SizeConstraint,
+};
 use elk_graph::properties::EnumSet;
 
 impl PortSide {
@@ -102,6 +104,69 @@ impl PortConstraints {
 
     pub fn is_side_fixed(self) -> bool {
         self != PortConstraints::FREE && self != PortConstraints::UNDEFINED
+    }
+}
+
+impl PortLabelPlacement {
+    /// Port of `PortLabelPlacement.inside()`.
+    pub fn inside() -> EnumSet<PortLabelPlacement> {
+        EnumSet::of(&[PortLabelPlacement::INSIDE])
+    }
+
+    /// Port of `PortLabelPlacement.outside()`.
+    pub fn outside() -> EnumSet<PortLabelPlacement> {
+        EnumSet::of(&[PortLabelPlacement::OUTSIDE])
+    }
+
+    /// Port of `PortLabelPlacement.isFixed(Set)`: neither INSIDE nor OUTSIDE
+    /// is included.
+    pub fn is_fixed(placement: EnumSet<PortLabelPlacement>) -> bool {
+        !placement.contains(PortLabelPlacement::INSIDE)
+            && !placement.contains(PortLabelPlacement::OUTSIDE)
+    }
+
+    /// Port of `PortLabelPlacement.isValid(Set)`.
+    pub fn is_valid(placement: EnumSet<PortLabelPlacement>) -> bool {
+        let inside_outside = [PortLabelPlacement::INSIDE, PortLabelPlacement::OUTSIDE];
+        if inside_outside.iter().filter(|&&v| placement.contains(v)).count() > 1 {
+            return false;
+        }
+        let position = [
+            PortLabelPlacement::ALWAYS_SAME_SIDE,
+            PortLabelPlacement::ALWAYS_OTHER_SAME_SIDE,
+            PortLabelPlacement::SPACE_EFFICIENT,
+        ];
+        if position.iter().filter(|&&v| placement.contains(v)).count() > 1 {
+            return false;
+        }
+        true
+    }
+}
+
+impl NodeLabelPlacement {
+    /// Port of `NodeLabelPlacement.isValid(Set)`.
+    pub fn is_valid(placement: EnumSet<NodeLabelPlacement>) -> bool {
+        let inside_outside = [NodeLabelPlacement::INSIDE, NodeLabelPlacement::OUTSIDE];
+        if inside_outside.iter().filter(|&&v| placement.contains(v)).count() > 1 {
+            return false;
+        }
+        let horizontal = [
+            NodeLabelPlacement::H_LEFT,
+            NodeLabelPlacement::H_CENTER,
+            NodeLabelPlacement::H_RIGHT,
+        ];
+        if horizontal.iter().filter(|&&v| placement.contains(v)).count() > 1 {
+            return false;
+        }
+        let vertical = [
+            NodeLabelPlacement::V_TOP,
+            NodeLabelPlacement::V_CENTER,
+            NodeLabelPlacement::V_BOTTOM,
+        ];
+        if vertical.iter().filter(|&&v| placement.contains(v)).count() > 1 {
+            return false;
+        }
+        true
     }
 }
 
