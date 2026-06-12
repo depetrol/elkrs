@@ -1,0 +1,10 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "stress" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30, "x": 0, "y": 0 },
+    { "id": "b", "width": 30, "height": 30, "x": 100, "y": 10 },
+    { "id": "c", "width": 30, "height": 30, "x": 50, "y": 80 },
+    { "id": "d", "width": 30, "height": 30, "x": 150, "y": 60 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["b"], "targets": ["d"] } ] }

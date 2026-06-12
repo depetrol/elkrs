@@ -14,6 +14,7 @@ dependencies = [
 name = "elk-alg-force"
 version = "0.1.0"
 dependencies = [
+ "elk-alg-common",
  "elk-core",
  "elk-graph",
 ]

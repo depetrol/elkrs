@@ -7,7 +7,7 @@ use elk_graph::math::KVector;
 
 use crate::graph::{FArena, FEdgeId, FGraph, FNodeId};
 use crate::options::{self, Dimension};
-use crate::provider::{check_node_micro_layout, force_layout};
+use crate::provider::{execute_node_micro_layout, force_layout};
 use crate::{components, importer};
 
 /// Port of `StressLayoutProvider`.
@@ -27,7 +27,7 @@ impl LayoutProvider for StressLayoutProvider {
             // If requested, compute nodes's dimensions, place node labels,
             // ports, port labels, etc. (handled by the force provider in the
             // non-interactive case above).
-            check_node_micro_layout(g, layout_node)?;
+            execute_node_micro_layout(g, layout_node);
         }
 
         // transform the input graph

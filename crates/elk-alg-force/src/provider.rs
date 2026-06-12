@@ -29,7 +29,7 @@ pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), 
         .properties
         .get(&options::OMIT_NODE_MICRO_LAYOUT)
     {
-        check_node_micro_layout(g, layout_node)?;
+        execute_node_micro_layout(g, layout_node);
     }
 
     // transform the input graph
@@ -75,44 +75,12 @@ pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), 
     Ok(())
 }
 
-// TODO(nodespacing): Java runs `NodeMicroLayout.forGraph(elkGraph).execute()`
-// here (alg.common nodespacing: sortPortLists, calculateLabelAndNodeSizes,
-// calculateNodeMargins), which is not ported yet. For graphs where it would
-// be a no-op with respect to the force result (no ports, no node size
-// constraints, no node label placement) we proceed without it; otherwise we
-// fail loudly instead of silently diverging from Java. Node margins, which
-// Java always computes, are not read by the force/stress algorithms.
-pub(crate) fn check_node_micro_layout(g: &ElkGraph, layout_node: NodeId) -> Result<(), String> {
-    for &child in &g.node(layout_node).children {
-        let node = g.node(child);
-        if !node.ports.is_empty() {
-            return Err(
-                "TODO(nodespacing): node micro layout (port placement) is not ported yet; \
-                 set org.eclipse.elk.omitNodeMicroLayout=true or remove ports"
-                    .to_string(),
-            );
-        }
-        let constraints: EnumSet<elk_core::options::SizeConstraint> =
-            node.properties.get(&options::NODE_SIZE_CONSTRAINTS);
-        if !constraints.is_empty() {
-            return Err(
-                "TODO(nodespacing): node micro layout (node size calculation) is not ported \
-                 yet; set org.eclipse.elk.omitNodeMicroLayout=true or remove nodeSize.constraints"
-                    .to_string(),
-            );
-        }
-        if !node.labels.is_empty() {
-            let placement: EnumSet<elk_core::options::NodeLabelPlacement> =
-                node.properties.get(&options::NODE_LABELS_PLACEMENT);
-            if !placement.is_empty() {
-                return Err(
-                    "TODO(nodespacing): node micro layout (node label placement) is not \
-                     ported yet; set org.eclipse.elk.omitNodeMicroLayout=true or remove \
-                     nodeLabels.placement"
-                        .to_string(),
-                );
-            }
-        }
-    }
-    Ok(())
+/// Port of `org.eclipse.elk.alg.common.NodeMicroLayout.execute()`:
+/// sortPortLists, calculateLabelAndNodeSizes, calculateNodeMargins on the
+/// graph adapter.
+pub(crate) fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
+    let mut adapter = elk_core::adapters::ElkGraphAdapter::new(g, layout_node);
+    elk_alg_common::nodespacing::sort_port_lists(&mut adapter);
+    elk_alg_common::nodespacing::calculate_label_and_node_sizes(&mut adapter, |_, _| true);
+    elk_alg_common::nodespacing::calculate_node_margins(&mut adapter, false);
 }
