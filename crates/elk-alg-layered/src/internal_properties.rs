@@ -23,6 +23,9 @@ pub enum Origin {
     LEdge(LEdgeId),
     /// internal: a dummy node's originating LGraph element set
     LNode(LNodeId),
+    /// internal: a dummy node's / dummy port's originating LPort (e.g. for
+    /// north/south port dummies and external port dummies)
+    LPort(LPortId),
 }
 
 macro_rules! internal_value {
