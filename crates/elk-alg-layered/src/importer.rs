@@ -321,18 +321,25 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(lgraph)
     }
 
-    /// Minimal port of `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`:
-    /// no inside node labels means zero padding. Full support arrives with
-    /// the alg.common port.
+    /// Port of the `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`
+    /// call in `createLGraph`:
+    /// `computeInsideNodeLabelPadding(elkgraph.getParent() == null ? null :
+    /// ElkGraphAdapters.adapt(elkgraph.getParent()),
+    /// ElkGraphAdapters.adaptSingleNode(elkgraph), Direction.RIGHT)`.
+    ///
+    /// Note that this also performs Java's property accesses on `elkgraph`
+    /// (the `NodeContext` constructor materializes Cloneable defaults like
+    /// `NODE_LABELS_PLACEMENT` on it).
     fn compute_inside_node_label_padding(
-        &self,
+        &mut self,
         elkgraph: NodeId,
     ) -> Result<elk_graph::math::Spacing, String> {
-        if self.elk.node(elkgraph).labels.is_empty() {
-            Ok(elk_graph::math::Spacing::default())
-        } else {
-            Err("TODO: inside node label padding is not ported yet (graph has labels)".to_string())
-        }
+        let adapter = elk_core::adapters::ElkGraphAdapter::adapt_single_node(self.elk, elkgraph);
+        Ok(elk_alg_common::nodespacing::compute_inside_node_label_padding(
+            &adapter,
+            elkgraph,
+            Direction::RIGHT,
+        ))
     }
 
     /// Port of `checkExternalPorts`.

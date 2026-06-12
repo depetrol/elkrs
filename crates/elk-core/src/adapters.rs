@@ -85,11 +85,30 @@ pub trait AdapterGraph {
 pub struct ElkGraphAdapter<'g> {
     pub elk: &'g mut ElkGraph,
     pub parent: NodeId,
+    /// Java node adapters can have a *null* parent graph adapter
+    /// (`ElkGraphAdapters.adaptSingleNode` of a node without a parent);
+    /// graph-level property lookups then fall back to the property defaults
+    /// without materializing them on any real element. This scratch map
+    /// absorbs those lookups.
+    null_graph_properties: Option<PropertyMap>,
 }
 
 impl<'g> ElkGraphAdapter<'g> {
     pub fn new(elk: &'g mut ElkGraph, parent: NodeId) -> Self {
-        ElkGraphAdapter { elk, parent }
+        ElkGraphAdapter { elk, parent, null_graph_properties: None }
+    }
+
+    /// Port of `ElkGraphAdapters.adaptSingleNode(node)`:
+    /// `new ElkNodeAdapter(node.getParent() == null ? null : adapt(node.getParent()), node)`.
+    pub fn adapt_single_node(elk: &'g mut ElkGraph, node: NodeId) -> Self {
+        match elk.node(node).parent {
+            Some(parent) => Self::new(elk, parent),
+            None => ElkGraphAdapter {
+                elk,
+                parent: node,
+                null_graph_properties: Some(PropertyMap::new()),
+            },
+        }
     }
 }
 
@@ -100,7 +119,10 @@ impl<'g> AdapterGraph for ElkGraphAdapter<'g> {
     type E = EdgeId;
 
     fn graph_properties(&self) -> &PropertyMap {
-        &self.elk.node(self.parent).properties
+        match &self.null_graph_properties {
+            Some(map) => map,
+            None => &self.elk.node(self.parent).properties,
+        }
     }
     fn nodes(&self) -> Vec<NodeId> {
         self.elk.node(self.parent).children.clone()

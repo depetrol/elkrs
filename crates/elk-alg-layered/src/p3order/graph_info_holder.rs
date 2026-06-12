@@ -5,7 +5,8 @@
 //! constructor below; the per-level hooks of all participating objects are
 //! invoked in exactly the same order as Java's initializable list
 //! `[this, crossingsCounter, layerSweepTypeDecider, portDistributor,
-//! constraintResolver, crossMinimizer]`.
+//! (constraintResolver,) crossMinimizer]` (the constraint resolver only
+//! participates for the barycenter heuristic).
 
 use elk_core::javacompat::JavaRandom;
 
@@ -16,10 +17,20 @@ use crate::options_gen::GraphProperties;
 
 use super::counting::AllCrossingsCounter;
 use super::forster_constraint_resolver::ForsterConstraintResolver;
+use super::greedy_switch::GreedySwitchHeuristic;
 use super::layer_sweep::CrossMinType;
 use super::layer_sweep_type_decider::LayerSweepTypeDecider;
-use super::port_distributor::PortDistributor;
+use super::port_distributor::SweepPortDistributor;
 use super::sweep_copy::SweepCopy;
+
+/// Port of the `ICrossingMinimizationHeuristic` field (`crossMinimizer`).
+pub enum CrossMinimizer {
+    /// `BarycenterHeuristic` (which owns the `ForsterConstraintResolver`
+    /// in this port; in Java the resolver is a separate initializable).
+    Barycenter { constraint_resolver: ForsterConstraintResolver },
+    /// `GreedySwitchHeuristic` (one- or two-sided).
+    GreedySwitch(GreedySwitchHeuristic),
+}
 
 pub struct GraphInfoHolder {
     /// Raw graph data.
@@ -45,9 +56,9 @@ pub struct GraphInfoHolder {
 
     /// Pre-initialized auxiliary objects.
     pub cross_min_type: CrossMinType,
-    pub port_distributor: PortDistributor,
+    pub cross_minimizer: CrossMinimizer,
+    pub port_distributor: SweepPortDistributor,
     pub crossings_counter: AllCrossingsCounter,
-    pub constraint_resolver: ForsterConstraintResolver,
 }
 
 impl GraphInfoHolder {
@@ -80,23 +91,32 @@ impl GraphInfoHolder {
         // Init all objects needing initialization by graph traversal.
         let mut crossings_counter = AllCrossingsCounter::new(num_layers);
         // (the Java RANDOM graph property is the `random` parameter here)
-        let mut port_distributor = PortDistributor::create(cross_min_type, random, num_layers)?;
+        let mut port_distributor = SweepPortDistributor::create(cross_min_type, random, num_layers);
         let mut decider = LayerSweepTypeDecider::new(num_layers);
 
-        if cross_min_type != CrossMinType::Barycenter {
-            return Err(format!("TODO: crossing minimizer {cross_min_type:?} not ported yet"));
-        }
-        if a.graph(graph)
-            .properties
-            .get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-        {
-            return Err("TODO: ModelOrderBarycenterHeuristic not ported yet".to_string());
-        }
-        let mut constraint_resolver = ForsterConstraintResolver::new(a, &current_node_order);
+        let mut cross_minimizer = match cross_min_type {
+            CrossMinType::Barycenter => {
+                if a.graph(graph)
+                    .properties
+                    .get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
+                {
+                    return Err("TODO: ModelOrderBarycenterHeuristic not ported yet".to_string());
+                }
+                CrossMinimizer::Barycenter {
+                    constraint_resolver: ForsterConstraintResolver::new(a, &current_node_order),
+                }
+            }
+            CrossMinType::Median => {
+                return Err("TODO: MedianHeuristic not ported yet".to_string());
+            }
+            CrossMinType::OneSidedGreedySwitch | CrossMinType::TwoSidedGreedySwitch => {
+                CrossMinimizer::GreedySwitch(GreedySwitchHeuristic::new(cross_min_type))
+            }
+        };
 
         // Apply Initializer (IInitializable.init), in the order
         // [this, crossingsCounter, layerSweepTypeDecider, portDistributor,
-        //  constraintResolver, crossMinimizer].
+        //  (constraintResolver,) crossMinimizer].
         let mut n_ports_holder: i32 = 0;
         for l in 0..current_node_order.len() {
             // --- initAtLayerLevel
@@ -104,11 +124,18 @@ impl GraphInfoHolder {
             // crossingsCounter: (nothing)
             decider.init_at_layer_level(a, l, &current_node_order);
             port_distributor.init_at_layer_level(l, &current_node_order);
-            constraint_resolver.init_at_layer_level(l, &current_node_order);
-            // crossMinimizer (BarycenterHeuristic): nodeOrder[l][0].getLayer().id = l
-            {
-                let layer = a.node(current_node_order[l][0]).layer.unwrap();
-                a.layer_mut(layer).id = l as i32;
+            match &mut cross_minimizer {
+                CrossMinimizer::Barycenter { constraint_resolver } => {
+                    constraint_resolver.init_at_layer_level(l, &current_node_order);
+                    // crossMinimizer (BarycenterHeuristic):
+                    // nodeOrder[l][0].getLayer().id = l
+                    let layer = a.node(current_node_order[l][0]).layer.unwrap();
+                    a.layer_mut(layer).id = l as i32;
+                }
+                CrossMinimizer::GreedySwitch(heuristic) => {
+                    // crossMinimizer (GreedySwitchHeuristic): layer.id = l
+                    heuristic.init_at_layer_level(a, l, &current_node_order);
+                }
             }
 
             for n in 0..current_node_order[l].len() {
@@ -121,7 +148,9 @@ impl GraphInfoHolder {
                 crossings_counter.init_at_node_level(a, l, n, &current_node_order);
                 decider.init_at_node_level(a, l, n, &current_node_order);
                 port_distributor.init_at_node_level(a, l, n, &current_node_order);
-                constraint_resolver.init_at_node_level(a, l, n, &current_node_order);
+                if let CrossMinimizer::Barycenter { constraint_resolver } = &mut cross_minimizer {
+                    constraint_resolver.init_at_node_level(a, l, n, &current_node_order);
+                }
                 // crossMinimizer: (nothing at node level)
 
                 let num_ports = a.node(node).ports.len();
@@ -131,6 +160,10 @@ impl GraphInfoHolder {
                     n_ports_holder += 1;
                     crossings_counter.init_at_port_level(a, l, n, p, &current_node_order);
                     port_distributor.init_at_port_level(a, l, n, p, &current_node_order);
+                    if let CrossMinimizer::GreedySwitch(heuristic) = &mut cross_minimizer {
+                        // crossMinimizer (GreedySwitchHeuristic): nPorts++
+                        heuristic.init_at_port_level();
+                    }
 
                     // --- initAtEdgeLevel (only the crossings counter uses it)
                     let port = a.node(node).ports[p];
@@ -144,14 +177,25 @@ impl GraphInfoHolder {
         let port_positions = vec![0; n_ports_holder as usize];
         crossings_counter.init_after_traversal();
         port_distributor.init_after_traversal();
-        // crossMinimizer's initAfterTraversal only captures references to the
-        // resolver's states and the distributor's port ranks, which this port
-        // passes explicitly at the call sites.
+        match &mut cross_minimizer {
+            // BarycenterHeuristic's initAfterTraversal only captures
+            // references to the resolver's states and the distributor's port
+            // ranks, which this port passes explicitly at the call sites.
+            CrossMinimizer::Barycenter { .. } => {}
+            CrossMinimizer::GreedySwitch(heuristic) => heuristic.init_after_traversal(),
+        }
 
         // calculate whether we need to use bottom up or sweep into this graph.
         let cross_min_deterministic = cross_min_deterministic(cross_min_type);
         let use_bottom_up =
             decider.use_bottom_up(a, graph, parent, cross_min_deterministic, &current_node_order);
+
+        // Make the graph data the greedy switch heuristic needs available
+        // (Java's GreedySwitchHeuristic holds a reference to this holder).
+        if let CrossMinimizer::GreedySwitch(heuristic) = &mut cross_minimizer {
+            heuristic.has_parent = has_parent;
+            heuristic.dont_sweep_into = use_bottom_up;
+        }
 
         Ok(GraphInfoHolder {
             lgraph: graph,
@@ -166,9 +210,9 @@ impl GraphInfoHolder {
             parent,
             parent_graph_index,
             cross_min_type,
+            cross_minimizer,
             port_distributor,
             crossings_counter,
-            constraint_resolver,
         })
     }
 
@@ -184,12 +228,7 @@ impl GraphInfoHolder {
 
     /// Java `crossMinAlwaysImproves()`.
     pub fn cross_min_always_improves(&self) -> bool {
-        match self.cross_min_type {
-            // BarycenterHeuristic.alwaysImproves() == false
-            CrossMinType::Barycenter => false,
-            // TWO_SIDED_GREEDY_SWITCH would return true; not ported.
-            _ => false,
-        }
+        cross_min_always_improves(self.cross_min_type)
     }
 
     /// Java `getBestSweep()`.
@@ -207,7 +246,23 @@ fn cross_min_deterministic(cross_min_type: CrossMinType) -> bool {
     match cross_min_type {
         // BarycenterHeuristic.isDeterministic() == false
         CrossMinType::Barycenter => false,
-        // greedy switch / median would be deterministic; not ported.
-        _ => true,
+        // GreedySwitchHeuristic.isDeterministic() == true
+        CrossMinType::OneSidedGreedySwitch | CrossMinType::TwoSidedGreedySwitch => true,
+        // MedianHeuristic.isDeterministic() == true (not ported)
+        CrossMinType::Median => true,
+    }
+}
+
+/// `ICrossingMinimizationHeuristic.alwaysImproves()` per heuristic type.
+fn cross_min_always_improves(cross_min_type: CrossMinType) -> bool {
+    match cross_min_type {
+        // BarycenterHeuristic.alwaysImproves() == false
+        CrossMinType::Barycenter => false,
+        // GreedySwitchHeuristic.alwaysImproves() ==
+        //   !(greedySwitchType == ONE_SIDED_GREEDY_SWITCH)
+        CrossMinType::OneSidedGreedySwitch => false,
+        CrossMinType::TwoSidedGreedySwitch => true,
+        // MedianHeuristic.alwaysImproves() == false (not ported)
+        CrossMinType::Median => false,
     }
 }

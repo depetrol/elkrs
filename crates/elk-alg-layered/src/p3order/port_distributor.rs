@@ -1,6 +1,7 @@
 //! Port of `AbstractBarycenterPortDistributor` and its two concrete
 //! subclasses `NodeRelativePortDistributor` and `LayerTotalPortDistributor`
-//! (plus the `ISweepPortDistributor.create` factory).
+//! (plus the `ISweepPortDistributor.create` factory, see
+//! [`SweepPortDistributor`]).
 //!
 //! The two subclasses only differ in `calculatePortRanks(node, rankSum,
 //! type)`, so they are merged into one struct with a `kind` discriminator.
@@ -17,7 +18,115 @@ use crate::internal_properties::Origin;
 use crate::options_gen as lopts;
 use crate::options_gen::PortType;
 
+use super::greedy_port_distributor::GreedyPortDistributor;
 use super::layer_sweep::CrossMinType;
+
+/// Port of the `ISweepPortDistributor` interface: either one of the two
+/// barycenter-based distributors or the greedy port distributor.
+pub enum SweepPortDistributor {
+    /// `AbstractBarycenterPortDistributor` subclasses
+    Barycenter(PortDistributor),
+    /// `GreedyPortDistributor` (used for TWO_SIDED_GREEDY_SWITCH)
+    Greedy(GreedyPortDistributor),
+}
+
+impl SweepPortDistributor {
+    /// Port of `ISweepPortDistributor.create`. Note the random consumption:
+    /// for TWO_SIDED_GREEDY_SWITCH no random boolean is drawn; for all other
+    /// types one boolean is drawn during `GraphInfoHolder` construction.
+    pub fn create(
+        cmt: CrossMinType,
+        random: &mut JavaRandom,
+        num_layers: usize,
+    ) -> SweepPortDistributor {
+        if cmt == CrossMinType::TwoSidedGreedySwitch {
+            SweepPortDistributor::Greedy(GreedyPortDistributor::new())
+        } else if random.next_boolean() {
+            // Since both methods lead to different results, but neither is
+            // clearly better, we choose randomly.
+            SweepPortDistributor::Barycenter(PortDistributor::new(
+                PortDistributorKind::NodeRelative,
+                num_layers,
+            ))
+        } else {
+            SweepPortDistributor::Barycenter(PortDistributor::new(
+                PortDistributorKind::LayerTotal,
+                num_layers,
+            ))
+        }
+    }
+
+    /// The barycenter heuristic casts the distributor to
+    /// `AbstractBarycenterPortDistributor` in Java (ClassCastException
+    /// otherwise — unreachable, the GraphInfoHolder pairs them correctly).
+    pub fn as_barycenter_mut(&mut self) -> &mut PortDistributor {
+        match self {
+            SweepPortDistributor::Barycenter(d) => d,
+            SweepPortDistributor::Greedy(_) => {
+                panic!("barycenter heuristic requires an AbstractBarycenterPortDistributor")
+            }
+        }
+    }
+
+    /// Port of `distributePortsWhileSweeping` dispatch.
+    pub fn distribute_ports_while_sweeping(
+        &mut self,
+        a: &mut LGraphArena,
+        node_order: &[Vec<LNodeId>],
+        current_index: usize,
+        is_forward_sweep: bool,
+    ) -> bool {
+        match self {
+            SweepPortDistributor::Barycenter(d) => {
+                d.distribute_ports_while_sweeping(a, node_order, current_index, is_forward_sweep)
+            }
+            SweepPortDistributor::Greedy(d) => {
+                d.distribute_ports_while_sweeping(a, node_order, current_index, is_forward_sweep)
+            }
+        }
+    }
+
+    // ------------------------------------------- IInitializable dispatch
+
+    pub fn init_at_layer_level(&mut self, l: usize, node_order: &[Vec<LNodeId>]) {
+        if let SweepPortDistributor::Barycenter(d) = self {
+            d.init_at_layer_level(l, node_order);
+        }
+    }
+
+    pub fn init_at_node_level(
+        &mut self,
+        a: &mut LGraphArena,
+        l: usize,
+        n: usize,
+        node_order: &[Vec<LNodeId>],
+    ) {
+        match self {
+            SweepPortDistributor::Barycenter(d) => d.init_at_node_level(a, l, n, node_order),
+            SweepPortDistributor::Greedy(d) => d.init_at_node_level(a, l, n, node_order),
+        }
+    }
+
+    pub fn init_at_port_level(
+        &mut self,
+        a: &mut LGraphArena,
+        l: usize,
+        n: usize,
+        p: usize,
+        node_order: &[Vec<LNodeId>],
+    ) {
+        if let SweepPortDistributor::Barycenter(d) = self {
+            d.init_at_port_level(a, l, n, p, node_order);
+        }
+    }
+
+    pub fn init_after_traversal(&mut self) {
+        match self {
+            SweepPortDistributor::Barycenter(d) => d.init_after_traversal(),
+            SweepPortDistributor::Greedy(d) => d.init_after_traversal(),
+        }
+    }
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum PortDistributorKind {
@@ -40,24 +149,10 @@ pub struct PortDistributor {
 }
 
 impl PortDistributor {
-    /// Port of `ISweepPortDistributor.create`. Note the call order: the
-    /// random boolean is drawn here, during `GraphInfoHolder` construction.
-    pub fn create(
-        cross_min_type: CrossMinType,
-        random: &mut JavaRandom,
-        num_layers: usize,
-    ) -> Result<PortDistributor, String> {
-        if cross_min_type == CrossMinType::TwoSidedGreedySwitch {
-            return Err("TODO: GreedyPortDistributor not ported yet".to_string());
-        }
-        let kind = if random.next_boolean() {
-            // Since both methods lead to different results, but neither is
-            // clearly better, we choose randomly.
-            PortDistributorKind::NodeRelative
-        } else {
-            PortDistributorKind::LayerTotal
-        };
-        Ok(PortDistributor {
+    /// Java `new NodeRelativePortDistributor(numLayers)` /
+    /// `new LayerTotalPortDistributor(numLayers)`.
+    pub fn new(kind: PortDistributorKind, num_layers: usize) -> PortDistributor {
+        PortDistributor {
             kind,
             port_ranks: Vec::new(),
             min_barycenter: 0.0,
@@ -66,7 +161,7 @@ impl PortDistributor {
             port_barycenter: Vec::new(),
             in_layer_ports: Vec::new(),
             n_ports: 0,
-        })
+        }
     }
 
     pub fn kind(&self) -> PortDistributorKind {

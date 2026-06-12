@@ -5,9 +5,11 @@
 //! After each re-sorting step, the ports in the two current layers are
 //! sorted.
 //!
-//! Only `CrossMinType::Barycenter` is ported so far; the hierarchical sweep
-//! paths are structurally present but bail out with a TODO error when a
-//! nested graph is actually encountered.
+//! `CrossMinType::Barycenter` (the LAYER_SWEEP phase implementation) and the
+//! greedy switch types (the ONE_SIDED_GREEDY_SWITCH /
+//! TWO_SIDED_GREEDY_SWITCH intermediate processors) are ported; the
+//! hierarchical sweep paths are structurally present but bail out with a
+//! TODO error when a nested graph is actually encountered.
 
 use elk_core::javacompat::JavaRandom;
 use elk_core::options::{HierarchyHandling, PortConstraints, PortSide};
@@ -19,7 +21,7 @@ use crate::options_gen as lopts;
 use crate::options_gen::OrderingStrategy;
 
 use super::barycenter_heuristic;
-use super::graph_info_holder::GraphInfoHolder;
+use super::graph_info_holder::{CrossMinimizer, GraphInfoHolder};
 use super::sweep_copy::SweepCopy;
 
 /// Port of `LayerSweepCrossingMinimizer.CrossMinType`.
@@ -27,9 +29,9 @@ use super::sweep_copy::SweepCopy;
 pub enum CrossMinType {
     /// Use BarycenterHeuristic.
     Barycenter,
-    /// Use one-sided GreedySwitchHeuristic (not ported yet).
+    /// Use one-sided GreedySwitchHeuristic.
     OneSidedGreedySwitch,
-    /// Use two-sided GreedySwitchHeuristic (not ported yet).
+    /// Use two-sided GreedySwitchHeuristic.
     TwoSidedGreedySwitch,
     /// Use MedianHeuristic (not ported yet).
     Median,
@@ -55,13 +57,16 @@ enum MinimizingMethod {
     WithCounter,
 }
 
-/// Entry point; the crossing minimizer type is hardcoded to BARYCENTER for
-/// now (`CrossingMinimizationStrategy.LAYER_SWEEP`).
+/// Entry point for the LAYER_SWEEP phase implementation, i.e.
+/// `new LayerSweepCrossingMinimizer(CrossMinType.BARYCENTER)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
-    process_with_cross_min_type(a, graph, random, CrossMinType::Barycenter)
+    process_with_type(a, graph, random, CrossMinType::Barycenter)
 }
 
-fn process_with_cross_min_type(
+/// Entry point with an explicit crossing minimizer type; the
+/// ONE_SIDED_GREEDY_SWITCH / TWO_SIDED_GREEDY_SWITCH intermediate
+/// processors are `new LayerSweepCrossingMinimizer(crossMinType)`, too.
+pub fn process_with_type(
     a: &mut LGraphArena,
     graph: LGraphId,
     random: &mut JavaRandom,
@@ -81,7 +86,7 @@ fn process_with_cross_min_type(
 
     // --- Early rejection of unported code paths, before any work is done
     // (in particular before any random numbers are consumed). ---
-    if cross_min_type != CrossMinType::Barycenter {
+    if cross_min_type == CrossMinType::Median {
         return Err(format!("TODO: cross minimizer {cross_min_type:?} not ported yet"));
     }
     if a.graph(graph).properties.get(&lopts::CONSIDER_MODEL_ORDER_STRATEGY)
@@ -93,7 +98,9 @@ fn process_with_cross_min_type(
                 .to_string(),
         );
     }
-    if a.graph(graph).properties.get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER) {
+    if cross_min_type == CrossMinType::Barycenter
+        && a.graph(graph).properties.get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
+    {
         return Err("TODO: ModelOrderBarycenterHeuristic not ported yet".to_string());
     }
     for &layer in &layers {
@@ -200,8 +207,7 @@ fn set_port_order_on_parent_graph(sweep: &mut LayerSweep, a: &mut LGraphArena, g
 }
 
 /// For use with any two-layer crossing minimizer which always improves
-/// crossings (e.g. two-sided greedy switch). Structurally present; never
-/// chosen for the barycenter heuristic.
+/// crossings (e.g. two-sided greedy switch).
 fn minimize_crossings_no_counter(
     sweep: &mut LayerSweep,
     a: &mut LGraphArena,
@@ -211,7 +217,7 @@ fn minimize_crossings_no_counter(
     let mut is_forward_sweep = random.next_boolean();
     let mut improved = true;
     while improved {
-        improved = set_first_layer_order(sweep, a, random, gidx, is_forward_sweep);
+        improved = set_first_layer_order(sweep, a, random, gidx, is_forward_sweep)?;
         improved |= sweep_reducing_crossings(sweep, a, random, gidx, is_forward_sweep, false)?;
         is_forward_sweep = !is_forward_sweep;
     }
@@ -289,16 +295,23 @@ fn set_first_layer_order(
     random: &mut JavaRandom,
     gidx: usize,
     is_forward_sweep: bool,
-) -> bool {
+) -> Result<bool, String> {
     let holder = &mut sweep.holders[gidx];
-    barycenter_heuristic::set_first_layer_order(
-        a,
-        &mut holder.current_node_order,
-        &mut holder.constraint_resolver,
-        &mut holder.port_distributor,
-        random,
-        is_forward_sweep,
-    )
+    match &mut holder.cross_minimizer {
+        CrossMinimizer::Barycenter { constraint_resolver } => {
+            Ok(barycenter_heuristic::set_first_layer_order(
+                a,
+                &mut holder.current_node_order,
+                constraint_resolver,
+                holder.port_distributor.as_barycenter_mut(),
+                random,
+                is_forward_sweep,
+            ))
+        }
+        CrossMinimizer::GreedySwitch(heuristic) => {
+            heuristic.set_first_layer_order(a, &mut holder.current_node_order, is_forward_sweep)
+        }
+    }
 }
 
 fn minimize_crossings_with_counter(
@@ -325,7 +338,7 @@ fn minimize_crossings_with_counter(
         || a.graph(lgraph).properties.get(&lopts::CONSIDER_MODEL_ORDER_STRATEGY)
             == OrderingStrategy::NONE
     {
-        set_first_layer_order(sweep, a, random, gidx, is_forward_sweep);
+        set_first_layer_order(sweep, a, random, gidx, is_forward_sweep)?;
     } else {
         is_forward_sweep = first_try;
     }
@@ -380,7 +393,7 @@ fn minimize_crossings_node_port_order_with_counter(
         || a.graph(lgraph).properties.get(&lopts::CONSIDER_MODEL_ORDER_STRATEGY)
             == OrderingStrategy::NONE
     {
-        set_first_layer_order(sweep, a, random, gidx, is_forward_sweep);
+        set_first_layer_order(sweep, a, random, gidx, is_forward_sweep)?;
     } else {
         is_forward_sweep = first_try;
     }
@@ -501,16 +514,27 @@ fn sweep_reducing_crossings(
             a.graph(lgraph).properties.get(&iprops::SECOND_TRY_WITH_INITIAL_ORDER);
         {
             let holder = &mut sweep.holders[gidx];
-            improved |= barycenter_heuristic::minimize_crossings_in_sweep(
-                a,
-                &mut holder.current_node_order,
-                &mut holder.constraint_resolver,
-                &mut holder.port_distributor,
-                random,
-                i as usize,
-                forward,
-                first_sweep && !first_try && !second_try,
-            );
+            improved |= match &mut holder.cross_minimizer {
+                CrossMinimizer::Barycenter { constraint_resolver } => {
+                    barycenter_heuristic::minimize_crossings_in_sweep(
+                        a,
+                        &mut holder.current_node_order,
+                        constraint_resolver,
+                        holder.port_distributor.as_barycenter_mut(),
+                        random,
+                        i as usize,
+                        forward,
+                        first_sweep && !first_try && !second_try,
+                    )
+                }
+                CrossMinimizer::GreedySwitch(heuristic) => heuristic.minimize_crossings(
+                    a,
+                    &mut holder.current_node_order,
+                    i as usize,
+                    forward,
+                    first_sweep && !first_try && !second_try,
+                )?,
+            };
             improved |= holder.port_distributor.distribute_ports_while_sweeping(
                 a,
                 &holder.current_node_order,

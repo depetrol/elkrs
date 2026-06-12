@@ -6,8 +6,10 @@
 //! `init_at_*` functions that are called by `GraphInfoHolder` in exactly
 //! the same traversal order as `IInitializable.init`.
 
+use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use elk_core::options::PortSide;
 
@@ -117,9 +119,13 @@ const INDEXING_SIDE: PortSide = PortSide::WEST;
 const STACK_SIDE: PortSide = PortSide::EAST;
 
 /// Port of `CrossingsCounter`. Port positions are tracked in an array
-/// indexed by the `LPort.id` scratch field.
+/// indexed by the `LPort.id` scratch field (Java `portPositions[port.id]`;
+/// the ids are assigned 0..nPorts-1 per graph by the initialization
+/// traversal). The array can be shared between several counters (Java passes
+/// the same `int[]` to multiple counters, e.g. in the greedy switch
+/// `SwitchDecider`).
 pub struct CrossingsCounter {
-    port_positions: Vec<i32>,
+    port_positions: Rc<RefCell<Vec<i32>>>,
     index_tree: Option<BinaryIndexedTree>,
     ends: Vec<i32>,
     node_cardinalities: Vec<i32>,
@@ -127,6 +133,11 @@ pub struct CrossingsCounter {
 
 impl CrossingsCounter {
     pub fn new(port_positions: Vec<i32>) -> Self {
+        Self::new_shared(Rc::new(RefCell::new(port_positions)))
+    }
+
+    /// Java `new CrossingsCounter(int[] portPositions)` with a shared array.
+    pub fn new_shared(port_positions: Rc<RefCell<Vec<i32>>>) -> Self {
         CrossingsCounter {
             port_positions,
             index_tree: None,
@@ -137,8 +148,8 @@ impl CrossingsCounter {
 
     /// Mutable access to the shared port position array (used by the
     /// hyperedge crossings counter, which shares it in Java).
-    pub fn port_positions_mut(&mut self) -> &mut Vec<i32> {
-        &mut self.port_positions
+    pub fn port_positions_mut(&mut self) -> RefMut<'_, Vec<i32>> {
+        self.port_positions.borrow_mut()
     }
 
     // -------------------------------------------------------------- public
@@ -191,11 +202,11 @@ impl CrossingsCounter {
         // Since we might add end positions of ports which are not in the ports
         // list, we need to explicitly clear the index tree.
         self.index_tree.as_mut().unwrap().clear();
-        self.switch_ports(upper_port, lower_port);
-        ports.sort_by(|&x, &y| self.position_of(x).cmp(&self.position_of(y)));
+        self.switch_ports(a, upper_port, lower_port);
+        ports.sort_by(|&x, &y| self.position_of(a, x).cmp(&self.position_of(a, y)));
         let lower_upper_crossings = self.count_crossings_on_ports(a, &ports);
         self.index_tree.as_mut().unwrap().clear();
-        self.switch_ports(lower_port, upper_port);
+        self.switch_ports(a, lower_port, upper_port);
         (upper_lower_crossings, lower_upper_crossings)
     }
 
@@ -212,7 +223,7 @@ impl CrossingsCounter {
         let upper_lower_crossings = self.count_in_layer_crossings_on_ports(a, &ports);
         self.switch_nodes(a, upper_node, lower_node, side);
         self.index_tree.as_mut().unwrap().clear();
-        ports.sort_by(|&x, &y| self.position_of(x).cmp(&self.position_of(y)));
+        ports.sort_by(|&x, &y| self.position_of(a, x).cmp(&self.position_of(a, y)));
         let lower_upper_crossings = self.count_in_layer_crossings_on_ports(a, &ports);
         self.switch_nodes(a, lower_node, upper_node, side);
         self.index_tree.as_mut().unwrap().clear();
@@ -244,10 +255,13 @@ impl CrossingsCounter {
     }
 
     /// Notify counter of port switch.
-    pub fn switch_ports(&mut self, top_port: LPortId, bottom_port: LPortId) {
-        let top_port_pos = self.port_positions[top_port.0 as usize];
-        self.port_positions[top_port.0 as usize] = self.port_positions[bottom_port.0 as usize];
-        self.port_positions[bottom_port.0 as usize] = top_port_pos;
+    pub fn switch_ports(&mut self, a: &LGraphArena, top_port: LPortId, bottom_port: LPortId) {
+        let top_id = a.port(top_port).id as usize;
+        let bottom_id = a.port(bottom_port).id as usize;
+        let mut pp = self.port_positions.borrow_mut();
+        let top_port_pos = pp[top_id];
+        pp[top_id] = pp[bottom_id];
+        pp[bottom_id] = top_port_pos;
     }
 
     /// Notify counter of a node switch (was-upper / was-lower).
@@ -260,14 +274,16 @@ impl CrossingsCounter {
     ) {
         let ports = in_north_south_east_west_order(a, was_upper_node, side);
         for port in ports {
-            self.port_positions[port.0 as usize] = self.position_of(port)
+            let new_pos = self.position_of(a, port)
                 + self.node_cardinalities[a.node(was_lower_node).id as usize];
+            self.port_positions.borrow_mut()[a.port(port).id as usize] = new_pos;
         }
 
         let ports = in_north_south_east_west_order(a, was_lower_node, side);
         for port in ports {
-            self.port_positions[port.0 as usize] = self.position_of(port)
+            let new_pos = self.position_of(a, port)
                 - self.node_cardinalities[a.node(was_upper_node).id as usize];
+            self.port_positions.borrow_mut()[a.port(port).id as usize] = new_pos;
         }
     }
 
@@ -287,10 +303,10 @@ impl CrossingsCounter {
             for port in in_north_south_east_west_order(a, node, side) {
                 for edge in a.port_connected_edges(port) {
                     if !a.edge_is_self_loop(edge) {
-                        ports.entry(self.position_of(port)).or_insert(port);
+                        ports.entry(self.position_of(a, port)).or_insert(port);
                         if self.is_in_layer(a, edge) {
                             let other = self.other_end_of(a, edge, port);
-                            ports.entry(self.position_of(other)).or_insert(other);
+                            ports.entry(self.position_of(a, other)).or_insert(other);
                         }
                     }
                 }
@@ -307,11 +323,11 @@ impl CrossingsCounter {
     ) -> Vec<LPortId> {
         let mut ports: BTreeMap<i32, LPortId> = BTreeMap::new();
         for port in [upper_port, lower_port] {
-            ports.entry(self.position_of(port)).or_insert(port);
+            ports.entry(self.position_of(a, port)).or_insert(port);
             for edge in a.port_connected_edges(port) {
                 if !self.is_port_self_loop(a, edge) {
                     let other = self.other_end_of(a, edge, port);
-                    ports.entry(self.position_of(other)).or_insert(other);
+                    ports.entry(self.position_of(a, other)).or_insert(other);
                 }
             }
         }
@@ -321,13 +337,12 @@ impl CrossingsCounter {
     fn count_crossings_on_ports(&mut self, a: &LGraphArena, ports: &[LPortId]) -> i32 {
         let mut crossings = 0;
         for &port in ports {
-            let port_pos = self.port_positions[port.0 as usize];
+            let port_pos = self.position_of(a, port);
             let index_tree = self.index_tree.as_mut().unwrap();
             index_tree.remove_all(port_pos as usize);
             // First get crossings for all edges.
             for edge in a.port_connected_edges(port) {
-                let end_position =
-                    self.port_positions[self.other_end_of(a, edge, port).0 as usize];
+                let end_position = self.position_of(a, self.other_end_of(a, edge, port));
                 if end_position > port_pos {
                     crossings += self.index_tree.as_ref().unwrap().rank(end_position as usize);
                     self.ends.push(end_position);
@@ -344,14 +359,13 @@ impl CrossingsCounter {
     fn count_in_layer_crossings_on_ports(&mut self, a: &LGraphArena, ports: &[LPortId]) -> i32 {
         let mut crossings = 0;
         for &port in ports {
-            let port_pos = self.port_positions[port.0 as usize];
+            let port_pos = self.position_of(a, port);
             self.index_tree.as_mut().unwrap().remove_all(port_pos as usize);
             let mut num_between_layer_edges = 0;
             // First get crossings for all edges.
             for edge in a.port_connected_edges(port) {
                 if self.is_in_layer(a, edge) {
-                    let end_position =
-                        self.port_positions[self.other_end_of(a, edge, port).0 as usize];
+                    let end_position = self.position_of(a, self.other_end_of(a, edge, port));
                     if end_position > port_pos {
                         crossings +=
                             self.index_tree.as_ref().unwrap().rank(end_position as usize);
@@ -375,7 +389,7 @@ impl CrossingsCounter {
         let mut targets_and_degrees: Vec<(LPortId, i32)> = Vec::new();
 
         for &port in ports {
-            let port_pos = self.port_positions[port.0 as usize];
+            let port_pos = self.position_of(a, port);
             self.index_tree.as_mut().unwrap().remove_all(port_pos as usize);
             targets_and_degrees.clear();
 
@@ -411,7 +425,7 @@ impl CrossingsCounter {
 
             // First get crossings for all edges.
             for &(target, degree) in &targets_and_degrees {
-                let end_position = self.port_positions[target.0 as usize];
+                let end_position = self.position_of(a, target);
                 if end_position > port_pos {
                     crossings +=
                         self.index_tree.as_ref().unwrap().rank(end_position as usize) * degree;
@@ -449,7 +463,7 @@ impl CrossingsCounter {
                 self.node_cardinalities[a.node(node).id as usize] = node_ports.len() as i32;
             }
             for &port in &node_ports {
-                self.port_positions[port.0 as usize] = num_ports;
+                self.port_positions.borrow_mut()[a.port(port).id as usize] = num_ports;
                 num_ports += 1;
             }
             ports.extend(node_ports);
@@ -495,7 +509,7 @@ impl CrossingsCounter {
                 NodeType::NORMAL => {
                     // index the northern ports west-to-east
                     for p in self.get_north_south_ports_with_incident_edges(a, current, PortSide::NORTH) {
-                        self.port_positions[p.0 as usize] = index;
+                        self.port_positions.borrow_mut()[a.port(p).id as usize] = index;
                         index += 1;
                         ports.push(p);
                     }
@@ -505,7 +519,7 @@ impl CrossingsCounter {
 
                     // index the southern ports in regular clock-wise order
                     for p in self.get_north_south_ports_with_incident_edges(a, current, PortSide::SOUTH) {
-                        self.port_positions[p.0 as usize] = index;
+                        self.port_positions.borrow_mut()[a.port(p).id as usize] = index;
                         index += 1;
                         ports.push(p);
                     }
@@ -516,7 +530,7 @@ impl CrossingsCounter {
                     if !indexing_view.is_empty() {
                         // should be only one
                         let p = indexing_view[0];
-                        self.port_positions[p.0 as usize] = index;
+                        self.port_positions.borrow_mut()[a.port(p).id as usize] = index;
                         index += 1;
                         ports.push(p);
                     }
@@ -527,7 +541,7 @@ impl CrossingsCounter {
 
                 NodeType::LONG_EDGE => {
                     for p in a.node_port_side_view(current, PortSide::WEST) {
-                        self.port_positions[p.0 as usize] = index;
+                        self.port_positions.borrow_mut()[a.port(p).id as usize] = index;
                         index += 1;
                         ports.push(p);
                     }
@@ -559,7 +573,7 @@ impl CrossingsCounter {
             // dummy is either a north/south port dummy or a long edge dummy
             // both of which have only a single port on the west and/or east side
             let p = a.node_port_side_view(dummy, side)[0];
-            self.port_positions[p.0 as usize] = index;
+            self.port_positions.borrow_mut()[a.port(p).id as usize] = index;
             index += 1;
             ports.push(p);
         }
@@ -628,8 +642,8 @@ impl CrossingsCounter {
         source_layer == target_layer
     }
 
-    fn position_of(&self, port: LPortId) -> i32 {
-        self.port_positions[port.0 as usize]
+    fn position_of(&self, a: &LGraphArena, port: LPortId) -> i32 {
+        self.port_positions.borrow()[a.port(port).id as usize]
     }
 
     fn other_end_of(&self, a: &LGraphArena, edge: LEdgeId, from_port: LPortId) -> LPortId {
@@ -739,7 +753,7 @@ pub fn count_hyperedge_crossings(
                 }
             }
             if port_edges > 0 {
-                port_pos[port.0 as usize] = source_count;
+                port_pos[a.port(port).id as usize] = source_count;
                 source_count += 1;
             }
         }
@@ -774,10 +788,10 @@ pub fn count_hyperedge_crossings(
             }
             if port_edges > 0 {
                 if a.port(port).side == PortSide::NORTH {
-                    port_pos[port.0 as usize] = target_count;
+                    port_pos[a.port(port).id as usize] = target_count;
                     target_count += 1;
                 } else {
-                    port_pos[port.0 as usize] = target_count + north_input_ports + other_input_ports;
+                    port_pos[a.port(port).id as usize] = target_count + north_input_ports + other_input_ports;
                     other_input_ports += 1;
                 }
             }
@@ -851,7 +865,7 @@ pub fn count_hyperedge_crossings(
         hyperedges[he].upper_right = target_count;
         let he_ports = hyperedges[he].ports.clone();
         for port in he_ports {
-            let pos = port_pos[port.0 as usize];
+            let pos = port_pos[a.port(port).id as usize];
             let port_layer = a.node(a.port(port).node.unwrap()).layer;
             if port_layer == left_layer_ref {
                 if pos < hyperedges[he].upper_left {
@@ -1042,8 +1056,10 @@ impl AllCrossingsCounter {
             let right_layer = &current_order[layer_index + 1];
             if self.has_hyperedges_east_of_index[layer_index] {
                 let counter = self.crossing_counter.as_mut().unwrap();
-                total_crossings =
-                    count_hyperedge_crossings(a, counter.port_positions_mut(), left_layer, right_layer);
+                total_crossings = {
+                    let mut port_pos = counter.port_positions_mut();
+                    count_hyperedge_crossings(a, &mut port_pos, left_layer, right_layer)
+                };
                 total_crossings +=
                     counter.count_in_layer_crossings_on_side(a, left_layer, PortSide::EAST);
                 total_crossings +=

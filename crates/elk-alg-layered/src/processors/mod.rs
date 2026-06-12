@@ -17,6 +17,7 @@ pub mod reversed_edge_restorer;
 use elk_core::javacompat::JavaRandom;
 
 use crate::graph::{LGraphArena, LGraphId};
+use crate::p3order::layer_sweep::{self, CrossMinType};
 use crate::phases::IntermediateProcessorStrategy as Ips;
 
 /// Dispatches an intermediate processor (Java: `IntermediateProcessorStrategy.create()` + run).
@@ -26,7 +27,6 @@ pub fn process(
     graph: LGraphId,
     random: &mut JavaRandom,
 ) -> Result<(), String> {
-    let _ = random;
     match strategy {
         Ips::EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER => {
             edge_and_layer_constraint_edge_reverser::process(a, graph)
@@ -52,6 +52,14 @@ pub fn process(
             Ok(())
         }
         Ips::REVERSED_EDGE_RESTORER => reversed_edge_restorer::process(a, graph),
+        // Java: new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH)
+        Ips::ONE_SIDED_GREEDY_SWITCH => {
+            layer_sweep::process_with_type(a, graph, random, CrossMinType::OneSidedGreedySwitch)
+        }
+        // Java: new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH)
+        Ips::TWO_SIDED_GREEDY_SWITCH => {
+            layer_sweep::process_with_type(a, graph, random, CrossMinType::TwoSidedGreedySwitch)
+        }
         other => Err(format!("TODO: intermediate processor {other:?} is not ported yet")),
     }
 }

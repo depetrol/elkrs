@@ -4,6 +4,8 @@ pub mod barycenter_heuristic;
 pub mod counting;
 pub mod forster_constraint_resolver;
 pub mod graph_info_holder;
+pub mod greedy_port_distributor;
+pub mod greedy_switch;
 pub mod layer_sweep;
 pub mod layer_sweep_type_decider;
 pub mod port_distributor;
