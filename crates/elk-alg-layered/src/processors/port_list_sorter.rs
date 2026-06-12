@@ -83,6 +83,11 @@ fn cmp_combined(a: &LGraphArena, p1: LPortId, p2: LPortId) -> Ordering {
     cmp_port_side(a, p1, p2).then_with(|| cmp_fixed_order_and_fixed_pos(a, p1, p2))
 }
 
+/// Public version of CMP_COMBINED for use by the LGraph adapter.
+pub fn cmp_combined_pub(a: &LGraphArena, p1: LPortId, p2: LPortId) -> Ordering {
+    cmp_combined(a, p1, p2)
+}
+
 fn cmp_port_degree_east_west(a: &LGraphArena, p1: LPortId, p2: LPortId) -> Ordering {
     let ordinal_difference =
         a.port(p1).side.ordinal() as i32 - a.port(p2).side.ordinal() as i32;

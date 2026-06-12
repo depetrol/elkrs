@@ -7,6 +7,7 @@ pub mod elk_layered;
 pub mod graph;
 pub mod importer;
 pub mod internal_properties;
+pub mod lgraph_adapters;
 pub mod lgraph_util;
 pub mod options_gen;
 pub mod p1cycles;
