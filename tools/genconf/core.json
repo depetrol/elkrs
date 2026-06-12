@@ -1,0 +1,41 @@
+{
+  "output": "crates/elk-core/src/options_gen.rs",
+  "register_fn": "register_core_options",
+  "header": "use elk_graph::elk_enum;\nuse elk_graph::math::{KVector, KVectorChain, Spacing};\npub use elk_graph::math::{ElkMargin, ElkPadding};\nuse elk_graph::properties::{EnumSet, Property};\nuse crate::data::{parse_enum, parse_enumset, parse_individual_spacings, parse_kvector, parse_kvectorchain, parse_margin, parse_padding, LayoutMetaDataRegistry, OptionData, OptionKind, Targets};\nuse crate::util::IndividualSpacings;\n",
+  "options_files": [
+    "org.eclipse.elk.core/org/eclipse/elk/core/options/CoreOptions.java"
+  ],
+  "type_aliases": {
+    "BoxLayoutProvider.PackingMode": "PackingMode"
+  },
+  "enums": {
+    "Alignment": "org.eclipse.elk.core/org/eclipse/elk/core/options/Alignment.java",
+    "ContentAlignment": "org.eclipse.elk.core/org/eclipse/elk/core/options/ContentAlignment.java",
+    "Direction": "org.eclipse.elk.core/org/eclipse/elk/core/options/Direction.java",
+    "EdgeCoords": "org.eclipse.elk.core/org/eclipse/elk/core/options/EdgeCoords.java",
+    "EdgeLabelPlacement": "org.eclipse.elk.core/org/eclipse/elk/core/options/EdgeLabelPlacement.java",
+    "EdgeRouting": "org.eclipse.elk.core/org/eclipse/elk/core/options/EdgeRouting.java",
+    "EdgeType": "org.eclipse.elk.core/org/eclipse/elk/core/options/EdgeType.java",
+    "HierarchyHandling": "org.eclipse.elk.core/org/eclipse/elk/core/options/HierarchyHandling.java",
+    "NodeLabelPlacement": "org.eclipse.elk.core/org/eclipse/elk/core/options/NodeLabelPlacement.java",
+    "PortAlignment": "org.eclipse.elk.core/org/eclipse/elk/core/options/PortAlignment.java",
+    "PortConstraints": "org.eclipse.elk.core/org/eclipse/elk/core/options/PortConstraints.java",
+    "PortLabelPlacement": "org.eclipse.elk.core/org/eclipse/elk/core/options/PortLabelPlacement.java",
+    "PortSide": "org.eclipse.elk.core/org/eclipse/elk/core/options/PortSide.java",
+    "ShapeCoords": "org.eclipse.elk.core/org/eclipse/elk/core/options/ShapeCoords.java",
+    "SizeConstraint": "org.eclipse.elk.core/org/eclipse/elk/core/options/SizeConstraint.java",
+    "SizeOptions": "org.eclipse.elk.core/org/eclipse/elk/core/options/SizeOptions.java",
+    "TopdownNodeTypes": "org.eclipse.elk.core/org/eclipse/elk/core/options/TopdownNodeTypes.java",
+    "PackingMode": "org.eclipse.elk.core/org/eclipse/elk/core/util/BoxLayoutProvider.java"
+  },
+  "default_overrides": {
+    "ContentAlignment.topLeft()": "EnumSet::of(&[ContentAlignment::V_TOP, ContentAlignment::H_LEFT])",
+    "NodeLabelPlacement.fixed()": "EnumSet::none()",
+    "PortLabelPlacement.outside()": "EnumSet::of(&[PortLabelPlacement::OUTSIDE])",
+    "TopdownSizeApproximator.COUNT_CHILDREN": null,
+    "new KVectorChain()": "KVectorChain::new()",
+    "BoxLayoutProvider.PackingMode.SIMPLE": "PackingMode::SIMPLE",
+    "EnumSet.<SizeConstraint>noneOf(SizeConstraint.class)": "EnumSet::none()",
+    "EnumSet.<SizeOptions>of(SizeOptions.DEFAULT_MINIMUM_SIZE)": "EnumSet::of(&[SizeOptions::DEFAULT_MINIMUM_SIZE])"
+  }
+}

@@ -1,0 +1,71 @@
+# elkrs — ELK in native Rust
+
+Goal: rewrite the Eclipse Layout Kernel in Rust with pixel-level output parity
+against Java ELK, replicating its test suite.
+
+## Reference
+
+- `elk/` — vendored Java source (0.12.0-SNAPSHOT), the porting source of truth.
+- `oracle/` — Java CLI on ELK 0.11.0 jars: `java -jar oracle/target/elk-oracle-1.0.jar graph.json`
+  reads ELK JSON, runs `RecursiveGraphLayoutEngine`, prints laid-out JSON.
+  Used to generate golden outputs.
+
+## Architecture (Cargo workspace, `crates/`)
+
+| Crate | Mirrors | Status |
+|---|---|---|
+| `elk-graph` | org.eclipse.elk.graph (model, properties, KVector math, JSON) | in progress |
+| `elk-core` | org.eclipse.elk.core (options, engine, fixed/box/random layouters) | todo |
+| `elk-alg-common` | org.eclipse.elk.alg.common (node sizing, polyomino, compaction) | todo |
+| `elk-alg-layered` | org.eclipse.elk.alg.layered (62k lines — main effort) | todo |
+| `elk-alg-force` | force + stress | todo |
+| `elk-alg-mrtree` | mrtree | todo |
+| `elk-alg-radial` | radial | todo |
+| `elk-alg-rectpacking` | rectpacking | todo |
+| `elk-alg-spore` | spore | todo |
+| `elk-alg-disco` | disco | todo |
+| `elk-alg-topdownpacking` | topdownpacking | todo |
+| `elk-alg-vertiflex` | vertiflex | todo |
+| `elk-cli` | mirrors oracle CLI for diffing | todo |
+
+## Testing strategy
+
+1. **Golden tests** (`goldens/`): input graphs + oracle output JSON; Rust CLI
+   output must match coordinates exactly (tolerance 1e-9, effectively bit-equal
+   doubles). Corpus grows with each ported feature.
+2. **Ported unit tests**: JUnit tests from `elk/test/**` rewritten as Rust
+   `#[test]`s in each crate (~190 files).
+
+## Fidelity rules (learned/important)
+
+- Java ELK relies on deterministic iteration: `LinkedHashMap/LinkedHashSet`
+  → use `indexmap`; `ArrayList` → `Vec`. Plain `HashMap` in Java code paths
+  must be checked individually for order sensitivity.
+- All geometry is `f64`; replicate Java `Math` exactly (`f64` ops are IEEE).
+- `Random` (random layouter, greedy switch tie-breaks): replicate
+  `java.util.Random` LCG bit-for-bit.
+- Double formatting in JSON: Java prints `12.0`; match shape where tests
+  compare strings (tests should compare parsed numbers instead).
+- Oracle is 0.11.0 jars; vendored source is 0.12.0-SNAPSHOT. Where outputs
+  diverge, vendored source wins; note divergences in GOLDEN_NOTES.md.
+
+## Porting order
+
+1. elk-graph: KVector/KVectorChain/ElkMargin/ElkPadding/ElkRectangle, property
+   system, graph model, ElkGraphUtil, JSON import/export. + graph tests.
+2. elk-core: option metadata (CoreOptions), LayoutMetaDataService,
+   RecursiveGraphLayoutEngine, ElkUtil, FixedLayouter, BoxLayouter,
+   RandomLayouter, node label/size calculation entry points. + core tests.
+3. elk-alg-common: NodeDimensionCalculation/NodeLabelAndSizeCalculator etc.
+   (pull in pieces as layered needs them).
+4. elk-alg-layered, phase by phase: graph import/transform → cycle breaking →
+   layering → crossing minimization → node placement → edge routing →
+   post-processing. Golden-test after each intermediate processor using full
+   pipelines on small graphs.
+5. Remaining algorithms in rough size order: radial, rectpacking, force,
+   mrtree, spore, topdownpacking, vertiflex, disco.
+
+## Progress log
+
+- 2026-06-12: repo surveyed; maven + oracle driver built and verified on
+  3-node layered graph.
