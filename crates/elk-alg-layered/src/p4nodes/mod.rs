@@ -1,6 +1,11 @@
 //! Phase 4: node placement (`org.eclipse.elk.alg.layered.p4nodes`).
 
 pub mod bk;
+pub mod bk_aligned_layout;
+pub mod bk_aligner;
+pub mod bk_compactor;
+pub mod neighborhood_information;
+pub mod threshold_strategy;
 
 use elk_graph::properties::EnumSet;
 
