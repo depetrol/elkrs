@@ -1,5 +1,6 @@
 //! Phase 1: cycle breaking (`org.eclipse.elk.alg.layered.p1cycles`).
 
+pub mod depth_first;
 pub mod greedy;
 
 use elk_core::javacompat::JavaRandom;
@@ -33,6 +34,7 @@ pub fn process(
 ) -> Result<(), String> {
     match strategy {
         CycleBreakingStrategy::GREEDY => greedy::process(a, graph, random),
+        CycleBreakingStrategy::DEPTH_FIRST => depth_first::process(a, graph),
         other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }
