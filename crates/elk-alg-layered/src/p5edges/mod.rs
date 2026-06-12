@@ -1,6 +1,12 @@
 //! Phase 5: edge routing (`org.eclipse.elk.alg.layered.p5edges`).
 
+pub mod direction;
+pub mod hyper_edge_cycle_detector;
+pub mod hyper_edge_segment;
+pub mod hyper_edge_segment_dependency;
+pub mod hyper_edge_segment_splitter;
 pub mod orthogonal;
+pub mod orthogonal_routing_generator;
 
 use elk_core::options::EdgeRouting;
 use elk_graph::properties::EnumSet;
@@ -102,10 +108,10 @@ pub fn process(
     routing: EdgeRouting,
     a: &mut LGraphArena,
     graph: LGraphId,
-    _random: &mut JavaRandom,
+    random: &mut JavaRandom,
 ) -> Result<(), String> {
     match effective_routing(routing) {
-        EdgeRouting::ORTHOGONAL => orthogonal::process(a, graph),
+        EdgeRouting::ORTHOGONAL => orthogonal::process(a, graph, random),
         other => Err(format!("TODO: edge routing {other:?} is not ported yet")),
     }
 }
