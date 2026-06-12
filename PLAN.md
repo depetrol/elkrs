@@ -82,7 +82,34 @@ against Java ELK, replicating its test suite.
   golden passes -> expand corpus (ports, labels, hierarchy, edge routing
   variants) porting more processors/phases -> remaining strategies.
 
+## Current state (layered port, 2026-06-12)
+
+elk-alg-layered structure in place: importer (flat graphs), configurator
+(pipeline assembly identical to AlgorithmAssembler), driver, components
+processor (SimpleRowGraphPlacer), spacings, transferrer, provider
+(registered via elk_cli::create_elk()). Ported processors: edge/layer
+constraint reversers+pre/post, long edge splitter/joiner, port side/list,
+in-layer constraints, layer size calc, reversed edge restorer, greedy cycle
+breaker. PORT FROM tools/elk-sources (0.11.0!), NOT the vendored elk/ repo
+(which is 0.12.0-SNAPSHOT) — oracle is 0.11.0 jars.
+
+Background agents were porting (check git status / their output when
+resuming): nodespacing -> elk-alg-common (entry points
+calculate_label_and_node_sizes, calculate_node_margins, process_node_size,
+compute_inside_node_label_padding; wire into processors/
+innermost_node_margin_calculator.rs + label_and_node_size_processor.rs and
+importer's compute_inside_node_label_padding); network simplex + layerers
+-> p2layers; layer sweep stack -> p3order; BK placer -> p4nodes; orthogonal
+router -> p5edges. After integration: cargo test goldens with
+goldens/cases/layered_*.json (add cases), debug divergences vs oracle
+(tools/compare_layouts.py /tmp/oracle.json /tmp/rust.json).
+
 ## Deferred/known gaps (revisit before declaring completion)
+
+- Layered: hierarchical (INCLUDE_CHILDREN) import/layout/transfer; external
+  ports; LayeredSpacings.withBaseValue; model-order strategies; label
+  management; interactive strategies; polyline/spline routing; wrapping;
+  compaction; EndLabelSorter is a no-op stub (fine without end labels).
 
 - Topdown layout (engine errors out) and DeprecatedLayoutOptionReplacer.
 - IndividualSpacings JSON: importer creates empty holder; values parse OK.
