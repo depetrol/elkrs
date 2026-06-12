@@ -3,6 +3,14 @@
 version = 4
 
 [[package]]
+name = "elk-alg-common"
+version = "0.1.0"
+dependencies = [
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-alg-layered"
 version = "0.1.0"
 dependencies = [

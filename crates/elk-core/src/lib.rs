@@ -1,6 +1,7 @@
 //! Rust port of `org.eclipse.elk.core`: layout option metadata, the
 //! recursive layout engine, basic layout providers, and ELK JSON I/O.
 
+pub mod adapters;
 pub mod data;
 pub mod elkutil;
 pub mod engine;
