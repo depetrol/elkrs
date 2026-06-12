@@ -14,8 +14,8 @@ against Java ELK, replicating its test suite.
 
 | Crate | Mirrors | Status |
 |---|---|---|
-| `elk-graph` | org.eclipse.elk.graph (model, properties, KVector math, JSON) | in progress |
-| `elk-core` | org.eclipse.elk.core (options, engine, fixed/box/random layouters) | todo |
+| `elk-graph` | org.eclipse.elk.graph (model, properties, KVector math, JSON) | done |
+| `elk-core` | org.eclipse.elk.core (options, engine, fixed/box/random layouters) | done (topdown layout deferred) |
 | `elk-alg-common` | org.eclipse.elk.alg.common (node sizing, polyomino, compaction) | todo |
 | `elk-alg-layered` | org.eclipse.elk.alg.layered (62k lines — main effort) | todo |
 | `elk-alg-force` | force + stress | todo |
@@ -69,3 +69,22 @@ against Java ELK, replicating its test suite.
 
 - 2026-06-12: repo surveyed; maven + oracle driver built and verified on
   3-node layered graph.
+- 2026-06-12: elk-graph + elk-core done. 10 golden cases (box simple/grouped/
+  expand/priority/hierarchy, fixed incl. orthogonal junction points, random
+  with seed) pixel-identical to oracle. Key Java semantics replicated:
+  materializing getProperty for Cloneable defaults (RefCell PropertyMap),
+  float casts (1.3f as f64), java.util.Random LCG, PriorityQueue heap order.
+- Next: elk-alg-layered. Port order: graph model (LGraph/LNode/LPort/LEdge,
+  arena, typed NodeType) -> options (LayeredOptions via generator,
+  InternalProperties manual) -> ElkGraphImporter -> ElkLayered driver +
+  GraphConfigurator + processor enum (unported processors error with their
+  name) -> port processors demanded by default pipeline until basic layered
+  golden passes -> expand corpus (ports, labels, hierarchy, edge routing
+  variants) porting more processors/phases -> remaining strategies.
+
+## Deferred/known gaps (revisit before declaring completion)
+
+- Topdown layout (engine errors out) and DeprecatedLayoutOptionReplacer.
+- IndividualSpacings JSON: importer creates empty holder; values parse OK.
+- elk-cli exporter always uses oracle flag set (omit nothing, full keys).
+- Random layouter with seed=0: Java is time-seeded; we use seed 1.
