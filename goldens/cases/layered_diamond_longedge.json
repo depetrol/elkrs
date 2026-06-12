@@ -1,0 +1,12 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "s", "width": 30, "height": 30 },
+    { "id": "m1", "width": 30, "height": 30 },
+    { "id": "m2", "width": 30, "height": 30 },
+    { "id": "t", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["s"], "targets": ["m1"] },
+    { "id": "e2", "sources": ["s"], "targets": ["m2"] },
+    { "id": "e3", "sources": ["m1"], "targets": ["t"] },
+    { "id": "e4", "sources": ["m2"], "targets": ["t"] },
+    { "id": "e5", "sources": ["s"], "targets": ["t"] } ] }
