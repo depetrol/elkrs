@@ -1,0 +1,62 @@
+{
+  "output": "crates/elk-alg-layered/src/options_gen.rs",
+  "register_fn": "register_layered_options",
+  "header": "use elk_core::data::{parse_enum, parse_enumset, parse_individual_spacings, parse_kvector, parse_kvectorchain, parse_margin, parse_padding, LayoutMetaDataRegistry, OptionData, OptionKind, Targets};\n#[allow(unused_imports)]\nuse elk_core::options::*;\nuse elk_graph::elk_enum;\n#[allow(unused_imports)]\nuse elk_graph::math::{KVector, KVectorChain, Spacing};\nuse elk_graph::properties::{EnumSet, Property};\n",
+  "options_files": [
+    "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayeredMetaDataProvider.java",
+    "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayeredOptions.java"
+  ],
+  "id_constant_sources": {
+    "org.eclipse.elk.core/org/eclipse/elk/core/options/CoreOptions.java": "CoreOptions",
+    "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayeredMetaDataProvider.java": "LayeredMetaDataProvider"
+  },
+  "alias_modules": {
+    "CoreOptions": "elk_core::options",
+    "LayeredMetaDataProvider": "self"
+  },
+  "type_aliases": {},
+  "enums": {
+    "CenterEdgeLabelPlacementStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/CenterEdgeLabelPlacementStrategy.java",
+    "ConstraintCalculationStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/ConstraintCalculationStrategy.java",
+    "CrossingMinimizationStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/CrossingMinimizationStrategy.java",
+    "CuttingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/CuttingStrategy.java",
+    "CycleBreakingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/CycleBreakingStrategy.java",
+    "DirectionCongruency": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/DirectionCongruency.java",
+    "EdgeConstraint": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/EdgeConstraint.java",
+    "EdgeLabelSideSelection": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/EdgeLabelSideSelection.java",
+    "EdgeStraighteningStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/EdgeStraighteningStrategy.java",
+    "FixedAlignment": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/FixedAlignment.java",
+    "GraphCompactionStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/GraphCompactionStrategy.java",
+    "GraphProperties": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/GraphProperties.java",
+    "GreedySwitchType": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/GreedySwitchType.java",
+    "GroupOrderStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/GroupOrderStrategy.java",
+    "InLayerConstraint": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/InLayerConstraint.java",
+    "InteractiveReferencePoint": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/InteractiveReferencePoint.java",
+    "LayerConstraint": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayerConstraint.java",
+    "LayeringStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayeringStrategy.java",
+    "LayerUnzippingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LayerUnzippingStrategy.java",
+    "LongEdgeOrderingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/LongEdgeOrderingStrategy.java",
+    "NodeFlexibility": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/NodeFlexibility.java",
+    "NodePlacementStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/NodePlacementStrategy.java",
+    "NodePromotionStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/NodePromotionStrategy.java",
+    "OrderingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/OrderingStrategy.java",
+    "PortSortingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/PortSortingStrategy.java",
+    "PortType": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/PortType.java",
+    "SelfLoopDistributionStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/SelfLoopDistributionStrategy.java",
+    "SelfLoopOrderingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/SelfLoopOrderingStrategy.java",
+    "SelfLoopPlacementStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/SelfLoopPlacementStrategy.java",
+    "SplineRoutingMode": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/SplineRoutingMode.java",
+    "ValidifyStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/ValidifyStrategy.java",
+    "WrappingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/options/WrappingStrategy.java",
+    "ComponentOrderingStrategy": "org.eclipse.elk.alg.layered/org/eclipse/elk/alg/layered/components/ComponentOrderingStrategy.java"
+  },
+  "default_overrides": {
+    "Collections.<Integer>unmodifiableList(CollectionLiterals.<Integer>newArrayList(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(10), Integer.valueOf(11)))": "vec![1, 2, 6, 7, 10, 11]"
+  },
+  "extern_types": [
+    "EdgeRouting",
+    "Direction",
+    "PortAlignment",
+    "TopdownNodeTypes"
+  ]
+}

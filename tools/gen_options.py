@@ -35,16 +35,46 @@ def parse_default_constants(java: str) :
     return consts
 
 
-def parse_properties(java):
-    """Yield (const_name, java_type, id, default_const, lower, upper)."""
+def parse_id_constants(java, class_name):
+    """Map CLASS.CONST -> option id for properties declared with string ids."""
+    table = {}
+    pat = re.compile(
+        r"public static final IProperty<[^=]+?>\s+(\w+)\s*=\s*new Property<[^=]+?>\(\s*"
+        r'"([^"]+)"', re.DOTALL)
+    for m in pat.finditer(java):
+        table[f"{class_name}.{m.group(1)}"] = m.group(2)
+    return table
+
+
+def parse_properties(java, id_table=None):
+    """Yield (const_name, java_type, id, default_const, alias_ref).
+
+    Handles three declaration forms:
+      new Property<T>("id"[, DEFAULT][, LOWER][, UPPER])
+      new Property<T>(CoreOptions.REF, DEFAULT)
+      = CoreOptions.REF;   (pure alias)
+    """
+    id_table = id_table or {}
     pat = re.compile(
         r"public static final IProperty<([^=]+?)>\s+(\w+)\s*=\s*new Property<[^=]+?>\(\s*"
-        r'"([^"]+)"\s*(?:,\s*(\w+|null)\s*)?(?:,\s*(\w+|null)\s*)?(?:,\s*(\w+|null)\s*)?\)',
+        r'(?:"([^"]+)"|([\w.]+))\s*(?:,\s*([\w.()]+|null)\s*)?(?:,\s*([\w.()]+|null)\s*)?(?:,\s*([\w.()]+|null)\s*)?\)',
         re.DOTALL,
     )
     for m in pat.finditer(java):
         jtype = re.sub(r"\s+", "", m.group(1))
-        yield (m.group(2), jtype, m.group(3), m.group(4), m.group(5), m.group(6))
+        oid = m.group(3)
+        if oid is None:
+            ref = m.group(4)
+            oid = id_table.get(ref)
+            if oid is None:
+                print(f"WARN: unknown property ref {ref} for {m.group(2)}", file=sys.stderr)
+                continue
+        yield (m.group(2), jtype, oid, m.group(5), None)
+
+    alias_pat = re.compile(
+        r"public static final IProperty<([^=]+?)>\s+(\w+)\s*=\s*([\w]+)\.(\w+);")
+    for m in alias_pat.finditer(java):
+        yield (m.group(2), re.sub(r"\s+", "", m.group(1)), None, None, (m.group(3), m.group(4)))
 
 
 def parse_registrations(java):
@@ -71,6 +101,7 @@ JAVA_TYPE_TO_RUST = {
     "ElkPadding": "ElkPadding",
     "ElkMargin": "ElkMargin",
     "IndividualSpacings": "IndividualSpacings",
+    "List<Integer>": "Vec<i32>",
 }
 
 
@@ -81,7 +112,7 @@ def rust_type(jtype: str, conf) :
     m = re.match(r"EnumSet<(\w+)>", jtype)
     if m:
         return f"EnumSet<{m.group(1)}>"
-    if jtype in conf.get("enums", {}):
+    if jtype in conf.get("enums", {}) or jtype in conf.get("extern_types", []):
         return jtype
     return None  # internal/unsupported type: skipped
 
@@ -98,6 +129,11 @@ def rust_default(expr: str, rtype: str, conf) :
         m = re.fullmatch(r"Boolean\.valueOf\((\w+)\)", expr)
         return m.group(1) if m else expr
     if rtype == "i32":
+        if expr == "Integer.MAX_VALUE":
+            return "i32::MAX"
+        m = re.fullmatch(r"Integer\.valueOf\((-?\d+)\)", expr)
+        if m:
+            return m.group(1)
         return expr
     if rtype == "f64":
         # Java often writes integral doubles as e.g. `20`
@@ -234,13 +270,31 @@ def generate(conf_path: str):
         out.append("")
 
     skipped = []
+    all_regs = {}
     for options_src in conf["options_files"]:
         java = (SRC_ROOT / options_src).read_text()
         consts = parse_default_constants(java)
         regs = {r.get("id", "").strip('"'): r for r in parse_registrations(java)}
 
+        id_table = {}
+        for src_path, cls in conf.get("id_constant_sources", {}).items():
+            id_table.update(parse_id_constants((SRC_ROOT / src_path).read_text(), cls))
+
         props = []
-        for name, jtype, oid, default_const, _lo, _hi in parse_properties(java):
+        aliases = []
+        for name, jtype, oid, default_const, alias in parse_properties(java, id_table):
+            if alias is not None:
+                target_mod, target_name = alias
+                module = conf.get("alias_modules", {}).get(target_mod)
+                if module is None:
+                    print(f"WARN: no alias module for {target_mod} ({name})", file=sys.stderr)
+                    continue
+                if module == "self":
+                    if target_name != name:
+                        aliases.append(f"pub use self::{target_name} as {name};")
+                else:
+                    aliases.append(f"pub use {module}::{target_name} as {name};")
+                continue
             rtype = rust_type(jtype, conf)
             if rtype is None:
                 skipped.append((name, jtype))
@@ -262,11 +316,16 @@ def generate(conf_path: str):
                 )
         out.extend(props)
         out.append("")
+        out.extend(aliases)
+        out.append("")
 
-        # registration function
-        fn_name = conf["register_fn"]
-        out.append(f"pub fn {fn_name}(reg: &mut LayoutMetaDataRegistry) {{")
-        for oid, r in regs.items():
+        # registration entries are accumulated; the function is emitted once
+        all_regs.update(regs)
+
+    fn_name = conf["register_fn"]
+    out.append(f"pub fn {fn_name}(reg: &mut LayoutMetaDataRegistry) {{")
+    if True:
+        for oid, r in all_regs.items():
             kind = parse_value_kind(r.get("type", ""), r.get("optionClass", "").replace(".class", ""))
             targets = re.findall(r"Target\.(\w+)", r.get("targets", ""))
             tflags = " | ".join(f"Targets::{t}" for t in targets) or "Targets::empty()"
@@ -279,8 +338,8 @@ def generate(conf_path: str):
                 f'    reg.register_option(OptionData {{ id: "{oid}", '
                 f"group: {group}, kind: {kind}, targets: {tflags}, legacy_ids: {legacy_rust} }});"
             )
-        out.append("}")
-        out.append("")
+    out.append("}")
+    out.append("")
 
     if skipped:
         out.append("// Skipped internal/unsupported-type properties:")

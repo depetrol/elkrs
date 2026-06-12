@@ -1,0 +1,10 @@
+[package]
+name = "elk-alg-layered"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+elk-core = { path = "../elk-core" }
+elk-graph = { path = "../elk-graph" }
+indexmap.workspace = true

@@ -280,6 +280,7 @@ pub static INSIDE_SELF_LOOPS_YO: Property<bool> = Property::with_default("org.ec
 pub static EDGE_THICKNESS: Property<f64> = Property::with_default("org.eclipse.elk.edge.thickness", || 1.0);
 pub static EDGE_TYPE: Property<EdgeType> = Property::with_default("org.eclipse.elk.edge.type", || EdgeType::NONE);
 
+
 pub fn register_core_options(reg: &mut LayoutMetaDataRegistry) {
     reg.register_option(OptionData { id: "org.eclipse.elk.algorithm", group: "", kind: OptionKind::Str, targets: Targets::PARENTS, legacy_ids: &[] });
     reg.register_option(OptionData { id: "org.eclipse.elk.resolvedAlgorithm", group: "", kind: OptionKind::Unparseable, targets: Targets::PARENTS, legacy_ids: &[] });
