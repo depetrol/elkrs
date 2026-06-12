@@ -14,6 +14,12 @@ impl JavaRandom {
         JavaRandom { seed: (seed as u64 ^ MULTIPLIER) & MASK }
     }
 
+    /// `java.util.Random.setSeed(long)`: re-scrambles exactly like the
+    /// constructor (`(seed ^ 0x5DEECE66D) & ((1 << 48) - 1)`).
+    pub fn set_seed(&mut self, seed: i64) {
+        self.seed = (seed as u64 ^ MULTIPLIER) & MASK;
+    }
+
     fn next(&mut self, bits: u32) -> i32 {
         self.seed = self.seed.wrapping_mul(MULTIPLIER).wrapping_add(ADDEND) & MASK;
         (self.seed >> (48 - bits)) as i32

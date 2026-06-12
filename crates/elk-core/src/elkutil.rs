@@ -472,6 +472,65 @@ fn determine_junction_points_at_port(
     junction_points
 }
 
+/// Port of `ElkUtil.getLabelsBounds(PortAdapter)`: bounding box of the
+/// port's labels, in coordinates relative to the port. Returns an empty
+/// rectangle if the port has no labels.
+pub fn get_labels_bounds<G: crate::adapters::AdapterGraph>(
+    g: &G,
+    port: G::P,
+) -> elk_graph::math::ElkRectangle {
+    use elk_graph::math::ElkRectangle;
+    let mut bounds: Option<ElkRectangle> = None;
+    for label in g.port_labels(port) {
+        let pos = g.label_position(label);
+        let size = g.label_size(label);
+        let current = ElkRectangle::new(pos.x, pos.y, size.x, size.y);
+        match &mut bounds {
+            None => bounds = Some(current),
+            Some(b) => b.union(&current),
+        }
+    }
+    bounds.unwrap_or_default()
+}
+
+/// Port of `ElkUtil.computeInsidePart(PortAdapter, double)`: the part of the
+/// port's (fixed-placement) labels that lies inside the node.
+pub fn compute_inside_part<G: crate::adapters::AdapterGraph>(
+    g: &G,
+    port: G::P,
+    port_border_offset: f64,
+) -> f64 {
+    let label_bounds = get_labels_bounds(g, port);
+    compute_inside_part_values(
+        KVector::new(label_bounds.x, label_bounds.y),
+        KVector::new(label_bounds.width, label_bounds.height),
+        g.port_size(port),
+        port_border_offset,
+        g.port_side(port),
+    )
+}
+
+/// Port of `ElkUtil.computeInsidePart(KVector, KVector, KVector, double, PortSide)`.
+pub fn compute_inside_part_values(
+    label_position: KVector,
+    label_size: KVector,
+    port_size: KVector,
+    port_border_offset: f64,
+    port_side: PortSide,
+) -> f64 {
+    match port_side {
+        PortSide::NORTH => {
+            (label_size.y + label_position.y - (port_size.y + port_border_offset)).max(0.0)
+        }
+        PortSide::SOUTH => (-label_position.y - port_border_offset).max(0.0),
+        PortSide::EAST => (-label_position.x - port_border_offset).max(0.0),
+        PortSide::WEST => {
+            (label_size.x + label_position.x - (port_size.x + port_border_offset)).max(0.0)
+        }
+        PortSide::UNDEFINED => 0.0,
+    }
+}
+
 /// Java `Math.signum` (returns 0.0 for ±0.0, NaN for NaN).
 fn java_signum(v: f64) -> f64 {
     if v == 0.0 || v.is_nan() {
