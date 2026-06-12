@@ -1,0 +1,90 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "labels": [
+        {
+          "text": "Node A",
+          "x": 10.0,
+          "y": 14.0,
+          "width": 40.0,
+          "height": 12.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[H_CENTER, V_CENTER, INSIDE]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 12.0,
+      "y": 12.0,
+      "width": 60.0,
+      "height": 40.0
+    },
+    {
+      "id": "b",
+      "labels": [
+        {
+          "text": "B",
+          "x": 0.0,
+          "y": 0.0,
+          "width": 10.0,
+          "height": 12.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 92.0,
+      "y": 17.0,
+      "width": 50.0,
+      "height": 30.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.algorithm": "layered",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 154.0,
+  "height": 64.0,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "b"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 72.0,
+            "y": 32.0
+          },
+          "endPoint": {
+            "x": 92.0,
+            "y": 32.0
+          },
+          "incomingShape": "a",
+          "outgoingShape": "b"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

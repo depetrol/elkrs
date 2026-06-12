@@ -1,0 +1,8 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 60, "height": 40,
+      "layoutOptions": { "nodeLabels.placement": "[INSIDE, H_CENTER, V_CENTER]" },
+      "labels": [ { "text": "Node A", "width": 40, "height": 12 } ] },
+    { "id": "b", "width": 50, "height": 30,
+      "labels": [ { "text": "B", "width": 10, "height": 12 } ] } ],
+  "edges": [ { "id": "e1", "sources": ["a"], "targets": ["b"] } ] }

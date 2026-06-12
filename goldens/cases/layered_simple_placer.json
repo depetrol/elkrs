@@ -1,0 +1,7 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "nodePlacement.strategy": "SIMPLE" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 }, { "id": "b", "width": 30, "height": 50 },
+    { "id": "c", "width": 30, "height": 20 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["c"] } ] }

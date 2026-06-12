@@ -1,0 +1,9 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30, "layoutOptions": { "layering.layerConstraint": "FIRST" } },
+    { "id": "b", "width": 30, "height": 30 },
+    { "id": "c", "width": 30, "height": 30, "layoutOptions": { "layering.layerConstraint": "LAST" } },
+    { "id": "d", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["b"], "targets": ["d"] },
+    { "id": "e2", "sources": ["d"], "targets": ["c"] } ] }

@@ -1,6 +1,7 @@
 //! Phase 4: node placement (`org.eclipse.elk.alg.layered.p4nodes`).
 
 pub mod bk;
+pub mod simple;
 pub mod bk_aligned_layout;
 pub mod bk_aligner;
 pub mod bk_compactor;
@@ -46,6 +47,7 @@ pub fn process(
 ) -> Result<(), String> {
     match strategy {
         NodePlacementStrategy::BRANDES_KOEPF => bk::process(a, graph),
+        NodePlacementStrategy::SIMPLE => simple::process(a, graph),
         other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
     }
 }
