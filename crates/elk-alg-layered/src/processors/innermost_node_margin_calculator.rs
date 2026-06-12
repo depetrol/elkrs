@@ -1,8 +1,13 @@
-//! TODO: not ported yet.
+//! Port of `InnermostNodeMarginCalculator`.
 
 use crate::graph::{LGraphArena, LGraphId};
+use crate::lgraph_adapters::LGraphAdapter;
 
-#[allow(unused)]
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
-    Err("TODO: innermost_node_margin_calculator is not ported yet".to_string())
+    // Java: NodeDimensionCalculation.getNodeMarginCalculator(
+    //           LGraphAdapters.adapt(layeredGraph, false))
+    //       .excludeEdgeHeadTailLabels().process()
+    let mut adapter = LGraphAdapter::new(a, graph, false, false, |_, _| true);
+    elk_alg_common::nodespacing::calculate_node_margins(&mut adapter, true);
+    Ok(())
 }
