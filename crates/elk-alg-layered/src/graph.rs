@@ -415,10 +415,10 @@ impl LGraphArena {
         p.incoming_edges.len() + p.outgoing_edges.len()
     }
 
-    /// Port of `LPort.getNetFlow` (outgoing minus incoming).
+    /// Port of `LPort.getNetFlow` (incoming minus outgoing).
     pub fn port_net_flow(&self, port: LPortId) -> i32 {
         let p = self.port(port);
-        p.outgoing_edges.len() as i32 - p.incoming_edges.len() as i32
+        p.incoming_edges.len() as i32 - p.outgoing_edges.len() as i32
     }
 
     /// Ports of the node with the given side, in port list order.
