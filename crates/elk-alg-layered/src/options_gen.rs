@@ -15,6 +15,8 @@ elk_enum! {
         TAIL_LAYER,
         HEAD_LAYER,
         SPACE_EFFICIENT_LAYER,
+        WIDEST_LAYER,
+        CENTER_LAYER,
     }
 }
 
@@ -29,6 +31,7 @@ elk_enum! {
     pub enum CrossingMinimizationStrategy {
         LAYER_SWEEP,
         MEDIAN_LAYER_SWEEP,
+        INTERACTIVE,
         NONE,
     }
 }
@@ -45,6 +48,7 @@ elk_enum! {
     pub enum CycleBreakingStrategy {
         GREEDY,
         DEPTH_FIRST,
+        INTERACTIVE,
         MODEL_ORDER,
         GREEDY_MODEL_ORDER,
         SCC_CONNECTIVITY,
@@ -170,6 +174,12 @@ elk_enum! {
         NETWORK_SIMPLEX,
         LONGEST_PATH,
         LONGEST_PATH_SOURCE,
+        COFFMAN_GRAHAM,
+        INTERACTIVE,
+        STRETCH_WIDTH,
+        MIN_WIDTH,
+        BF_MODEL_ORDER,
+        DF_MODEL_ORDER,
     }
 }
 
@@ -192,6 +202,7 @@ elk_enum! {
     pub enum NodeFlexibility {
         NONE,
         PORT_POSITION,
+        NODE_SIZE_WHERE_SPACE_PERMITS,
         NODE_SIZE,
     }
 }
@@ -199,6 +210,7 @@ elk_enum! {
 elk_enum! {
     pub enum NodePlacementStrategy {
         SIMPLE,
+        INTERACTIVE,
         LINEAR_SEGMENTS,
         BRANDES_KOEPF,
         NETWORK_SIMPLEX,
@@ -210,6 +222,11 @@ elk_enum! {
         NONE,
         NIKOLOV,
         NIKOLOV_PIXEL,
+        NIKOLOV_IMPROVED,
+        NIKOLOV_IMPROVED_PIXEL,
+        DUMMYNODE_PERCENTAGE,
+        NODECOUNT_PERCENTAGE,
+        NO_BOUNDARY,
         MODEL_ORDER_LEFT_TO_RIGHT,
         MODEL_ORDER_RIGHT_TO_LEFT,
     }

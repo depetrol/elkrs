@@ -1,0 +1,46 @@
+//! Phase 4: node placement (`org.eclipse.elk.alg.layered.p4nodes`).
+
+pub mod bk;
+
+use elk_graph::properties::EnumSet;
+
+use elk_core::javacompat::JavaRandom;
+
+use crate::graph::{LGraphArena, LGraphId};
+use crate::internal_properties as iprops;
+use crate::options_gen::{GraphProperties, NodePlacementStrategy};
+use crate::phases::{IntermediateProcessorStrategy as Ips, LayeredPhases, ProcessorConfiguration};
+
+pub fn processor_configuration(
+    strategy: NodePlacementStrategy,
+    a: &LGraphArena,
+    graph: LGraphId,
+    config: &mut ProcessorConfiguration,
+) -> Result<(), String> {
+    match strategy {
+        NodePlacementStrategy::BRANDES_KOEPF | NodePlacementStrategy::SIMPLE => {
+            let graph_properties: EnumSet<GraphProperties> =
+                a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
+            if graph_properties.contains(GraphProperties::EXTERNAL_PORTS) {
+                config.add_before(
+                    LayeredPhases::P5_EDGE_ROUTING,
+                    Ips::HIERARCHICAL_PORT_POSITION_PROCESSOR,
+                );
+            }
+            Ok(())
+        }
+        other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
+    }
+}
+
+pub fn process(
+    strategy: NodePlacementStrategy,
+    a: &mut LGraphArena,
+    graph: LGraphId,
+    _random: &mut JavaRandom,
+) -> Result<(), String> {
+    match strategy {
+        NodePlacementStrategy::BRANDES_KOEPF => bk::process(a, graph),
+        other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
+    }
+}

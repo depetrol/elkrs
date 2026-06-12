@@ -1,4 +1,19 @@
 //! Rust port of `org.eclipse.elk.alg.layered` — ELK's layer-based
 //! layout algorithm.
 
+pub mod components;
+pub mod configurator;
+pub mod elk_layered;
+pub mod graph;
+pub mod importer;
+pub mod internal_properties;
+pub mod lgraph_util;
 pub mod options_gen;
+pub mod p1cycles;
+pub mod p2layers;
+pub mod p3order;
+pub mod p4nodes;
+pub mod p5edges;
+pub mod phases;
+pub mod processors;
+pub mod spacings;

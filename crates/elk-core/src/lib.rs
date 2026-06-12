@@ -4,6 +4,7 @@
 pub mod data;
 pub mod elkutil;
 pub mod engine;
+pub mod enum_helpers;
 pub mod javacompat;
 pub mod json;
 pub mod options;

@@ -228,6 +228,7 @@ def gen_enum(java_file: Path) :
     # there are no members. Strip comments first.
     body = re.sub(r"/\*.*?\*/", "", body, flags=re.DOTALL)
     body = re.sub(r"//[^\n]*", "", body)
+    body = re.sub(r"@\w+", "", body)
     stop = len(body)
     for i, ch in enumerate(body):
         if ch in ";}":
