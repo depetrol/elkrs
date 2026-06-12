@@ -14,6 +14,7 @@ dependencies = [
 name = "elk-alg-layered"
 version = "0.1.0"
 dependencies = [
+ "elk-alg-common",
  "elk-core",
  "elk-graph",
  "indexmap",
