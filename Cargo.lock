@@ -11,6 +11,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "elk-alg-force"
+version = "0.1.0"
+dependencies = [
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-alg-layered"
 version = "0.1.0"
 dependencies = [
@@ -24,6 +32,7 @@ dependencies = [
 name = "elk-cli"
 version = "0.1.0"
 dependencies = [
+ "elk-alg-force",
  "elk-alg-layered",
  "elk-core",
  "elk-graph",

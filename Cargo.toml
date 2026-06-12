@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/elk-graph", "crates/elk-core", "crates/elk-cli", "crates/elk-alg-layered", "crates/elk-alg-common"]
+members = ["crates/elk-graph", "crates/elk-core", "crates/elk-cli", "crates/elk-alg-layered", "crates/elk-alg-common", "crates/elk-alg-force"]
 
 [workspace.package]
 version = "0.1.0"

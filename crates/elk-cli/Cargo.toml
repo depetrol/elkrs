@@ -13,6 +13,7 @@ name = "elkrs"
 path = "src/main.rs"
 
 [dependencies]
+elk-alg-force = { path = "../elk-alg-force" }
 elk-alg-layered = { path = "../elk-alg-layered" }
 elk-core = { path = "../elk-core" }
 elk-graph = { path = "../elk-graph" }
