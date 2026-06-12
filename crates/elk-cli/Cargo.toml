@@ -4,11 +4,16 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[lib]
+name = "elk_cli"
+path = "src/lib.rs"
+
 [[bin]]
 name = "elkrs"
 path = "src/main.rs"
 
 [dependencies]
+elk-alg-layered = { path = "../elk-alg-layered" }
 elk-core = { path = "../elk-core" }
 elk-graph = { path = "../elk-graph" }
 serde_json.workspace = true

@@ -23,6 +23,7 @@ dependencies = [
 name = "elk-cli"
 version = "0.1.0"
 dependencies = [
+ "elk-alg-layered",
  "elk-core",
  "elk-graph",
  "serde_json",

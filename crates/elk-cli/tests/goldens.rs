@@ -46,7 +46,7 @@ fn golden_cases_match_oracle() {
     let cases_dir = root.join("goldens/cases");
     let expected_dir = root.join("goldens/expected");
 
-    let elk = elk_core::Elk::new();
+    let elk = elk_cli::create_elk();
     let mut failures = Vec::new();
     let mut total = 0;
 

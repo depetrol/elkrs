@@ -16,4 +16,6 @@ pub mod p4nodes;
 pub mod p5edges;
 pub mod phases;
 pub mod processors;
+pub mod provider;
+pub mod transferrer;
 pub mod spacings;
