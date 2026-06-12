@@ -1,0 +1,16 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "box" },
+  "children": [
+    { "id": "p1",
+      "layoutOptions": { "elk.algorithm": "box" },
+      "children": [
+        { "id": "p1c1", "width": 30, "height": 30 },
+        { "id": "p1c2", "width": 40, "height": 20 }
+      ] },
+    { "id": "n2", "width": 50, "height": 50 },
+    { "id": "p2",
+      "layoutOptions": { "elk.algorithm": "box", "elk.padding": "[top=5,left=5,bottom=5,right=5]" },
+      "children": [
+        { "id": "p2c1", "width": 25, "height": 35 }
+      ] }
+  ] }

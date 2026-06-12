@@ -324,26 +324,9 @@ impl ElkGraph {
         depth
     }
 
-    /// Recomputes the edge's containing node as the lowest common ancestor of
-    /// all endpoints (Java `ElkGraphUtil.updateContainment` semantics).
+    /// Recomputes the edge's containment (Java `ElkGraphUtil.updateContainment`).
     pub fn update_containment(&mut self, edge: EdgeId) {
-        let e = self.edge(edge);
-        let mut endpoints = e.sources.iter().chain(e.targets.iter());
-        let best = if let Some(&first) = endpoints.next() {
-            let mut anc: Vec<NodeId> = self.ancestors_inclusive(self.shape_node(first));
-            // For a source node itself being a hierarchical parent, Java uses
-            // the node itself as candidate; ancestors of the *node* work
-            // because findBestContainment uses findLowestCommonAncestor of
-            // the endpoints' parents — replicated here via ancestor chains.
-            for &other in endpoints {
-                let other_anc = self.ancestors_inclusive(self.shape_node(other));
-                anc.retain(|a| other_anc.contains(a));
-            }
-            anc.first().copied()
-        } else {
-            None
-        };
-
+        let best = self.find_best_edge_containment(edge);
         let old = self.edge(edge).containing_node;
         if old != best {
             if let Some(o) = old {
@@ -356,16 +339,65 @@ impl ElkGraph {
         }
     }
 
-    /// Chain of ancestors starting at the node's parent... actually starting
-    /// at the node's parent and walking to the root, deepest first.
-    fn ancestors_inclusive(&self, node: NodeId) -> Vec<NodeId> {
-        let mut result = Vec::new();
-        let mut current = self.node(node).parent;
-        while let Some(n) = current {
-            result.push(n);
-            current = self.node(n).parent;
+    /// Port of `ElkGraphUtil.findBestEdgeContainment`.
+    pub fn find_best_edge_containment(&self, edge: EdgeId) -> Option<NodeId> {
+        let e = self.edge(edge);
+        let incident: Vec<NodeId> = e
+            .sources
+            .iter()
+            .chain(e.targets.iter())
+            .map(|&s| self.shape_node(s))
+            .collect();
+
+        match incident.len() {
+            0 => panic!("The edge must have at least one source or target."),
+            1 => return self.node(incident[0]).parent,
+            _ => {}
         }
-        result
+
+        if e.sources.len() == 1 && e.targets.len() == 1 {
+            let (s, t) = (incident[0], incident[1]);
+            if self.node(s).parent == self.node(t).parent {
+                return self.node(s).parent;
+            } else if Some(s) == self.node(t).parent {
+                return Some(s);
+            } else if Some(t) == self.node(s).parent {
+                return Some(t);
+            }
+        }
+
+        let mut common = incident[0];
+        for &n in &incident[1..] {
+            if n != common && !self.is_descendant(n, common) {
+                if self.node(n).parent == self.node(common).parent {
+                    common = self.node(n).parent?;
+                } else {
+                    common = self.find_lowest_common_ancestor(common, n)?;
+                }
+            }
+        }
+        Some(common)
+    }
+
+    /// Port of `ElkGraphUtil.findLowestCommonAncestor` (both chains include
+    /// the nodes themselves).
+    pub fn find_lowest_common_ancestor(&self, a: NodeId, b: NodeId) -> Option<NodeId> {
+        let chain = |start: NodeId| {
+            let mut v = Vec::new();
+            let mut cur = Some(start);
+            while let Some(n) = cur {
+                v.push(n);
+                cur = self.node(n).parent;
+            }
+            v.reverse(); // root first
+            v
+        };
+        let (ca, cb) = (chain(a), chain(b));
+        ca.iter()
+            .zip(cb.iter())
+            .take_while(|(x, y)| x == y)
+            .last()
+            .map(|(&x, _)| x)
     }
 
     /// All nodes in the subtree below `node` in pre-order, excluding `node`.
@@ -493,6 +525,9 @@ mod tests {
         let b = g.create_node(Some(g.root));
         let e2 = g.create_simple_edge(ShapeId::Node(a1), ShapeId::Node(b));
         assert_eq!(g.edge(e2).containing_node, Some(g.root));
+        // hierarchical edge: parent -> child is contained in the parent itself
+        let e3 = g.create_simple_edge(ShapeId::Node(a), ShapeId::Node(a1));
+        assert_eq!(g.edge(e3).containing_node, Some(a));
     }
 
     #[test]

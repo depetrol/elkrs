@@ -1,0 +1,13 @@
+{
+  "id": "root",
+  "layoutOptions": { "elk.algorithm": "fixed" },
+  "children": [
+    { "id": "n1", "x": 10, "y": 20, "width": 30, "height": 30,
+      "layoutOptions": { "org.eclipse.elk.position": "(100, 50)" } },
+    { "id": "n2", "x": 80, "y": 90, "width": 30, "height": 30 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["n1"], "targets": ["n2"],
+      "layoutOptions": { "org.eclipse.elk.bendPoints": "(130,65; 150,65; 150,105)" } }
+  ]
+}

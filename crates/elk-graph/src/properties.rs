@@ -93,6 +93,37 @@ impl<T: JavaString> JavaString for Vec<T> {
     }
 }
 
+/// Whether Java's `getProperty` materializes (clones and stores) the default
+/// for this type. Mirrors `instanceof Cloneable` in `MapPropertyHolder`.
+pub trait JavaCloneable {
+    const CLONEABLE: bool;
+}
+
+impl JavaCloneable for bool {
+    const CLONEABLE: bool = false;
+}
+impl JavaCloneable for i32 {
+    const CLONEABLE: bool = false;
+}
+impl JavaCloneable for f64 {
+    const CLONEABLE: bool = false;
+}
+impl JavaCloneable for String {
+    const CLONEABLE: bool = false;
+}
+impl JavaCloneable for crate::math::KVector {
+    const CLONEABLE: bool = true;
+}
+impl JavaCloneable for crate::math::KVectorChain {
+    const CLONEABLE: bool = true;
+}
+impl JavaCloneable for crate::math::Spacing {
+    const CLONEABLE: bool = true;
+}
+impl<T: JavaCloneable> JavaCloneable for Vec<T> {
+    const CLONEABLE: bool = true;
+}
+
 // ----------------------------------------------------------------- ElkEnum
 
 /// Implemented by `elk_enum!`-generated enums; mirrors Java `Enum`.
@@ -110,6 +141,7 @@ macro_rules! elk_enum {
     ($(#[$meta:meta])* pub enum $Name:ident { $($Variant:ident),+ $(,)? }) => {
         $(#[$meta])*
         #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
+        #[allow(non_camel_case_types)]
         pub enum $Name { $($Variant),+ }
 
         impl $crate::properties::ElkEnum for $Name {
@@ -129,10 +161,22 @@ macro_rules! elk_enum {
             }
         }
 
+        // Fallback only: property lookups use the option's Java default;
+        // this is required to satisfy `PropertyMap::get`'s bound.
+        impl Default for $Name {
+            fn default() -> Self {
+                <$Name as $crate::properties::ElkEnum>::VALUES[0]
+            }
+        }
+
         impl $crate::properties::JavaString for $Name {
             fn java_string(&self) -> String {
                 $crate::properties::ElkEnum::name(self).to_string()
             }
+        }
+
+        impl $crate::properties::JavaCloneable for $Name {
+            const CLONEABLE: bool = false;
         }
     };
 }
@@ -228,6 +272,10 @@ impl<T: ElkEnum> EnumSet<T> {
     }
 }
 
+impl<T: ElkEnum> JavaCloneable for EnumSet<T> {
+    const CLONEABLE: bool = true;
+}
+
 impl<T: ElkEnum> JavaString for EnumSet<T> {
     fn java_string(&self) -> String {
         self.java_string_impl()
@@ -283,19 +331,26 @@ impl<T: 'static> Property<T> {
 ///
 /// Uses an `IndexMap` (insertion order) so that serialization output is
 /// deterministic; Java uses `HashMap` and never relies on its order for
-/// layout decisions.
-#[derive(Default, Clone, Debug)]
+/// layout decisions. The map is `RefCell`-backed because Java's
+/// `getProperty` has write-through semantics: reading an unset property
+/// whose default is `Cloneable` stores the cloned default in the map.
+#[derive(Default, Debug)]
 pub struct PropertyMap {
-    map: IndexMap<String, Box<dyn PropValue>>,
+    map: std::cell::RefCell<IndexMap<String, Box<dyn PropValue>>>,
+}
+
+impl Clone for PropertyMap {
+    fn clone(&self) -> Self {
+        PropertyMap { map: std::cell::RefCell::new(self.map.borrow().clone()) }
+    }
 }
 
 impl PartialEq for PropertyMap {
     fn eq(&self, other: &Self) -> bool {
-        self.map.len() == other.map.len()
-            && self
-                .map
-                .iter()
-                .all(|(k, v)| other.map.get(k).is_some_and(|o| v.eq_value(o.as_ref())))
+        let a = self.map.borrow();
+        let b = other.map.borrow();
+        a.len() == b.len()
+            && a.iter().all(|(k, v)| b.get(k).is_some_and(|o| v.eq_value(o.as_ref())))
     }
 }
 
@@ -304,88 +359,91 @@ impl PropertyMap {
         Self::default()
     }
 
-    /// Java `getProperty`: stored value, else the property default, else the
-    /// type's `Default`. Unlike Java this does not write the default back
-    /// into the map; use [`PropertyMap::get_or_insert_default`] when the
-    /// caller mutates the returned value in place.
-    pub fn get<T: PropValue + Clone + Default>(&self, p: &Property<T>) -> T {
-        self.try_get(p)
-            .cloned()
-            .or_else(|| p.get_default())
-            .unwrap_or_default()
+    /// Java `getProperty`: stored value, else the property default (cloned
+    /// and stored if the type is "Cloneable" in Java), else `T::default()`
+    /// (where Java would return null).
+    pub fn get<T: PropValue + Clone + Default + JavaCloneable>(&self, p: &Property<T>) -> T {
+        self.get_opt(p).unwrap_or_default()
     }
 
-    /// Stored value or property default, without falling back to `T::Default`.
-    pub fn get_opt<T: PropValue + Clone>(&self, p: &Property<T>) -> Option<T> {
-        self.try_get(p).cloned().or_else(|| p.get_default())
-    }
-
-    /// Reference to the stored value, if set.
-    pub fn try_get<T: PropValue>(&self, p: &Property<T>) -> Option<&T> {
-        self.map.get(p.id).and_then(|v| v.as_any().downcast_ref::<T>())
-    }
-
-    /// Mutable reference, inserting the default first if unset. This mirrors
-    /// Java's behavior where `getProperty` stores cloned mutable defaults.
-    pub fn get_or_insert_default<T: PropValue + Clone + Default>(
-        &mut self,
-        p: &Property<T>,
-    ) -> &mut T {
-        if !self.map.contains_key(p.id) {
-            let v: T = p.get_default().unwrap_or_default();
-            self.map.insert(p.id.to_string(), Box::new(v));
+    /// Java `getProperty` for call sites that handle null: stored value or
+    /// property default; `None` where Java returns null.
+    pub fn get_opt<T: PropValue + Clone + JavaCloneable>(&self, p: &Property<T>) -> Option<T> {
+        if let Some(v) = self.try_get(p) {
+            return Some(v);
         }
-        self.map
-            .get_mut(p.id)
-            .and_then(|v| v.as_any_mut().downcast_mut::<T>())
-            .expect("property type mismatch")
+        let default = p.get_default()?;
+        if T::CLONEABLE {
+            self.map
+                .borrow_mut()
+                .insert(p.id.to_string(), Box::new(default.clone()));
+        }
+        Some(default)
     }
 
-    pub fn set<T: PropValue>(&mut self, p: &Property<T>, value: T) -> &mut Self {
-        self.map.insert(p.id.to_string(), Box::new(value));
+    /// The stored value only (no default, no materialization); clone of the
+    /// stored value. Used for Java's `hasProperty() ? getProperty() : null`
+    /// patterns and for read-modify-write of in-place mutations.
+    pub fn try_get<T: PropValue + Clone>(&self, p: &Property<T>) -> Option<T> {
+        self.map
+            .borrow()
+            .get(p.id)
+            .and_then(|v| v.as_any().downcast_ref::<T>())
+            .cloned()
+    }
+
+    pub fn set<T: PropValue>(&self, p: &Property<T>, value: T) -> &Self {
+        self.map.borrow_mut().insert(p.id.to_string(), Box::new(value));
         self
     }
 
     /// Java `setProperty(p, null)`.
-    pub fn unset<T>(&mut self, p: &Property<T>) -> &mut Self {
-        self.map.shift_remove(p.id);
+    pub fn unset<T>(&self, p: &Property<T>) -> &Self {
+        self.map.borrow_mut().shift_remove(p.id);
         self
     }
 
     pub fn has<T>(&self, p: &Property<T>) -> bool {
-        self.map.contains_key(p.id)
+        self.map.borrow().contains_key(p.id)
     }
 
     pub fn has_id(&self, id: &str) -> bool {
-        self.map.contains_key(id)
+        self.map.borrow().contains_key(id)
     }
 
-    /// Raw access by option id (used by serialization and option resolution).
-    pub fn get_by_id(&self, id: &str) -> Option<&dyn PropValue> {
-        self.map.get(id).map(|b| b.as_ref())
+    /// Raw clone of a value by option id (serialization, option resolution).
+    pub fn get_by_id(&self, id: &str) -> Option<Box<dyn PropValue>> {
+        self.map.borrow().get(id).cloned()
     }
 
-    pub fn set_by_id(&mut self, id: &str, value: Box<dyn PropValue>) {
-        self.map.insert(id.to_string(), value);
+    pub fn set_by_id(&self, id: &str, value: Box<dyn PropValue>) {
+        self.map.borrow_mut().insert(id.to_string(), value);
     }
 
     /// Java `copyProperties`: other's entries overwrite ours.
-    pub fn copy_from(&mut self, other: &PropertyMap) {
-        for (k, v) in &other.map {
-            self.map.insert(k.clone(), v.clone());
+    pub fn copy_from(&self, other: &PropertyMap) {
+        let other_map = other.map.borrow();
+        let mut own = self.map.borrow_mut();
+        for (k, v) in other_map.iter() {
+            own.insert(k.clone(), v.clone());
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&str, &dyn PropValue)> {
-        self.map.iter().map(|(k, v)| (k.as_str(), v.as_ref()))
+    /// Snapshot of all entries in insertion order.
+    pub fn entries(&self) -> Vec<(String, Box<dyn PropValue>)> {
+        self.map
+            .borrow()
+            .iter()
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.map.is_empty()
+        self.map.borrow().is_empty()
     }
 
     pub fn len(&self) -> usize {
-        self.map.len()
+        self.map.borrow().len()
     }
 }
 
@@ -394,7 +452,7 @@ pub trait PropertyHolder {
     fn properties(&self) -> &PropertyMap;
     fn properties_mut(&mut self) -> &mut PropertyMap;
 
-    fn get_property<T: PropValue + Clone + Default>(&self, p: &Property<T>) -> T {
+    fn get_property<T: PropValue + Clone + Default + JavaCloneable>(&self, p: &Property<T>) -> T {
         self.properties().get(p)
     }
     fn set_property<T: PropValue>(&mut self, p: &Property<T>, value: T) {
@@ -434,10 +492,22 @@ mod tests {
     }
 
     #[test]
-    fn get_or_insert_default_mutates_in_place() {
-        let mut m = PropertyMap::new();
-        m.get_or_insert_default(&OFFSET).x = 7.0;
-        assert_eq!(m.get(&OFFSET), KVector::new(7.0, 0.0));
+    fn cloneable_defaults_materialize_on_read() {
+        let m = PropertyMap::new();
+        let v: KVector = m.get(&OFFSET);
+        assert_eq!(v, KVector::default());
+        // KVector is "Cloneable" in Java, so reading stores... only when a
+        // default exists; OFFSET has none, so nothing is stored.
+        assert!(!m.has(&OFFSET));
+
+        static MARGIN: Property<crate::math::Spacing> =
+            Property::with_default("test.margin", || crate::math::Spacing::uniform(3.0));
+        let _ = m.get(&MARGIN);
+        assert!(m.has(&MARGIN));
+
+        // non-Cloneable defaults are not materialized
+        let _ = m.get(&SPACING);
+        assert!(!m.has(&SPACING));
     }
 
     #[test]

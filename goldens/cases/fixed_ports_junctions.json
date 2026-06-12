@@ -1,0 +1,15 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "fixed", "edgeRouting": "ORTHOGONAL" },
+  "children": [
+    { "id": "n1", "width": 40, "height": 40,
+      "layoutOptions": { "org.eclipse.elk.position": "(0, 0)" },
+      "ports": [ { "id": "p1", "x": 40, "y": 20, "width": 4, "height": 4 } ] },
+    { "id": "n2", "width": 40, "height": 40, "layoutOptions": { "org.eclipse.elk.position": "(150, 0)" } },
+    { "id": "n3", "width": 40, "height": 40, "layoutOptions": { "org.eclipse.elk.position": "(150, 100)" } }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["p1"], "targets": ["n2"],
+      "layoutOptions": { "org.eclipse.elk.bendPoints": "(44,22; 100,22; 100,20; 150,20)" } },
+    { "id": "e2", "sources": ["p1"], "targets": ["n3"],
+      "layoutOptions": { "org.eclipse.elk.bendPoints": "(44,22; 100,22; 100,120; 150,120)" } }
+  ] }

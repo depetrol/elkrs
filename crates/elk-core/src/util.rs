@@ -23,7 +23,7 @@ impl JavaString for IndividualSpacings {
         // Java inherits Object.toString; the exact form never matters for
         // layout. Mirror the option entries instead for debuggability.
         let entries: Vec<String> =
-            self.properties.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect();
+            self.properties.entries().iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect();
         format!("IndividualSpacings({})", entries.join(", "))
     }
 }

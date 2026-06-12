@@ -1,0 +1,11 @@
+{
+  "id": "root",
+  "layoutOptions": { "elk.algorithm": "box" },
+  "children": [
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 50, "height": 20 },
+    { "id": "n3", "width": 40, "height": 40 },
+    { "id": "n4", "width": 20, "height": 60 },
+    { "id": "n5", "width": 25, "height": 25 }
+  ]
+}

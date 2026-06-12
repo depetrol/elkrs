@@ -1,0 +1,8 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "box", "interactive": "true" },
+  "children": [
+    { "id": "a", "x": 50, "y": 10, "width": 40, "height": 30, "layoutOptions": { "priority": "1" } },
+    { "id": "b", "x": 10, "y": 10, "width": 35, "height": 25 },
+    { "id": "c", "x": 10, "y": 50, "width": 20, "height": 20, "layoutOptions": { "priority": "5" } },
+    { "id": "d", "x": 0, "y": 0, "width": 55, "height": 45 }
+  ] }

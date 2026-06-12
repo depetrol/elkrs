@@ -1,0 +1,9 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "box", "org.eclipse.elk.box.packingMode": "GROUP_INC", "aspectRatio": "2.0" },
+  "children": [
+    { "id": "a", "width": 80, "height": 60 },
+    { "id": "b", "width": 30, "height": 25 },
+    { "id": "c", "width": 22, "height": 18 },
+    { "id": "d", "width": 50, "height": 40 },
+    { "id": "e", "width": 12, "height": 14 }
+  ] }

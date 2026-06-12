@@ -1,0 +1,89 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 10.0,
+      "y": 10.0,
+      "width": 100.0,
+      "height": 80.0
+    },
+    {
+      "id": "b",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 96.0,
+      "y": 98.0,
+      "width": 30.0,
+      "height": 20.0
+    },
+    {
+      "id": "c",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 63.0,
+      "y": 146.0,
+      "width": 25.0,
+      "height": 25.0
+    },
+    {
+      "id": "d",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 10.0,
+      "y": 98.0,
+      "width": 60.0,
+      "height": 40.0
+    },
+    {
+      "id": "e",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 114.0,
+      "y": 126.0,
+      "width": 15.0,
+      "height": 15.0
+    },
+    {
+      "id": "f",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 10.0,
+      "y": 146.0,
+      "width": 45.0,
+      "height": 35.0
+    },
+    {
+      "id": "g",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]"
+      },
+      "x": 96.0,
+      "y": 126.0,
+      "width": 10.0,
+      "height": 30.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.algorithm": "box",
+    "org.eclipse.elk.padding": "[top=10.0,left=10.0,bottom=10.0,right=10.0]",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.spacing.nodeNode": "8.0",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.box",
+    "org.eclipse.elk.box.packingMode": "GROUP_DEC",
+    "org.eclipse.elk.nodeSize.minimum": "(0.0,0.0)",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 139.0,
+  "height": 191.0
+}

@@ -1,0 +1,8 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "box", "expandNodes": "true", "nodeSize.minimum": "(200, 150)", "nodeSize.constraints": "[MINIMUM_SIZE]" },
+  "children": [
+    { "id": "a", "width": 40, "height": 30 },
+    { "id": "b", "width": 35, "height": 25 },
+    { "id": "c", "width": 20, "height": 20 },
+    { "id": "d", "width": 55, "height": 45 }
+  ] }

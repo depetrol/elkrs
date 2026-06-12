@@ -1,0 +1,14 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "random", "randomSeed": "7" },
+  "children": [
+    { "id": "a", "width": 40, "height": 30 },
+    { "id": "b", "width": 35, "height": 25 },
+    { "id": "c", "width": 20, "height": 20 },
+    { "id": "d", "width": 55, "height": 45 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["c"], "targets": ["c"] },
+    { "id": "e4", "sources": ["d"], "targets": ["a"] }
+  ] }
