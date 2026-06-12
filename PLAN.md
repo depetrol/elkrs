@@ -82,6 +82,19 @@ against Java ELK, replicating its test suite.
   golden passes -> expand corpus (ports, labels, hierarchy, edge routing
   variants) porting more processors/phases -> remaining strategies.
 
+## Milestone: 19/19 goldens pixel-identical (incl. 6 layered) 2026-06-12
+
+Default layered pipeline fully ported and bit-exact vs oracle. Next fronts:
+1. Broaden layered coverage: directions (DOWN/UP/LEFT), explicit ports +
+   FIXED_ORDER/POS/RATIO/SIDE, node/port/edge labels, self loops,
+   polyline/spline routing, COFFMAN_GRAHAM/MIN_WIDTH/STRETCH_WIDTH layering,
+   LINEAR_SEGMENTS/NETWORK_SIMPLEX/SIMPLE placement, node promotion,
+   compaction, model order, wrapping, external ports, INCLUDE_CHILDREN.
+   Add golden cases per feature; port missing processors as errors surface.
+2. Remaining algorithms: mrtree, radial, rectpacking, spore, disco,
+   topdownpacking, vertiflex (agents work well; force/stress already done).
+3. Replicate elk JUnit test suites (elk/test/**) as Rust tests.
+
 ## Current state (layered port, 2026-06-12)
 
 elk-alg-layered structure in place: importer (flat graphs), configurator
