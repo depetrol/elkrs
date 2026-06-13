@@ -1,0 +1,5 @@
+{"id":"graph","layoutOptions":{"org.eclipse.elk.algorithm":"org.eclipse.elk.layered"},
+ "children":[
+   {"id":"node1","width":30,"height":30,"layoutOptions":{"org.eclipse.elk.nodeSize.constraints":"[]"}},
+   {"id":"node2","width":30,"height":30,"layoutOptions":{"org.eclipse.elk.nodeSize.constraints":"[]"}}],
+ "edges":[{"id":"e1","sources":["node1"],"targets":["node2"]}]}
