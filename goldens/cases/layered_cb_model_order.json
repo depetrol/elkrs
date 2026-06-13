@@ -1,0 +1,15 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.cycleBreaking.strategy": "MODEL_ORDER" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "b", "width": 30, "height": 30 },
+    { "id": "c", "width": 30, "height": 30 },
+    { "id": "d", "width": 30, "height": 30 },
+    { "id": "e", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["c"], "targets": ["a"] },
+    { "id": "e4", "sources": ["c"], "targets": ["d"] },
+    { "id": "e5", "sources": ["d"], "targets": ["e"] },
+    { "id": "e6", "sources": ["e"], "targets": ["c"] },
+    { "id": "e7", "sources": ["b"], "targets": ["d"] } ] }

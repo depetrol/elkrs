@@ -1,7 +1,12 @@
 //! Phase 1: cycle breaking (`org.eclipse.elk.alg.layered.p1cycles`).
 
+pub mod bfs_node_order;
 pub mod depth_first;
+pub mod dfs_node_order;
 pub mod greedy;
+pub mod group_model_order_calculator;
+pub mod model_order;
+pub mod scc;
 
 use elk_core::javacompat::JavaRandom;
 
@@ -17,7 +22,14 @@ pub fn processor_configuration(
     config: &mut ProcessorConfiguration,
 ) -> Result<(), String> {
     match strategy {
-        CycleBreakingStrategy::GREEDY | CycleBreakingStrategy::DEPTH_FIRST => {
+        CycleBreakingStrategy::GREEDY
+        | CycleBreakingStrategy::DEPTH_FIRST
+        | CycleBreakingStrategy::MODEL_ORDER
+        | CycleBreakingStrategy::GREEDY_MODEL_ORDER
+        | CycleBreakingStrategy::BFS_NODE_ORDER
+        | CycleBreakingStrategy::DFS_NODE_ORDER
+        | CycleBreakingStrategy::SCC_CONNECTIVITY
+        | CycleBreakingStrategy::SCC_NODE_TYPE => {
             config.add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::REVERSED_EDGE_RESTORER);
             Ok(())
         }
@@ -35,6 +47,12 @@ pub fn process(
     match strategy {
         CycleBreakingStrategy::GREEDY => greedy::process(a, graph, random),
         CycleBreakingStrategy::DEPTH_FIRST => depth_first::process(a, graph),
+        CycleBreakingStrategy::MODEL_ORDER => model_order::process(a, graph),
+        CycleBreakingStrategy::GREEDY_MODEL_ORDER => greedy::process_model_order(a, graph, random),
+        CycleBreakingStrategy::BFS_NODE_ORDER => bfs_node_order::process(a, graph),
+        CycleBreakingStrategy::DFS_NODE_ORDER => dfs_node_order::process(a, graph),
+        CycleBreakingStrategy::SCC_CONNECTIVITY => scc::process_connectivity(a, graph),
+        CycleBreakingStrategy::SCC_NODE_TYPE => scc::process_node_type(a, graph),
         other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }

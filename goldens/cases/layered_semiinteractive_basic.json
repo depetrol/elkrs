@@ -1,0 +1,10 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.crossingMinimization.semiInteractive": "true" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "b", "width": 30, "height": 30, "layoutOptions": { "org.eclipse.elk.position": "(0,90)" } },
+    { "id": "c", "width": 30, "height": 30, "layoutOptions": { "org.eclipse.elk.position": "(0,10)" } },
+    { "id": "d", "width": 30, "height": 30, "layoutOptions": { "org.eclipse.elk.position": "(0,50)" } } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["c"] },
+    { "id": "e3", "sources": ["a"], "targets": ["d"] } ] }

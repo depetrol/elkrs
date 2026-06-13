@@ -1,0 +1,10 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.crossingMinimization.forceNodeModelOrder": "true" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "t1", "width": 30, "height": 30 },
+    { "id": "t2", "width": 30, "height": 30 },
+    { "id": "t3", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["t3"] },
+    { "id": "e2", "sources": ["a"], "targets": ["t2"] },
+    { "id": "e3", "sources": ["a"], "targets": ["t1"] } ] }

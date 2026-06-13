@@ -1,0 +1,16 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES" },
+  "children": [
+    {"id":"n0","width":30,"height":30},{"id":"n1","width":30,"height":30},
+    {"id":"n2","width":30,"height":30},{"id":"n3","width":30,"height":30},
+    {"id":"n4","width":30,"height":30},{"id":"n5","width":30,"height":30},
+    {"id":"n6","width":30,"height":30},{"id":"n7","width":30,"height":30} ],
+  "edges": [
+    {"id":"e1","sources":["n0"],"targets":["n3"]},
+    {"id":"e2","sources":["n1"],"targets":["n3"]},
+    {"id":"e3","sources":["n1"],"targets":["n4"]},
+    {"id":"e4","sources":["n2"],"targets":["n5"]},
+    {"id":"e5","sources":["n3"],"targets":["n6"]},
+    {"id":"e6","sources":["n4"],"targets":["n6"]},
+    {"id":"e7","sources":["n5"],"targets":["n7"]},
+    {"id":"e8","sources":["n0"],"targets":["n5"]},
+    {"id":"e9","sources":["n2"],"targets":["n4"]} ] }

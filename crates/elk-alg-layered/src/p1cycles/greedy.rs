@@ -10,6 +10,25 @@ use crate::lgraph_util::edge_reverse;
 use crate::options_gen as lopts;
 
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
+    process_impl(a, graph, random, false)
+}
+
+/// Port of `GreedyModelOrderCycleBreaker`: same as `GreedyCycleBreaker` but the
+/// tie-break among max-outflow nodes picks the minimum (group) model order.
+pub fn process_model_order(
+    a: &mut LGraphArena,
+    graph: LGraphId,
+    random: &mut JavaRandom,
+) -> Result<(), String> {
+    process_impl(a, graph, random, true)
+}
+
+fn process_impl(
+    a: &mut LGraphArena,
+    graph: LGraphId,
+    random: &mut JavaRandom,
+    model_order: bool,
+) -> Result<(), String> {
     let nodes: Vec<LNodeId> = a.graph(graph).layerless_nodes.clone();
     let mut unprocessed_node_count = nodes.len() as i32;
     let n = nodes.len();
@@ -133,7 +152,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
             }
             debug_assert!(max_outflow > i32::MIN);
 
-            let max_node = max_nodes[random.next_int_bound(max_nodes.len() as i32) as usize];
+            let max_node = choose_node_with_max_outflow(a, graph, &max_nodes, random, model_order);
             mark[a.node(max_node).id as usize] = next_left;
             next_left += 1;
             update_neighbors(a, max_node, &mark, &mut indeg, &mut outdeg, &mut sources, &mut sinks);
@@ -165,4 +184,47 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
     }
 
     Ok(())
+}
+
+/// Port of `chooseNodeWithMaxOutflow` (base: random; model order: min
+/// constraint-model-order, falling back to random when no node has a model
+/// order).
+fn choose_node_with_max_outflow(
+    a: &LGraphArena,
+    graph: LGraphId,
+    max_nodes: &[LNodeId],
+    random: &mut JavaRandom,
+    model_order: bool,
+) -> LNodeId {
+    if model_order {
+        let offset = (a.graph(graph).layerless_nodes.len() as i32)
+            .max(a.graph(graph).properties.get(&iprops::MAX_MODEL_ORDER_NODES));
+        let big_offset =
+            offset.wrapping_mul(a.graph(graph).properties.get(&iprops::CB_NUM_MODEL_ORDER_GROUPS));
+        let enforce_group = a
+            .graph(graph)
+            .properties
+            .get(&lopts::CONSIDER_MODEL_ORDER_GROUP_MODEL_ORDER_CB_GROUP_ORDER_STRATEGY)
+            == crate::options_gen::GroupOrderStrategy::ENFORCED;
+        let mut calc = super::group_model_order_calculator::GroupModelOrderCalculator::new();
+        let mut return_node: Option<LNodeId> = None;
+        let mut minimum_model_order = i32::MAX;
+        for &node in max_nodes {
+            if a.node(node).properties.has(&iprops::MODEL_ORDER) {
+                let mo = if enforce_group {
+                    calc.compute_constraint_group_model_order(a, node, big_offset, offset)
+                } else {
+                    calc.compute_constraint_model_order(a, node, offset)
+                };
+                if minimum_model_order > mo {
+                    minimum_model_order = mo;
+                    return_node = Some(node);
+                }
+            }
+        }
+        if let Some(n) = return_node {
+            return n;
+        }
+    }
+    max_nodes[random.next_int_bound(max_nodes.len() as i32) as usize]
 }

@@ -1,0 +1,10 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.considerModelOrder.strategy": "PREFER_EDGES", "org.eclipse.elk.layered.considerModelOrder.portModelOrder": "true", "org.eclipse.elk.portConstraints": "FIXED_SIDE" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30, "ports": [
+        {"id":"a.p1","layoutOptions":{"org.eclipse.elk.port.side":"EAST"}},
+        {"id":"a.p2","layoutOptions":{"org.eclipse.elk.port.side":"EAST"}} ] },
+    { "id": "b", "width": 30, "height": 30 },
+    { "id": "c", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a.p1"], "targets": ["c"] },
+    { "id": "e2", "sources": ["a.p2"], "targets": ["b"] } ] }

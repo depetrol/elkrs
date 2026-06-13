@@ -1,6 +1,8 @@
 //! Phase 2: layering (`org.eclipse.elk.alg.layered.p2layers`).
 
+pub mod breadth_first_model_order;
 pub mod coffman_graham;
+pub mod depth_first_model_order;
 pub mod longest_path;
 pub mod longest_path_source;
 pub mod min_width;
@@ -28,7 +30,9 @@ pub fn processor_configuration(
         | LayeringStrategy::LONGEST_PATH_SOURCE
         | LayeringStrategy::COFFMAN_GRAHAM
         | LayeringStrategy::MIN_WIDTH
-        | LayeringStrategy::STRETCH_WIDTH => {
+        | LayeringStrategy::STRETCH_WIDTH
+        | LayeringStrategy::BF_MODEL_ORDER
+        | LayeringStrategy::DF_MODEL_ORDER => {
             config
                 .add_before(
                     LayeredPhases::P1_CYCLE_BREAKING,
@@ -55,6 +59,8 @@ pub fn process(
         LayeringStrategy::COFFMAN_GRAHAM => coffman_graham::process(a, graph),
         LayeringStrategy::MIN_WIDTH => min_width::process(a, graph),
         LayeringStrategy::STRETCH_WIDTH => stretch_width::process(a, graph),
+        LayeringStrategy::BF_MODEL_ORDER => breadth_first_model_order::process(a, graph),
+        LayeringStrategy::DF_MODEL_ORDER => depth_first_model_order::process(a, graph),
         other => Err(format!("TODO: layering strategy {other:?} is not ported yet")),
     }
 }

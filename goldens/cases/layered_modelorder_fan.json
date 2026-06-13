@@ -1,0 +1,10 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES" },
+  "children": [
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 30, "height": 30 },
+    { "id": "n3", "width": 30, "height": 30 },
+    { "id": "n4", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["n1"], "targets": ["n4"] },
+    { "id": "e2", "sources": ["n1"], "targets": ["n3"] },
+    { "id": "e3", "sources": ["n2"], "targets": ["n3"] } ] }

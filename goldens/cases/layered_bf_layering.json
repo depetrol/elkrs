@@ -1,0 +1,13 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "org.eclipse.elk.layered.layering.strategy": "BF_MODEL_ORDER" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "b", "width": 30, "height": 30 },
+    { "id": "c", "width": 30, "height": 30 },
+    { "id": "d", "width": 30, "height": 30 },
+    { "id": "e", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["c"] },
+    { "id": "e3", "sources": ["b"], "targets": ["d"] },
+    { "id": "e4", "sources": ["c"], "targets": ["d"] },
+    { "id": "e5", "sources": ["d"], "targets": ["e"] } ] }
