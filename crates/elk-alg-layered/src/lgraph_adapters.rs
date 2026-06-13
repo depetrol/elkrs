@@ -168,7 +168,7 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
         self.arena.port_mut(p).margin = margin;
     }
     /// Java `LPortAdapter.getIncomingEdges` incl. transparent north/south
-    /// handling (self-loop holder handling arrives with self-loop support).
+    /// handling and the self loop holder's hidden incoming edges.
     fn port_incoming_edges(&self, p: LPortId) -> Vec<LEdgeId> {
         let a = &*self.arena;
         let node = a.port(p).node.unwrap();
@@ -181,6 +181,15 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
         if self.transparent_north_south_edges {
             if let Some(port_dummy) = a.port(p).properties.try_get(&iprops::PORT_DUMMY) {
                 edges.extend(a.node_incoming_edges(port_dummy));
+            }
+        }
+        // Add the incoming edges from the self loop holder if asked for one
+        // (Java: SELF_LOOP_HOLDER property)
+        if let Some(slh) = &a.node(node).self_loop_holder {
+            if let Some(slp) = slh.sl_port_idx(p) {
+                for &sle in &slh.sl_ports[slp].incoming_sl_edges {
+                    edges.push(slh.sl_edges[sle].l_edge);
+                }
             }
         }
         edges
@@ -197,6 +206,15 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
         if self.transparent_north_south_edges {
             if let Some(port_dummy) = a.port(p).properties.try_get(&iprops::PORT_DUMMY) {
                 edges.extend(a.node_outgoing_edges(port_dummy));
+            }
+        }
+        // Add the outgoing edges from the self loop holder if asked for one
+        // (Java: SELF_LOOP_HOLDER property)
+        if let Some(slh) = &a.node(node).self_loop_holder {
+            if let Some(slp) = slh.sl_port_idx(p) {
+                for &sle in &slh.sl_ports[slp].outgoing_sl_edges {
+                    edges.push(slh.sl_edges[sle].l_edge);
+                }
             }
         }
         edges

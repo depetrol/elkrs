@@ -9,6 +9,7 @@ pub mod importer;
 pub mod internal_properties;
 pub mod lgraph_adapters;
 pub mod lgraph_util;
+pub mod loops;
 pub mod options_gen;
 pub mod p1cycles;
 pub mod p2layers;

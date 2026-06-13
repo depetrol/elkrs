@@ -120,3 +120,4 @@ pub static ORIGINAL_OPPOSITE_PORT: Property<LPortId> = Property::new("originalOp
 pub static END_LABEL_EDGE: Property<LEdgeId> = Property::new("endLabelEdge");
 pub static ORIGINAL_PORT_CONSTRAINTS: Property<elk_core::options::PortConstraints> =
     Property::new("originalPortConstraints");
+pub static SPLINE_NS_PORT_Y_COORD: Property<f64> = Property::new("splines.nsPortY");

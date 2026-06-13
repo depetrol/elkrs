@@ -85,6 +85,10 @@ pub struct LNode {
     pub pos: KVector,
     pub size: KVector,
     pub properties: PropertyMap,
+    /// Port of the `InternalProperties.SELF_LOOP_HOLDER` property: Java
+    /// stores a mutable `SelfLoopHolder` object on the node; here it is a
+    /// dedicated field so mutations stay by-reference like in Java.
+    pub self_loop_holder: Option<Box<crate::loops::SelfLoopHolder>>,
     /// cached port side index ranges (after PortListSorter)
     port_side_indices: Option<[(usize, usize); 5]>,
     port_sides_cached: bool,
@@ -105,6 +109,7 @@ impl Default for LNode {
             pos: KVector::default(),
             size: KVector::default(),
             properties: PropertyMap::new(),
+            self_loop_holder: None,
             port_side_indices: None,
             port_sides_cached: false,
         }
