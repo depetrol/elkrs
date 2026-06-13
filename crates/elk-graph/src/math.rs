@@ -479,44 +479,44 @@ impl Spacing {
         self.top + self.bottom
     }
 
-    /// Parse from ELK's `[top=..,left=..,bottom=..,right=..]` string form,
-    /// also accepting a plain list of 1, 2, or 4 numbers.
+    /// Port of Java `Spacing.parse`: expects a list of `key=value` pairs
+    /// (unknown keys are ignored; an empty string yields all zeros).
     pub fn parse(string: &str) -> Result<Spacing, String> {
-        let trimmed: &str =
-            string.trim_matches(|c: char| "([{\"' \t\r\n".contains(c) || ")]}".contains(c));
+        let is_delim = |c: char, delims: &str| delims.contains(c);
+        let bytes: Vec<char> = string.chars().collect();
+        let mut start = 0usize;
+        while start < bytes.len() && is_delim(bytes[start], "([{\"' \t\r\n") {
+            start += 1;
+        }
+        let mut end = bytes.len();
+        while end > 0 && is_delim(bytes[end - 1], ")]}\"' \t\r\n") {
+            end -= 1;
+        }
         let mut s = Spacing::default();
-        if trimmed.contains('=') {
-            for part in trimmed.split(',') {
-                let mut kv = part.split('=');
-                let key = kv.next().unwrap_or("").trim();
-                let value: f64 = kv
-                    .next()
-                    .ok_or_else(|| format!("Expected key=value pair, got '{part}'"))?
+        if start < end {
+            let inner: String = bytes[start..end].iter().collect();
+            for token in inner.split([',', ';']) {
+                let keyandvalue: Vec<&str> = token.split('=').collect();
+                if keyandvalue.len() != 2 {
+                    return Err("Expecting a list of key-value pairs.".to_string());
+                }
+                let key = keyandvalue[0].trim();
+                let value: f64 = keyandvalue[1]
                     .trim()
                     .parse()
-                    .map_err(|e: std::num::ParseFloatError| e.to_string())?;
+                    .map_err(|e: std::num::ParseFloatError| {
+                        format!("The given string contains parts that cannot be parsed as numbers.{e}")
+                    })?;
                 match key {
                     "top" => s.top = value,
                     "left" => s.left = value,
                     "bottom" => s.bottom = value,
                     "right" => s.right = value,
-                    _ => return Err(format!("Unknown spacing key '{key}'")),
+                    _ => {} // Java silently ignores unknown keys
                 }
             }
-            Ok(s)
-        } else {
-            let nums: Vec<f64> = trimmed
-                .split(|c: char| c == ',' || c.is_whitespace())
-                .filter(|t| !t.is_empty())
-                .map(|t| t.parse::<f64>().map_err(|e| e.to_string()))
-                .collect::<Result<_, _>>()?;
-            match nums.len() {
-                1 => Ok(Spacing::uniform(nums[0])),
-                2 => Ok(Spacing::of_lr_tb(nums[0], nums[1])),
-                4 => Ok(Spacing::new(nums[0], nums[1], nums[2], nums[3])),
-                n => Err(format!("Expected 1, 2 or 4 numbers, found {n}")),
-            }
         }
+        Ok(s)
     }
 }
 
@@ -672,6 +672,10 @@ mod tests {
     fn spacing_parse_forms() {
         let s = Spacing::parse("[top=1.0,left=2.0,bottom=3.0,right=4.0]").unwrap();
         assert_eq!(s, Spacing::new(1.0, 4.0, 3.0, 2.0));
-        assert_eq!(Spacing::parse("5").unwrap(), Spacing::uniform(5.0));
+        // Java rejects bare numbers (not key=value pairs)
+        assert!(Spacing::parse("5").is_err());
+        // unknown keys are silently ignored; empty input yields all zeros
+        assert_eq!(Spacing::parse("[foo=7]").unwrap(), Spacing::default());
+        assert_eq!(Spacing::parse("[]").unwrap(), Spacing::default());
     }
 }
