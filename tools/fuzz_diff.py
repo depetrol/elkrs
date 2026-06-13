@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""Differential fuzzer: generate random ELK graphs, lay them out with both the
+Java oracle and the Rust port, and report any coordinate divergence.
+
+This is the strongest pixel-level-reproduction check we have: it explores the
+input space far beyond the curated golden corpus. Option combinations are
+restricted to features the Rust port claims to support, so a diff is a real
+fidelity bug (modulo the caveats in GOLDEN_NOTES.md).
+
+Usage: fuzz_diff.py [N] [--seed S] [--algorithm A] [--keep-going]
+"""
+
+import json
+import random
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+ORACLE = ROOT / "oracle" / "target" / "elk-oracle-1.0.jar"
+ELKRS = ROOT / "target" / "debug" / "elkrs"
+COMPARE = ROOT / "tools" / "compare_layouts.py"
+
+# Layered options known to be ported, with value pools. Each fuzz run picks a
+# random subset to set on the root graph.
+LAYERED_GRAPH_OPTIONS = {
+    "elk.direction": ["RIGHT", "DOWN", "LEFT", "UP"],
+    "layering.strategy": ["NETWORK_SIMPLEX", "LONGEST_PATH", "LONGEST_PATH_SOURCE",
+                          "COFFMAN_GRAHAM", "MIN_WIDTH", "STRETCH_WIDTH"],
+    "nodePlacement.strategy": ["BRANDES_KOEPF", "SIMPLE", "LINEAR_SEGMENTS",
+                               "NETWORK_SIMPLEX"],
+    "edgeRouting": ["ORTHOGONAL", "POLYLINE", "SPLINES"],
+    "spacing.nodeNode": ["10", "20", "35"],
+    "layered.spacing.nodeNodeBetweenLayers": ["10", "20", "40"],
+    "spacing.edgeEdge": ["5", "10"],
+    "crossingMinimization.strategy": ["LAYER_SWEEP"],
+    "cycleBreaking.strategy": ["GREEDY", "DEPTH_FIRST"],
+    "layering.nodePromotion.strategy": ["NONE", "NIKOLOV", "NIKOLOV_IMPROVED"],
+    "separateConnectedComponents": ["true", "false"],
+}
+
+
+def rand_graph(rng, n_nodes, n_edges, with_ports, algorithm):
+    opts = {"elk.algorithm": algorithm}
+    if algorithm == "layered":
+        for key, pool in LAYERED_GRAPH_OPTIONS.items():
+            if rng.random() < 0.45:
+                opts[key] = rng.choice(pool)
+    children = []
+    for i in range(n_nodes):
+        node = {"id": f"n{i}", "width": rng.choice([20, 30, 40, 25, 50]),
+                "height": rng.choice([20, 30, 40, 15, 35])}
+        if with_ports and rng.random() < 0.4:
+            node.setdefault("ports", [])
+        children.append(node)
+    edges = []
+    for j in range(n_edges):
+        s = rng.randrange(n_nodes)
+        t = rng.randrange(n_nodes)
+        if s == t:
+            continue
+        edges.append({"id": f"e{j}", "sources": [f"n{s}"], "targets": [f"n{t}"]})
+    g = {"id": "root", "layoutOptions": opts, "children": children}
+    if edges:
+        g["edges"] = edges
+    return g
+
+
+def run(cmd, inp):
+    p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=60)
+    return p.returncode, p.stdout, p.stderr
+
+
+def main():
+    args = sys.argv[1:]
+    n = 200
+    seed = 1
+    algorithm = "layered"
+    keep_going = False
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--seed":
+            seed = int(args[i + 1]); i += 2
+        elif a == "--algorithm":
+            algorithm = args[i + 1]; i += 2
+        elif a == "--keep-going":
+            keep_going = True; i += 1
+        else:
+            n = int(a); i += 1
+
+    rng = random.Random(seed)
+    diffs = 0
+    both_err = 0
+    rust_only_err = 0
+    ok = 0
+    for case in range(n):
+        n_nodes = rng.randint(2, 9)
+        n_edges = rng.randint(1, n_nodes + 3)
+        graph = rand_graph(rng, n_nodes, n_edges, rng.random() < 0.3, algorithm)
+        inp = json.dumps(graph)
+
+        orc, o_out, o_err = run(["java", "-jar", str(ORACLE), "-"], inp)
+        rst, r_out, r_err = run([str(ELKRS), "-"], inp)
+
+        if orc != 0:
+            # Oracle itself failed (unsupported combo / Java exception). Rust
+            # should fail too (crash-for-crash); a Rust success here is benign.
+            if rst != 0:
+                both_err += 1
+            continue
+        if rst != 0:
+            rust_only_err += 1
+            print(f"\n[case {case}] RUST ERROR but oracle OK:\n  {r_err.strip()[:200]}")
+            print(f"  input: {inp}")
+            if not keep_going:
+                break
+            continue
+
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as of:
+            of.write(o_out); o_path = of.name
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as rf:
+            rf.write(r_out); r_path = rf.name
+        cmp = subprocess.run(["python3", str(COMPARE), o_path, r_path],
+                             capture_output=True, text=True)
+        if cmp.returncode == 0:
+            ok += 1
+        else:
+            diffs += 1
+            print(f"\n[case {case}] DIVERGENCE:")
+            print("  " + "\n  ".join(cmp.stdout.strip().splitlines()[:8]))
+            print(f"  input: {inp}")
+            print(f"  (oracle={o_path} rust={r_path})")
+            if not keep_going:
+                break
+
+    print(f"\n=== {algorithm} fuzz: {ok} identical, {diffs} diverged, "
+          f"{rust_only_err} rust-only-errors, {both_err} both-errored "
+          f"(seed {seed}, {n} cases) ===")
+    sys.exit(1 if (diffs or rust_only_err) else 0)
+
+
+if __name__ == "__main__":
+    main()
