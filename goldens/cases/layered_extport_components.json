@@ -1,0 +1,25 @@
+{
+  "id": "graph",
+  "layoutOptions": {"org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+    "org.eclipse.elk.edgeRouting": "ORTHOGONAL", "org.eclipse.elk.direction": "DOWN"},
+  "children": [{
+    "id": "parent",
+    "layoutOptions": {"org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+      "org.eclipse.elk.edgeRouting": "ORTHOGONAL", "org.eclipse.elk.direction": "DOWN"},
+    "ports": [
+      {"id": "p1", "width": 15, "height": 165, "layoutOptions": {"org.eclipse.elk.port.borderOffset": "-20.0"}},
+      {"id": "p2", "width": 15, "height": 166, "layoutOptions": {"org.eclipse.elk.port.borderOffset": "-22.0"}}
+    ],
+    "children": [{
+      "id": "child", "width": 40.265625, "height": 75.5,
+      "ports": [
+        {"id": "childP1", "width": 15, "height": 33, "layoutOptions": {"org.eclipse.elk.port.borderOffset": "-8.0"}},
+        {"id": "childP2", "width": 15, "height": 34, "layoutOptions": {"org.eclipse.elk.port.borderOffset": "-8.0"}}
+      ]
+    }],
+    "edges": [
+      {"id": "e1", "sources": ["p1"], "targets": ["childP1"]},
+      {"id": "e2", "sources": ["childP2"], "targets": ["p2"]}
+    ]
+  }]
+}

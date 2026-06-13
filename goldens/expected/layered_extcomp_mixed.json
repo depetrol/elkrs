@@ -1,0 +1,207 @@
+{
+  "id": "graph",
+  "children": [
+    {
+      "id": "parent",
+      "ports": [
+        {
+          "id": "n",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "NORTH",
+            "org.eclipse.elk.port.borderOffset": "0.0"
+          },
+          "x": 53.0,
+          "y": -8.0,
+          "width": 8.0,
+          "height": 8.0
+        },
+        {
+          "id": "s",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "SOUTH",
+            "org.eclipse.elk.port.borderOffset": "0.0"
+          },
+          "x": 118.0,
+          "y": 49.0,
+          "width": 8.0,
+          "height": 8.0
+        },
+        {
+          "id": "w",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "WEST",
+            "org.eclipse.elk.port.borderOffset": "0.0"
+          },
+          "x": -8.0,
+          "y": 20.5,
+          "width": 8.0,
+          "height": 8.0
+        }
+      ],
+      "children": [
+        {
+          "id": "a",
+          "layoutOptions": {
+            "org.eclipse.elk.nodeSize.constraints": "[]",
+            "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+            "org.eclipse.elk.layered.layering.layerId": "-1"
+          },
+          "x": 77.0,
+          "y": 12.0,
+          "width": 25.0,
+          "height": 25.0
+        },
+        {
+          "id": "b",
+          "layoutOptions": {
+            "org.eclipse.elk.nodeSize.constraints": "[]",
+            "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+            "org.eclipse.elk.layered.layering.layerId": "-1"
+          },
+          "x": 12.0,
+          "y": 12.0,
+          "width": 25.0,
+          "height": 25.0
+        },
+        {
+          "id": "f",
+          "layoutOptions": {
+            "org.eclipse.elk.nodeSize.constraints": "[]",
+            "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+            "org.eclipse.elk.layered.layering.layerId": "-1"
+          },
+          "x": 142.0,
+          "y": 12.0,
+          "width": 40.0,
+          "height": 20.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.layering.layerId": "-1",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.portConstraints": "FIXED_POS",
+        "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+        "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+      },
+      "x": 20.0,
+      "y": 20.0,
+      "width": 194.0,
+      "height": 49.0,
+      "edges": [
+        {
+          "id": "x1",
+          "sources": [
+            "n"
+          ],
+          "targets": [
+            "a"
+          ],
+          "sections": [
+            {
+              "id": "s0",
+              "startPoint": {
+                "x": 57.0,
+                "y": 0.0
+              },
+              "endPoint": {
+                "x": 77.0,
+                "y": 24.5
+              },
+              "bendPoints": [
+                {
+                  "x": 57.0,
+                  "y": 24.5
+                }
+              ],
+              "incomingShape": "n",
+              "outgoingShape": "a"
+            }
+          ],
+          "layoutOptions": {
+            "org.eclipse.elk.junctionPoints": "()"
+          }
+        },
+        {
+          "id": "x2",
+          "sources": [
+            "a"
+          ],
+          "targets": [
+            "s"
+          ],
+          "sections": [
+            {
+              "id": "s1",
+              "startPoint": {
+                "x": 102.0,
+                "y": 24.5
+              },
+              "endPoint": {
+                "x": 122.0,
+                "y": 49.0
+              },
+              "bendPoints": [
+                {
+                  "x": 122.0,
+                  "y": 24.5
+                }
+              ],
+              "incomingShape": "a",
+              "outgoingShape": "s"
+            }
+          ],
+          "layoutOptions": {
+            "org.eclipse.elk.junctionPoints": "()"
+          }
+        },
+        {
+          "id": "x3",
+          "sources": [
+            "w"
+          ],
+          "targets": [
+            "b"
+          ],
+          "sections": [
+            {
+              "id": "s2",
+              "startPoint": {
+                "x": 0.0,
+                "y": 24.5
+              },
+              "endPoint": {
+                "x": 12.0,
+                "y": 24.5
+              },
+              "incomingShape": "w",
+              "outgoingShape": "b"
+            }
+          ],
+          "layoutOptions": {
+            "org.eclipse.elk.junctionPoints": "()"
+          }
+        }
+      ]
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 226.0,
+  "height": 89.0
+}
