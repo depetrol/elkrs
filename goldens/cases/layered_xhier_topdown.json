@@ -1,0 +1,20 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "elk.hierarchyHandling": "INCLUDE_CHILDREN" },
+  "children": [
+    { "id": "a1", "width": 30, "height": 30 },
+    { "id": "a2", "width": 30, "height": 30 },
+    { "id": "n", "width": 30, "height": 30,
+      "children": [
+        { "id": "c1", "width": 30, "height": 30 },
+        { "id": "c2", "width": 30, "height": 30 },
+        { "id": "c3", "width": 30, "height": 30 },
+        { "id": "c4", "width": 30, "height": 30 } ],
+      "edges": [
+        { "id": "ce1", "sources": ["c1"], "targets": ["c3"] },
+        { "id": "ce2", "sources": ["c2"], "targets": ["c4"] } ] },
+    { "id": "b1", "width": 30, "height": 30 },
+    { "id": "b2", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "te1", "sources": ["a1"], "targets": ["c1"] },
+    { "id": "te2", "sources": ["a2"], "targets": ["c2"] },
+    { "id": "te3", "sources": ["c3"], "targets": ["b1"] },
+    { "id": "te4", "sources": ["c4"], "targets": ["b2"] } ] }

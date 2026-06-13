@@ -489,7 +489,7 @@ fn sweep_reducing_crossings(
         )
     };
     let first_layer = sweep.holders[gidx].current_node_order[first_index(forward, length)].clone();
-    improved |= sweep_in_hierarchical_nodes(sweep, a, &first_layer, forward, first_sweep)?;
+    improved |= sweep_in_hierarchical_nodes(sweep, a, random, &first_layer, forward, first_sweep)?;
     let mut i = first_free(forward, length);
     while is_not_end(length, i, forward) {
         let first_try: bool =
@@ -528,7 +528,7 @@ fn sweep_reducing_crossings(
             );
         }
         let layer = sweep.holders[gidx].current_node_order[i as usize].clone();
-        improved |= sweep_in_hierarchical_nodes(sweep, a, &layer, forward, first_sweep)?;
+        improved |= sweep_in_hierarchical_nodes(sweep, a, random, &layer, forward, first_sweep)?;
         i += next(forward);
     }
 
@@ -538,30 +538,103 @@ fn sweep_reducing_crossings(
     Ok(improved)
 }
 
-/// Port of `sweepInHierarchicalNodes`. Nested graphs are rejected before any
-/// work is done in `process`, so reaching one here is impossible; the check
-/// is kept for structural fidelity.
+/// Port of `sweepInHierarchicalNodes`.
 fn sweep_in_hierarchical_nodes(
-    sweep: &LayerSweep,
-    a: &LGraphArena,
+    sweep: &mut LayerSweep,
+    a: &mut LGraphArena,
+    random: &mut JavaRandom,
     layer: &[LNodeId],
-    _is_forward_sweep: bool,
-    _is_first_sweep: bool,
+    is_forward_sweep: bool,
+    is_first_sweep: bool,
 ) -> Result<bool, String> {
-    let improved = false;
+    let mut improved = false;
     for &node in layer {
         if let Some(nested) = a.node(node).nested_graph {
             let child_idx = a.graph(nested).id as usize;
             if !sweep.holders[child_idx].dont_sweep_into() {
-                // sweepInHierarchicalNode(...)
-                return Err(
-                    "TODO: hierarchical crossing minimization (sweepInHierarchicalNode) not ported yet"
-                        .to_string(),
-                );
+                improved |= sweep_in_hierarchical_node(
+                    sweep,
+                    a,
+                    random,
+                    node,
+                    is_forward_sweep,
+                    is_first_sweep,
+                )?;
             }
         }
     }
     Ok(improved)
+}
+
+/// Port of `sweepInHierarchicalNode`.
+fn sweep_in_hierarchical_node(
+    sweep: &mut LayerSweep,
+    a: &mut LGraphArena,
+    random: &mut JavaRandom,
+    node: LNodeId,
+    is_forward_sweep: bool,
+    is_first_sweep: bool,
+) -> Result<bool, String> {
+    let nested = a.node(node).nested_graph.unwrap();
+    let child_idx = a.graph(nested).id as usize;
+    let order_len = sweep.holders[child_idx].current_node_order.len();
+    let start_index = first_index(is_forward_sweep, order_len);
+    let first_node = sweep.holders[child_idx].current_node_order[start_index][0];
+
+    if is_external_port_dummy(a, first_node) {
+        let side = side_opposed_sweep_direction(is_forward_sweep);
+        let layer_close = sweep.holders[child_idx].current_node_order[start_index].clone();
+        let sorted = sort_port_dummies_by_port_positions(a, node, &layer_close, side);
+        sweep.holders[child_idx].current_node_order[start_index] = sorted;
+    } else {
+        set_first_layer_order(sweep, a, random, child_idx, is_forward_sweep)?;
+    }
+
+    let improved = sweep_reducing_crossings(sweep, a, random, child_idx, is_forward_sweep, is_first_sweep)?;
+
+    let parent = sweep.holders[child_idx].parent.unwrap();
+    let order = sweep.holders[child_idx].current_node_order.clone();
+    sort_ports_by_dummy_positions_in_last_layer(a, &order, parent, is_forward_sweep);
+
+    Ok(improved)
+}
+
+/// Java `PortSide.sideOpposedSweepDirection`-equivalent inline logic: a forward
+/// sweep approaches the child's left (WEST) side first.
+fn side_opposed_sweep_direction(is_forward_sweep: bool) -> PortSide {
+    if is_forward_sweep {
+        PortSide::WEST
+    } else {
+        PortSide::EAST
+    }
+}
+
+/// Port of `sortPortDummiesByPortPositions`.
+fn sort_port_dummies_by_port_positions(
+    a: &LGraphArena,
+    parent_node: LNodeId,
+    layer_close_to_node_edge: &[LNodeId],
+    side: PortSide,
+) -> Vec<LNodeId> {
+    let ports = crate::p3order::counting::in_north_south_east_west_order(a, parent_node, side);
+
+    let mut sorted: Vec<LNodeId> = Vec::with_capacity(layer_close_to_node_edge.len());
+    for port in ports {
+        if is_hierarchical(a, port) {
+            let dummy: LNodeId = a.port(port).properties.try_get(&iprops::PORT_DUMMY).unwrap();
+            sorted.push(dummy);
+        }
+    }
+
+    if sorted.len() < layer_close_to_node_edge.len() {
+        // Java throws IllegalStateException here.
+        panic!(
+            "Expected {} hierarchical ports, but found only {}.",
+            layer_close_to_node_edge.len(),
+            sorted.len()
+        );
+    }
+    sorted
 }
 
 /// Port of `sortPortsByDummyPositionsInLastLayer`.

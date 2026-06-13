@@ -1,0 +1,19 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "elk.hierarchyHandling": "INCLUDE_CHILDREN" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "n", "width": 60, "height": 60,
+      "layoutOptions": { "portConstraints": "FIXED_POS" },
+      "ports": [
+        { "id": "np1", "x": 0, "y": 20, "width": 4, "height": 4 },
+        { "id": "np2", "x": 56, "y": 35, "width": 4, "height": 4 } ],
+      "children": [
+        { "id": "c1", "width": 30, "height": 30 },
+        { "id": "c2", "width": 30, "height": 30 } ],
+      "edges": [
+        { "id": "ce1", "sources": ["np1"], "targets": ["c1"] },
+        { "id": "ce2", "sources": ["c1"], "targets": ["c2"] },
+        { "id": "ce3", "sources": ["c2"], "targets": ["np2"] } ] },
+    { "id": "b", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "te1", "sources": ["a"], "targets": ["np1"] },
+    { "id": "te2", "sources": ["np2"], "targets": ["b"] } ] }

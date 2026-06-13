@@ -45,12 +45,15 @@ fn graph_layout_to_node(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Str
     // Process external ports.
     let child_nodes = a.graph(lgraph).layerless_nodes.clone();
     for child_node in child_nodes {
-        if let Some(Origin::Port(_)) = a.node(child_node).properties.try_get(&iprops::ORIGIN) {
-            return Err(
-                "TODO: external port position transfer in HierarchicalNodeResizingProcessor is \
-                 not ported yet"
-                    .to_string(),
-            );
+        // Java: `origin instanceof LPort`. The external-port dummy's ORIGIN
+        // points to the LPort on the parent node it represents.
+        if let Some(Origin::LPort(port)) = a.node(child_node).properties.try_get(&iprops::ORIGIN) {
+            let psize = a.port(port).size;
+            let port_position =
+                lgraph_util::get_external_port_position(a, lgraph, child_node, psize.x, psize.y);
+            a.port_mut(port).pos = port_position;
+            let side: PortSide = a.node(child_node).properties.get(&iprops::EXT_PORT_SIDE);
+            a.port_set_side(port, side);
         }
     }
 

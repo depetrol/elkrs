@@ -52,8 +52,19 @@ pub fn apply_layout(
             Some(Origin::Node(elknode)) => {
                 apply_node_layout(a, elk, lnode, elknode, offset);
             }
-            Some(Origin::Port(_)) if parent_lnode.is_none() => {
-                return Err("TODO: external port layout transfer is not ported yet".to_string());
+            Some(Origin::Port(elkport)) if parent_lnode.is_none() => {
+                // External port on the top-most hierarchy level of the current
+                // layout run; set its position. (Reachable only for top-level
+                // external ports, which ELK Layered does not otherwise support.)
+                let (w, h) = {
+                    let p = elk.port(elkport);
+                    (p.shape.width, p.shape.height)
+                };
+                let port_position =
+                    crate::lgraph_util::get_external_port_position(a, lgraph, lnode, w, h);
+                elk.port_mut(elkport)
+                    .shape
+                    .set_location(port_position.x, port_position.y);
             }
             _ => {}
         }

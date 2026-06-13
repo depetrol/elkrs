@@ -65,8 +65,16 @@ impl ComponentsProcessor {
             }
 
             if ext_ports {
+                // The ComponentGroupGraphPlacer path. Unreachable through the
+                // public layout API: external ports only ever exist on nested
+                // graphs (top-level external ports throw an NPE during import in
+                // `transformExternalPort`), and nested graphs are laid out by
+                // `hierarchicalLayout`, which never invokes the components
+                // processor. We therefore keep this as a guard (crash-for-crash
+                // with Java's behavior) instead of porting the dead placer.
                 return Err(
-                    "TODO: component placers for graphs with external ports are not ported yet"
+                    "component placers for graphs with external ports are unreachable via the \
+                     public layout API (top-level external ports are unsupported)"
                         .to_string(),
                 );
             }

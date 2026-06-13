@@ -51,6 +51,10 @@ pub mod semi_interactive_crossmin_processor;
 pub mod sort_by_input_order_of_model;
 pub mod constraints_postprocessor;
 pub mod interactive_external_port_positioner;
+pub mod hierarchical_port_constraint_processor;
+pub mod hierarchical_port_dummy_size_processor;
+pub mod hierarchical_port_position_processor;
+pub mod hierarchical_port_orthogonal_edge_router;
 
 use elk_core::javacompat::JavaRandom;
 
@@ -146,6 +150,18 @@ pub fn process(
         Ips::CONSTRAINTS_POSTPROCESSOR => constraints_postprocessor::process(a, graph),
         Ips::INTERACTIVE_EXTERNAL_PORT_POSITIONER => {
             interactive_external_port_positioner::process(a, graph)
+        }
+        Ips::HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR => {
+            hierarchical_port_constraint_processor::process(a, graph)
+        }
+        Ips::HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR => {
+            hierarchical_port_dummy_size_processor::process(a, graph)
+        }
+        Ips::HIERARCHICAL_PORT_POSITION_PROCESSOR => {
+            hierarchical_port_position_processor::process(a, graph)
+        }
+        Ips::HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER => {
+            hierarchical_port_orthogonal_edge_router::process(a, graph, random)
         }
         other => Err(format!("TODO: intermediate processor {other:?} is not ported yet")),
     }
