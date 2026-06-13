@@ -65,7 +65,9 @@ impl<'g> ElkGraphImporter<'g> {
             .properties
             .set(&iprops::GRAPH_PROPERTIES, graph_properties);
         if graph_properties.contains(GraphProperties::EXTERNAL_PORTS) {
-            return Err("TODO: external port import is not ported yet".to_string());
+            for elkport in &ports {
+                self.transform_external_port(elkgraph, top_level_graph, *elkport, a)?;
+            }
         }
 
         // Calculate the graph's minimum size
@@ -81,13 +83,14 @@ impl<'g> ElkGraphImporter<'g> {
         }
 
         if a.graph(top_level_graph).properties.has(&lopts::SPACING_BASE_VALUE) {
-            return Err("TODO: LayeredSpacings.withBaseValue is not ported yet".to_string());
+            let base: f64 = a.graph(top_level_graph).properties.get(&lopts::SPACING_BASE_VALUE);
+            apply_spacings_with_base_value(&a.graph(top_level_graph).properties, base);
         }
 
         if self.elk.node(elkgraph).properties.get(&lopts::HIERARCHY_HANDLING)
             == HierarchyHandling::INCLUDE_CHILDREN
         {
-            return Err("TODO: hierarchical (INCLUDE_CHILDREN) import is not ported yet".to_string());
+            self.import_hierarchical_graph(elkgraph, a, top_level_graph)?;
         } else {
             self.import_flat_graph(elkgraph, a, top_level_graph)?;
         }
@@ -133,13 +136,53 @@ impl<'g> ElkGraphImporter<'g> {
     fn calculate_minimum_graph_size(
         &mut self,
         elkgraph: NodeId,
-        _a: &mut LGraphArena,
-        _lgraph: LGraphId,
+        a: &mut LGraphArena,
+        lgraph: LGraphId,
     ) -> Result<(), String> {
+        // If the graph is on the top level, don't bother
         if self.elk.node(elkgraph).parent.is_none() {
             return Ok(());
         }
-        Err("TODO: NodeLabelAndSizeCalculator minimum graph size is not ported yet".to_string())
+
+        // Ensure that the port constraints are not UNDEFINED
+        if self.elk.node(elkgraph).properties.get::<PortConstraints>(&lopts::PORT_CONSTRAINTS)
+            == PortConstraints::UNDEFINED
+        {
+            self.elk
+                .node(elkgraph)
+                .properties
+                .set(&lopts::PORT_CONSTRAINTS, PortConstraints::FREE);
+        }
+
+        // Size constraints are not empty, so calculate the size the node and
+        // label placement code thing would like to give the graph.
+        // Java: GraphAdapter = adapt(elkgraph.getParent()),
+        //       NodeAdapter = adaptSingleNode(elkgraph)
+        let min_size = {
+            let mut adapter =
+                elk_core::adapters::ElkGraphAdapter::adapt_single_node(self.elk, elkgraph);
+            elk_alg_common::nodespacing::process_node_size(&mut adapter, elkgraph, false, true)
+        };
+
+        // Apply the minimum size as a property and make sure the minimum size
+        // is respected by ELK Layered by making sure the necessary size
+        // constraint exists
+        let mut size_constraints: EnumSet<elk_core::options::SizeConstraint> =
+            a.graph(lgraph).properties.get(&lopts::NODE_SIZE_CONSTRAINTS);
+        size_constraints.add(elk_core::options::SizeConstraint::MINIMUM_SIZE);
+        a.graph(lgraph)
+            .properties
+            .set(&lopts::NODE_SIZE_CONSTRAINTS, size_constraints);
+
+        let mut configured_min_size: KVector =
+            a.graph(lgraph).properties.get(&lopts::NODE_SIZE_MINIMUM);
+        configured_min_size.x = f64::max(min_size.x, configured_min_size.x);
+        configured_min_size.y = f64::max(min_size.y, configured_min_size.y);
+        a.graph(lgraph)
+            .properties
+            .set(&lopts::NODE_SIZE_MINIMUM, configured_min_size);
+
+        Ok(())
     }
 
     /// Port of `importFlatGraph`.
@@ -236,6 +279,269 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(())
     }
 
+    /// Port of `importHierarchicalGraph`: imports the graph hierarchy rooted
+    /// at the given graph.
+    fn import_hierarchical_graph(
+        &mut self,
+        elkgraph: NodeId,
+        a: &mut LGraphArena,
+        lgraph: LGraphId,
+    ) -> Result<(), String> {
+        let parent_graph_direction: Direction = a.graph(lgraph).properties.get(&lopts::DIRECTION);
+
+        // Model order index for nodes
+        let mut index = 0i32;
+        let mut cb_group_model_orders: std::collections::HashSet<i32> =
+            std::collections::HashSet::new();
+
+        // Transform the node's children
+        let mut elk_graph_queue: std::collections::VecDeque<NodeId> =
+            self.elk.node(elkgraph).children.iter().copied().collect();
+        while let Some(elknode) = elk_graph_queue.pop_front() {
+            if self.needs_model_order(elknode) {
+                // Assign a model order to the nodes as they are read
+                self.elk.node_mut(elknode).properties.set(&iprops::MODEL_ORDER, index);
+                index += 1;
+                if self
+                    .elk
+                    .node(elknode)
+                    .properties
+                    .has(&lopts::CONSIDER_MODEL_ORDER_GROUP_MODEL_ORDER_CYCLE_BREAKING_ID)
+                {
+                    cb_group_model_orders.insert(self.elk.node(elknode).properties.get(
+                        &lopts::CONSIDER_MODEL_ORDER_GROUP_MODEL_ORDER_CYCLE_BREAKING_ID,
+                    ));
+                }
+            }
+
+            // Check if the current node is to be laid out in the first place
+            let is_node_to_be_laid_out = !self.elk.node(elknode).properties.get(&copts::NO_LAYOUT);
+            if is_node_to_be_laid_out {
+                // Check if there has to be an LGraph for this node (which is
+                // the case if it has children or inside self-loops, and if it
+                // does not have another layout algorithm configured)
+                let has_children = !self.elk.node(elknode).children.is_empty();
+                let has_inside_self_loops = self.has_inside_self_loops(elknode);
+                let has_hierarchy_handling_enabled = self
+                    .elk
+                    .node(elknode)
+                    .properties
+                    .get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
+                    == HierarchyHandling::INCLUDE_CHILDREN;
+                let uses_elk_layered = uses_elk_layered(self.elk, elknode);
+
+                let mut nested_graph: Option<LGraphId> = None;
+                if uses_elk_layered
+                    && has_hierarchy_handling_enabled
+                    && (has_children || has_inside_self_loops)
+                {
+                    let ng = self.create_lgraph(elknode, a)?;
+                    a.graph(ng).properties.set(&lopts::DIRECTION, parent_graph_direction);
+
+                    // Apply a spacing configuration, for details see comment
+                    // in #importGraph(...)
+                    if a.graph(ng).properties.has(&lopts::SPACING_BASE_VALUE) {
+                        let base: f64 = a.graph(ng).properties.get(&lopts::SPACING_BASE_VALUE);
+                        apply_spacings_with_base_value(&a.graph(ng).properties, base);
+                    }
+
+                    // We need to make sure that we make the graph large enough
+                    // for any ports, node labels, etc. if the size constraints
+                    // are not empty
+                    if self.should_calculate_minimum_graph_size(elknode) {
+                        let ports = self.elk.node(elknode).ports.clone();
+                        for elkport in ports {
+                            self.ensure_defined_port_side(a, ng, elkport);
+                        }
+                        self.calculate_minimum_graph_size(elknode, a, ng)?;
+                    }
+
+                    nested_graph = Some(ng);
+                }
+
+                // Transform da node!!!
+                let mut parent_lgraph = lgraph;
+                if let Some(parent_elk) = self.elk.node(elknode).parent {
+                    if let Some(&parent_lnode) = self.maps.node_map.get(&parent_elk) {
+                        parent_lgraph = a
+                            .node(parent_lnode)
+                            .nested_graph
+                            .expect("parent LNode without nested graph");
+                    }
+                }
+                let lnode = self.transform_node(elknode, a, parent_lgraph)?;
+
+                // Setup hierarchical relationships
+                if let Some(ng) = nested_graph {
+                    a.node_mut(lnode).nested_graph = Some(ng);
+                    a.graph_mut(ng).parent_node = Some(lnode);
+
+                    elk_graph_queue.extend(self.elk.node(elknode).children.iter().copied());
+                }
+            }
+        }
+        // Save the maximum node model order.
+        a.graph(lgraph).properties.set(&iprops::MAX_MODEL_ORDER_NODES, index);
+        // Save the number of model order groups.
+        a.graph(lgraph)
+            .properties
+            .set(&iprops::CB_NUM_MODEL_ORDER_GROUPS, cb_group_model_orders.len() as i32);
+
+        // Model order index for edges.
+        let mut index = 0i32;
+        // Transform the edges
+        let mut elk_graph_queue: std::collections::VecDeque<NodeId> =
+            std::iter::once(elkgraph).collect();
+        while let Some(elk_graph_node) = elk_graph_queue.pop_front() {
+            let contained_edges = self.elk.node(elk_graph_node).contained_edges.clone();
+            for elkedge in contained_edges {
+                // We don't support hyperedges
+                check_edge_validity(self.elk, elkedge)?;
+
+                if self.needs_model_order_based_on_parent(elkgraph) {
+                    // Assign a model order to the edges as they are read
+                    self.elk.edge_mut(elkedge).properties.set(&iprops::MODEL_ORDER, index);
+                    index += 1;
+                }
+
+                let source_node = self.elk.shape_node(self.elk.edge(elkedge).sources[0]);
+                let target_node = self.elk.shape_node(self.elk.edge(elkedge).targets[0]);
+
+                // Don't bother if either the edge or at least one of its end
+                // points are excluded from layout
+                if self.elk.edge(elkedge).properties.get(&copts::NO_LAYOUT)
+                    || self.elk.node(source_node).properties.get(&copts::NO_LAYOUT)
+                    || self.elk.node(target_node).properties.get(&copts::NO_LAYOUT)
+                {
+                    continue;
+                }
+
+                // Check if this edge is an inside self-loop
+                let is_inside_self_loop = is_elk_self_loop(self.elk, elkedge)
+                    && self
+                        .elk
+                        .node(source_node)
+                        .properties
+                        .get(&copts::INSIDE_SELF_LOOPS_ACTIVATE)
+                    && self.elk.edge(elkedge).properties.get(&copts::INSIDE_SELF_LOOPS_YO);
+
+                // Find the graph the edge will be placed in
+                let mut parent_elk_graph = elk_graph_node;
+                if is_inside_self_loop || self.elk.is_descendant(target_node, source_node) {
+                    parent_elk_graph = source_node;
+                } else if self.elk.is_descendant(source_node, target_node) {
+                    parent_elk_graph = target_node;
+                }
+
+                let mut parent_lgraph = lgraph;
+                if let Some(&parent_lnode) = self.maps.node_map.get(&parent_elk_graph) {
+                    parent_lgraph = a
+                        .node(parent_lnode)
+                        .nested_graph
+                        .ok_or_else(|| edge_endpoint_error())?;
+                }
+
+                // Transform the edge, finally...
+                let ledge = self.transform_edge(elkedge, parent_elk_graph, a, parent_lgraph)?;
+
+                // Find the graph the edge's coordinates will have to be made
+                // relative to during export
+                if let Some(origin) =
+                    self.find_coordinate_system_origin(elkedge, elkgraph, lgraph, a)
+                {
+                    a.edge(ledge).properties.set(&iprops::COORDINATE_SYSTEM_ORIGIN, origin);
+                }
+            }
+
+            // We may need to look at edges contained in the current graph
+            // node's children as well
+            let has_hierarchy_handling_enabled = self
+                .elk
+                .node(elk_graph_node)
+                .properties
+                .get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
+                == HierarchyHandling::INCLUDE_CHILDREN;
+            if has_hierarchy_handling_enabled {
+                let children = self.elk.node(elk_graph_node).children.clone();
+                for elk_child_graph_node in children {
+                    let uses_elk_layered = uses_elk_layered(self.elk, elk_child_graph_node);
+                    let part_of_same_layout_run = self
+                        .elk
+                        .node(elk_child_graph_node)
+                        .properties
+                        .get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
+                        == HierarchyHandling::INCLUDE_CHILDREN;
+
+                    if uses_elk_layered && part_of_same_layout_run {
+                        elk_graph_queue.push_back(elk_child_graph_node);
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Port of `hasInsideSelfLoops`: checks if the given node has any inside
+    /// self loops.
+    fn has_inside_self_loops(&self, elknode: NodeId) -> bool {
+        if self.elk.node(elknode).properties.get(&copts::INSIDE_SELF_LOOPS_ACTIVATE) {
+            // ElkGraphUtil.allOutgoingEdges: the node's own outgoing edges
+            // plus those of its ports
+            let mut edges: Vec<EdgeId> = self.elk.node(elknode).outgoing_edges.clone();
+            for &port in &self.elk.node(elknode).ports {
+                edges.extend(self.elk.port(port).outgoing_edges.iter().copied());
+            }
+            for edge in edges {
+                if is_elk_self_loop(self.elk, edge)
+                    && self.elk.edge(edge).properties.get(&copts::INSIDE_SELF_LOOPS_YO)
+                {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /// Port of `findCoordinateSystemOrigin`.
+    fn find_coordinate_system_origin(
+        &self,
+        elkedge: EdgeId,
+        top_level_elkgraph: NodeId,
+        top_level_lgraph: LGraphId,
+        a: &LGraphArena,
+    ) -> Option<LGraphId> {
+        let source = self.elk.shape_node(self.elk.edge(elkedge).sources[0]);
+        let target = self.elk.shape_node(self.elk.edge(elkedge).targets[0]);
+
+        // If the source and the target are siblings, we're good (this also
+        // includes self-loops)
+        if self.elk.node(source).parent == self.elk.node(target).parent {
+            return None;
+        }
+
+        // If the target is a descendant of the source, ELK Layered uses the
+        // source's top left corner as the origin of the coordinate system,
+        // which matches how ELK graph should be constructed
+        if self.elk.is_descendant(target, source) {
+            return None;
+        }
+
+        let origin = self.elk.edge(elkedge).containing_node?;
+
+        // Find the associated LGraph
+        if origin == top_level_elkgraph {
+            return Some(top_level_lgraph);
+        } else if let Some(&lnode) = self.maps.node_map.get(&origin) {
+            // Find the graph that represents the node's insides
+            if let Some(lgraph) = a.node(lnode).nested_graph {
+                return Some(lgraph);
+            }
+        }
+
+        None
+    }
+
     /// Port of `needsModelOrder`.
     fn needs_model_order(&self, child: NodeId) -> bool {
         match self.elk.node(child).parent {
@@ -301,6 +607,9 @@ impl<'g> ElkGraphImporter<'g> {
         }
 
         // (Label management not supported: LABEL_MANAGER is not ported.)
+
+        // Remember the KGraph parent the LGraph was created from
+        a.graph(lgraph).properties.set(&iprops::ORIGIN, Origin::Node(elkgraph));
 
         // Initialize the graph properties discovered during the transformations
         a.graph(lgraph)
@@ -421,6 +730,191 @@ impl<'g> ElkGraphImporter<'g> {
         if has_hyperedges {
             graph_properties.add(GraphProperties::HYPEREDGES);
         }
+    }
+
+    /// Port of `transformExternalPort`: transforms the given external port
+    /// into a dummy node.
+    fn transform_external_port(
+        &mut self,
+        elkgraph: NodeId,
+        lgraph: LGraphId,
+        elkport: PortId,
+        a: &mut LGraphArena,
+    ) -> Result<(), String> {
+        // Java dereferences elkgraph.getParent() further below; a top-level
+        // graph with external ports throws a NullPointerException there.
+        let elkparent = self.elk.node(elkgraph).parent.ok_or_else(|| {
+            "NullPointerException: external ports on the top-level graph are not supported by \
+             ELK Layered (elkgraph.getParent() is null in transformExternalPort)"
+                .to_string()
+        })?;
+
+        // We need some information about the port
+        let elkport_shape = &self.elk.port(elkport).shape;
+        let elkport_position = KVector::new(
+            elkport_shape.x + elkport_shape.width / 2.0,
+            elkport_shape.y + elkport_shape.height / 2.0,
+        );
+        let elkport_size = KVector::new(elkport_shape.width, elkport_shape.height);
+        let (elkport_x, elkport_y) = (elkport_shape.x, elkport_shape.y);
+        let net_flow = self.calculate_net_flow(elkport);
+        let port_constraints: PortConstraints =
+            self.elk.node(elkgraph).properties.get(&lopts::PORT_CONSTRAINTS);
+
+        // If we don't have a proper port side, calculate one
+        let port_side: PortSide = self.elk.port(elkport).properties.get(&copts::PORT_SIDE);
+        debug_assert!(port_side != PortSide::UNDEFINED);
+
+        // If we don't have a port offset, infer one
+        if !self.elk.port(elkport).properties.has(&lopts::PORT_BORDER_OFFSET) {
+            // if port coordinates are (0,0), we default to port offset 0 to
+            // make the common case frustration-free
+            let port_offset = if elkport_x == 0.0 && elkport_y == 0.0 {
+                0.0
+            } else {
+                elk_core::elkutil::calc_port_offset(self.elk, elkport, port_side)
+            };
+            self.elk
+                .port(elkport)
+                .properties
+                .set(&lopts::PORT_BORDER_OFFSET, port_offset);
+        }
+
+        // Create the external port dummy node
+        let graph_size = KVector::new(
+            self.elk.node(elkgraph).shape.width,
+            self.elk.node(elkgraph).shape.height,
+        );
+        let layout_direction: Direction = a.graph(lgraph).properties.get(&lopts::DIRECTION);
+        let dummy = lgraph_util::create_external_port_dummy(
+            a,
+            lgraph_util::PortPropertyHolder::Map(&self.elk.port(elkport).properties),
+            port_constraints,
+            port_side,
+            net_flow,
+            Some(graph_size),
+            Some(elkport_position),
+            elkport_size,
+            layout_direction,
+            lgraph,
+        );
+        a.node(dummy).properties.set(&iprops::ORIGIN, Origin::Port(elkport));
+
+        // The dummy only has one port
+        let dummy_port = a.node(dummy).ports[0];
+        a.port_mut(dummy_port).connected_to_external_nodes =
+            self.is_connected_to_external_nodes(elkport);
+        a.node(dummy).properties.set(
+            &lopts::PORT_LABELS_PLACEMENT,
+            EnumSet::of(&[copts::PortLabelPlacement::OUTSIDE]),
+        );
+
+        // If the compound node wants to have its port labels placed on the
+        // inside, we need to leave enough space for them by creating an
+        // LLabel for the KLabels. If the compound node wants to have its port
+        // labels placed on the outside, we still need to leave enough space
+        // for them so the port placement does not cause problems on the
+        // outside, but we also don't want to waste space inside. Thus, for
+        // east and west ports, we reduce the label width to zero, otherwise
+        // we reduce the label height to zero
+        let inside_port_labels = self
+            .elk
+            .node(elkgraph)
+            .properties
+            .get::<EnumSet<copts::PortLabelPlacement>>(&lopts::PORT_LABELS_PLACEMENT)
+            .contains(copts::PortLabelPlacement::INSIDE);
+
+        // Transform all of the port's labels
+        let labels = self.elk.port(elkport).labels.clone();
+        for elklabel in labels {
+            if !self.elk.label(elklabel).properties.get(&copts::NO_LAYOUT)
+                && !self.elk.label(elklabel).text.is_empty()
+            {
+                let llabel = self.transform_label(elklabel, a);
+                a.port_mut(dummy_port).labels.push(llabel);
+
+                // If port labels are placed outside, modify the size.
+                // If the port labels are fixed, we should consider the part
+                // that is inside the node and not 0.
+                if !inside_port_labels {
+                    let mut inside_part = 0.0;
+                    let placement: EnumSet<copts::PortLabelPlacement> = self
+                        .elk
+                        .node(elkgraph)
+                        .properties
+                        .get(&lopts::PORT_LABELS_PLACEMENT);
+                    if port_label_placement_is_fixed(placement) {
+                        // We use 0 as port border offset here, as we only want
+                        // the label part that is inside the node "after" the
+                        // port.
+                        let lshape = &self.elk.label(elklabel).shape;
+                        inside_part = elk_core::elkutil::compute_inside_part_values(
+                            KVector::new(lshape.x, lshape.y),
+                            KVector::new(lshape.width, lshape.height),
+                            elkport_size,
+                            0.0,
+                            port_side,
+                        );
+                    }
+                    match port_side {
+                        PortSide::EAST | PortSide::WEST => {
+                            a.label_mut(llabel).size.x = inside_part;
+                        }
+                        PortSide::NORTH | PortSide::SOUTH => {
+                            a.label_mut(llabel).size.y = inside_part;
+                        }
+                        PortSide::UNDEFINED => {}
+                    }
+                }
+            }
+        }
+
+        // Remember the relevant spacings that will apply to the labels here.
+        // It's not the spacings in the graph, but in the parent
+        let h: f64 = self
+            .elk
+            .node(elkparent)
+            .properties
+            .get(&lopts::SPACING_LABEL_PORT_HORIZONTAL);
+        a.node(dummy).properties.set(&lopts::SPACING_LABEL_PORT_HORIZONTAL, h);
+        let v: f64 = self
+            .elk
+            .node(elkparent)
+            .properties
+            .get(&lopts::SPACING_LABEL_PORT_VERTICAL);
+        a.node(dummy).properties.set(&lopts::SPACING_LABEL_PORT_VERTICAL, v);
+        let ll: f64 = self.elk.node(elkparent).properties.get(&lopts::SPACING_LABEL_LABEL);
+        a.node(dummy).properties.set(&lopts::SPACING_LABEL_LABEL, ll);
+
+        // Put the external port dummy into our graph and associate it with
+        // the original KPort
+        a.graph_mut(lgraph).layerless_nodes.push(dummy);
+        self.maps.external_port_dummies.insert(elkport, dummy);
+
+        Ok(())
+    }
+
+    /// Port of `isConnectedToExternalNodes`: checks whether the given
+    /// (external) port has connections to the outside (that is, to
+    /// non-descendants).
+    fn is_connected_to_external_nodes(&self, elkport: PortId) -> bool {
+        let parent = self.elk.port(elkport).parent.unwrap();
+
+        for &out_edge in &self.elk.port(elkport).outgoing_edges {
+            let target_node = self.elk.shape_node(self.elk.edge(out_edge).targets[0]);
+            if !self.elk.is_descendant(target_node, parent) {
+                return true;
+            }
+        }
+
+        for &in_edge in &self.elk.port(elkport).incoming_edges {
+            let source_node = self.elk.shape_node(self.elk.edge(in_edge).sources[0]);
+            if !self.elk.is_descendant(source_node, parent) {
+                return true;
+            }
+        }
+
+        false
     }
 
     /// Port of `calculateNetFlow`.
@@ -857,6 +1351,67 @@ impl<'g> ElkGraphImporter<'g> {
             l.pos.y = shape.y;
         }
         llabel
+    }
+}
+
+/// Java `LayeredOptions.ALGORITHM_ID.endsWith(elknode.getProperty(ALGORITHM))`
+/// when the algorithm property is set.
+fn uses_elk_layered(elk: &ElkGraph, elknode: NodeId) -> bool {
+    match elk.node(elknode).properties.try_get::<String>(&copts::ALGORITHM) {
+        None => true,
+        Some(algorithm) => "org.eclipse.elk.layered".ends_with(&algorithm),
+    }
+}
+
+/// Java `PortLabelPlacement.isFixed(Set)`.
+fn port_label_placement_is_fixed(placement: EnumSet<copts::PortLabelPlacement>) -> bool {
+    !placement.contains(copts::PortLabelPlacement::INSIDE)
+        && !placement.contains(copts::PortLabelPlacement::OUTSIDE)
+}
+
+/// Port of `LayeredSpacings.withBaseValue(base).apply(holder)`: applies a
+/// spacing configuration derived from a base value. Values are only set for
+/// options that are not already present on the holder (no overwrite).
+pub fn apply_spacings_with_base_value(props: &elk_graph::properties::PropertyMap, base: f64) {
+    // AbstractSpacingsBuilder.DOUBLE_EQ_EPSILON = 10e-5
+    const DOUBLE_EQ_EPSILON: f64 = 10e-5;
+
+    let base_default = lopts::SPACING_NODE_NODE.get_default().unwrap();
+
+    // Early exit if we are not allowed to overwrite any options and if the
+    // specified base matches the default values anyway (fuzzy comparison)
+    if (base - base_default).abs() <= DOUBLE_EQ_EPSILON {
+        return;
+    }
+
+    // The base option itself (factor 1.0) plus the dependent options with
+    // factors derived from their default values
+    let options: [&elk_graph::properties::Property<f64>; 14] = [
+        &lopts::SPACING_NODE_NODE,
+        &lopts::SPACING_COMPONENT_COMPONENT,
+        &lopts::SPACING_EDGE_EDGE,
+        &lopts::SPACING_EDGE_LABEL,
+        &lopts::SPACING_EDGE_NODE,
+        &lopts::SPACING_LABEL_LABEL,
+        &lopts::SPACING_LABEL_NODE,
+        &lopts::SPACING_LABEL_PORT_HORIZONTAL,
+        &lopts::SPACING_LABEL_PORT_VERTICAL,
+        &lopts::SPACING_NODE_SELF_LOOP,
+        &lopts::SPACING_PORT_PORT,
+        &lopts::SPACING_EDGE_EDGE_BETWEEN_LAYERS,
+        &lopts::SPACING_EDGE_NODE_BETWEEN_LAYERS,
+        &lopts::SPACING_NODE_NODE_BETWEEN_LAYERS,
+    ];
+
+    for option in options {
+        // NO_OVERWRITE_HOLDER: only apply if the property is not set yet
+        if !props.has(option) {
+            let factor = match option.get_default() {
+                Some(default) => default / base_default,
+                None => 1.0,
+            };
+            props.set(option, factor * base);
+        }
     }
 }
 
