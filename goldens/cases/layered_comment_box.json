@@ -1,0 +1,6 @@
+{"id":"g","layoutOptions":{"org.eclipse.elk.algorithm":"org.eclipse.elk.layered"},
+ "children":[
+   {"id":"n1","width":40,"height":30},
+   {"id":"cmt","width":50,"height":20,"layoutOptions":{"org.eclipse.elk.commentBox":"true"}},
+   {"id":"n2","width":40,"height":30}],
+ "edges":[{"id":"e1","sources":["n1"],"targets":["n2"]},{"id":"ce","sources":["cmt"],"targets":["n1"]}]}

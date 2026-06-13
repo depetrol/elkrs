@@ -1,0 +1,5 @@
+{"id":"g","layoutOptions":{"org.eclipse.elk.algorithm":"org.eclipse.elk.layered","org.eclipse.elk.edgeLabels.placement":"CENTER"},
+ "children":[{"id":"n1","width":30,"height":30},{"id":"n2","width":30,"height":30},{"id":"n3","width":30,"height":30}],
+ "edges":[
+   {"id":"e1","sources":["n1"],"targets":["n2"],"labels":[{"text":"hello world","width":60,"height":12}]},
+   {"id":"e2","sources":["n1"],"targets":["n3"],"labels":[{"text":"x","width":8,"height":12}]}]}

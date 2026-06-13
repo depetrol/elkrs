@@ -1,0 +1,7 @@
+{"id":"g","layoutOptions":{"org.eclipse.elk.algorithm":"org.eclipse.elk.layered","org.eclipse.elk.portLabels.placement":"[OUTSIDE]","org.eclipse.elk.nodeSize.constraints":"[PORTS, PORT_LABELS]"},
+ "children":[
+   {"id":"n1","width":30,"height":30,"layoutOptions":{"org.eclipse.elk.portConstraints":"FIXED_SIDE"},
+    "ports":[{"id":"p1","width":4,"height":4,"layoutOptions":{"org.eclipse.elk.port.side":"EAST"},"labels":[{"text":"out","width":16,"height":10}]}]},
+   {"id":"n2","width":30,"height":30,"layoutOptions":{"org.eclipse.elk.portConstraints":"FIXED_SIDE"},
+    "ports":[{"id":"p2","width":4,"height":4,"layoutOptions":{"org.eclipse.elk.port.side":"WEST"},"labels":[{"text":"in","width":12,"height":10}]}]}],
+ "edges":[{"id":"e1","sources":["p1"],"targets":["p2"]}]}
