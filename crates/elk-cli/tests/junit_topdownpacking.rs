@@ -20,7 +20,8 @@ fn layout(n: usize) -> Vec<Value> {
         "children": children
     });
     let o = elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed");
-    o["children"].as_array().unwrap().clone()
+    // an empty graph is exported without a "children" key
+    o["children"].as_array().cloned().unwrap_or_default()
 }
 
 fn close(a: f64, b: f64) {
