@@ -93,6 +93,14 @@ impl Quadruplet {
         Quadruplet::default()
     }
 
+    /// Java `set(l, r, u, d)`.
+    pub fn set_all(&mut self, l: bool, r: bool, u: bool, d: bool) {
+        self.left = l;
+        self.right = r;
+        self.up = u;
+        self.down = d;
+    }
+
     pub fn apply_or(&mut self, other: &Quadruplet) {
         self.left |= other.left;
         self.right |= other.right;

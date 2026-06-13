@@ -136,6 +136,28 @@ impl OneDimensionalCompactor {
         self
     }
 
+    /// Runs the preamble of [`compact`](Self::compact) — defaulting the
+    /// direction (which calculates the constraints) and resetting the per-group
+    /// `out_degree`/per-node `start_pos` — but does *not* run a compaction
+    /// algorithm. Used by callers that need to drive a compaction algorithm
+    /// externally (e.g. the layered network-simplex compaction, which requires
+    /// access to the surrounding LGraph).
+    pub fn prepare_external_compaction(&mut self) -> &mut Self {
+        if self.finished {
+            panic!("The OneDimensionalCompactor instance has been finished already.");
+        }
+        if self.direction == Direction::UNDEFINED {
+            self.change_direction(Direction::LEFT);
+        }
+        for g in &mut self.cgraph.cgroups {
+            g.out_degree = g.out_degree_real;
+        }
+        for n in &mut self.cgraph.cnodes {
+            n.start_pos = f64::NEG_INFINITY;
+        }
+        self
+    }
+
     /// Indicate that the compaction is finished. The direction is changed back
     /// to LEFT.
     pub fn finish(&mut self) -> &mut Self {

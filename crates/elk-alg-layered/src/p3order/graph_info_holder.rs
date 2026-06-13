@@ -27,7 +27,12 @@ use super::sweep_copy::SweepCopy;
 pub enum CrossMinimizer {
     /// `BarycenterHeuristic` (which owns the `ForsterConstraintResolver`
     /// in this port; in Java the resolver is a separate initializable).
-    Barycenter { constraint_resolver: ForsterConstraintResolver },
+    /// `model_order` is `Some` for `ModelOrderBarycenterHeuristic`
+    /// (considerModelOrder.strategy != NONE or force-node-model-order).
+    Barycenter {
+        constraint_resolver: ForsterConstraintResolver,
+        model_order: Option<super::model_order_barycenter_heuristic::ModelOrderBarycenterState>,
+    },
     /// `GreedySwitchHeuristic` (one- or two-sided).
     GreedySwitch(GreedySwitchHeuristic),
 }
@@ -96,14 +101,25 @@ impl GraphInfoHolder {
 
         let mut cross_minimizer = match cross_min_type {
             CrossMinType::Barycenter => {
-                if a.graph(graph)
+                // Java GraphInfoHolder (0.11.0): use ModelOrderBarycenterHeuristic
+                // ONLY when CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER is set.
+                // For considerModelOrder.strategy != NONE the *plain*
+                // BarycenterHeuristic is used; the model order is preserved by
+                // SortByInputModelProcessor + FIRST_TRY_WITH_INITIAL_ORDER.
+                let force = a
+                    .graph(graph)
                     .properties
-                    .get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                {
-                    return Err("TODO: ModelOrderBarycenterHeuristic not ported yet".to_string());
-                }
+                    .get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER);
+                let model_order = if force {
+                    Some(super::model_order_barycenter_heuristic::ModelOrderBarycenterState::new(
+                        force,
+                    ))
+                } else {
+                    None
+                };
                 CrossMinimizer::Barycenter {
                     constraint_resolver: ForsterConstraintResolver::new(a, &current_node_order),
+                    model_order,
                 }
             }
             CrossMinType::Median => {
@@ -125,7 +141,7 @@ impl GraphInfoHolder {
             decider.init_at_layer_level(a, l, &current_node_order);
             port_distributor.init_at_layer_level(l, &current_node_order);
             match &mut cross_minimizer {
-                CrossMinimizer::Barycenter { constraint_resolver } => {
+                CrossMinimizer::Barycenter { constraint_resolver, .. } => {
                     constraint_resolver.init_at_layer_level(l, &current_node_order);
                     // crossMinimizer (BarycenterHeuristic):
                     // nodeOrder[l][0].getLayer().id = l
@@ -148,7 +164,7 @@ impl GraphInfoHolder {
                 crossings_counter.init_at_node_level(a, l, n, &current_node_order);
                 decider.init_at_node_level(a, l, n, &current_node_order);
                 port_distributor.init_at_node_level(a, l, n, &current_node_order);
-                if let CrossMinimizer::Barycenter { constraint_resolver } = &mut cross_minimizer {
+                if let CrossMinimizer::Barycenter { constraint_resolver, .. } = &mut cross_minimizer {
                     constraint_resolver.init_at_node_level(a, l, n, &current_node_order);
                 }
                 // crossMinimizer: (nothing at node level)

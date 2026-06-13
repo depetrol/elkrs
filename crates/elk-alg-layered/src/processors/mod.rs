@@ -40,6 +40,14 @@ pub mod self_loop_port_restorer;
 pub mod self_loop_post_processor;
 pub mod self_loop_pre_processor;
 pub mod self_loop_router;
+pub mod wrapping_support;
+pub mod single_edge_graph_wrapper;
+pub mod breaking_point_inserter;
+pub mod breaking_point_processor;
+pub mod breaking_point_remover;
+pub mod alternating_layer_unzipper;
+pub mod semi_interactive_crossmin_processor;
+pub mod sort_by_input_order_of_model;
 
 use elk_core::javacompat::JavaRandom;
 
@@ -122,6 +130,15 @@ pub fn process(
             high_degree_node_layer_processor::process(a, graph)
         }
         Ips::HORIZONTAL_COMPACTOR => horizontal_compactor::process(a, graph),
+        Ips::SINGLE_EDGE_GRAPH_WRAPPER => single_edge_graph_wrapper::process(a, graph),
+        Ips::BREAKING_POINT_INSERTER => breaking_point_inserter::process(a, graph),
+        Ips::BREAKING_POINT_PROCESSOR => breaking_point_processor::process(a, graph),
+        Ips::BREAKING_POINT_REMOVER => breaking_point_remover::process(a, graph),
+        Ips::ALTERNATING_LAYER_UNZIPPER => alternating_layer_unzipper::process(a, graph),
+        Ips::SORT_BY_INPUT_ORDER_OF_MODEL => sort_by_input_order_of_model::process(a, graph),
+        Ips::SEMI_INTERACTIVE_CROSSMIN_PROCESSOR => {
+            semi_interactive_crossmin_processor::process(a, graph)
+        }
         other => Err(format!("TODO: intermediate processor {other:?} is not ported yet")),
     }
 }

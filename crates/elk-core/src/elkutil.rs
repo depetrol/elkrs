@@ -259,10 +259,13 @@ pub fn translate_edge(g: &mut ElkGraph, edge: EdgeId, xoffset: f64, yoffset: f64
         s.x += xoffset;
         s.y += yoffset;
     }
-    if let Some(mut jps) = g.edge_mut(edge).properties.try_get(&JUNCTION_POINTS) {
-        jps.offset_xy(xoffset, yoffset);
-        g.edge_mut(edge).properties.set(&JUNCTION_POINTS, jps);
-    }
+    // Java `edge.getProperty(JUNCTION_POINTS)` materializes the empty
+    // Cloneable default into the edge, so even edges without junction points
+    // gain an (empty) chain that the exporter then emits as "()". Use `get`
+    // (materializing), not `try_get`, to match.
+    let mut jps = g.edge(edge).properties.get(&JUNCTION_POINTS);
+    jps.offset_xy(xoffset, yoffset);
+    g.edge(edge).properties.set(&JUNCTION_POINTS, jps);
 }
 
 /// Port of `ElkUtil.translate(ElkEdgeSection, double, double)`.

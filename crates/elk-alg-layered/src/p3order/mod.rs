@@ -8,6 +8,8 @@ pub mod greedy_port_distributor;
 pub mod greedy_switch;
 pub mod layer_sweep;
 pub mod layer_sweep_type_decider;
+pub mod model_order_barycenter_heuristic;
+pub mod model_order_comparators;
 pub mod port_distributor;
 pub mod sweep_copy;
 

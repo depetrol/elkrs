@@ -89,20 +89,6 @@ pub fn process_with_type(
     if cross_min_type == CrossMinType::Median {
         return Err(format!("TODO: cross minimizer {cross_min_type:?} not ported yet"));
     }
-    if a.graph(graph).properties.get(&lopts::CONSIDER_MODEL_ORDER_STRATEGY)
-        != OrderingStrategy::NONE
-    {
-        return Err(
-            "TODO: considerModelOrder.strategy != NONE (ModelOrderNodeComparator / \
-             ModelOrderPortComparator) not ported yet"
-                .to_string(),
-        );
-    }
-    if cross_min_type == CrossMinType::Barycenter
-        && a.graph(graph).properties.get(&lopts::CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-    {
-        return Err("TODO: ModelOrderBarycenterHeuristic not ported yet".to_string());
-    }
     for &layer in &layers {
         for &node in &a.layer(layer).nodes {
             if a.node(node).nested_graph.is_some() {
@@ -298,11 +284,12 @@ fn set_first_layer_order(
 ) -> Result<bool, String> {
     let holder = &mut sweep.holders[gidx];
     match &mut holder.cross_minimizer {
-        CrossMinimizer::Barycenter { constraint_resolver } => {
+        CrossMinimizer::Barycenter { constraint_resolver, model_order } => {
             Ok(barycenter_heuristic::set_first_layer_order(
                 a,
                 &mut holder.current_node_order,
                 constraint_resolver,
+                model_order.as_mut(),
                 holder.port_distributor.as_barycenter_mut(),
                 random,
                 is_forward_sweep,
@@ -515,11 +502,12 @@ fn sweep_reducing_crossings(
         {
             let holder = &mut sweep.holders[gidx];
             improved |= match &mut holder.cross_minimizer {
-                CrossMinimizer::Barycenter { constraint_resolver } => {
+                CrossMinimizer::Barycenter { constraint_resolver, model_order } => {
                     barycenter_heuristic::minimize_crossings_in_sweep(
                         a,
                         &mut holder.current_node_order,
                         constraint_resolver,
+                        model_order.as_mut(),
                         holder.port_distributor.as_barycenter_mut(),
                         random,
                         i as usize,

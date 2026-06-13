@@ -1,0 +1,19 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "org.eclipse.elk.layered.compaction.postCompaction.strategy": "LEFT",
+    "org.eclipse.elk.portConstraints": "FIXED_SIDE"
+  },
+  "children": [
+    { "id": "n1", "width": 40, "height": 40,
+      "ports": [ {"id":"p1e","layoutOptions":{"port.side":"EAST"}}, {"id":"p1w","layoutOptions":{"port.side":"WEST"}} ] },
+    { "id": "n2", "width": 40, "height": 60,
+      "ports": [ {"id":"p2e","layoutOptions":{"port.side":"EAST"}}, {"id":"p2w","layoutOptions":{"port.side":"WEST"}} ] },
+    { "id": "n3", "width": 40, "height": 40,
+      "ports": [ {"id":"p3w","layoutOptions":{"port.side":"WEST"}} ] }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["p1e"], "targets": ["p2w"] },
+    { "id": "e2", "sources": ["p2e"], "targets": ["p3w"] },
+    { "id": "e3", "sources": ["p2e"], "targets": ["p1w"] }
+  ] }

@@ -13,6 +13,7 @@ use crate::graph::{LGraphArena, LNodeId, NodeType};
 use crate::internal_properties as iprops;
 
 use super::forster_constraint_resolver::ForsterConstraintResolver;
+use super::model_order_barycenter_heuristic::ModelOrderBarycenterState;
 use super::port_distributor::PortDistributor;
 
 /// the amount of random value to add to each calculated barycenter.
@@ -55,10 +56,12 @@ fn state_indices(a: &LGraphArena, node: LNodeId) -> (usize, usize) {
 
 /// Port of `BarycenterHeuristic.minimizeCrossings(LNode[][], int, boolean,
 /// boolean)`. Always returns `false` (does not always improve).
+#[allow(clippy::too_many_arguments)]
 pub fn minimize_crossings_in_sweep(
     a: &LGraphArena,
     order: &mut [Vec<LNodeId>],
     resolver: &mut ForsterConstraintResolver,
+    model_order: Option<&mut ModelOrderBarycenterState>,
     distributor: &mut PortDistributor,
     random: &mut JavaRandom,
     free_layer_index: usize,
@@ -74,7 +77,7 @@ pub fn minimize_crossings_in_sweep(
     let pre_ordered = !is_first_sweep || is_external_port_dummy(a, first_node_in_layer);
 
     let mut nodes: Vec<LNodeId> = order[free_layer_index].clone();
-    minimize_crossings_list(a, &mut nodes, resolver, distributor, random, pre_ordered, false, forward_sweep);
+    minimize_crossings_list(a, &mut nodes, resolver, model_order, distributor, random, pre_ordered, false, forward_sweep);
     // apply the new ordering
     order[free_layer_index].clone_from(&nodes);
 
@@ -82,10 +85,12 @@ pub fn minimize_crossings_in_sweep(
 }
 
 /// Port of `BarycenterHeuristic.setFirstLayerOrder`.
+#[allow(clippy::too_many_arguments)]
 pub fn set_first_layer_order(
     a: &LGraphArena,
     order: &mut [Vec<LNodeId>],
     resolver: &mut ForsterConstraintResolver,
+    model_order: Option<&mut ModelOrderBarycenterState>,
     distributor: &mut PortDistributor,
     random: &mut JavaRandom,
     is_forward_sweep: bool,
@@ -93,7 +98,7 @@ pub fn set_first_layer_order(
     let start_index = start_index(is_forward_sweep, order.len());
     let mut nodes: Vec<LNodeId> = order[start_index].clone();
     // randomize nodes' barycenters
-    minimize_crossings_list(a, &mut nodes, resolver, distributor, random, false, true, is_forward_sweep);
+    minimize_crossings_list(a, &mut nodes, resolver, model_order, distributor, random, false, true, is_forward_sweep);
     // fill first layer with nodes
     order[start_index].clone_from(&nodes);
 
@@ -102,10 +107,12 @@ pub fn set_first_layer_order(
 
 /// Port of the package-visible `minimizeCrossings(List<LNode>, boolean,
 /// boolean, boolean)`.
+#[allow(clippy::too_many_arguments)]
 pub fn minimize_crossings_list(
     a: &LGraphArena,
     layer: &mut Vec<LNodeId>,
     resolver: &mut ForsterConstraintResolver,
+    model_order: Option<&mut ModelOrderBarycenterState>,
     distributor: &mut PortDistributor,
     random: &mut JavaRandom,
     pre_ordered: bool,
@@ -124,25 +131,62 @@ pub fn minimize_crossings_list(
     }
 
     if layer.len() > 1 {
-        // Sort the vertices according to their barycenters
-        // (the CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER branch using
-        // ModelOrderBarycenterHeuristic is rejected early in layer_sweep)
-        let states = &resolver.barycenter_states;
-        layer.sort_by(|&n1, &n2| {
-            let (l1, i1) = state_indices(a, n1);
-            let (l2, i2) = state_indices(a, n2);
-            let b1 = states[l1][i1].barycenter;
-            let b2 = states[l2][i2].barycenter;
-            match (b1, b2) {
-                (Some(v1), Some(v2)) => v1.total_cmp(&v2), // Double.compareTo
-                (Some(_), None) => Ordering::Less,
-                (None, Some(_)) => Ordering::Greater,
-                (None, None) => Ordering::Equal,
+        match model_order {
+            // ModelOrderBarycenterHeuristic.minimizeCrossings
+            Some(mo) => {
+                let states = &resolver.barycenter_states;
+                if mo.force_node_model_order {
+                    // insertionSort with the model-order comparator; NO
+                    // processConstraints afterwards.
+                    insertion_sort_model_order(a, layer, states, mo);
+                    mo.clear_transitive_ordering();
+                } else {
+                    // Collections.sort (TimSort) with the model-order
+                    // comparator, then processConstraints.
+                    elk_core::javacompat::tim_sort(layer, |&n1, &n2| {
+                        mo.compare(a, states, n1, n2)
+                    });
+                    resolver.process_constraints(a, layer);
+                }
             }
-        });
+            // Plain BarycenterHeuristic.
+            None => {
+                let states = &resolver.barycenter_states;
+                layer.sort_by(|&n1, &n2| {
+                    let (l1, i1) = state_indices(a, n1);
+                    let (l2, i2) = state_indices(a, n2);
+                    let b1 = states[l1][i1].barycenter;
+                    let b2 = states[l2][i2].barycenter;
+                    match (b1, b2) {
+                        (Some(v1), Some(v2)) => v1.total_cmp(&v2), // Double.compareTo
+                        (Some(_), None) => Ordering::Less,
+                        (None, Some(_)) => Ordering::Greater,
+                        (None, None) => Ordering::Equal,
+                    }
+                });
 
-        // Resolve ordering constraints
-        resolver.process_constraints(a, layer);
+                // Resolve ordering constraints
+                resolver.process_constraints(a, layer);
+            }
+        }
+    }
+}
+
+/// Port of `ModelOrderBarycenterHeuristic.insertionSort`.
+fn insertion_sort_model_order(
+    a: &LGraphArena,
+    layer: &mut [LNodeId],
+    states: &[Vec<BarycenterState>],
+    mo: &mut ModelOrderBarycenterState,
+) {
+    for i in 1..layer.len() {
+        let temp = layer[i];
+        let mut j = i;
+        while j > 0 && mo.compare(a, states, layer[j - 1], temp) > 0 {
+            layer[j] = layer[j - 1];
+            j -= 1;
+        }
+        layer[j] = temp;
     }
 }
 

@@ -1,0 +1,3 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "rectpacking" },
+  "children": [ { "id": "a", "width": 20, "height": 20 }, { "id": "b", "width": 30, "height": 20 } ],
+  "edges": [ { "id": "e", "sources": ["a"], "targets": ["b"] } ] }

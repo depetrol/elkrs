@@ -1,0 +1,16 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "org.eclipse.elk.layered.compaction.postCompaction.strategy": "LEFT"
+  },
+  "children": [
+    { "id": "n1", "width": 40, "height": 40 },
+    { "id": "n2", "width": 40, "height": 40 },
+    { "id": "n3", "width": 40, "height": 40 },
+    { "id": "cmt", "width": 50, "height": 20, "layoutOptions": {"org.eclipse.elk.commentBox": "true"} }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["n1"], "targets": ["n2"] },
+    { "id": "e2", "sources": ["n2"], "targets": ["n3"] },
+    { "id": "ec", "sources": ["n2"], "targets": ["cmt"] }
+  ] }

@@ -198,6 +198,17 @@ elk_enum! {
     }
 }
 
+impl LongEdgeOrderingStrategy {
+    /// Port of `LongEdgeOrderingStrategy.returnValue()`.
+    pub fn return_value(self) -> i32 {
+        match self {
+            LongEdgeOrderingStrategy::DUMMY_NODE_OVER => i32::MAX,
+            LongEdgeOrderingStrategy::DUMMY_NODE_UNDER => i32::MIN,
+            LongEdgeOrderingStrategy::EQUAL => 0,
+        }
+    }
+}
+
 elk_enum! {
     pub enum NodeFlexibility {
         NONE,

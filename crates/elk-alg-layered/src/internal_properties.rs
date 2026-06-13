@@ -155,3 +155,115 @@ pub static SPLINE_SEGMENT_STORE: Property<crate::p5edges::splines::SplineSegment
 /// the `CompoundGraphPreprocessor` and consumed by the postprocessor.
 pub static CROSS_HIERARCHY_MAP: Property<crate::compound::CrossHierarchyMap> =
     Property::new("crossHierarchyMap");
+
+/// Java `InternalProperties.TARGET_NODE_MODEL_ORDER` (`Map<LNode, Integer>`),
+/// cached on a node by `SortByInputModelProcessor.longEdgeTargetNodePreprocessing`.
+/// Insertion order is irrelevant (only keyed lookups happen), but kept
+/// deterministic via `IndexMap`.
+#[derive(Clone, Debug, PartialEq, Default)]
+pub struct TargetNodeModelOrder(pub indexmap::IndexMap<LNodeId, i32>);
+impl JavaString for TargetNodeModelOrder {
+    fn java_string(&self) -> String {
+        format!("{:?}", self.0)
+    }
+}
+impl JavaCloneable for TargetNodeModelOrder {
+    const CLONEABLE: bool = false;
+}
+pub static TARGET_NODE_MODEL_ORDER: Property<TargetNodeModelOrder> =
+    Property::new("targetNodeModelOrder");
+
+// ---------------------------------------------------------------------------
+// Breaking-point wrapping (multi-edge) storage.
+// ---------------------------------------------------------------------------
+
+/// Index of a [`BPInfo`] inside the per-graph [`BPInfoStore`].
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct BPInfoId(pub usize);
+
+internal_value!(BPInfoId);
+
+/// Port of `BreakingPointInserter.BPInfo`: information attached to a single
+/// breaking point. Java stores one mutable `BPInfo` object referenced from
+/// both the start and end dummy nodes; here the objects live in a per-graph
+/// [`BPInfoStore`] (held as a graph property) and nodes reference them by
+/// [`BPInfoId`]. Linked-list `prev`/`next` are also ids.
+#[derive(Clone, Debug, PartialEq)]
+pub struct BPInfo {
+    pub start: LNodeId,
+    pub end: LNodeId,
+    pub node_start_edge: LEdgeId,
+    pub start_end_edge: LEdgeId,
+    pub original_edge: LEdgeId,
+
+    pub start_in_layer_dummy: Option<LNodeId>,
+    pub start_in_layer_edge: Option<LEdgeId>,
+    pub end_in_layer_dummy: Option<LNodeId>,
+    pub end_in_layer_edge: Option<LEdgeId>,
+
+    pub prev: Option<BPInfoId>,
+    pub next: Option<BPInfoId>,
+}
+
+impl BPInfo {
+    pub fn new(
+        start: LNodeId,
+        end: LNodeId,
+        node_start_edge: LEdgeId,
+        start_end_edge: LEdgeId,
+        original_edge: LEdgeId,
+    ) -> BPInfo {
+        BPInfo {
+            start,
+            end,
+            node_start_edge,
+            start_end_edge,
+            original_edge,
+            start_in_layer_dummy: None,
+            start_in_layer_edge: None,
+            end_in_layer_dummy: None,
+            end_in_layer_edge: None,
+            prev: None,
+            next: None,
+        }
+    }
+}
+
+/// Per-graph arena of [`BPInfo`] objects (Java attaches the objects directly to
+/// the nodes; here they are pooled and referenced by [`BPInfoId`]).
+#[derive(Clone, Debug, PartialEq, Default)]
+pub struct BPInfoStore {
+    pub infos: Vec<BPInfo>,
+}
+
+impl BPInfoStore {
+    pub fn push(&mut self, info: BPInfo) -> BPInfoId {
+        let id = BPInfoId(self.infos.len());
+        self.infos.push(info);
+        id
+    }
+    pub fn get(&self, id: BPInfoId) -> &BPInfo {
+        &self.infos[id.0]
+    }
+    pub fn get_mut(&mut self, id: BPInfoId) -> &mut BPInfo {
+        &mut self.infos[id.0]
+    }
+}
+
+impl elk_graph::properties::JavaString for BPInfoStore {
+    fn java_string(&self) -> String {
+        format!("{self:?}")
+    }
+}
+impl elk_graph::properties::JavaCloneable for BPInfoStore {
+    const CLONEABLE: bool = false;
+}
+
+/// Java `InternalProperties.BREAKING_POINT_INFO` (a `BPInfo` on each breaking
+/// point dummy node). Stored here as a [`BPInfoId`] into the graph's
+/// [`BPInfoStore`].
+pub static BREAKING_POINT_INFO: Property<BPInfoId> = Property::new("breakingPoint.info");
+
+/// Rust-only: the per-graph arena of [`BPInfo`] objects, attached to the graph
+/// for the lifetime of the breaking-point wrapping phase.
+pub static BP_INFO_STORE: Property<BPInfoStore> = Property::new("breakingPoint.store.rs");
