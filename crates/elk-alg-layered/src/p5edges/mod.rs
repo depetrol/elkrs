@@ -7,6 +7,8 @@ pub mod hyper_edge_segment_dependency;
 pub mod hyper_edge_segment_splitter;
 pub mod orthogonal;
 pub mod orthogonal_routing_generator;
+pub mod polyline;
+pub mod splines;
 
 use elk_core::options::EdgeRouting;
 use elk_graph::properties::EnumSet;
@@ -100,6 +102,102 @@ pub fn processor_configuration(
             }
             Ok(())
         }
+        EdgeRouting::POLYLINE => {
+            // Java `PolylineEdgeRouter.getLayoutProcessorConfiguration`
+            let graph_properties: EnumSet<GraphProperties> =
+                a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
+
+            // Basic configuration (BASELINE_PROCESSOR_CONFIGURATION)
+            config.add_before(LayeredPhases::P3_NODE_ORDERING, Ips::INVERTED_PORT_PROCESSOR);
+
+            // Additional dependencies
+            if graph_properties.contains(GraphProperties::NORTH_SOUTH_PORTS) {
+                config
+                    .add_before(
+                        LayeredPhases::P3_NODE_ORDERING,
+                        Ips::NORTH_SOUTH_PORT_PREPROCESSOR,
+                    )
+                    .add_after(
+                        LayeredPhases::P5_EDGE_ROUTING,
+                        Ips::NORTH_SOUTH_PORT_POSTPROCESSOR,
+                    );
+            }
+
+            if graph_properties.contains(GraphProperties::SELF_LOOPS) {
+                config
+                    .add_before(LayeredPhases::P1_CYCLE_BREAKING, Ips::SELF_LOOP_PREPROCESSOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::SELF_LOOP_POSTPROCESSOR)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::SELF_LOOP_PORT_RESTORER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::SELF_LOOP_ROUTER);
+            }
+
+            if graph_properties.contains(GraphProperties::CENTER_LABELS) {
+                config
+                    .add_before(LayeredPhases::P2_LAYERING, Ips::LABEL_DUMMY_INSERTER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_DUMMY_SWITCHER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_SIDE_SELECTOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::LABEL_DUMMY_REMOVER);
+            }
+
+            if graph_properties.contains(GraphProperties::END_LABELS) {
+                config
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_SIDE_SELECTOR)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::END_LABEL_PREPROCESSOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::END_LABEL_POSTPROCESSOR);
+            }
+            Ok(())
+        }
+        EdgeRouting::SPLINES => {
+            // Java `SplineEdgeRouter.getLayoutProcessorConfiguration`
+            let graph_properties: EnumSet<GraphProperties> =
+                a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
+
+            // BASELINE_PROCESSING_ADDITIONS
+            config
+                .add_after(
+                    LayeredPhases::P5_EDGE_ROUTING,
+                    Ips::FINAL_SPLINE_BENDPOINTS_CALCULATOR,
+                )
+                .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::INVERTED_PORT_PROCESSOR);
+
+            if graph_properties.contains(GraphProperties::SELF_LOOPS) {
+                config
+                    .add_before(LayeredPhases::P1_CYCLE_BREAKING, Ips::SELF_LOOP_PREPROCESSOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::SELF_LOOP_POSTPROCESSOR)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::SELF_LOOP_PORT_RESTORER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::SELF_LOOP_ROUTER);
+            }
+
+            if graph_properties.contains(GraphProperties::CENTER_LABELS) {
+                config
+                    .add_before(LayeredPhases::P2_LAYERING, Ips::LABEL_DUMMY_INSERTER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_DUMMY_SWITCHER)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_SIDE_SELECTOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::LABEL_DUMMY_REMOVER);
+            }
+
+            if graph_properties.contains(GraphProperties::NORTH_SOUTH_PORTS) {
+                // NOTE: unlike the other routers, the Java SplineEdgeRouter adds the
+                // NORTH_SOUTH_PORT_POSTPROCESSOR *before* phase 5 (replicated faithfully).
+                config
+                    .add_before(
+                        LayeredPhases::P3_NODE_ORDERING,
+                        Ips::NORTH_SOUTH_PORT_PREPROCESSOR,
+                    )
+                    .add_before(
+                        LayeredPhases::P5_EDGE_ROUTING,
+                        Ips::NORTH_SOUTH_PORT_POSTPROCESSOR,
+                    );
+            }
+
+            if graph_properties.contains(GraphProperties::END_LABELS) {
+                config
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::LABEL_SIDE_SELECTOR)
+                    .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::END_LABEL_PREPROCESSOR)
+                    .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::END_LABEL_POSTPROCESSOR);
+            }
+            Ok(())
+        }
         other => Err(format!("TODO: edge routing {other:?} is not ported yet")),
     }
 }
@@ -112,6 +210,8 @@ pub fn process(
 ) -> Result<(), String> {
     match effective_routing(routing) {
         EdgeRouting::ORTHOGONAL => orthogonal::process(a, graph, random),
+        EdgeRouting::POLYLINE => polyline::process(a, graph),
+        EdgeRouting::SPLINES => splines::process(a, graph, random),
         other => Err(format!("TODO: edge routing {other:?} is not ported yet")),
     }
 }

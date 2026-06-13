@@ -1,0 +1,196 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "ports": [
+        {
+          "id": "a_out",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "EAST"
+          },
+          "x": 40.0,
+          "y": 20.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.portConstraints": "FIXED_SIDE",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 12.0,
+      "y": 57.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "b",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 72.0,
+      "y": 62.0,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "c",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 72.0,
+      "y": 112.0,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "d",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 72.0,
+      "y": 12.0,
+      "width": 30.0,
+      "height": 30.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.algorithm": "layered",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.edgeRouting": "SPLINES",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 114.0,
+  "height": 154.0,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "a_out"
+      ],
+      "targets": [
+        "b"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 52.0,
+            "y": 77.0
+          },
+          "endPoint": {
+            "x": 72.0,
+            "y": 77.0
+          },
+          "bendPoints": [
+            {
+              "x": 52.0,
+              "y": 77.0
+            },
+            {
+              "x": 62.0,
+              "y": 77.0
+            }
+          ],
+          "incomingShape": "a_out",
+          "outgoingShape": "b"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()",
+        "org.eclipse.elk.edgeRouting": "SPLINES"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "a_out"
+      ],
+      "targets": [
+        "c"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 52.0,
+            "y": 77.0
+          },
+          "endPoint": {
+            "x": 72.0,
+            "y": 127.0
+          },
+          "bendPoints": [
+            {
+              "x": 52.0,
+              "y": 77.0
+            },
+            {
+              "x": 62.0,
+              "y": 122.0
+            }
+          ],
+          "incomingShape": "a_out",
+          "outgoingShape": "c"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()",
+        "org.eclipse.elk.edgeRouting": "SPLINES"
+      }
+    },
+    {
+      "id": "e3",
+      "sources": [
+        "a_out"
+      ],
+      "targets": [
+        "d"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 52.0,
+            "y": 77.0
+          },
+          "endPoint": {
+            "x": 72.0,
+            "y": 27.0
+          },
+          "bendPoints": [
+            {
+              "x": 52.0,
+              "y": 77.0
+            },
+            {
+              "x": 62.0,
+              "y": 32.0
+            }
+          ],
+          "incomingShape": "a_out",
+          "outgoingShape": "d"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()",
+        "org.eclipse.elk.edgeRouting": "SPLINES"
+      }
+    }
+  ]
+}

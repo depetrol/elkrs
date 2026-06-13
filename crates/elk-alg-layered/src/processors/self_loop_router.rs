@@ -9,18 +9,12 @@ use crate::loops::routing;
 use crate::options_gen as lopts;
 
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
-    // Java `routerForGraph`: polyline and spline self loop routers are not
-    // ported (they are only reachable when those edge routers run, which are
-    // not ported either)
-    match a.graph(graph).properties.get(&lopts::EDGE_ROUTING) {
-        EdgeRouting::POLYLINE => {
-            return Err("TODO: PolylineSelfLoopRouter is not ported yet".to_string());
-        }
-        EdgeRouting::SPLINES => {
-            return Err("TODO: SplineSelfLoopRouter is not ported yet".to_string());
-        }
-        _ => {}
-    }
+    // Java `routerForGraph`
+    let router_kind = match a.graph(graph).properties.get(&lopts::EDGE_ROUTING) {
+        EdgeRouting::POLYLINE => routing::SelfLoopRouterKind::Polyline,
+        EdgeRouting::SPLINES => routing::SelfLoopRouterKind::Spline,
+        _ => routing::SelfLoopRouterKind::Orthogonal,
+    };
 
     // Java: label manager handling is not ported; it only applies when a
     // label manager is configured on the graph.
@@ -49,7 +43,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
                 routing::assign_routing_slots(a, &mut sl_holder, random);
 
                 // Finally route the self loops
-                routing::route_self_loops(a, &mut sl_holder);
+                routing::route_self_loops(a, &mut sl_holder, router_kind);
 
                 a.node_mut(l_node).self_loop_holder = Some(sl_holder);
             }

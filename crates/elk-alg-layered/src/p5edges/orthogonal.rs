@@ -135,7 +135,8 @@ fn is_external_west_or_east_port(a: &LGraphArena, node: LNodeId) -> bool {
 
 /// Port of `LGraphUtil.placeNodesHorizontally`: places the nodes of the given
 /// layer, aligning them based on their alignment options or port counts.
-fn place_nodes_horizontally(a: &mut LGraphArena, layer: LayerId, xoffset: f64) {
+/// (Also used by the polyline and spline edge routers.)
+pub(crate) fn place_nodes_horizontally(a: &mut LGraphArena, layer: LayerId, xoffset: f64) {
     // determine maximal left and right margin
     let mut max_left_margin: f64 = 0.0;
     let mut max_right_margin: f64 = 0.0;

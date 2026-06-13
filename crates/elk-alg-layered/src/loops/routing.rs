@@ -1,10 +1,7 @@
 //! Port of `intermediate.loops.routing`: `RoutingDirector`, `LabelPlacer`,
-//! `RoutingSlotAssigner` and `OrthogonalSelfLoopRouter`.
-//!
-//! `PolylineSelfLoopRouter` and `SplineSelfLoopRouter` are not ported; they
-//! are unreachable while the polyline / spline edge routers themselves are
-//! not ported (the self loop processors are only added by the orthogonal
-//! edge router's processor configuration).
+//! `RoutingSlotAssigner`, `OrthogonalSelfLoopRouter` and its subclasses
+//! `PolylineSelfLoopRouter` and `SplineSelfLoopRouter` (which reuse the
+//! orthogonal bend points and merely modify them).
 
 use std::collections::VecDeque;
 
@@ -1096,8 +1093,19 @@ enum EdgeRoutingDirection {
     CounterClockwise,
 }
 
-/// Port of `OrthogonalSelfLoopRouter.routeSelfLoops`.
-pub fn route_self_loops(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
+/// Selects which of the self loop routers runs (Java instantiates
+/// `OrthogonalSelfLoopRouter`, `PolylineSelfLoopRouter` or
+/// `SplineSelfLoopRouter`; the latter two only override `modifyBendPoints`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum SelfLoopRouterKind {
+    Orthogonal,
+    Polyline,
+    Spline,
+}
+
+/// Port of `OrthogonalSelfLoopRouter.routeSelfLoops` (incl. the subclasses'
+/// `modifyBendPoints` overrides, selected via `kind`).
+pub fn route_self_loops(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder, kind: SelfLoopRouterKind) {
     let l_node = sl_holder.l_node;
 
     let node_size = a.node(l_node).size;
@@ -1125,10 +1133,19 @@ pub fn route_self_loops(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
 
             let routing_direction = compute_edge_routing_direction(a, sl_holder, sl_edge);
 
-            // Compute orthogonal bend points (Java gives subclasses a chance
-            // to modify them; the orthogonal router doesn't)
-            let bend_points =
+            // Compute orthogonal bend points and give subclasses a chance to
+            // modify them to suit their particular routing style
+            let mut bend_points =
                 compute_orthogonal_bend_points(a, sl_holder, sl_edge, routing_direction, &routing_slot_positions);
+            bend_points = match kind {
+                SelfLoopRouterKind::Orthogonal => bend_points,
+                SelfLoopRouterKind::Polyline => {
+                    polyline_modify_bend_points(a, sl_holder, sl_edge, bend_points)
+                }
+                SelfLoopRouterKind::Spline => {
+                    spline_modify_bend_points(a, sl_holder, sl_edge, routing_direction, bend_points)
+                }
+            };
 
             for bp in &bend_points {
                 update_new_node_margins(node_size, &mut new_node_margins, *bp);
@@ -1524,4 +1541,209 @@ fn adjust_vector_for_label_side(
         PortSide::EAST => port_side_component.x += label_size.x / 2.0,
         PortSide::UNDEFINED => {}
     }
+}
+
+// ---------------------------------------------------------------------------
+// PolylineSelfLoopRouter
+
+/// Java `PolylineSelfLoopRouter.CORNER_DISTANCE`.
+const CORNER_DISTANCE: f64 = 10.0;
+/// Java `PolylineSelfLoopRouter.TOLERANCE` for double comparisons.
+const POLYLINE_TOLERANCE: f64 = 0.01;
+
+/// Java `PolylineSelfLoopRouter.modifyBendPoints`: turns a vector chain of
+/// orthogonal bend points into polyline bend points by cutting the corners.
+fn polyline_modify_bend_points(
+    a: &LGraphArena,
+    sl_holder: &SelfLoopHolder,
+    sl_edge: SlEdgeIdx,
+    mut bend_points: Vec<KVector>,
+) -> Vec<KVector> {
+    // Add the source and target points
+    let edge = &sl_holder.sl_edges[sl_edge];
+    let l_source_port = a.port(sl_holder.sl_ports[edge.sl_source].l_port);
+    let mut source_anchor = l_source_port.pos;
+    source_anchor.add(l_source_port.anchor);
+    bend_points.insert(0, source_anchor);
+
+    let l_target_port = a.port(sl_holder.sl_ports[edge.sl_target].l_port);
+    let mut target_anchor = l_target_port.pos;
+    target_anchor.add(l_target_port.anchor);
+    bend_points.push(target_anchor);
+
+    cut_corners(&bend_points, CORNER_DISTANCE)
+}
+
+/// Java `Math.signum(double)`.
+fn java_signum(x: f64) -> f64 {
+    if x == 0.0 || x.is_nan() {
+        x
+    } else if x > 0.0 {
+        1.0
+    } else {
+        -1.0
+    }
+}
+
+/// Java `PolylineSelfLoopRouter.nearZeroToZero`.
+fn near_zero_to_zero(mut vector: KVector) -> KVector {
+    if vector.x >= -POLYLINE_TOLERANCE && vector.x <= POLYLINE_TOLERANCE {
+        vector.x = 0.0;
+    }
+    if vector.y >= -POLYLINE_TOLERANCE && vector.y <= POLYLINE_TOLERANCE {
+        vector.y = 0.0;
+    }
+    vector
+}
+
+/// Java `PolylineSelfLoopRouter.cutCorners`: replaces each inner bend point by
+/// two which are ideally `distance` away from the original bend point. The
+/// first and last point are not included in the returned list.
+fn cut_corners(bend_points: &[KVector], distance: f64) -> Vec<KVector> {
+    // The incoming list should consist of more than just the two end points
+    debug_assert!(bend_points.len() > 2);
+
+    let mut result: Vec<KVector> = Vec::new();
+
+    let mut bp_iterator = bend_points.iter();
+    let mut corner = *bp_iterator.next().unwrap();
+    let mut next = *bp_iterator.next().unwrap();
+
+    for &after in bp_iterator {
+        // Move to the next corner
+        let previous = corner;
+        corner = next;
+        next = after;
+
+        // Compute how much we need to offset the corner to get to the previous and
+        // next bend points (offsets always have one coordinate at 0)
+        let mut diff1 = previous;
+        diff1.sub(corner);
+        let offset1 = near_zero_to_zero(diff1);
+        let mut diff2 = next;
+        diff2.sub(corner);
+        let offset2 = near_zero_to_zero(diff2);
+
+        // We usually use the standard distance, but that might be too much
+        let mut effective_distance = distance;
+        effective_distance = f64::min(effective_distance, (offset1.x + offset1.y).abs() / 2.0);
+        effective_distance = f64::min(effective_distance, (offset2.x + offset2.y).abs() / 2.0);
+
+        // Limit the offset vectors to our effective distance
+        let mut o1 = KVector::new(
+            java_signum(offset1.x) * effective_distance,
+            java_signum(offset1.y) * effective_distance,
+        );
+        let mut o2 = KVector::new(
+            java_signum(offset2.x) * effective_distance,
+            java_signum(offset2.y) * effective_distance,
+        );
+
+        // Compute the effective bend points and add them to our result
+        o1.add(corner);
+        result.push(o1);
+        o2.add(corner);
+        result.push(o2);
+    }
+
+    result
+}
+
+// ---------------------------------------------------------------------------
+// SplineSelfLoopRouter
+
+/// Java `SplineSelfLoopRouter.DIM`.
+const SPLINE_SELF_LOOP_DIM: usize = 3;
+/// Java `SplineSelfLoopRouter.HALF`.
+const HALF: f64 = 0.5;
+
+/// Java `SplineSelfLoopRouter.relativePortAnchor`.
+fn relative_port_anchor(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_port: SlPortIdx) -> KVector {
+    let l_port = a.port(sl_holder.sl_ports[sl_port].l_port);
+    let mut anchor = l_port.pos;
+    anchor.add(l_port.anchor);
+    anchor
+}
+
+/// Java `SplineSelfLoopRouter.modifyBendPoints`.
+fn spline_modify_bend_points(
+    a: &LGraphArena,
+    sl_holder: &SelfLoopHolder,
+    sl_edge: SlEdgeIdx,
+    routing_direction: EdgeRoutingDirection,
+    bend_points: Vec<KVector>,
+) -> Vec<KVector> {
+    let edge_label_distance =
+        get_individual_or_inherited(a, sl_holder.l_node, &lopts::SPACING_EDGE_LABEL);
+
+    // For the splines to be routed correctly, we also have to include the source and
+    // target positions
+    let edge = &sl_holder.sl_edges[sl_edge];
+    let mut spline_bend_points = vec![relative_port_anchor(a, sl_holder, edge.sl_source)];
+    add_spline_control_points(
+        a,
+        sl_holder,
+        sl_edge,
+        routing_direction,
+        &bend_points,
+        &mut spline_bend_points,
+        edge_label_distance,
+    );
+    spline_bend_points.push(relative_port_anchor(a, sl_holder, edge.sl_target));
+
+    crate::p5edges::splines::nub_spline::NubSpline::new_clamped(
+        SPLINE_SELF_LOOP_DIM,
+        spline_bend_points,
+    )
+    .get_bezier_cp()
+}
+
+/// Java `SplineSelfLoopRouter.addSplineControlPoints`: inserts spline control
+/// points between each consecutive pair of bend points as computed by the
+/// orthogonal self loop router, slightly offset away from the node.
+fn add_spline_control_points(
+    a: &LGraphArena,
+    sl_holder: &SelfLoopHolder,
+    sl_edge: SlEdgeIdx,
+    routing_direction: EdgeRoutingDirection,
+    ortho_bend_points: &[KVector],
+    new_bend_points: &mut Vec<KVector>,
+    edge_label_distance: f64,
+) {
+    debug_assert!(ortho_bend_points.len() >= 2);
+
+    // We want to insert a new bend point between each pair of consecutive bend points
+    // in the old list
+    let edge = &sl_holder.sl_edges[sl_edge];
+    let mut curr_port_side = a.port(sl_holder.sl_ports[edge.sl_source].l_port).side;
+    let mut first_bp = ortho_bend_points[0];
+
+    for &second_bp in &ortho_bend_points[1..] {
+        // The first bend point will go straight into our list before we compute a new
+        // bend point
+        new_bend_points.push(first_bp);
+
+        // Compute a middle bend point and move it away from the node a little
+        let mut mid_bp = first_bp;
+        mid_bp.add(second_bp);
+        mid_bp.scale(HALF);
+        let mut offset = KVector::from_angle(
+            crate::p5edges::splines::splines_math::port_side_to_direction(curr_port_side),
+        );
+        offset.scale(edge_label_distance);
+        mid_bp.add(offset);
+
+        new_bend_points.push(mid_bp);
+
+        // Advance to the next pair of bend points on the next port side
+        first_bp = second_bp;
+        curr_port_side = if routing_direction == EdgeRoutingDirection::Clockwise {
+            curr_port_side.right()
+        } else {
+            curr_port_side.left()
+        };
+    }
+
+    // Add the last of the original bend points
+    new_bend_points.push(*ortho_bend_points.last().unwrap());
 }

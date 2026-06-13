@@ -1,0 +1,15 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "elk.edgeRouting": "SPLINES" },
+  "children": [
+    { "id": "s", "width": 30, "height": 30 },
+    { "id": "m1", "width": 30, "height": 30 },
+    { "id": "m2", "width": 30, "height": 50 },
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "t", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["s"], "targets": ["m1"] },
+    { "id": "e2", "sources": ["s"], "targets": ["m2"] },
+    { "id": "e3", "sources": ["m1"], "targets": ["n1"] },
+    { "id": "e4", "sources": ["m2"], "targets": ["n1"] },
+    { "id": "e5", "sources": ["n1"], "targets": ["t"] },
+    { "id": "e6", "sources": ["s"], "targets": ["t"] },
+    { "id": "e7", "sources": ["m2"], "targets": ["t"] } ] }
