@@ -633,16 +633,11 @@ pub fn resize_node(
     a.node_mut(node).size = new_size;
 
     // Set fixed size option for the node: now the size is assumed to stay as
-    // determined here
-    a.node(node).properties.set(
-        &lopts::NODE_SIZE_CONSTRAINTS,
-        EnumSet::of(&[
-            SizeConstraint::NODE_LABELS,
-            SizeConstraint::PORTS,
-            SizeConstraint::PORT_LABELS,
-            SizeConstraint::MINIMUM_SIZE,
-        ]),
-    );
+    // determined here. Java: `SizeConstraint.fixed()` == an EMPTY set, which
+    // means "fixed size" — the label/node-size processor will not resize it.
+    a.node(node)
+        .properties
+        .set(&lopts::NODE_SIZE_CONSTRAINTS, EnumSet::<SizeConstraint>::none());
 }
 
 /// Port of `LGraphUtil.isDescendant` (LGraph hierarchy).

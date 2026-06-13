@@ -10,6 +10,7 @@ use elk_alg_common::compaction::{
 use crate::graph::{LEdgeId, LGraphArena, LGraphId, LNodeId, NodeType};
 use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
+use crate::p5edges::splines::{SegIdx, SplineSegmentStore};
 
 use super::compare_fuzzy;
 use super::vertical_segment::{BendRef, JpRef, VerticalSegment};
@@ -33,6 +34,12 @@ pub struct LGraphToCGraphTransformer {
     pub segments: Vec<VerticalSegment>,
     /// CNodeId -> Quadruplet (the lock map, used by connection locking).
     pub lock_map: Vec<Quadruplet>,
+
+    /// For SPLINES routing: the spline segment store, owned during compaction.
+    /// `VerticalSegment.affected_bounding_boxes` indexes `store.segments`, whose
+    /// `bounding_box` fields are mutated during `apply_layout` and then the
+    /// store is written back to the graph for `FinalSplineBendpointsCalculator`.
+    spline_store: Option<SplineSegmentStore>,
 }
 
 impl LGraphToCGraphTransformer {
@@ -45,6 +52,7 @@ impl LGraphToCGraphTransformer {
             vertical_segments_map: Vec::new(),
             segments: Vec::new(),
             lock_map: Vec::new(),
+            spline_store: None,
         }
     }
 
@@ -52,6 +60,15 @@ impl LGraphToCGraphTransformer {
     pub fn transform(&mut self, a: &mut LGraphArena, graph: LGraphId) -> CGraph {
         self.graph = graph;
         self.edge_routing = a.graph(graph).properties.get(&lopts::EDGE_ROUTING);
+
+        // For spline routing, take ownership of the segment store; its bounding
+        // boxes are the entities being compacted. It is written back in
+        // `apply_layout` for the FinalSplineBendpointsCalculator to consume.
+        self.spline_store = if self.edge_routing == EdgeRouting::SPLINES {
+            a.graph(graph).properties.try_get(&iprops::SPLINE_SEGMENT_STORE)
+        } else {
+            None
+        };
 
         let mut cgraph = self.init(a, graph);
         self.transform_nodes(a, graph, &mut cgraph);
@@ -161,12 +178,7 @@ impl LGraphToCGraphTransformer {
         let style = a.graph(graph).properties.get(&lopts::EDGE_ROUTING);
         let segments = match style {
             EdgeRouting::ORTHOGONAL => self.collect_vertical_segments_orthogonal(a, graph, cgraph),
-            EdgeRouting::SPLINES => {
-                // Splines compaction is not exercised by the configurator (the
-                // post-compaction processor is only inserted for non-polyline
-                // routings, and splines route is unsupported in this port path).
-                panic!("Spline compaction not supported.")
-            }
+            EdgeRouting::SPLINES => self.collect_vertical_segments_splines(a, graph),
             other => panic!("Compaction not supported for {other:?} edges."),
         };
 
@@ -362,6 +374,71 @@ impl LGraphToCGraphTransformer {
         result
     }
 
+    /// Java `collectVerticalSegmentsSplines`. Each spline's non-straight
+    /// segments become vertical segments; consecutive ones are linked by a
+    /// constraint. `affected_bounding_boxes` indexes `self.spline_store`.
+    fn collect_vertical_segments_splines(
+        &mut self,
+        a: &LGraphArena,
+        graph: LGraphId,
+    ) -> Vec<usize> {
+        let mut result: Vec<usize> = Vec::new();
+
+        // Java streams layers -> nodes -> outgoing edges -> SPLINE_ROUTE_START,
+        // filtering null. The store holds the actual segment data.
+        let layers = a.graph(graph).layers.clone();
+        for layer in layers {
+            let nodes = a.layer(layer).nodes.clone();
+            for node in nodes {
+                for edge in a.node_outgoing_edges(node) {
+                    let spline = match a.edge(edge).properties.try_get(&iprops::SPLINE_ROUTE_START) {
+                        Some(s) => s,
+                        None => continue,
+                    };
+
+                    let mut last_vs: Option<usize> = None;
+                    for &seg_i32 in &spline {
+                        let seg = seg_i32 as SegIdx;
+                        let store = self.spline_store.as_ref().expect("spline store present");
+                        if store.segments[seg].is_straight {
+                            continue;
+                        }
+                        let bb = store.segments[seg].bounding_box;
+                        // first edge of the segment's hyper-edge set
+                        let s_edge = store.segments[seg].edges[0];
+                        let left_top = bb.position();
+                        let right_bottom = bb.bottom_right();
+
+                        let jps = self.junction_points_of(a, s_edge);
+                        let mut vs = VerticalSegment::new(
+                            left_top,
+                            right_bottom,
+                            None,
+                            None,
+                            None,
+                            &jps,
+                        );
+                        vs.represented_ledges.push(s_edge);
+                        // Java: vs.affectedBoundingBoxes.add(s.boundingBox).
+                        vs.affected_bounding_boxes.push(seg);
+
+                        let idx = self.push_segment(vs);
+                        result.push(idx);
+
+                        // there has to be a constraint between two non-straight
+                        // segments of the same spline.
+                        if let Some(prev) = last_vs {
+                            self.segments[prev].constraints.push(idx);
+                        }
+                        last_vs = Some(idx);
+                    }
+                }
+            }
+        }
+
+        result
+    }
+
     /// Junction points of an edge as `(JpRef, value)` pairs.
     fn junction_points_of(&self, a: &LGraphArena, edge: LEdgeId) -> Vec<(JpRef, KVector)> {
         let mut out = Vec::new();
@@ -497,6 +574,13 @@ impl LGraphToCGraphTransformer {
                 for b in bends {
                     a.edge_mut(b.edge).bend_points.0[b.index].x += delta_x;
                 }
+                // Java: vs.affectedBoundingBoxes.forEach(bb -> bb.x += deltaX).
+                let bbs = self.segments[vs].affected_bounding_boxes.clone();
+                if let Some(store) = self.spline_store.as_mut() {
+                    for seg in bbs {
+                        store.segments[seg].bounding_box.x += delta_x;
+                    }
+                }
                 let jps = self.segments[vs].junction_points.clone();
                 for jp in jps {
                     if let Some(mut chain) =
@@ -509,7 +593,10 @@ impl LGraphToCGraphTransformer {
             }
         }
 
-        // (spline handling omitted: spline routing reaches a panic earlier)
+        // special treatment of spline edge routes
+        if self.edge_routing == EdgeRouting::SPLINES {
+            self.apply_spline_layout(a, cgraph);
+        }
 
         // offset selfloop labels
         let node_ids: Vec<LNodeId> = (0..self.nodes_map.len())
@@ -553,6 +640,158 @@ impl LGraphToCGraphTransformer {
 
         // external port dummies may have moved — put them back
         self.apply_external_port_positions(a, cgraph, top_left, bottom_right);
+    }
+
+    /// Java `applyLayout` spline branch: offset spline self loops and adjust
+    /// the control points of straight segments. Writes the store back.
+    fn apply_spline_layout(&mut self, a: &mut LGraphArena, cgraph: &CGraph) {
+        // offset selfloops of splines (not part of the compaction graph)
+        let node_ids: Vec<LNodeId> = (0..self.nodes_map.len())
+            .filter(|&i| self.nodes_map[i].is_some())
+            .map(|i| LNodeId(i as u32))
+            .collect();
+        for n in &node_ids {
+            for sl in a.node_outgoing_edges(*n) {
+                if a.edge_is_self_loop(sl) {
+                    let l_node = a.port(a.edge(sl).source.unwrap()).node.unwrap();
+                    let cnode = self.nodes_map[l_node.index()].unwrap();
+                    let delta_x =
+                        cgraph.cnodes[cnode].hitbox.x - cgraph.cnodes[cnode].hitbox_pre_compaction.x;
+                    a.edge_mut(sl).bend_points.offset_xy(delta_x, 0.0);
+                }
+            }
+        }
+
+        // offset straight segments. Java streams layers -> nodes -> outgoing ->
+        // SPLINE_ROUTE_START, filtering null/empty.
+        let layers = a.graph(self.graph).layers.clone();
+        for layer in layers {
+            let nodes = a.layer(layer).nodes.clone();
+            for node in nodes {
+                for edge in a.node_outgoing_edges(node) {
+                    let chain = match a.edge(edge).properties.try_get(&iprops::SPLINE_ROUTE_START) {
+                        Some(c) if !c.is_empty() => c,
+                        _ => continue,
+                    };
+                    let spline: Vec<SegIdx> = chain.iter().map(|&i| i as SegIdx).collect();
+                    self.adjust_spline_control_points(cgraph, &spline);
+                }
+            }
+        }
+
+        // write the (mutated) store back for the FinalSplineBendpointsCalculator
+        if let Some(store) = self.spline_store.take() {
+            a.graph(self.graph)
+                .properties
+                .set(&iprops::SPLINE_SEGMENT_STORE, store);
+        }
+    }
+
+    /// Java `adjustSplineControlPoints`.
+    fn adjust_spline_control_points(&mut self, cgraph: &CGraph, spline: &[SegIdx]) {
+        if spline.is_empty() {
+            return;
+        }
+
+        let mut last_seg = spline[0];
+
+        // first case: a single segment
+        if spline.len() == 1 {
+            self.adjust_control_point_between_segments(cgraph, last_seg, last_seg, 1, 0, spline);
+            return;
+        }
+
+        // ... more than one segment
+        let mut i = 1usize;
+        while i < spline.len() {
+            let store = self.spline_store.as_ref().expect("spline store present");
+            let ls = &store.segments[last_seg];
+            if ls.initial_segment || !ls.is_straight {
+                if let Some((j, next_seg)) = self.first_non_straight_segment(spline, i) {
+                    self.adjust_control_point_between_segments(
+                        cgraph, last_seg, next_seg, i, j, spline,
+                    );
+                    i = j + 1;
+                    last_seg = next_seg;
+                }
+            }
+        }
+    }
+
+    /// Java `firstNonStraightSegment`.
+    fn first_non_straight_segment(
+        &self,
+        spline: &[SegIdx],
+        index: usize,
+    ) -> Option<(usize, SegIdx)> {
+        if index >= spline.len() {
+            return None;
+        }
+        let store = self.spline_store.as_ref().expect("spline store present");
+        for i in index..spline.len() {
+            let seg = spline[i];
+            if i == spline.len() - 1 || !store.segments[seg].is_straight {
+                return Some((i, seg));
+            }
+        }
+        None
+    }
+
+    /// Java `adjustControlPointBetweenSegments`.
+    fn adjust_control_point_between_segments(
+        &mut self,
+        cgraph: &CGraph,
+        left: SegIdx,
+        right: SegIdx,
+        left_idx: usize,
+        right_idx: usize,
+        spline: &[SegIdx],
+    ) {
+        let store = self.spline_store.as_ref().expect("spline store present");
+
+        // check if the initial segment of the spline is a straight one
+        let start_x;
+        let mut idx1 = left_idx as i64;
+        let left_seg = &store.segments[left];
+        if left_seg.initial_segment && left_seg.is_straight {
+            let src = left_seg.source_node.expect("initial segment has source node");
+            let cn = self.nodes_map[src.index()].expect("source node has CNode");
+            let hb = cgraph.cnodes[cn].hitbox;
+            start_x = hb.x + hb.width;
+            idx1 -= 1;
+        } else {
+            start_x = left_seg.bounding_box.x + left_seg.bounding_box.width;
+        }
+
+        // ... the same for the last segment
+        let end_x;
+        let mut idx2 = right_idx as i64;
+        let right_seg = &store.segments[right];
+        if right_seg.last_segment && right_seg.is_straight {
+            let tgt = right_seg.target_node.expect("last segment has target node");
+            let cn = self.nodes_map[tgt.index()].expect("target node has CNode");
+            end_x = cgraph.cnodes[cn].hitbox.x;
+            idx2 += 1;
+        } else {
+            end_x = right_seg.bounding_box.x;
+        }
+
+        // divide the available space into equidistant chunks
+        let strip = end_x - start_x;
+        let chunks = std::cmp::max(2, idx2 - idx1) as f64;
+        let chunk = strip / chunks;
+
+        // apply new positions to the control points
+        let mut new_pos = start_x + chunk;
+        let store = self.spline_store.as_mut().expect("spline store present");
+        let mut k = idx1;
+        while k < idx2 {
+            let seg = spline[k as usize];
+            let width = store.segments[seg].bounding_box.width;
+            store.segments[seg].bounding_box.x = new_pos - width / 2.0;
+            new_pos += chunk;
+            k += 1;
+        }
     }
 
     fn apply_comment_positions(&self, a: &mut LGraphArena) {

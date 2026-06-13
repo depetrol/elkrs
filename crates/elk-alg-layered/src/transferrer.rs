@@ -91,8 +91,13 @@ pub fn apply_layout(
     // nested subgraphs
     let nodes = a.graph(lgraph).layerless_nodes.clone();
     for lnode in nodes {
-        if a.node(lnode).nested_graph.is_some() {
-            return Err("TODO: nested graph layout transfer is not ported yet".to_string());
+        if let Some(nested) = a.node(lnode).nested_graph {
+            // The nested graph's ElkNode parent is the origin of the LNode
+            // that represents it on this level.
+            if let Some(Origin::Node(child_elk)) = a.node(lnode).properties.try_get(&iprops::ORIGIN)
+            {
+                apply_layout(a, elk, nested, child_elk)?;
+            }
         }
     }
     Ok(())

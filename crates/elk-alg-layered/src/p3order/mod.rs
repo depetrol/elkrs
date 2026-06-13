@@ -5,6 +5,7 @@ pub mod counting;
 pub mod forster_constraint_resolver;
 pub mod graph_info_holder;
 pub mod greedy_port_distributor;
+pub mod interactive;
 pub mod greedy_switch;
 pub mod layer_sweep;
 pub mod layer_sweep_type_decider;
@@ -13,15 +14,18 @@ pub mod model_order_comparators;
 pub mod port_distributor;
 pub mod sweep_copy;
 
+use elk_graph::properties::EnumSet;
+
 use crate::graph::{LGraphArena, LGraphId};
 use elk_core::javacompat::JavaRandom;
-use crate::options_gen::CrossingMinimizationStrategy;
+use crate::internal_properties as iprops;
+use crate::options_gen::{CrossingMinimizationStrategy, GraphProperties};
 use crate::phases::{IntermediateProcessorStrategy as Ips, LayeredPhases, ProcessorConfiguration};
 
 pub fn processor_configuration(
     strategy: CrossingMinimizationStrategy,
-    _a: &LGraphArena,
-    _graph: LGraphId,
+    a: &LGraphArena,
+    graph: LGraphId,
     config: &mut ProcessorConfiguration,
 ) -> Result<(), String> {
     match strategy {
@@ -31,6 +35,18 @@ pub fn processor_configuration(
                 .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::IN_LAYER_CONSTRAINT_PROCESSOR)
                 .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::LONG_EDGE_JOINER)
                 .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::PORT_LIST_SORTER);
+            Ok(())
+        }
+        CrossingMinimizationStrategy::INTERACTIVE => {
+            config
+                .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::LONG_EDGE_SPLITTER)
+                .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::IN_LAYER_CONSTRAINT_PROCESSOR)
+                .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::LONG_EDGE_JOINER);
+            let graph_properties: EnumSet<GraphProperties> =
+                a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
+            if graph_properties.contains(GraphProperties::NON_FREE_PORTS) {
+                config.add_before(LayeredPhases::P3_NODE_ORDERING, Ips::PORT_LIST_SORTER);
+            }
             Ok(())
         }
         other => Err(format!("TODO: crossing minimization strategy {other:?} is not ported yet")),
@@ -45,6 +61,7 @@ pub fn process(
 ) -> Result<(), String> {
     match strategy {
         CrossingMinimizationStrategy::LAYER_SWEEP => layer_sweep::process(a, graph, random),
+        CrossingMinimizationStrategy::INTERACTIVE => interactive::process(a, graph),
         other => Err(format!("TODO: crossing minimization strategy {other:?} is not ported yet")),
     }
 }

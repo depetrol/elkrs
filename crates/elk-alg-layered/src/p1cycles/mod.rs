@@ -5,6 +5,7 @@ pub mod depth_first;
 pub mod dfs_node_order;
 pub mod greedy;
 pub mod group_model_order_calculator;
+pub mod interactive;
 pub mod model_order;
 pub mod scc;
 
@@ -33,6 +34,15 @@ pub fn processor_configuration(
             config.add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::REVERSED_EDGE_RESTORER);
             Ok(())
         }
+        CycleBreakingStrategy::INTERACTIVE => {
+            config
+                .add_before(
+                    LayeredPhases::P1_CYCLE_BREAKING,
+                    Ips::INTERACTIVE_EXTERNAL_PORT_POSITIONER,
+                )
+                .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::REVERSED_EDGE_RESTORER);
+            Ok(())
+        }
         other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }
@@ -53,6 +63,7 @@ pub fn process(
         CycleBreakingStrategy::DFS_NODE_ORDER => dfs_node_order::process(a, graph),
         CycleBreakingStrategy::SCC_CONNECTIVITY => scc::process_connectivity(a, graph),
         CycleBreakingStrategy::SCC_NODE_TYPE => scc::process_node_type(a, graph),
+        CycleBreakingStrategy::INTERACTIVE => interactive::process(a, graph),
         other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }

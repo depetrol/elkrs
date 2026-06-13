@@ -1,0 +1,35 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "elk.edgeRouting": "SPLINES",
+    "org.eclipse.elk.layered.compaction.postCompaction.strategy": "LEFT"
+  },
+  "children": [
+    { "id": "s",  "width": 40, "height": 40,
+      "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [
+        { "id": "s_s", "width": 5, "height": 5,
+          "layoutOptions": { "port.side": "SOUTH" } },
+        { "id": "s_e", "width": 5, "height": 5,
+          "layoutOptions": { "port.side": "EAST" } }
+      ] },
+    { "id": "m1", "width": 30, "height": 70 },
+    { "id": "m2", "width": 30, "height": 30 },
+    { "id": "n1", "width": 30, "height": 50 },
+    { "id": "t",  "width": 40, "height": 40,
+      "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [
+        { "id": "t_n", "width": 5, "height": 5,
+          "layoutOptions": { "port.side": "NORTH" } },
+        { "id": "t_w", "width": 5, "height": 5,
+          "layoutOptions": { "port.side": "WEST" } }
+      ] }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["s_e"], "targets": ["m1"] },
+    { "id": "e2", "sources": ["s_s"], "targets": ["m2"] },
+    { "id": "e3", "sources": ["m1"],  "targets": ["n1"] },
+    { "id": "e4", "sources": ["m2"],  "targets": ["n1"] },
+    { "id": "e5", "sources": ["n1"],  "targets": ["t_w"] },
+    { "id": "e6", "sources": ["m1"],  "targets": ["t_n"] }
+  ] }

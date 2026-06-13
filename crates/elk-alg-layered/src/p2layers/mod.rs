@@ -3,6 +3,7 @@
 pub mod breadth_first_model_order;
 pub mod coffman_graham;
 pub mod depth_first_model_order;
+pub mod interactive;
 pub mod longest_path;
 pub mod longest_path_source;
 pub mod min_width;
@@ -42,6 +43,16 @@ pub fn processor_configuration(
                 .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::LAYER_CONSTRAINT_POSTPROCESSOR);
             Ok(())
         }
+        LayeringStrategy::INTERACTIVE => {
+            config
+                .add_before(
+                    LayeredPhases::P1_CYCLE_BREAKING,
+                    Ips::INTERACTIVE_EXTERNAL_PORT_POSITIONER,
+                )
+                .add_before(LayeredPhases::P2_LAYERING, Ips::LAYER_CONSTRAINT_PREPROCESSOR)
+                .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::LAYER_CONSTRAINT_POSTPROCESSOR);
+            Ok(())
+        }
         other => Err(format!("TODO: layering strategy {other:?} is not ported yet")),
     }
 }
@@ -61,6 +72,7 @@ pub fn process(
         LayeringStrategy::STRETCH_WIDTH => stretch_width::process(a, graph),
         LayeringStrategy::BF_MODEL_ORDER => breadth_first_model_order::process(a, graph),
         LayeringStrategy::DF_MODEL_ORDER => depth_first_model_order::process(a, graph),
+        LayeringStrategy::INTERACTIVE => interactive::process(a, graph),
         other => Err(format!("TODO: layering strategy {other:?} is not ported yet")),
     }
 }

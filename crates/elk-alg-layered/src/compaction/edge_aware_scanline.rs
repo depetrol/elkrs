@@ -207,13 +207,37 @@ impl EdgeAwareScanlineConstraintCalculation {
     fn edge_edge_spacing_for(&self, lnode: usize) -> f64 {
         self.edge_edge_node_spacing[lnode]
     }
+
+    /// Java `calculateForSpline`.
+    fn calculate_for_spline(&self, c: &mut OneDimensionalCompactor) {
+        // -------------------- Vertical Segments --------------------
+        // Some constraints between subsequent vertical segments of the same
+        // spline have been precalculated during import. The boxes are not
+        // enlarged here since that risks introducing overlaps.
+        scanline::sweep(c, |c, n| {
+            matches!(c.cgraph.cnodes[n].origin, CNodeOrigin::VerticalSegment(_))
+        });
+
+        // -------------------- Everything --------------------
+        let min_spacing = self.min_spacing(c);
+        let l_nodes: Vec<CNodeId> = (0..c.cgraph.cnodes.len())
+            .filter(|&i| matches!(c.cgraph.cnodes[i].origin, CNodeOrigin::LNode(_)))
+            .collect();
+        for &n in &l_nodes {
+            self.alter_hitbox(c, n, min_spacing, 1.0);
+        }
+        scanline::sweep(c, |_, _| true);
+        for &n in &l_nodes {
+            self.alter_hitbox(c, n, min_spacing, -1.0);
+        }
+    }
 }
 
 impl ConstraintCalculationAlgorithm for EdgeAwareScanlineConstraintCalculation {
     fn calculate_constraints(&mut self, compactor: &mut OneDimensionalCompactor) {
         match self.edge_routing {
             EdgeRouting::ORTHOGONAL => self.calculate_for_orthogonal(compactor),
-            EdgeRouting::SPLINES => panic!("Spline compaction not supported."),
+            EdgeRouting::SPLINES => self.calculate_for_spline(compactor),
             _ => panic!("Unsupported configuration."),
         }
     }

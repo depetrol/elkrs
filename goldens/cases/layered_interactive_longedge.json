@@ -1,0 +1,21 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "org.eclipse.elk.layered.cycleBreaking.strategy": "INTERACTIVE",
+    "org.eclipse.elk.layered.layering.strategy": "INTERACTIVE",
+    "org.eclipse.elk.layered.crossingMinimization.strategy": "INTERACTIVE",
+    "org.eclipse.elk.layered.nodePlacement.strategy": "INTERACTIVE"
+  },
+  "children": [
+    { "id": "a", "x": 0,   "y": 50,  "width": 40, "height": 40 },
+    { "id": "b", "x": 150, "y": 0,   "width": 40, "height": 40 },
+    { "id": "c", "x": 150, "y": 120, "width": 40, "height": 40 },
+    { "id": "d", "x": 300, "y": 0,   "width": 40, "height": 40 },
+    { "id": "e", "x": 450, "y": 50,  "width": 40, "height": 40 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["e"] },
+    { "id": "e3", "sources": ["b"], "targets": ["d"] },
+    { "id": "e4", "sources": ["d"], "targets": ["e"] },
+    { "id": "e5", "sources": ["a"], "targets": ["c"] },
+    { "id": "e6", "sources": ["c"], "targets": ["e"] } ] }

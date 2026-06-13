@@ -1,6 +1,7 @@
 //! Phase 4: node placement (`org.eclipse.elk.alg.layered.p4nodes`).
 
 pub mod bk;
+pub mod interactive;
 pub mod linear_segments;
 pub mod network_simplex_placer;
 pub mod simple;
@@ -32,7 +33,8 @@ pub fn processor_configuration(
         NodePlacementStrategy::BRANDES_KOEPF
         | NodePlacementStrategy::SIMPLE
         | NodePlacementStrategy::LINEAR_SEGMENTS
-        | NodePlacementStrategy::NETWORK_SIMPLEX => {
+        | NodePlacementStrategy::NETWORK_SIMPLEX
+        | NodePlacementStrategy::INTERACTIVE => {
             let graph_properties: EnumSet<GraphProperties> =
                 a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
             if graph_properties.contains(GraphProperties::EXTERNAL_PORTS) {
@@ -58,6 +60,7 @@ pub fn process(
         NodePlacementStrategy::SIMPLE => simple::process(a, graph),
         NodePlacementStrategy::LINEAR_SEGMENTS => linear_segments::process(a, graph),
         NodePlacementStrategy::NETWORK_SIMPLEX => network_simplex_placer::process(a, graph),
+        NodePlacementStrategy::INTERACTIVE => interactive::process(a, graph),
         other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
     }
 }

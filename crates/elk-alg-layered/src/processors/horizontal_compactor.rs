@@ -162,8 +162,13 @@ impl SpecialSpacingsHandler {
                 }
                 let nt1 = node_type_from_index(t1);
                 let nt2 = node_type_from_index(t2);
-                horiz[t1][t2] = spacings::horizontal_spacing_by_type(a, graph, nt1, nt2);
-                vert[t1][t2] = spacings::vertical_spacing_by_type(a, graph, nt1, nt2);
+                // Java leaves some type-pair mappings null and only queries them
+                // for pairs that actually become adjacent; here the table is
+                // precomputed, so absent pairs stay NaN (never legitimately read).
+                horiz[t1][t2] = spacings::try_horizontal_spacing_by_type(a, graph, nt1, nt2)
+                    .unwrap_or(f64::NAN);
+                vert[t1][t2] = spacings::try_vertical_spacing_by_type(a, graph, nt1, nt2)
+                    .unwrap_or(f64::NAN);
             }
         }
 

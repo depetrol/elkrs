@@ -192,3 +192,26 @@ pub fn vertical_spacing_by_type(
         .unwrap_or_else(|| panic!("unspecified spacing between {t1:?} and {t2:?}"));
     a.graph(graph).properties.get(prop)
 }
+
+/// Like [`horizontal_spacing_by_type`] but returns `None` when no spacing
+/// property is defined for the type pair (Java leaves the mapping `null`, in
+/// which case the value is only ever queried for pairs that actually occur).
+/// Used by the compaction spacing handler, which eagerly precomputes a table.
+pub fn try_horizontal_spacing_by_type(
+    a: &LGraphArena,
+    graph: LGraphId,
+    t1: NodeType,
+    t2: NodeType,
+) -> Option<f64> {
+    tables().horizontal[t1 as usize][t2 as usize].map(|prop| a.graph(graph).properties.get(prop))
+}
+
+/// Like [`vertical_spacing_by_type`] but returns `None` for an undefined pair.
+pub fn try_vertical_spacing_by_type(
+    a: &LGraphArena,
+    graph: LGraphId,
+    t1: NodeType,
+    t2: NodeType,
+) -> Option<f64> {
+    tables().vertical[t1 as usize][t2 as usize].map(|prop| a.graph(graph).properties.get(prop))
+}

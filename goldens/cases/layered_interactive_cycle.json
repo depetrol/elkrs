@@ -1,0 +1,15 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "org.eclipse.elk.layered.cycleBreaking.strategy": "INTERACTIVE"
+  },
+  "children": [
+    { "id": "a", "x": 10,  "y": 20,  "width": 30, "height": 30 },
+    { "id": "b", "x": 120, "y": 20,  "width": 30, "height": 30 },
+    { "id": "c", "x": 240, "y": 20,  "width": 30, "height": 30 },
+    { "id": "d", "x": 120, "y": 120, "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["c"], "targets": ["a"] },
+    { "id": "e4", "sources": ["d"], "targets": ["b"] } ] }

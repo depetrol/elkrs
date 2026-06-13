@@ -89,13 +89,10 @@ pub fn process_with_type(
     if cross_min_type == CrossMinType::Median {
         return Err(format!("TODO: cross minimizer {cross_min_type:?} not ported yet"));
     }
-    for &layer in &layers {
-        for &node in &a.layer(layer).nodes {
-            if a.node(node).nested_graph.is_some() {
-                return Err("TODO: hierarchical crossing minimization not ported yet".to_string());
-            }
-        }
-    }
+    // Hierarchical (nested-graph) layouts are handled bottom-up by the
+    // LayerSweepTypeDecider for the simple compound case; the only unported
+    // path (sweeping top-down into a child) is rejected at the point it would
+    // actually be taken, in `sweep_in_hierarchical_nodes`.
 
     let (mut sweep, graphs_to_sweep_on) = initialize(a, graph, random, cross_min_type)?;
 

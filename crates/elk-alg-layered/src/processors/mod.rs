@@ -10,6 +10,7 @@ pub mod end_label_preprocessor;
 pub mod end_label_sorter;
 pub mod final_spline_bendpoints_calculator;
 pub mod graph_transformer;
+pub mod hierarchical_node_resizer;
 pub mod high_degree_node_layer_processor;
 pub mod horizontal_compactor;
 pub mod hyperedge_dummy_merger;
@@ -48,6 +49,8 @@ pub mod breaking_point_remover;
 pub mod alternating_layer_unzipper;
 pub mod semi_interactive_crossmin_processor;
 pub mod sort_by_input_order_of_model;
+pub mod constraints_postprocessor;
+pub mod interactive_external_port_positioner;
 
 use elk_core::javacompat::JavaRandom;
 
@@ -138,6 +141,11 @@ pub fn process(
         Ips::SORT_BY_INPUT_ORDER_OF_MODEL => sort_by_input_order_of_model::process(a, graph),
         Ips::SEMI_INTERACTIVE_CROSSMIN_PROCESSOR => {
             semi_interactive_crossmin_processor::process(a, graph)
+        }
+        Ips::HIERARCHICAL_NODE_RESIZER => hierarchical_node_resizer::process(a, graph),
+        Ips::CONSTRAINTS_POSTPROCESSOR => constraints_postprocessor::process(a, graph),
+        Ips::INTERACTIVE_EXTERNAL_PORT_POSITIONER => {
+            interactive_external_port_positioner::process(a, graph)
         }
         other => Err(format!("TODO: intermediate processor {other:?} is not ported yet")),
     }

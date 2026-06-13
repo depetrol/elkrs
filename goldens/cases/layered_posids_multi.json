@@ -1,0 +1,22 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "org.eclipse.elk.layered.generatePositionAndLayerIds": "true"
+  },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "b", "width": 30, "height": 30 },
+    { "id": "c", "width": 30, "height": 30 },
+    { "id": "d", "width": 30, "height": 30 },
+    { "id": "f", "width": 30, "height": 30 },
+    { "id": "g", "width": 30, "height": 30 },
+    { "id": "h", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["c"] },
+    { "id": "e3", "sources": ["a"], "targets": ["d"] },
+    { "id": "e4", "sources": ["b"], "targets": ["f"] },
+    { "id": "e5", "sources": ["c"], "targets": ["g"] },
+    { "id": "e6", "sources": ["d"], "targets": ["g"] },
+    { "id": "e7", "sources": ["f"], "targets": ["h"] },
+    { "id": "e8", "sources": ["g"], "targets": ["h"] } ] }

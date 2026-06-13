@@ -1,0 +1,356 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "0",
+        "org.eclipse.elk.layered.layering.layerId": "0"
+      },
+      "x": 12.0,
+      "y": 72.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "b",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "0",
+        "org.eclipse.elk.layered.layering.layerId": "1"
+      },
+      "x": 72.0,
+      "y": 12.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "c",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "1",
+        "org.eclipse.elk.layered.layering.layerId": "1"
+      },
+      "x": 72.0,
+      "y": 142.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "d",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "0",
+        "org.eclipse.elk.layered.layering.layerId": "2"
+      },
+      "x": 152.0,
+      "y": 42.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "e",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "1",
+        "org.eclipse.elk.layered.layering.layerId": "2"
+      },
+      "x": 152.0,
+      "y": 172.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "f",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "0",
+        "org.eclipse.elk.layered.layering.layerId": "3"
+      },
+      "x": 212.0,
+      "y": 102.0,
+      "width": 40.0,
+      "height": 40.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.interactiveLayout": "true",
+    "org.eclipse.elk.layered.cycleBreaking.strategy": "INTERACTIVE",
+    "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.algorithm": "layered",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.layered.nodePlacement.strategy": "INTERACTIVE",
+    "org.eclipse.elk.layered.layering.strategy": "INTERACTIVE",
+    "org.eclipse.elk.layered.crossingMinimization.strategy": "INTERACTIVE",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 264.0,
+  "height": 224.0,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "b"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 52.0,
+            "y": 85.33333333333333
+          },
+          "endPoint": {
+            "x": 72.0,
+            "y": 32.0
+          },
+          "bendPoints": [
+            {
+              "x": 62.0,
+              "y": 85.33333333333333
+            },
+            {
+              "x": 62.0,
+              "y": 32.0
+            }
+          ],
+          "incomingShape": "a",
+          "outgoingShape": "b"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "a"
+      ],
+      "targets": [
+        "c"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 52.0,
+            "y": 98.66666666666667
+          },
+          "endPoint": {
+            "x": 72.0,
+            "y": 162.0
+          },
+          "bendPoints": [
+            {
+              "x": 62.0,
+              "y": 98.66666666666667
+            },
+            {
+              "x": 62.0,
+              "y": 162.0
+            }
+          ],
+          "incomingShape": "a",
+          "outgoingShape": "c"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e3",
+      "sources": [
+        "b"
+      ],
+      "targets": [
+        "d"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 112.0,
+            "y": 25.333333333333336
+          },
+          "endPoint": {
+            "x": 152.0,
+            "y": 62.0
+          },
+          "bendPoints": [
+            {
+              "x": 142.0,
+              "y": 25.333333333333336
+            },
+            {
+              "x": 142.0,
+              "y": 62.0
+            }
+          ],
+          "incomingShape": "b",
+          "outgoingShape": "d"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e4",
+      "sources": [
+        "c"
+      ],
+      "targets": [
+        "e"
+      ],
+      "sections": [
+        {
+          "id": "s3",
+          "startPoint": {
+            "x": 112.0,
+            "y": 162.0
+          },
+          "endPoint": {
+            "x": 152.0,
+            "y": 198.66666666666666
+          },
+          "bendPoints": [
+            {
+              "x": 122.0,
+              "y": 162.0
+            },
+            {
+              "x": 122.0,
+              "y": 198.66666666666666
+            }
+          ],
+          "incomingShape": "c",
+          "outgoingShape": "e"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e5",
+      "sources": [
+        "d"
+      ],
+      "targets": [
+        "f"
+      ],
+      "sections": [
+        {
+          "id": "s4",
+          "startPoint": {
+            "x": 192.0,
+            "y": 62.0
+          },
+          "endPoint": {
+            "x": 212.0,
+            "y": 115.33333333333333
+          },
+          "bendPoints": [
+            {
+              "x": 202.0,
+              "y": 62.0
+            },
+            {
+              "x": 202.0,
+              "y": 115.33333333333333
+            }
+          ],
+          "incomingShape": "d",
+          "outgoingShape": "f"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e6",
+      "sources": [
+        "e"
+      ],
+      "targets": [
+        "f"
+      ],
+      "sections": [
+        {
+          "id": "s5",
+          "startPoint": {
+            "x": 192.0,
+            "y": 192.0
+          },
+          "endPoint": {
+            "x": 212.0,
+            "y": 128.66666666666669
+          },
+          "bendPoints": [
+            {
+              "x": 202.0,
+              "y": 192.0
+            },
+            {
+              "x": 202.0,
+              "y": 128.66666666666669
+            }
+          ],
+          "incomingShape": "e",
+          "outgoingShape": "f"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e7",
+      "sources": [
+        "b"
+      ],
+      "targets": [
+        "e"
+      ],
+      "sections": [
+        {
+          "id": "s6",
+          "startPoint": {
+            "x": 112.0,
+            "y": 38.66666666666667
+          },
+          "endPoint": {
+            "x": 152.0,
+            "y": 185.33333333333334
+          },
+          "bendPoints": [
+            {
+              "x": 132.0,
+              "y": 38.66666666666667
+            },
+            {
+              "x": 132.0,
+              "y": 185.33333333333334
+            }
+          ],
+          "incomingShape": "b",
+          "outgoingShape": "e"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

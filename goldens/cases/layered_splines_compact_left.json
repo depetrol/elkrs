@@ -1,0 +1,24 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "layered",
+    "elk.edgeRouting": "SPLINES",
+    "org.eclipse.elk.layered.compaction.postCompaction.strategy": "LEFT"
+  },
+  "children": [
+    { "id": "s",  "width": 30, "height": 30 },
+    { "id": "m1", "width": 30, "height": 80 },
+    { "id": "m2", "width": 30, "height": 30 },
+    { "id": "n1", "width": 30, "height": 50 },
+    { "id": "n2", "width": 30, "height": 30 },
+    { "id": "t",  "width": 30, "height": 60 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["s"],  "targets": ["m1"] },
+    { "id": "e2", "sources": ["s"],  "targets": ["m2"] },
+    { "id": "e3", "sources": ["m1"], "targets": ["n1"] },
+    { "id": "e4", "sources": ["m2"], "targets": ["n2"] },
+    { "id": "e5", "sources": ["n1"], "targets": ["t"] },
+    { "id": "e6", "sources": ["n2"], "targets": ["t"] },
+    { "id": "e7", "sources": ["s"],  "targets": ["t"] },
+    { "id": "e8", "sources": ["s"],  "targets": ["n1"] }
+  ] }

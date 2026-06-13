@@ -103,7 +103,12 @@ fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Stri
                     // Continue with the graph at the bottom of the hierarchy.
                     break;
                 } else {
-                    // Operates on full hierarchy and is not root: skip and pause.
+                    // Operates on full hierarchy and is not root. Java consumes
+                    // this processor from the per-graph iterator (via next())
+                    // before breaking, so the non-root graph SKIPS the
+                    // hierarchical processor (which the root runs on its behalf)
+                    // and resumes at the next processor on the following visit.
+                    graphs_and_algorithms[gi].2 += 1;
                     break;
                 }
             }
