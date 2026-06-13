@@ -82,6 +82,20 @@ against Java ELK, replicating its test suite.
   golden passes -> expand corpus (ports, labels, hierarchy, edge routing
   variants) porting more processors/phases -> remaining strategies.
 
+## Milestone: 63/63 goldens pixel-identical, 9 algorithms 2026-06-12
+
+Algorithms done (pixel-exact vs 0.11.0 oracle): fixed, box, random, layered
+(default pipeline + directions + ports incl. FIXED_*/inverted/north-south +
+self loops + node labels + layer constraints + LONGEST_PATH + SIMPLE placer),
+force, stress, radial, rectpacking, mrtree. `cargo test -p elk-cli` runs the
+63-case golden suite. Next wave (agents launched, check completions):
+spore+disco, topdownpacking+vertiflex, layered polyline/spline routers,
+layered remaining strategies (COFFMAN_GRAHAM/MIN_WIDTH/STRETCH_WIDTH/
+LINEAR_SEGMENTS/NETWORK_SIMPLEX placer), layered edge labels
+(LABEL_DUMMY_*, END_LABEL_*), layered hierarchical+external ports.
+After that: model order/wrapping/compaction strategies, JUnit test
+replication (elk/test/**), GOLDEN_NOTES for known ULP/trig caveats.
+
 ## Milestone: 19/19 goldens pixel-identical (incl. 6 layered) 2026-06-12
 
 Default layered pipeline fully ported and bit-exact vs oracle. Next fronts:
