@@ -149,3 +149,9 @@ pub static SPLINE_EDGE_CHAIN: Property<Vec<LEdgeId>> = Property::new("splines.ed
 /// the segment objects directly via `SPLINE_ROUTE_START`).
 pub static SPLINE_SEGMENT_STORE: Property<crate::p5edges::splines::SplineSegmentStore> =
     Property::new("splines.segmentStore.rs");
+
+/// Java `InternalProperties.CROSS_HIERARCHY_MAP`
+/// (`Multimap<LEdge, CrossHierarchyEdge>`), attached to the top-level graph by
+/// the `CompoundGraphPreprocessor` and consumed by the postprocessor.
+pub static CROSS_HIERARCHY_MAP: Property<crate::compound::CrossHierarchyMap> =
+    Property::new("crossHierarchyMap");

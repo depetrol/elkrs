@@ -1,5 +1,6 @@
 //! Rust port of `org.eclipse.elk.alg.common` (node spacing, network simplex, ...).
 
+pub mod compaction;
 pub mod elkmath;
 pub mod jhash;
 pub mod networksimplex;

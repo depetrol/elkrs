@@ -2,6 +2,7 @@
 //! layout algorithm.
 
 pub mod components;
+pub mod compound;
 pub mod configurator;
 pub mod elk_layered;
 pub mod graph;

@@ -10,6 +10,10 @@ pub mod end_label_preprocessor;
 pub mod end_label_sorter;
 pub mod final_spline_bendpoints_calculator;
 pub mod graph_transformer;
+pub mod high_degree_node_layer_processor;
+pub mod horizontal_compactor;
+pub mod hyperedge_dummy_merger;
+pub mod hypernode_processor;
 pub mod label_dummy_inserter;
 pub mod label_dummy_remover;
 pub mod label_dummy_switcher;
@@ -25,6 +29,9 @@ pub mod long_edge_joiner;
 pub mod long_edge_splitter;
 pub mod node_promotion;
 pub mod north_south_port_postprocessor;
+pub mod partition_midprocessor;
+pub mod partition_postprocessor;
+pub mod partition_preprocessor;
 pub mod north_south_port_preprocessor;
 pub mod port_list_sorter;
 pub mod port_side_processor;
@@ -106,6 +113,15 @@ pub fn process(
         Ips::TWO_SIDED_GREEDY_SWITCH => {
             layer_sweep::process_with_type(a, graph, random, CrossMinType::TwoSidedGreedySwitch)
         }
+        Ips::PARTITION_PREPROCESSOR => partition_preprocessor::process(a, graph),
+        Ips::PARTITION_MIDPROCESSOR => partition_midprocessor::process(a, graph),
+        Ips::PARTITION_POSTPROCESSOR => partition_postprocessor::process(a, graph),
+        Ips::HYPEREDGE_DUMMY_MERGER => hyperedge_dummy_merger::process(a, graph),
+        Ips::HYPERNODE_PROCESSOR => hypernode_processor::process(a, graph),
+        Ips::HIGH_DEGREE_NODE_LAYER_PROCESSOR => {
+            high_degree_node_layer_processor::process(a, graph)
+        }
+        Ips::HORIZONTAL_COMPACTOR => horizontal_compactor::process(a, graph),
         other => Err(format!("TODO: intermediate processor {other:?} is not ported yet")),
     }
 }

@@ -16,21 +16,8 @@ use crate::processors;
 
 /// Port of `ElkLayered.doLayout`.
 pub fn do_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
-    if a.graph(lgraph)
-        .properties
-        .get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
-        == HierarchyHandling::INCLUDE_CHILDREN
-    {
-        return Err("TODO: compound (INCLUDE_CHILDREN) layout is not ported yet".to_string());
-    }
-
     // the random number generator (Java: stored in the RANDOM property)
-    let random_seed: i32 = a.graph(lgraph).properties.get(&lopts::RANDOM_SEED);
-    let mut random = if random_seed == 0 {
-        JavaRandom::new(1) // Java uses time-based here; not reproducible
-    } else {
-        JavaRandom::new(random_seed as i64)
-    };
+    let mut random = make_random(a, lgraph);
 
     let pipeline = configurator::prepare_graph_for_layout(a, lgraph)?;
 
@@ -41,6 +28,176 @@ pub fn do_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     ComponentsProcessor::combine(a, &mut components, lgraph)?;
 
     resize_graph(a, lgraph);
+    Ok(())
+}
+
+/// The random number generator created from `RANDOM_SEED` (Java stores a
+/// `Random` instance in the `RANDOM` graph property).
+fn make_random(a: &LGraphArena, lgraph: LGraphId) -> JavaRandom {
+    let random_seed: i32 = a.graph(lgraph).properties.get(&lopts::RANDOM_SEED);
+    if random_seed == 0 {
+        JavaRandom::new(1) // Java uses time-based here; not reproducible
+    } else {
+        JavaRandom::new(random_seed as i64)
+    }
+}
+
+/// Port of `ElkLayered.doCompoundLayout`.
+pub fn do_compound_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
+    // Preprocess the compound graph by splitting cross-hierarchy edges.
+    crate::compound::preprocess(a, lgraph)?;
+
+    hierarchical_layout(a, lgraph)?;
+
+    // Postprocess the compound graph by combining split cross-hierarchy edges.
+    crate::compound::postprocess(a, lgraph)?;
+
+    Ok(())
+}
+
+/// Port of `ElkLayered.hierarchicalLayout`.
+fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
+    // Perform a reversed breadth first search: the graphs in the lowest
+    // hierarchy come first.
+    let graphs = collect_all_graphs_bottom_up(a, lgraph);
+
+    // Make sure hierarchical processors don't break control flow (#228).
+    review_and_correct_hierarchical_processors(a, lgraph, &graphs)?;
+
+    // Random number generator is created from the root graph (Java RANDOM).
+    let mut random = make_random(a, lgraph);
+
+    // Get list of processors for each graph, since they can be different.
+    let mut graphs_and_algorithms: Vec<(LGraphId, Vec<PipelineStep>, usize)> = Vec::new();
+    for &g in &graphs {
+        let pipeline = configurator::prepare_graph_for_layout(a, g)?;
+        graphs_and_algorithms.push((g, pipeline, 0));
+    }
+
+    // The root graph is the last one in the bottom-up list.
+    let root_index = graphs_and_algorithms.len() - 1;
+
+    // When the root graph has finished layout, the layout is complete.
+    loop {
+        if graphs_and_algorithms[root_index].2 >= graphs_and_algorithms[root_index].1.len() {
+            break;
+        }
+        // Layout from bottom up.
+        for gi in 0..graphs_and_algorithms.len() {
+            loop {
+                let (graph, ref pipeline, step) = graphs_and_algorithms[gi];
+                if step >= pipeline.len() {
+                    break;
+                }
+                let processor = pipeline[step];
+                let is_hierarchical = is_hierarchy_aware(processor);
+                let is_root = a.graph(graph).parent_node.is_none();
+
+                if !is_hierarchical {
+                    run_step(a, graph, processor, &mut random)?;
+                    graphs_and_algorithms[gi].2 += 1;
+                } else if is_root {
+                    // Hierarchy-aware processor runs once on the root.
+                    run_step(a, graph, processor, &mut random)?;
+                    graphs_and_algorithms[gi].2 += 1;
+                    // Continue with the graph at the bottom of the hierarchy.
+                    break;
+                } else {
+                    // Operates on full hierarchy and is not root: skip and pause.
+                    break;
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+/// Java: a processor is hierarchy-aware iff it is a `LayerSweepCrossingMinimizer`.
+/// In this port that is the LAYER_SWEEP crossing minimization phase and the
+/// one/two-sided greedy switch intermediate processors.
+fn is_hierarchy_aware(step: PipelineStep) -> bool {
+    use crate::options_gen::CrossingMinimizationStrategy;
+    use crate::phases::IntermediateProcessorStrategy as Ips;
+    match step {
+        PipelineStep::CrossingMinimization(CrossingMinimizationStrategy::LAYER_SWEEP) => true,
+        PipelineStep::Intermediate(Ips::ONE_SIDED_GREEDY_SWITCH)
+        | PipelineStep::Intermediate(Ips::TWO_SIDED_GREEDY_SWITCH) => true,
+        _ => false,
+    }
+}
+
+/// Runs a single pipeline step on a graph (does not move nodes out of layers,
+/// unlike the flat `layout`, since the hierarchical resizer / final phases
+/// handle that).
+fn run_step(
+    a: &mut LGraphArena,
+    graph: LGraphId,
+    step: PipelineStep,
+    random: &mut JavaRandom,
+) -> Result<(), String> {
+    match step {
+        PipelineStep::Intermediate(strategy) => processors::process(strategy, a, graph, random),
+        PipelineStep::CycleBreaking(s) => crate::p1cycles::process(s, a, graph, random),
+        PipelineStep::Layering(s) => crate::p2layers::process(s, a, graph, random),
+        PipelineStep::CrossingMinimization(s) => crate::p3order::process(s, a, graph, random),
+        PipelineStep::NodePlacement(s) => crate::p4nodes::process(s, a, graph, random),
+        PipelineStep::EdgeRouting(s) => crate::p5edges::process(s, a, graph, random),
+    }
+}
+
+/// Port of `ElkLayered.collectAllGraphsBottomUp`: breadth-first search in the
+/// compound graph with reversed order (innermost graphs first).
+fn collect_all_graphs_bottom_up(a: &LGraphArena, root: LGraphId) -> Vec<LGraphId> {
+    // collectedGraphs and continueSearching are ArrayDeques used as stacks
+    // (push = addFirst, pop = removeFirst).
+    let mut collected: std::collections::VecDeque<LGraphId> = std::collections::VecDeque::new();
+    let mut to_search: std::collections::VecDeque<LGraphId> = std::collections::VecDeque::new();
+    collected.push_front(root);
+    to_search.push_front(root);
+
+    while let Some(next_graph) = to_search.pop_front() {
+        for &node in &a.graph(next_graph).layerless_nodes {
+            if let Some(nested) = a.node(node).nested_graph {
+                collected.push_front(nested);
+                to_search.push_front(nested);
+            }
+        }
+    }
+    collected.into_iter().collect()
+}
+
+/// Port of `ElkLayered.reviewAndCorrectHierarchicalProcessors`.
+fn review_and_correct_hierarchical_processors(
+    a: &mut LGraphArena,
+    root: LGraphId,
+    graphs: &[LGraphId],
+) -> Result<(), String> {
+    use crate::options_gen::{CrossingMinimizationStrategy, GreedySwitchType};
+
+    let parent_cms: CrossingMinimizationStrategy =
+        a.graph(root).properties.get(&lopts::CROSSING_MINIMIZATION_STRATEGY);
+    for &child in graphs {
+        let child_cms: CrossingMinimizationStrategy =
+            a.graph(child).properties.get(&lopts::CROSSING_MINIMIZATION_STRATEGY);
+        if child_cms != parent_cms {
+            return Err(format!(
+                "The hierarchy aware processor {child_cms:?} in a child node is only allowed if \
+                 the root node specifies the same hierarchical processor."
+            ));
+        }
+    }
+
+    // Greedy switch (copy the root behaviour to all children).
+    let root_type: GreedySwitchType = a
+        .graph(root)
+        .properties
+        .get(&lopts::CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE);
+    for &g in graphs {
+        a.graph(g)
+            .properties
+            .set(&lopts::CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE, root_type);
+    }
     Ok(())
 }
 

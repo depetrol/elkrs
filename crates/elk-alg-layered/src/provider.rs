@@ -1,5 +1,6 @@
 //! Port of `LayeredLayoutProvider`: hooks ELK Layered into the core engine.
 
+use elk_core::options::HierarchyHandling;
 use elk_core::registry::{AlgorithmData, AlgorithmRegistry, GraphFeature, LayoutProvider};
 use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::properties::EnumSet;
@@ -7,6 +8,7 @@ use elk_graph::properties::EnumSet;
 use crate::elk_layered;
 use crate::graph::LGraphArena;
 use crate::importer::ElkGraphImporter;
+use crate::options_gen as lopts;
 use crate::transferrer;
 
 #[derive(Default)]
@@ -19,7 +21,15 @@ impl LayoutProvider for LayeredLayoutProvider {
             let mut importer = ElkGraphImporter::new(elk);
             importer.import_graph(layout_node, &mut arena)?
         };
-        elk_layered::do_layout(&mut arena, lgraph)?;
+        // Java LayeredLayoutProvider.layout: doCompoundLayout when the graph
+        // (or any of its children) wants its children included, else doLayout.
+        if elk.node(layout_node).properties.get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
+            == HierarchyHandling::INCLUDE_CHILDREN
+        {
+            elk_layered::do_compound_layout(&mut arena, lgraph)?;
+        } else {
+            elk_layered::do_layout(&mut arena, lgraph)?;
+        }
         transferrer::apply_layout(&mut arena, elk, lgraph, layout_node)
     }
 }
