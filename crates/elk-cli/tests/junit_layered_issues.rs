@@ -74,3 +74,92 @@ fn issue680_external_ports() {
     assert!((py - 157.0).abs() < EPS, "parent.y = {py}, expected 157.0");
     assert!((cy - 57.0).abs() < EPS, "child.y = {cy}, expected 57.0");
 }
+
+// ---- Issue871Test: model-order layout with crossingMinimization = NONE ----
+
+fn model_order_opts() -> Value {
+    json!({
+        "org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+        "org.eclipse.elk.direction": "RIGHT",
+        "org.eclipse.elk.layered.cycleBreaking.strategy": "MODEL_ORDER",
+        "org.eclipse.elk.layered.considerModelOrder.strategy": "PREFER_EDGES",
+        "org.eclipse.elk.layered.crossingMinimization.strategy": "NONE",
+        "org.eclipse.elk.layered.crossingMinimization.greedySwitch.type": "OFF",
+        "org.eclipse.elk.padding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.spacing.nodeNode": "10.0",
+        "org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers": "20.0"
+    })
+}
+
+fn node30(id: &str) -> Value {
+    json!({"id": id, "width": 30, "height": 30})
+}
+
+fn y_of<'a>(o: &'a Value, id: &str) -> f64 {
+    o["children"].as_array().unwrap().iter()
+        .find(|c| c["id"] == id).unwrap()["y"].as_f64().unwrap()
+}
+
+#[test]
+fn issue871_feedback_edge_basic() {
+    let mut opts = model_order_opts();
+    opts["org.eclipse.elk.layered.feedbackEdges"] = json!("true");
+    let g = json!({
+        "id": "parent", "layoutOptions": opts,
+        "children": [node30("n1"), node30("n2"), node30("n3")],
+        "edges": [
+            {"id": "e1", "sources": ["n1"], "targets": ["n2"]},
+            {"id": "e2", "sources": ["n2"], "targets": ["n3"]},
+            {"id": "e3", "sources": ["n3"], "targets": ["n2"]}
+        ]
+    });
+    let o = layout(g);
+    // n3 should align with n2
+    assert!((y_of(&o, "n3") - y_of(&o, "n2")).abs() < 0.1);
+}
+
+#[test]
+fn issue871_feedback_edge_below() {
+    let mut opts = model_order_opts();
+    opts["org.eclipse.elk.layered.feedbackEdges"] = json!("true");
+    let g = json!({
+        "id": "parent", "layoutOptions": opts,
+        "children": [node30("n1"), node30("n2"), node30("n3"), node30("n4")],
+        "edges": [
+            {"id": "e1", "sources": ["n1"], "targets": ["n2"]},
+            {"id": "e2", "sources": ["n1"], "targets": ["n3"]},
+            {"id": "e3", "sources": ["n2"], "targets": ["n4"]},
+            {"id": "e4", "sources": ["n4"], "targets": ["n3"]}
+        ]
+    });
+    let o = layout(g);
+    // n4 should align with n2
+    assert!((y_of(&o, "n4") - y_of(&o, "n2")).abs() < 0.1);
+}
+
+#[test]
+fn issue871_no_feedback_edges_still_working() {
+    let g = json!({
+        "id": "parent", "layoutOptions": model_order_opts(),
+        "children": [
+            {"id": "n1", "width": 30, "height": 30, "labels": [{"text": "n1"}]},
+            {"id": "n2", "width": 30, "height": 30, "labels": [{"text": "n2"}]},
+            {"id": "n3", "width": 30, "height": 30, "labels": [{"text": "n3"}]},
+            {"id": "n4", "width": 30, "height": 30, "labels": [{"text": "n4"}]}
+        ],
+        "edges": [
+            {"id": "e1", "sources": ["n1"], "targets": ["n2"], "labels": [{"text": "1"}]},
+            {"id": "e2", "sources": ["n1"], "targets": ["n4"], "labels": [{"text": "2"}]},
+            {"id": "e3", "sources": ["n2"], "targets": ["n4"]},
+            {"id": "e4", "sources": ["n3"], "targets": ["n2"]},
+            {"id": "e5", "sources": ["n3"], "targets": ["n4"]}
+        ]
+    });
+    let o = layout(g);
+    let x = |id| o["children"].as_array().unwrap().iter()
+        .find(|c| c["id"] == id).unwrap()["x"].as_f64().unwrap();
+    for (id, ex, ey) in [("n1", 0.0, 31.0), ("n2", 70.0, 6.0), ("n3", 120.0, 11.0), ("n4", 170.0, 11.0)] {
+        assert!((x(id) - ex).abs() < 0.1, "{id}.x = {}, expected {ex}", x(id));
+        assert!((y_of(&o, id) - ey).abs() < 0.1, "{id}.y = {}, expected {ey}", y_of(&o, id));
+    }
+}

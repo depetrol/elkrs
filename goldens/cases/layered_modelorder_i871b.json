@@ -1,0 +1,8 @@
+{"id":"parent","layoutOptions":{
+  "org.eclipse.elk.algorithm":"org.eclipse.elk.layered","org.eclipse.elk.direction":"RIGHT",
+  "org.eclipse.elk.layered.cycleBreaking.strategy":"MODEL_ORDER","org.eclipse.elk.layered.considerModelOrder.strategy":"PREFER_EDGES",
+  "org.eclipse.elk.layered.crossingMinimization.strategy":"NONE","org.eclipse.elk.layered.crossingMinimization.greedySwitch.type":"OFF",
+  "org.eclipse.elk.padding":"[top=0.0,left=0.0,bottom=0.0,right=0.0]","org.eclipse.elk.spacing.nodeNode":"10.0",
+  "org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers":"20.0","org.eclipse.elk.layered.feedbackEdges":"true"},
+ "children":[{"id":"n1","width":30,"height":30},{"id":"n2","width":30,"height":30},{"id":"n3","width":30,"height":30},{"id":"n4","width":30,"height":30}],
+ "edges":[{"id":"e1","sources":["n1"],"targets":["n2"]},{"id":"e2","sources":["n1"],"targets":["n3"]},{"id":"e3","sources":["n2"],"targets":["n4"]},{"id":"e4","sources":["n4"],"targets":["n3"]}]}

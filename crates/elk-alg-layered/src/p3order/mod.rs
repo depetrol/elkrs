@@ -49,6 +49,17 @@ pub fn processor_configuration(
             }
             Ok(())
         }
+        // `NoCrossingMinimizer`: same intermediate processors as LAYER_SWEEP
+        // (its INTERMEDIATE_PROCESSING_CONFIGURATION plus an unconditional
+        // PORT_LIST_SORTER), but the phase itself is a no-op.
+        CrossingMinimizationStrategy::NONE => {
+            config
+                .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::LONG_EDGE_SPLITTER)
+                .add_before(LayeredPhases::P4_NODE_PLACEMENT, Ips::IN_LAYER_CONSTRAINT_PROCESSOR)
+                .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::LONG_EDGE_JOINER)
+                .add_before(LayeredPhases::P3_NODE_ORDERING, Ips::PORT_LIST_SORTER);
+            Ok(())
+        }
         other => Err(format!("TODO: crossing minimization strategy {other:?} is not ported yet")),
     }
 }
@@ -62,6 +73,8 @@ pub fn process(
     match strategy {
         CrossingMinimizationStrategy::LAYER_SWEEP => layer_sweep::process(a, graph, random),
         CrossingMinimizationStrategy::INTERACTIVE => interactive::process(a, graph),
+        // `NoCrossingMinimizer.process` is empty: keep the layer order as is.
+        CrossingMinimizationStrategy::NONE => Ok(()),
         other => Err(format!("TODO: crossing minimization strategy {other:?} is not ported yet")),
     }
 }
