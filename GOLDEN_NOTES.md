@@ -21,8 +21,11 @@ Consequence: algorithms that feed `sin`/`cos`/`log` results into coordinates
 (radial node placement, Eades force model's attractive term, mrtree, disco
 edge contours, spline control points) can show ~1-ULP coordinate noise on
 adversarial inputs. The committed goldens were verified to be unaffected for
-their specific inputs. A pixel-perfect guarantee here would require shipping
-a bit-exact `fdlibm` port; deferred.
+their specific inputs. The differential fuzzer (`tools/fuzz_diff.py --tol`)
+quantifies the residual: across random radial trees, ~93% are bit-exact and
+the rest match within 1 ULP (relative 1e-9); mrtree and disco are bit-exact
+100%. A pixel-perfect guarantee for the last few radial ULPs would require
+shipping a bit-exact `fdlibm` port; deferred.
 
 ## 2. Identity-hash-ordered Java collections
 

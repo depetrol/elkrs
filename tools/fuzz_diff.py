@@ -91,6 +91,37 @@ def rand_graph(rng, n_nodes, n_edges, with_ports, algorithm):
     return g
 
 
+def _within_tol(a, b, tol):
+    """True if every leaf numeric value in a and b matches within relative
+    tolerance `tol` and all non-numeric leaves are equal. Used to confirm that
+    a fuzz "divergence" is only trig ULP noise (GOLDEN_NOTES §1), not a bug."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        if a.keys() != b.keys():
+            return False
+        return all(_within_tol(a[k], b[k], tol) for k in a)
+    if isinstance(a, list) and isinstance(b, list):
+        return len(a) == len(b) and all(_within_tol(x, y, tol) for x, y in zip(a, b))
+    # numeric strings (ELK serializes some doubles as strings)
+    fa = _as_float(a)
+    fb = _as_float(b)
+    if fa is not None and fb is not None:
+        return abs(fa - fb) <= tol * max(1.0, abs(fa), abs(fb))
+    return a == b
+
+
+def _as_float(v):
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        try:
+            return float(v)
+        except ValueError:
+            return None
+    return None
+
+
 def run(cmd, inp):
     try:
         p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=45)
@@ -107,6 +138,7 @@ def main():
     seed = 1
     algorithm = "layered"
     keep_going = False
+    tol = 0.0
     i = 0
     while i < len(args):
         a = args[i]
@@ -116,6 +148,8 @@ def main():
             algorithm = args[i + 1]; i += 2
         elif a == "--keep-going":
             keep_going = True; i += 1
+        elif a == "--tol":
+            tol = float(args[i + 1]); i += 2
         else:
             n = int(a); i += 1
 
@@ -124,6 +158,7 @@ def main():
     both_err = 0
     rust_only_err = 0
     ok = 0
+    near = 0
     for case in range(n):
         n_nodes = rng.randint(2, 9)
         n_edges = rng.randint(1, n_nodes + 3)
@@ -158,6 +193,8 @@ def main():
                              capture_output=True, text=True)
         if cmp.returncode == 0:
             ok += 1
+        elif tol > 0 and _within_tol(json.loads(o_norm), json.loads(r_out), tol):
+            near += 1
         else:
             diffs += 1
             print(f"\n[case {case}] DIVERGENCE:")
@@ -167,7 +204,7 @@ def main():
             if not keep_going:
                 break
 
-    print(f"\n=== {algorithm} fuzz: {ok} identical, {diffs} diverged, "
+    print(f"\n=== {algorithm} fuzz: {ok} identical, {near} within-tol, {diffs} diverged, "
           f"{rust_only_err} rust-only-errors, {both_err} both-errored "
           f"(seed {seed}, {n} cases) ===")
     sys.exit(1 if (diffs or rust_only_err) else 0)
