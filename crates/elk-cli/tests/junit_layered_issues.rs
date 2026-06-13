@@ -163,3 +163,40 @@ fn issue871_no_feedback_edges_still_working() {
         assert!((y_of(&o, id) - ey).abs() < 0.1, "{id}.y = {}, expected {ey}", y_of(&o, id));
     }
 }
+
+/// `Issue682Test` (parameterized over all four directions): a single node with
+/// an inside-top-center label and NODE_LABELS size constraint. The label sits
+/// at (54, 21) and the node grows to width 54 + 23 + 32 = 109, regardless of
+/// layout direction.
+#[test]
+fn issue682_node_label_placement() {
+    for dir in ["RIGHT", "DOWN", "UP", "LEFT"] {
+        let g = json!({
+            "id": "graph",
+            "layoutOptions": {
+                "org.eclipse.elk.algorithm": "org.eclipse.elk.layered",
+                "org.eclipse.elk.edgeRouting": "ORTHOGONAL",
+                "org.eclipse.elk.direction": dir,
+                "org.eclipse.elk.nodeLabels.padding": "[top=21.0,left=54.0,bottom=43.0,right=32.0]"
+            },
+            "children": [{
+                "id": "parent",
+                "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "NODE_LABELS",
+                    "org.eclipse.elk.nodeLabels.placement": "[H_CENTER, V_TOP, INSIDE]"
+                },
+                "labels": [{"text": "foobar", "width": 23, "height": 22}]
+            }]
+        });
+        let o = layout(g);
+        let parent = &o["children"][0];
+        let label = &parent["labels"][0];
+        let lx = label["x"].as_f64().unwrap();
+        let ly = label["y"].as_f64().unwrap();
+        assert!((lx - 54.0).abs() < EPS, "[{dir}] label.x = {lx}");
+        assert!((ly - 21.0).abs() < EPS, "[{dir}] label.y = {ly}");
+        // node width = label.x + label.width + right padding (32)
+        let w = parent["width"].as_f64().unwrap();
+        assert!((w - (lx + 23.0 + 32.0)).abs() < EPS, "[{dir}] node.width = {w}");
+    }
+}

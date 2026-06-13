@@ -97,6 +97,15 @@ Two narrow compound cases are known to diverge or are deliberately unreached:
   crossing-minimization randomizes the first layer. Independent edges (one port
   per child) are byte-exact; this needs one port shared by ≥2 interior edges.
   Not triggered by the layered fuzzer (it generates flat graphs only).
+- **`nodeLabels.placement` echo under `direction=UP`.** A node with an explicit
+  `NODE_LABELS_PLACEMENT` (e.g. `[H_CENTER, V_TOP, INSIDE]`) laid out with
+  `direction=UP` has the *echoed* placement option flipped to `V_BOTTOM` by the
+  oracle's `GraphTransformer` (the two direction passes do not round-trip the
+  enum). The Rust port round-trips it back to `V_TOP`. This is **cosmetic**: the
+  label and node *geometry* are byte-identical (verified for all four
+  directions — ELK's own `Issue682Test` asserts only geometry, which passes).
+  Only the echoed config string differs, and only for UP. RIGHT/DOWN/LEFT are
+  fully byte-exact (`layered_nodelabel_*` goldens).
 - **`restoreDummy` PORT_LABELS branch** (N/S external-port-label margin
   recomputation in the orthogonal router) returns `Err` rather than
   recomputing — unreached by any input with N/S external ports carrying labels
