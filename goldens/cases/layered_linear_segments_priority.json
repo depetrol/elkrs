@@ -1,0 +1,13 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "nodePlacement.strategy": "LINEAR_SEGMENTS" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 }, { "id": "b", "width": 30, "height": 50 },
+    { "id": "c", "width": 30, "height": 20 }, { "id": "d", "width": 30, "height": 30 },
+    { "id": "e", "width": 30, "height": 40 }, { "id": "f", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["a"], "targets": ["c"] },
+    { "id": "e3", "sources": ["b"], "targets": ["d"] },
+    { "id": "e4", "sources": ["c"], "targets": ["d"], "layoutOptions": { "priority.straightness": 5 } },
+    { "id": "e5", "sources": ["a"], "targets": ["e"] },
+    { "id": "e6", "sources": ["d"], "targets": ["f"] },
+    { "id": "e7", "sources": ["e"], "targets": ["f"] } ] }

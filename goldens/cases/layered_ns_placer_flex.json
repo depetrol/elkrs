@@ -1,0 +1,15 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "nodePlacement.strategy": "NETWORK_SIMPLEX",
+    "nodePlacement.networkSimplex.nodeFlexibility.default": "PORT_POSITION" },
+  "children": [
+    { "id": "a", "width": 30, "height": 30 },
+    { "id": "b", "width": 30, "height": 80,
+      "ports": [ { "id": "b_in1", "width": 4, "height": 4 }, { "id": "b_in2", "width": 4, "height": 4 },
+                 { "id": "b_out", "width": 4, "height": 4 } ] },
+    { "id": "c", "width": 30, "height": 30 },
+    { "id": "d", "width": 30, "height": 30 },
+    { "id": "e", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b_in1"] },
+    { "id": "e2", "sources": ["c"], "targets": ["b_in2"] },
+    { "id": "e3", "sources": ["b_out"], "targets": ["d"] },
+    { "id": "e4", "sources": ["c"], "targets": ["e"] } ] }

@@ -1,13 +1,13 @@
 //! Port of `org.eclipse.elk.alg.layered.graph.LGraphUtil` (subset; grows as
 //! more of the algorithm is ported).
 
-use elk_core::options::{Direction, PortConstraints, PortSide};
+use elk_core::options::{Alignment, Direction, PortConstraints, PortSide, SizeConstraint};
 use elk_graph::math::KVector;
-use elk_graph::properties::EnumSet;
+use elk_graph::properties::{EnumSet, PropertyMap};
 
-use crate::graph::{LGraphArena, LGraphId, LNodeId, LPortId};
+use crate::graph::{LGraphArena, LGraphId, LNodeId, LPortId, NodeType};
 use crate::internal_properties as iprops;
-use crate::options_gen::{GraphProperties, PortType};
+use crate::options_gen::{EdgeConstraint, GraphProperties, InLayerConstraint, LayerConstraint, PortType};
 use crate::options_gen as lopts;
 
 /// Port of `LGraphUtil.getDirection`.
@@ -291,6 +291,416 @@ pub fn initialize_port(
         port_anchor.y = port_size.y / 2.0;
     }
     a.port_mut(port).anchor = port_anchor;
+}
+
+/// The `IPropertyHolder` parameter of `LGraphUtil.createExternalPortDummy`:
+/// either an arena `LPort` or an external (Elk port / scratch) property map.
+pub enum PortPropertyHolder<'h> {
+    LPort(LPortId),
+    Map(&'h PropertyMap),
+}
+
+impl<'h> PortPropertyHolder<'h> {
+    fn with_props<R>(&self, a: &LGraphArena, f: impl FnOnce(&PropertyMap) -> R) -> R {
+        match self {
+            PortPropertyHolder::LPort(p) => f(&a.port(*p).properties),
+            PortPropertyHolder::Map(m) => f(m),
+        }
+    }
+}
+
+/// Port of `LGraphUtil.createExternalPortDummy`. Creates a dummy node (with
+/// one port) for an external port; see the Java documentation for the
+/// decorations applied. The dummy is NOT added to the graph's node list.
+#[allow(clippy::too_many_arguments)]
+pub fn create_external_port_dummy(
+    a: &mut LGraphArena,
+    property_holder: PortPropertyHolder,
+    port_constraints: PortConstraints,
+    port_side: PortSide,
+    net_flow: i32,
+    port_node_size: Option<KVector>,
+    port_position: Option<KVector>,
+    port_size: KVector,
+    layout_direction: Direction,
+    layered_graph: LGraphId,
+) -> LNodeId {
+    let mut final_external_port_side = port_side;
+
+    // Create the dummy with one port
+    let dummy = a.create_node(layered_graph);
+    a.node_mut(dummy).node_type = NodeType::EXTERNAL_PORT;
+    a.node(dummy).properties.set(&iprops::EXT_PORT_SIZE, port_size);
+    a.node(dummy)
+        .properties
+        .set(&lopts::PORT_CONSTRAINTS, PortConstraints::FIXED_POS);
+    let port_border_offset: f64 =
+        property_holder.with_props(a, |p| p.get(&lopts::PORT_BORDER_OFFSET));
+    a.node(dummy)
+        .properties
+        .set(&lopts::PORT_BORDER_OFFSET, port_border_offset);
+
+    let dummy_port = a.create_port();
+    a.port_set_node(dummy_port, Some(dummy));
+
+    // If the port constraints are free, we need to determine where to put the
+    // dummy (and its port)
+    if !port_constraints.is_side_fixed() {
+        debug_assert!(layout_direction != Direction::UNDEFINED);
+        if net_flow >= 0 {
+            final_external_port_side = PortSide::from_direction(layout_direction);
+        } else {
+            final_external_port_side = PortSide::from_direction(layout_direction).opposed();
+        }
+        property_holder.with_props(a, |p| {
+            p.set(&lopts::PORT_SIDE, final_external_port_side);
+        });
+    }
+
+    // Retrieve the anchor point, possibly to be modified later
+    let mut anchor = KVector::default();
+    let mut explicit_anchor = false;
+    if property_holder.with_props(a, |p| p.has(&lopts::PORT_ANCHOR)) {
+        let v: KVector =
+            property_holder.with_props(a, |p| p.try_get(&lopts::PORT_ANCHOR).unwrap());
+        anchor.set(v.x, v.y);
+        explicit_anchor = true;
+    } else {
+        anchor.set(port_size.x / 2.0, port_size.y / 2.0);
+    }
+
+    // With the port side at hand, set the necessary properties and place the
+    // dummy's port at the dummy's center
+    match final_external_port_side {
+        PortSide::WEST => {
+            a.node(dummy)
+                .properties
+                .set(&lopts::LAYERING_LAYER_CONSTRAINT, LayerConstraint::FIRST_SEPARATE);
+            a.node(dummy)
+                .properties
+                .set(&iprops::EDGE_CONSTRAINT, EdgeConstraint::OUTGOING_ONLY);
+            a.node_mut(dummy).size.y = port_size.y;
+            if port_border_offset < 0.0 {
+                a.node_mut(dummy).size.x = -port_border_offset;
+            }
+            a.port_set_side(dummy_port, PortSide::EAST);
+            if !explicit_anchor {
+                anchor.x = port_size.x;
+            }
+            // The port anchors think that there is a difference between the
+            // port's left and right border coordinates, which makes sense if
+            // the port has a non-zero width. The port dummy, however, will
+            // have a width of zero. Thus, the anchor must be relative to
+            // -portWidth. This fixes #546.
+            anchor.x -= port_size.x;
+        }
+        PortSide::EAST => {
+            a.node(dummy)
+                .properties
+                .set(&lopts::LAYERING_LAYER_CONSTRAINT, LayerConstraint::LAST_SEPARATE);
+            a.node(dummy)
+                .properties
+                .set(&iprops::EDGE_CONSTRAINT, EdgeConstraint::INCOMING_ONLY);
+            a.node_mut(dummy).size.y = port_size.y;
+            if port_border_offset < 0.0 {
+                a.node_mut(dummy).size.x = -port_border_offset;
+            }
+            a.port_set_side(dummy_port, PortSide::WEST);
+            if !explicit_anchor {
+                anchor.x = 0.0;
+            }
+        }
+        PortSide::NORTH => {
+            a.node(dummy)
+                .properties
+                .set(&iprops::IN_LAYER_CONSTRAINT, InLayerConstraint::TOP);
+            a.node_mut(dummy).size.x = port_size.x;
+            if port_border_offset < 0.0 {
+                a.node_mut(dummy).size.y = -port_border_offset;
+            }
+            a.port_set_side(dummy_port, PortSide::SOUTH);
+            if !explicit_anchor {
+                anchor.y = port_size.y;
+            }
+            // See comments in case WEST. This partly fixes #680.
+            anchor.y -= port_size.y;
+        }
+        PortSide::SOUTH => {
+            a.node(dummy)
+                .properties
+                .set(&iprops::IN_LAYER_CONSTRAINT, InLayerConstraint::BOTTOM);
+            a.node_mut(dummy).size.x = port_size.x;
+            if port_border_offset < 0.0 {
+                a.node_mut(dummy).size.y = -port_border_offset;
+            }
+            a.port_set_side(dummy_port, PortSide::NORTH);
+            if !explicit_anchor {
+                anchor.y = 0.0;
+            }
+        }
+        PortSide::UNDEFINED => {
+            debug_assert!(false, "external port side is UNDEFINED");
+        }
+    }
+
+    // Finally apply the anchor by setting the dummy port position accordingly.
+    // Also, remember the anchor on the dummy itself since the hierarchical
+    // port processors depend on that
+    a.port_mut(dummy_port).pos = anchor;
+    a.node(dummy).properties.set(&lopts::PORT_ANCHOR, anchor);
+
+    if port_constraints.is_order_fixed() {
+        // The order of ports is fixed in some way, so what we will have to do
+        // is to remember information about it
+        let mut information_about_it = 0.0f64;
+
+        // If only the order is fixed _and_ the port has an explicit index set
+        // on it, remember that
+        if port_constraints == PortConstraints::FIXED_ORDER
+            && property_holder.with_props(a, |p| p.has(&lopts::PORT_INDEX))
+        {
+            // We will have to be careful: on the SOUTH and WEST sides, the
+            // index is in reverse to what we would later expect in the code,
+            // so we'll use the index * -1 there
+            let index: i32 =
+                property_holder.with_props(a, |p| p.try_get(&lopts::PORT_INDEX).unwrap());
+            match final_external_port_side {
+                PortSide::NORTH | PortSide::EAST => {
+                    information_about_it = index as f64;
+                }
+                PortSide::SOUTH | PortSide::WEST => {
+                    information_about_it = -1.0 * index as f64;
+                }
+                PortSide::UNDEFINED => {}
+            }
+        } else {
+            // Otherwise, we will just go with the position itself
+            match final_external_port_side {
+                PortSide::WEST | PortSide::EAST => {
+                    information_about_it = port_position.unwrap().y;
+                    if port_constraints.is_ratio_fixed() {
+                        information_about_it /= port_node_size.unwrap().y;
+                    }
+                }
+                PortSide::NORTH | PortSide::SOUTH => {
+                    information_about_it = port_position.unwrap().x;
+                    if port_constraints.is_ratio_fixed() {
+                        information_about_it /= port_node_size.unwrap().x;
+                    }
+                }
+                PortSide::UNDEFINED => {}
+            }
+        }
+
+        a.node(dummy)
+            .properties
+            .set(&iprops::PORT_RATIO_OR_POSITION, information_about_it);
+    }
+
+    // Set the port side of the dummy
+    a.node(dummy)
+        .properties
+        .set(&iprops::EXT_PORT_SIDE, final_external_port_side);
+
+    dummy
+}
+
+/// Port of `LGraphUtil.getExternalPortPosition`: calculates the position of
+/// the external port's top left corner from the position of the given dummy
+/// node that represents the port. Also adjusts the dummy node's position.
+pub fn get_external_port_position(
+    a: &mut LGraphArena,
+    graph: LGraphId,
+    port_dummy: LNodeId,
+    port_width: f64,
+    port_height: f64,
+) -> KVector {
+    let mut port_position = a.node(port_dummy).pos;
+    port_position.x += a.node(port_dummy).size.x / 2.0;
+    port_position.y += a.node(port_dummy).size.y / 2.0;
+    let port_offset: f64 = a.node(port_dummy).properties.get(&lopts::PORT_BORDER_OFFSET);
+
+    // Get some properties of the graph
+    let graph_size = a.graph(graph).size;
+    let padding = a.graph(graph).padding;
+    let graph_offset = a.graph(graph).offset;
+
+    // The exact coordinates depend on the port's side...
+    match a.node(port_dummy).properties.get::<PortSide>(&iprops::EXT_PORT_SIDE) {
+        PortSide::NORTH => {
+            port_position.x += padding.left + graph_offset.x - (port_width / 2.0);
+            port_position.y = -port_height - port_offset;
+            a.node_mut(port_dummy).pos.y = -(padding.top + port_offset + graph_offset.y);
+        }
+        PortSide::EAST => {
+            port_position.x = graph_size.x + padding.left + padding.right + port_offset;
+            port_position.y += padding.top + graph_offset.y - (port_height / 2.0);
+            a.node_mut(port_dummy).pos.x =
+                graph_size.x + padding.right + port_offset - graph_offset.x;
+        }
+        PortSide::SOUTH => {
+            port_position.x += padding.left + graph_offset.x - (port_width / 2.0);
+            port_position.y = graph_size.y + padding.top + padding.bottom + port_offset;
+            a.node_mut(port_dummy).pos.y =
+                graph_size.y + padding.bottom + port_offset - graph_offset.y;
+        }
+        PortSide::WEST => {
+            port_position.x = -port_width - port_offset;
+            port_position.y += padding.top + graph_offset.y - (port_height / 2.0);
+            a.node_mut(port_dummy).pos.x = -(padding.left + port_offset + graph_offset.x);
+        }
+        PortSide::UNDEFINED => {}
+    }
+
+    port_position
+}
+
+/// Port of `LGraphUtil.resizeNode` (LGraph variant): resizes a node to the
+/// given width and height, adjusting port and label positions if needed.
+pub fn resize_node(
+    a: &mut LGraphArena,
+    node: LNodeId,
+    new_size: KVector,
+    move_ports: bool,
+    move_labels: bool,
+) {
+    let old_size = a.node(node).size;
+
+    // Java performs these calculations in float!
+    let width_ratio = (new_size.x / old_size.x) as f32;
+    let height_ratio = (new_size.y / old_size.y) as f32;
+    let width_diff = (new_size.x - old_size.x) as f32;
+    let height_diff = (new_size.y - old_size.y) as f32;
+
+    // Update port positions
+    if move_ports {
+        let fixed_ports = a.node(node).properties.get::<PortConstraints>(&lopts::PORT_CONSTRAINTS)
+            == PortConstraints::FIXED_POS;
+
+        for port in a.node(node).ports.clone() {
+            match a.port(port).side {
+                PortSide::NORTH => {
+                    if !fixed_ports {
+                        a.port_mut(port).pos.x *= width_ratio as f64;
+                    }
+                }
+                PortSide::EAST => {
+                    a.port_mut(port).pos.x += width_diff as f64;
+                    if !fixed_ports {
+                        a.port_mut(port).pos.y *= height_ratio as f64;
+                    }
+                }
+                PortSide::SOUTH => {
+                    if !fixed_ports {
+                        a.port_mut(port).pos.x *= width_ratio as f64;
+                    }
+                    a.port_mut(port).pos.y += height_diff as f64;
+                }
+                PortSide::WEST => {
+                    if !fixed_ports {
+                        a.port_mut(port).pos.y *= height_ratio as f64;
+                    }
+                }
+                PortSide::UNDEFINED => {}
+            }
+        }
+    }
+
+    // Update label positions
+    if move_labels {
+        for label in a.node(node).labels.clone() {
+            let l = a.label(label);
+            let midx = l.pos.x + l.size.x / 2.0;
+            let midy = l.pos.y + l.size.y / 2.0;
+            let width_percent = midx / old_size.x;
+            let height_percent = midy / old_size.y;
+
+            if width_percent + height_percent >= 1.0 {
+                if width_percent - height_percent > 0.0 && midy >= 0.0 {
+                    // label is on the right
+                    a.label_mut(label).pos.x += width_diff as f64;
+                    a.label_mut(label).pos.y += height_diff as f64 * height_percent;
+                } else if width_percent - height_percent < 0.0 && midx >= 0.0 {
+                    // label is on the bottom
+                    a.label_mut(label).pos.x += width_diff as f64 * width_percent;
+                    a.label_mut(label).pos.y += height_diff as f64;
+                }
+            }
+        }
+    }
+
+    // Set the new node size
+    a.node_mut(node).size = new_size;
+
+    // Set fixed size option for the node: now the size is assumed to stay as
+    // determined here
+    a.node(node).properties.set(
+        &lopts::NODE_SIZE_CONSTRAINTS,
+        EnumSet::of(&[
+            SizeConstraint::NODE_LABELS,
+            SizeConstraint::PORTS,
+            SizeConstraint::PORT_LABELS,
+            SizeConstraint::MINIMUM_SIZE,
+        ]),
+    );
+}
+
+/// Port of `LGraphUtil.isDescendant` (LGraph hierarchy).
+pub fn is_descendant(a: &LGraphArena, child: LNodeId, parent: LNodeId) -> bool {
+    let mut current = child;
+    let mut next = a.graph(a.node_graph(current)).parent_node;
+    while let Some(n) = next {
+        current = n;
+        if current == parent {
+            return true;
+        }
+        next = a.graph(a.node_graph(current)).parent_node;
+    }
+    false
+}
+
+/// Port of `LGraphUtil.changeCoordSystem`: converts the given point from the
+/// coordinate system of `old_graph` to that of `new_graph`.
+pub fn change_coord_system(
+    a: &LGraphArena,
+    point: &mut KVector,
+    old_graph: LGraphId,
+    new_graph: LGraphId,
+) {
+    if old_graph == new_graph {
+        // nothing has to be done
+        return;
+    }
+
+    // transform to absolute coordinates
+    let mut graph = old_graph;
+    loop {
+        point.add(a.graph(graph).offset);
+        match a.graph(graph).parent_node {
+            Some(node) => {
+                let padding = a.graph(graph).padding;
+                point.add_xy(padding.left, padding.top);
+                point.add(a.node(node).pos);
+                graph = a.node_graph(node);
+            }
+            None => break,
+        }
+    }
+
+    // transform to relative coordinates (to newGraph)
+    let mut graph = new_graph;
+    loop {
+        point.sub(a.graph(graph).offset);
+        match a.graph(graph).parent_node {
+            Some(node) => {
+                let padding = a.graph(graph).padding;
+                point.sub_xy(padding.left, padding.top);
+                point.sub(a.node(node).pos);
+                graph = a.node_graph(node);
+            }
+            None => break,
+        }
+    }
 }
 
 /// Port of `LEdge.reverse`.

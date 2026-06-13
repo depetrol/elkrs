@@ -1,0 +1,15 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "layering.strategy": "COFFMAN_GRAHAM",
+    "layering.coffmanGraham.layerBound": 2 },
+  "children": [
+    { "id": "n0", "width": 30, "height": 30 }, { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 30, "height": 30 }, { "id": "n3", "width": 30, "height": 30 },
+    { "id": "n4", "width": 30, "height": 30 }, { "id": "n5", "width": 30, "height": 30 },
+    { "id": "n6", "width": 30, "height": 30 }, { "id": "n7", "width": 30, "height": 30 } ],
+  "edges": [
+    { "id": "e0", "sources": ["n0"], "targets": ["n4"] },
+    { "id": "e1", "sources": ["n1"], "targets": ["n4"] },
+    { "id": "e2", "sources": ["n2"], "targets": ["n5"] },
+    { "id": "e3", "sources": ["n3"], "targets": ["n5"] },
+    { "id": "e4", "sources": ["n4"], "targets": ["n6"] },
+    { "id": "e5", "sources": ["n5"], "targets": ["n6"] },
+    { "id": "e6", "sources": ["n5"], "targets": ["n7"] } ] }

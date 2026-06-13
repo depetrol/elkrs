@@ -1,6 +1,8 @@
 //! Phase 4: node placement (`org.eclipse.elk.alg.layered.p4nodes`).
 
 pub mod bk;
+pub mod linear_segments;
+pub mod network_simplex_placer;
 pub mod simple;
 pub mod bk_aligned_layout;
 pub mod bk_aligner;
@@ -24,7 +26,13 @@ pub fn processor_configuration(
     config: &mut ProcessorConfiguration,
 ) -> Result<(), String> {
     match strategy {
-        NodePlacementStrategy::BRANDES_KOEPF | NodePlacementStrategy::SIMPLE => {
+        // BKNodePlacer, SimpleNodePlacer, LinearSegmentsNodePlacer and
+        // NetworkSimplexPlacer all add the HIERARCHICAL_PORT_POSITION_PROCESSOR
+        // for graphs with external ports (and nothing otherwise).
+        NodePlacementStrategy::BRANDES_KOEPF
+        | NodePlacementStrategy::SIMPLE
+        | NodePlacementStrategy::LINEAR_SEGMENTS
+        | NodePlacementStrategy::NETWORK_SIMPLEX => {
             let graph_properties: EnumSet<GraphProperties> =
                 a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
             if graph_properties.contains(GraphProperties::EXTERNAL_PORTS) {
@@ -48,6 +56,8 @@ pub fn process(
     match strategy {
         NodePlacementStrategy::BRANDES_KOEPF => bk::process(a, graph),
         NodePlacementStrategy::SIMPLE => simple::process(a, graph),
+        NodePlacementStrategy::LINEAR_SEGMENTS => linear_segments::process(a, graph),
+        NodePlacementStrategy::NETWORK_SIMPLEX => network_simplex_placer::process(a, graph),
         other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
     }
 }

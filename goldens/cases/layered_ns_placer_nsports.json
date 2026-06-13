@@ -1,0 +1,19 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered", "nodePlacement.strategy": "NETWORK_SIMPLEX" },
+  "children": [
+    { "id": "a", "width": 40, "height": 40, "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [ { "id": "a_e", "width": 4, "height": 4, "layoutOptions": { "port.side": "EAST" } },
+                 { "id": "a_s", "width": 4, "height": 4, "layoutOptions": { "port.side": "SOUTH" } } ] },
+    { "id": "b", "width": 40, "height": 55, "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [ { "id": "b_w", "width": 4, "height": 4, "layoutOptions": { "port.side": "WEST" } },
+                 { "id": "b_n", "width": 4, "height": 4, "layoutOptions": { "port.side": "NORTH" } },
+                 { "id": "b_e", "width": 4, "height": 4, "layoutOptions": { "port.side": "EAST" } } ] },
+    { "id": "c", "width": 40, "height": 40, "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [ { "id": "c_n", "width": 4, "height": 4, "layoutOptions": { "port.side": "NORTH" } },
+                 { "id": "c_w", "width": 4, "height": 4, "layoutOptions": { "port.side": "WEST" } } ] },
+    { "id": "d", "width": 40, "height": 40, "layoutOptions": { "portConstraints": "FIXED_SIDE" },
+      "ports": [ { "id": "d_w", "width": 4, "height": 4, "layoutOptions": { "port.side": "WEST" } } ] } ],
+  "edges": [
+    { "id": "e1", "sources": ["a_e"], "targets": ["b_w"] },
+    { "id": "e2", "sources": ["a_s"], "targets": ["c_n"] },
+    { "id": "e3", "sources": ["b_n"], "targets": ["c_w"] },
+    { "id": "e4", "sources": ["b_e"], "targets": ["d_w"] } ] }

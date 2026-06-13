@@ -1,7 +1,11 @@
 //! Phase 2: layering (`org.eclipse.elk.alg.layered.p2layers`).
 
+pub mod coffman_graham;
 pub mod longest_path;
+pub mod longest_path_source;
+pub mod min_width;
 pub mod network_simplex;
+pub mod stretch_width;
 
 use elk_core::javacompat::JavaRandom;
 
@@ -16,9 +20,15 @@ pub fn processor_configuration(
     config: &mut ProcessorConfiguration,
 ) -> Result<(), String> {
     match strategy {
+        // NetworkSimplexLayerer, LongestPathLayerer, LongestPathSourceLayerer,
+        // CoffmanGrahamLayerer, MinWidthLayerer and StretchWidthLayerer all
+        // declare the same baseline intermediate processing configuration.
         LayeringStrategy::NETWORK_SIMPLEX
         | LayeringStrategy::LONGEST_PATH
-        | LayeringStrategy::LONGEST_PATH_SOURCE => {
+        | LayeringStrategy::LONGEST_PATH_SOURCE
+        | LayeringStrategy::COFFMAN_GRAHAM
+        | LayeringStrategy::MIN_WIDTH
+        | LayeringStrategy::STRETCH_WIDTH => {
             config
                 .add_before(
                     LayeredPhases::P1_CYCLE_BREAKING,
@@ -41,6 +51,10 @@ pub fn process(
     match strategy {
         LayeringStrategy::NETWORK_SIMPLEX => network_simplex::process(a, graph),
         LayeringStrategy::LONGEST_PATH => longest_path::process(a, graph),
+        LayeringStrategy::LONGEST_PATH_SOURCE => longest_path_source::process(a, graph),
+        LayeringStrategy::COFFMAN_GRAHAM => coffman_graham::process(a, graph),
+        LayeringStrategy::MIN_WIDTH => min_width::process(a, graph),
+        LayeringStrategy::STRETCH_WIDTH => stretch_width::process(a, graph),
         other => Err(format!("TODO: layering strategy {other:?} is not ported yet")),
     }
 }
