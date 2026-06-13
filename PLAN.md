@@ -163,3 +163,24 @@ goldens/cases/layered_*.json (add cases), debug divergences vs oracle
 - IndividualSpacings JSON: importer creates empty holder; values parse OK.
 - elk-cli exporter always uses oracle flag set (omit nothing, full keys).
 - Random layouter with seed=0: Java is time-seeded; we use seed 1.
+
+## Replicated ELK JUnit tests (`crates/*/tests/junit_*.rs`)
+
+Faithful ports of ELK's own JUnit suite, ~105 test fns. Each ports a named
+ELK test class; black-box ones run through `elk_cli::create_elk()`, white-box
+ones call the ported APIs directly.
+
+- elk-graph: KVectorTest, KVectorChainTest, ElkGraphUtilTest
+- elk-core: PropertyTest, IdTest, ElkUtilTest, RecursiveGraphLayoutEngineTest
+- elk-alg-common: ElkMathTest, NetworkSimplexTest, UtilsTest (spore overlap/
+  underlap/distance), OneDimensionalCompactorTest (17 cases: nodes, groups,
+  per-pair spacing handlers, all 4 directions + 256-perm invariance)
+- elk-alg-force: ForceImportTest (import + connected-component split)
+- radial: CenterOnRootTest · mrtree: MrTreeGraphSizeTest
+- rectpacking: PaddingTest (4) + CompactionTest (10)
+- topdownpacking: TopdownPackingTest · spore: ScanlineOverlapRemovalTest
+
+Not portable: LayoutTestRunner integration tests (need .elkt resources +
+multi-algorithm harness); GraphValidator/AlgorithmAssembler/ElkReflect
+(core infra not needed for layout output); spline tests (splines live in the
+layered crate). Layered-specific JUnit tests pending the compound-layout work.
