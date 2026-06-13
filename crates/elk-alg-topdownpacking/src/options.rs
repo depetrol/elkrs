@@ -1,0 +1,56 @@
+//! Hand-ported option constants for ELK Top-down Packing, mirroring
+//! `org.eclipse.elk.alg.topdownpacking.options` (`TopdownpackingOptions`,
+//! `TopdownpackingMetaDataProvider`) plus the phase strategy enums.
+
+use elk_core::data::{parse_enum, LayoutMetaDataRegistry, OptionData, OptionKind, Targets};
+use elk_graph::elk_enum;
+use elk_graph::properties::Property;
+
+pub const ALGORITHM_ID: &str = "org.eclipse.elk.topdownpacking";
+
+elk_enum! {
+    /// Port of `org.eclipse.elk.alg.topdownpacking.NodeArrangementStrategy`.
+    pub enum NodeArrangementStrategy {
+        LEFT_RIGHT_TOP_DOWN_NODE_PLACER,
+    }
+}
+
+elk_enum! {
+    /// Port of `org.eclipse.elk.alg.topdownpacking.WhitespaceEliminationStrategy`.
+    pub enum WhitespaceEliminationStrategy {
+        BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR,
+    }
+}
+
+// ------------------------------------------------------ TopdownpackingOptions
+// All core options are supported without a default override (the algorithm
+// also supports `topdownLayout` and declares the algorithm-specific default
+// `topdown.nodeType = PARALLEL_NODE`; both are only read by the engine's
+// topdown layout mode, which elk-core does not implement yet).
+
+pub use elk_core::options::{
+    PADDING, SPACING_NODE_NODE, TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO,
+    TOPDOWN_HIERARCHICAL_NODE_WIDTH,
+};
+
+// -------------------------------------------- TopdownpackingMetaDataProvider
+
+pub static NODE_ARRANGEMENT_STRATEGY: Property<NodeArrangementStrategy> = Property::with_default(
+    "org.eclipse.elk.topdownpacking.nodeArrangement.strategy",
+    || NodeArrangementStrategy::LEFT_RIGHT_TOP_DOWN_NODE_PLACER,
+);
+pub static WHITESPACE_ELIMINATION_STRATEGY: Property<WhitespaceEliminationStrategy> =
+    Property::with_default(
+        "org.eclipse.elk.topdownpacking.whitespaceElimination.strategy",
+        || WhitespaceEliminationStrategy::BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR,
+    );
+
+// ------------------------------------------------------------------ metadata
+
+/// Option metadata from `TopdownpackingMetaDataProvider.apply` (the core
+/// options referenced by `TopdownpackingOptions.apply` are registered by
+/// elk-core).
+pub fn register_topdownpacking_options(reg: &mut LayoutMetaDataRegistry) {
+    reg.register_option(OptionData { id: "org.eclipse.elk.topdownpacking.nodeArrangement.strategy", group: "nodeArrangement", kind: OptionKind::Enum(parse_enum::<NodeArrangementStrategy>), targets: Targets::PARENTS, legacy_ids: &[] });
+    reg.register_option(OptionData { id: "org.eclipse.elk.topdownpacking.whitespaceElimination.strategy", group: "whitespaceElimination", kind: OptionKind::Enum(parse_enum::<WhitespaceEliminationStrategy>), targets: Targets::PARENTS, legacy_ids: &[] });
+}

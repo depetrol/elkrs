@@ -18,6 +18,7 @@ elk-alg-layered = { path = "../elk-alg-layered" }
 elk-alg-mrtree = { path = "../elk-alg-mrtree" }
 elk-alg-radial = { path = "../elk-alg-radial" }
 elk-alg-rectpacking = { path = "../elk-alg-rectpacking" }
+elk-alg-topdownpacking = { path = "../elk-alg-topdownpacking" }
 elk-core = { path = "../elk-core" }
 elk-graph = { path = "../elk-graph" }
 serde_json.workspace = true

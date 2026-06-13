@@ -1,0 +1,15 @@
+{
+  "id": "root",
+  "width": 800,
+  "height": 700,
+  "layoutOptions": { "elk.algorithm": "topdownpacking" },
+  "children": [
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 30, "height": 30 },
+    { "id": "n3", "width": 30, "height": 30 },
+    { "id": "n4", "width": 30, "height": 30 },
+    { "id": "n5", "width": 30, "height": 30 },
+    { "id": "n6", "width": 30, "height": 30 },
+    { "id": "n7", "width": 30, "height": 30 }
+  ]
+}

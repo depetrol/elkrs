@@ -34,7 +34,8 @@ public final class Oracle {
                 new org.eclipse.elk.alg.radial.options.RadialMetaDataProvider(),
                 new org.eclipse.elk.alg.rectpacking.options.RectPackingMetaDataProvider(),
                 new org.eclipse.elk.alg.spore.options.SporeMetaDataProvider(),
-                new org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider());
+                new org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider(),
+                new org.eclipse.elk.alg.topdownpacking.options.TopdownpackingMetaDataProvider());
 
         ElkNode graph = ElkGraphJson.forGraph(input).toElk();
         new RecursiveGraphLayoutEngine().layout(graph, new BasicProgressMonitor());

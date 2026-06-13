@@ -1,0 +1,19 @@
+{
+  "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "topdownpacking",
+    "elk.padding": "[top=5.0,left=10.0,bottom=15.0,right=20.0]",
+    "elk.spacing.nodeNode": "7.5",
+    "elk.topdown.hierarchicalNodeWidth": "120",
+    "elk.topdown.hierarchicalNodeAspectRatio": "1.7"
+  },
+  "children": [
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 30, "height": 30 },
+    { "id": "n3", "width": 30, "height": 30 },
+    { "id": "n4", "width": 30, "height": 30 },
+    { "id": "n5", "width": 30, "height": 30 },
+    { "id": "n6", "width": 30, "height": 30 },
+    { "id": "n7", "width": 30, "height": 30 }
+  ]
+}

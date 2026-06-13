@@ -59,6 +59,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "elk-alg-topdownpacking"
+version = "0.1.0"
+dependencies = [
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-cli"
 version = "0.1.0"
 dependencies = [
@@ -67,6 +75,7 @@ dependencies = [
  "elk-alg-mrtree",
  "elk-alg-radial",
  "elk-alg-rectpacking",
+ "elk-alg-topdownpacking",
  "elk-core",
  "elk-graph",
  "serde_json",

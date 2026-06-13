@@ -1,0 +1,50 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "x": 12.0,
+      "y": 12.0,
+      "width": 150.0,
+      "height": 106.08203677510609
+    },
+    {
+      "id": "n2",
+      "x": 182.0,
+      "y": 12.0,
+      "width": 150.0,
+      "height": 106.08203677510609
+    },
+    {
+      "id": "n3",
+      "x": 352.0,
+      "y": 12.0,
+      "width": 150.0,
+      "height": 106.08203677510609
+    },
+    {
+      "id": "n4",
+      "x": 12.0,
+      "y": 138.08203677510608,
+      "width": 235.0,
+      "height": 106.08203677510609
+    },
+    {
+      "id": "n5",
+      "x": 267.0,
+      "y": 138.08203677510608,
+      "width": 235.0,
+      "height": 106.08203677510609
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.topdownpacking",
+    "org.eclipse.elk.algorithm": "topdownpacking",
+    "org.eclipse.elk.padding": "[top=12.0,left=12.0,bottom=12.0,right=12.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 514.0,
+  "height": 256.16407355021215
+}

@@ -7,5 +7,6 @@ pub fn create_elk() -> elk_core::Elk {
     elk_alg_radial::register(&mut elk.options, &mut elk.algorithms);
     elk_alg_rectpacking::register(&mut elk.options, &mut elk.algorithms);
     elk_alg_mrtree::register(&mut elk.options, &mut elk.algorithms);
+    elk_alg_topdownpacking::register(&mut elk.options, &mut elk.algorithms);
     elk
 }

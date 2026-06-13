@@ -1,0 +1,64 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "x": 12.0,
+      "y": 12.0,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n2",
+      "x": 277.3333333333333,
+      "y": 91.43847241867044,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n3",
+      "x": 542.6666666666666,
+      "y": 170.8769448373409,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n4",
+      "x": 12.0,
+      "y": 376.3974540311174,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n5",
+      "x": 277.3333333333333,
+      "y": 455.83592644978785,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n6",
+      "x": 542.6666666666666,
+      "y": 535.2743988684583,
+      "width": 245.33333333333331,
+      "height": 185.52050919377655
+    },
+    {
+      "id": "n7",
+      "x": 12.0,
+      "y": 740.7949080622349,
+      "width": 776.0,
+      "height": 185.52050919377655
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.topdownpacking",
+    "org.eclipse.elk.algorithm": "topdownpacking",
+    "org.eclipse.elk.padding": "[top=12.0,left=12.0,bottom=12.0,right=12.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 800.0,
+  "height": 700.0
+}

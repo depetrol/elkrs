@@ -1,0 +1,67 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "x": 10.0,
+      "y": 5.0,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n2",
+      "x": 137.5,
+      "y": 5.0,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n3",
+      "x": 265.0,
+      "y": 5.0,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n4",
+      "x": 10.0,
+      "y": 83.08823529411765,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n5",
+      "x": 137.5,
+      "y": 83.08823529411765,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n6",
+      "x": 265.0,
+      "y": 83.08823529411765,
+      "width": 120.0,
+      "height": 70.58823529411765
+    },
+    {
+      "id": "n7",
+      "x": 10.0,
+      "y": 161.1764705882353,
+      "width": 375.0,
+      "height": 70.58823529411765
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.algorithm": "topdownpacking",
+    "org.eclipse.elk.padding": "[top=5.0,left=10.0,bottom=15.0,right=20.0]",
+    "org.eclipse.elk.topdown.hierarchicalNodeAspectRatio": "1.7",
+    "org.eclipse.elk.topdown.hierarchicalNodeWidth": "120.0",
+    "org.eclipse.elk.spacing.nodeNode": "7.5",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.topdownpacking",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 405.0,
+  "height": 246.76470588235296
+}

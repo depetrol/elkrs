@@ -1,0 +1,18 @@
+{
+  "id": "root",
+  "layoutOptions": { "elk.algorithm": "topdownpacking" },
+  "children": [
+    {
+      "id": "p1",
+      "children": [
+        { "id": "c1", "width": 30, "height": 30 },
+        { "id": "c2", "width": 30, "height": 30 }
+      ],
+      "edges": [
+        { "id": "e1", "sources": ["c1"], "targets": ["c2"] }
+      ]
+    },
+    { "id": "n2", "width": 30, "height": 30 },
+    { "id": "n3", "width": 30, "height": 30 }
+  ]
+}
