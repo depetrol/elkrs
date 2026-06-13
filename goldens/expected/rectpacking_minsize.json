@@ -1,0 +1,113 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 15.0,
+      "y": 15.0,
+      "width": 41.875,
+      "height": 270.0
+    },
+    {
+      "id": "n2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 71.875,
+      "y": 15.0,
+      "width": 61.875,
+      "height": 270.0
+    },
+    {
+      "id": "n3",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 148.75,
+      "y": 15.0,
+      "width": 33.75,
+      "height": 270.0
+    },
+    {
+      "id": "n4",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 197.5,
+      "y": 15.0,
+      "width": 83.75,
+      "height": 270.0
+    },
+    {
+      "id": "n5",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 296.25,
+      "y": 15.0,
+      "width": 51.875,
+      "height": 270.0
+    },
+    {
+      "id": "n6",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 363.125,
+      "y": 15.0,
+      "width": 21.875,
+      "height": 270.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.rectpacking",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "targetWidth": "400.0",
+    "org.eclipse.elk.nodeSize.minimum": "(400.0,300.0)",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]",
+    "org.eclipse.elk.algorithm": "rectpacking",
+    "org.eclipse.elk.rectpacking.whiteSpaceElimination.strategy": "EQUAL_BETWEEN_STRUCTURES",
+    "org.eclipse.elk.padding": "[top=15.0,left=15.0,bottom=15.0,right=15.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 400.0,
+  "height": 300.0
+}

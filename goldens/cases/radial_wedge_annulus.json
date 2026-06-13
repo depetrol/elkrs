@@ -1,0 +1,23 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "radial",
+    "org.eclipse.elk.radial.wedgeCriteria": "LEAF_NUMBER",
+    "org.eclipse.elk.radial.radius": "110",
+    "org.eclipse.elk.radial.centerOnRoot": "true",
+    "org.eclipse.elk.spacing.nodeNode": "10"
+  },
+  "children": [
+    { "id": "c", "width": 40, "height": 40 },
+    { "id": "a1", "width": 30, "height": 30 },
+    { "id": "a2", "width": 30, "height": 30 },
+    { "id": "b1", "width": 25, "height": 35 },
+    { "id": "b2", "width": 45, "height": 20 },
+    { "id": "b3", "width": 20, "height": 20 },
+    { "id": "b4", "width": 30, "height": 24 } ],
+  "edges": [
+    { "id": "e1", "sources": ["c"], "targets": ["a1"] },
+    { "id": "e2", "sources": ["c"], "targets": ["a2"] },
+    { "id": "e3", "sources": ["a1"], "targets": ["b1"] },
+    { "id": "e4", "sources": ["a1"], "targets": ["b2"] },
+    { "id": "e5", "sources": ["a2"], "targets": ["b3"] },
+    { "id": "e6", "sources": ["a2"], "targets": ["b4"] } ] }

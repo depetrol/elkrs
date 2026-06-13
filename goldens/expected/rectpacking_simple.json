@@ -1,0 +1,142 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 15.0,
+      "y": 15.0,
+      "width": 45.0,
+      "height": 70.0
+    },
+    {
+      "id": "n2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 75.0,
+      "y": 15.0,
+      "width": 65.0,
+      "height": 70.0
+    },
+    {
+      "id": "n3",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 155.0,
+      "y": 15.0,
+      "width": 40.0,
+      "height": 70.0
+    },
+    {
+      "id": "n4",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 15.0,
+      "y": 100.0,
+      "width": 80.0,
+      "height": 50.0
+    },
+    {
+      "id": "n5",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 110.0,
+      "y": 100.0,
+      "width": 50.0,
+      "height": 50.0
+    },
+    {
+      "id": "n6",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 175.0,
+      "y": 100.0,
+      "width": 20.0,
+      "height": 50.0
+    },
+    {
+      "id": "n7",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 15.0,
+      "y": 165.0,
+      "width": 70.0,
+      "height": 45.0
+    },
+    {
+      "id": "n8",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 100.0,
+      "y": 165.0,
+      "width": 95.0,
+      "height": 45.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.rectpacking.packing.strategy": "SIMPLE",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.rectpacking",
+    "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "targetWidth": "210.0",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]",
+    "org.eclipse.elk.algorithm": "rectpacking",
+    "org.eclipse.elk.rectpacking.whiteSpaceElimination.strategy": "EQUAL_BETWEEN_STRUCTURES",
+    "org.eclipse.elk.padding": "[top=15.0,left=15.0,bottom=15.0,right=15.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 210.0,
+  "height": 225.0
+}

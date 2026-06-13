@@ -1,0 +1,22 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "radial",
+    "org.eclipse.elk.radial.rotate": "true",
+    "org.eclipse.elk.radial.rotation.targetAngle": "0.7853981633974483",
+    "org.eclipse.elk.radial.rotation.computeAdditionalWedgeSpace": "true",
+    "org.eclipse.elk.radial.optimizationCriteria": "EDGE_LENGTH",
+    "org.eclipse.elk.radial.rotation.outgoingEdgeAngles": "true"
+  },
+  "children": [
+    { "id": "m0", "width": 53, "height": 26 },
+    { "id": "m1", "width": 36, "height": 44 },
+    { "id": "m2", "width": 27, "height": 52 },
+    { "id": "m3", "width": 25, "height": 54 },
+    { "id": "m4", "width": 37, "height": 53 },
+    { "id": "m5", "width": 29, "height": 24 } ],
+  "edges": [
+    { "id": "e1", "sources": ["m0"], "targets": ["m1"] },
+    { "id": "e2", "sources": ["m0"], "targets": ["m2"] },
+    { "id": "e3", "sources": ["m0"], "targets": ["m3"] },
+    { "id": "e4", "sources": ["m2"], "targets": ["m4"] },
+    { "id": "e5", "sources": ["m3"], "targets": ["m5"] } ] }

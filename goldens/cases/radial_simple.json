@@ -1,0 +1,16 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "radial" },
+  "children": [
+    { "id": "n0", "width": 50, "height": 30 },
+    { "id": "n1", "width": 40, "height": 40 },
+    { "id": "n2", "width": 30, "height": 20 },
+    { "id": "n3", "width": 60, "height": 25 },
+    { "id": "n4", "width": 20, "height": 20 },
+    { "id": "n5", "width": 35, "height": 30 },
+    { "id": "n6", "width": 25, "height": 45 } ],
+  "edges": [
+    { "id": "e1", "sources": ["n0"], "targets": ["n1"] },
+    { "id": "e2", "sources": ["n0"], "targets": ["n2"] },
+    { "id": "e3", "sources": ["n0"], "targets": ["n3"] },
+    { "id": "e4", "sources": ["n1"], "targets": ["n4"] },
+    { "id": "e5", "sources": ["n1"], "targets": ["n5"] },
+    { "id": "e6", "sources": ["n2"], "targets": ["n6"] } ] }

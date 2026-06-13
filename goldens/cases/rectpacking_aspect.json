@@ -1,0 +1,18 @@
+{
+  "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "rectpacking",
+    "elk.aspectRatio": "2.5",
+    "elk.rectpacking.widthApproximation.optimizationGoal": "ASPECT_RATIO_DRIVEN"
+  },
+  "children": [
+    { "id": "n1", "width": 30, "height": 30 },
+    { "id": "n2", "width": 55, "height": 40 },
+    { "id": "n3", "width": 25, "height": 60 },
+    { "id": "n4", "width": 90, "height": 35 },
+    { "id": "n5", "width": 45, "height": 45 },
+    { "id": "n6", "width": 65, "height": 25 },
+    { "id": "n7", "width": 40, "height": 50 },
+    { "id": "n8", "width": 35, "height": 35 }
+  ]
+}

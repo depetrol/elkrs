@@ -1,0 +1,15 @@
+{
+  "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "rectpacking",
+    "elk.rectpacking.trybox": "true"
+  },
+  "children": [
+    { "id": "n1", "width": 40, "height": 40 },
+    { "id": "n2", "width": 60, "height": 42 },
+    { "id": "n3", "width": 30, "height": 38 },
+    { "id": "n4", "width": 80, "height": 41 },
+    { "id": "n5", "width": 50, "height": 39 },
+    { "id": "n6", "width": 20, "height": 43 }
+  ]
+}

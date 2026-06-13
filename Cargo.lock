@@ -30,11 +30,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "elk-alg-mrtree"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-common",
+ "elk-core",
+ "elk-graph",
+ "indexmap",
+]
+
+[[package]]
+name = "elk-alg-radial"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-common",
+ "elk-core",
+ "elk-graph",
+ "indexmap",
+]
+
+[[package]]
+name = "elk-alg-rectpacking"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-common",
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-cli"
 version = "0.1.0"
 dependencies = [
  "elk-alg-force",
  "elk-alg-layered",
+ "elk-alg-mrtree",
+ "elk-alg-radial",
+ "elk-alg-rectpacking",
  "elk-core",
  "elk-graph",
  "serde_json",

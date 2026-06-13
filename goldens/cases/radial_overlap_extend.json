@@ -1,0 +1,24 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "radial",
+    "org.eclipse.elk.radial.radius": "30"
+  },
+  "children": [
+    { "id": "h", "width": 30, "height": 30 },
+    { "id": "k1", "width": 40, "height": 30 },
+    { "id": "k2", "width": 38, "height": 32 },
+    { "id": "k3", "width": 42, "height": 28 },
+    { "id": "k4", "width": 36, "height": 34 },
+    { "id": "k5", "width": 40, "height": 30 },
+    { "id": "k6", "width": 34, "height": 36 },
+    { "id": "k7", "width": 44, "height": 26 },
+    { "id": "k8", "width": 38, "height": 30 } ],
+  "edges": [
+    { "id": "e1", "sources": ["h"], "targets": ["k1"] },
+    { "id": "e2", "sources": ["h"], "targets": ["k2"] },
+    { "id": "e3", "sources": ["h"], "targets": ["k3"] },
+    { "id": "e4", "sources": ["h"], "targets": ["k4"] },
+    { "id": "e5", "sources": ["h"], "targets": ["k5"] },
+    { "id": "e6", "sources": ["h"], "targets": ["k6"] },
+    { "id": "e7", "sources": ["h"], "targets": ["k7"] },
+    { "id": "e8", "sources": ["h"], "targets": ["k8"] } ] }

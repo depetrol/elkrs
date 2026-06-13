@@ -1,0 +1,253 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "w0",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 136.13759745553753,
+      "y": 127.6235227648337,
+      "width": 32.0,
+      "height": 45.0
+    },
+    {
+      "id": "w1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 171.23912299318732,
+      "y": 193.08594197094607,
+      "width": 35.0,
+      "height": 45.0
+    },
+    {
+      "id": "w2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 68.35416096647961,
+      "y": 119.80111507852891,
+      "width": 47.0,
+      "height": 42.0
+    },
+    {
+      "id": "w3",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 182.31354991656553,
+      "y": 75.02376460697957,
+      "width": 32.0,
+      "height": 32.0
+    },
+    {
+      "id": "w4",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 210.31627003650897,
+      "y": 258.5783515760043,
+      "width": 34.0,
+      "height": 45.0
+    },
+    {
+      "id": "w5",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 12.0,
+      "y": 164.72065207964786,
+      "width": 36.0,
+      "height": 24.0
+    },
+    {
+      "id": "w6",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 231.7581436452998,
+      "y": 12.0,
+      "width": 23.0,
+      "height": 43.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.radial.compactor": "WEDGE_COMPACTION",
+    "org.eclipse.elk.algorithm": "radial",
+    "org.eclipse.elk.childAreaHeight": "291.5783515760043",
+    "org.eclipse.elk.radial.radius": "150.0",
+    "org.eclipse.elk.padding": "[top=12.0,left=12.0,bottom=12.0,right=12.0]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "org.eclipse.elk.childAreaWidth": "242.7581436452998",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.radial",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 266.7581436452998,
+  "height": 315.5783515760043,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "w0"
+      ],
+      "targets": [
+        "w1"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 164.71785853639022,
+            "y": 172.6235227648337
+          },
+          "endPoint": {
+            "x": 176.1588619123346,
+            "y": 193.08594197094607
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "w0"
+      ],
+      "targets": [
+        "w2"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 136.13759745553753,
+            "y": 147.6492357688037
+          },
+          "endPoint": {
+            "x": 115.35416096647961,
+            "y": 144.43522410394797
+          }
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "sources": [
+        "w0"
+      ],
+      "targets": [
+        "w3"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 168.13759745553753,
+            "y": 129.6454150024927
+          },
+          "endPoint": {
+            "x": 185.81239487963478,
+            "y": 107.02376460697957
+          }
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "sources": [
+        "w1"
+      ],
+      "targets": [
+        "w4"
+      ],
+      "sections": [
+        {
+          "id": "s3",
+          "startPoint": {
+            "x": 201.9923505612214,
+            "y": 238.08594197094607
+          },
+          "endPoint": {
+            "x": 214.06304246847492,
+            "y": 258.5783515760043
+          }
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "sources": [
+        "w2"
+      ],
+      "targets": [
+        "w5"
+      ],
+      "sections": [
+        {
+          "id": "s4",
+          "startPoint": {
+            "x": 68.35416096647961,
+            "y": 154.4478787939682
+          },
+          "endPoint": {
+            "x": 48.0,
+            "y": 166.26781178697095
+          }
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "sources": [
+        "w3"
+      ],
+      "targets": [
+        "w6"
+      ],
+      "sections": [
+        {
+          "id": "s5",
+          "startPoint": {
+            "x": 210.81470495349606,
+            "y": 75.02376460697957
+          },
+          "endPoint": {
+            "x": 231.7581436452998,
+            "y": 48.21863995418287
+          }
+        }
+      ]
+    }
+  ]
+}

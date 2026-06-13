@@ -1,0 +1,293 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 15.0,
+      "y": 15.0,
+      "width": 56.0,
+      "height": 72.0
+    },
+    {
+      "id": "n2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 76.0,
+      "y": 15.0,
+      "width": 77.0,
+      "height": 72.0
+    },
+    {
+      "id": "n3",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 158.0,
+      "y": 15.0,
+      "width": 56.0,
+      "height": 72.0
+    },
+    {
+      "id": "n4",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 219.0,
+      "y": 15.0,
+      "width": 109.0,
+      "height": 72.0
+    },
+    {
+      "id": "n5",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 249.0,
+      "y": 15.0,
+      "width": 62.22222222222222,
+      "height": 58.0
+    },
+    {
+      "id": "n6",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 316.22222222222223,
+      "y": 15.0,
+      "width": 26.222222222222218,
+      "height": 58.0
+    },
+    {
+      "id": "n7",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 29.444444444444436,
+      "y": 92.0,
+      "width": 51.22222222222222,
+      "height": 58.0
+    },
+    {
+      "id": "n8",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 85.66666666666666,
+      "y": 92.0,
+      "width": 94.66666666666667,
+      "height": 58.0
+    },
+    {
+      "id": "n9",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 185.33333333333334,
+      "y": 92.0,
+      "width": 58.66666666666667,
+      "height": 58.0
+    },
+    {
+      "id": "n10",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 184.0,
+      "y": 92.0,
+      "width": 70.0,
+      "height": 41.0
+    },
+    {
+      "id": "n11",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 259.0,
+      "y": 92.0,
+      "width": 42.0,
+      "height": 41.0
+    },
+    {
+      "id": "n12",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 51.0,
+      "y": 155.0,
+      "width": 78.0,
+      "height": 41.0
+    },
+    {
+      "id": "n13",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 134.0,
+      "y": 155.0,
+      "width": 43.0,
+      "height": 41.0
+    },
+    {
+      "id": "n14",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 182.0,
+      "y": 155.0,
+      "width": 60.0,
+      "height": 41.0
+    },
+    {
+      "id": "n15",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 175.0,
+      "y": 155.0,
+      "width": 65.25,
+      "height": 62.0
+    },
+    {
+      "id": "n16",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 245.25,
+      "y": 155.0,
+      "width": 83.25,
+      "height": 62.0
+    },
+    {
+      "id": "n17",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 333.5,
+      "y": 155.0,
+      "width": 48.25,
+      "height": 62.0
+    },
+    {
+      "id": "n18",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 93.75,
+      "y": 222.0,
+      "width": 101.25,
+      "height": 62.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.rectpacking",
+    "org.eclipse.elk.contentAlignment": "[V_TOP, H_LEFT]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "targetWidth": "277.0",
+    "org.eclipse.elk.rectpacking.packing.compaction.iterations": "3",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]",
+    "org.eclipse.elk.algorithm": "rectpacking",
+    "org.eclipse.elk.rectpacking.whiteSpaceElimination.strategy": "EQUAL_BETWEEN_STRUCTURES",
+    "org.eclipse.elk.padding": "[top=15.0,left=15.0,bottom=15.0,right=15.0]",
+    "org.eclipse.elk.spacing.nodeNode": "5.0",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 343.0,
+  "height": 265.0
+}

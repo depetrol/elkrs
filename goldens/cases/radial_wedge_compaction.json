@@ -1,0 +1,21 @@
+{ "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "radial",
+    "org.eclipse.elk.radial.compactor": "WEDGE_COMPACTION",
+    "org.eclipse.elk.radial.radius": "150"
+  },
+  "children": [
+    { "id": "w0", "width": 32, "height": 45 },
+    { "id": "w1", "width": 35, "height": 45 },
+    { "id": "w2", "width": 47, "height": 42 },
+    { "id": "w3", "width": 32, "height": 32 },
+    { "id": "w4", "width": 34, "height": 45 },
+    { "id": "w5", "width": 36, "height": 24 },
+    { "id": "w6", "width": 23, "height": 43 } ],
+  "edges": [
+    { "id": "e1", "sources": ["w0"], "targets": ["w1"] },
+    { "id": "e2", "sources": ["w0"], "targets": ["w2"] },
+    { "id": "e3", "sources": ["w0"], "targets": ["w3"] },
+    { "id": "e4", "sources": ["w1"], "targets": ["w4"] },
+    { "id": "e5", "sources": ["w2"], "targets": ["w5"] },
+    { "id": "e6", "sources": ["w3"], "targets": ["w6"] } ] }

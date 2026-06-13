@@ -1,0 +1,29 @@
+{
+  "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "rectpacking",
+    "elk.spacing.nodeNode": "5",
+    "elk.rectpacking.whiteSpaceElimination.strategy": "EQUAL_BETWEEN_STRUCTURES",
+    "elk.rectpacking.packing.compaction.iterations": "3"
+  },
+  "children": [
+    { "id": "n1", "width": 42, "height": 38 },
+    { "id": "n2", "width": 63, "height": 31 },
+    { "id": "n3", "width": 28, "height": 72 },
+    { "id": "n4", "width": 81, "height": 24 },
+    { "id": "n5", "width": 55, "height": 47 },
+    { "id": "n6", "width": 19, "height": 36 },
+    { "id": "n7", "width": 44, "height": 44 },
+    { "id": "n8", "width": 73, "height": 21 },
+    { "id": "n9", "width": 37, "height": 58 },
+    { "id": "n10", "width": 52, "height": 29 },
+    { "id": "n11", "width": 24, "height": 24 },
+    { "id": "n12", "width": 66, "height": 41 },
+    { "id": "n13", "width": 31, "height": 33 },
+    { "id": "n14", "width": 48, "height": 26 },
+    { "id": "n15", "width": 39, "height": 62 },
+    { "id": "n16", "width": 57, "height": 35 },
+    { "id": "n17", "width": 22, "height": 49 },
+    { "id": "n18", "width": 75, "height": 28 }
+  ]
+}

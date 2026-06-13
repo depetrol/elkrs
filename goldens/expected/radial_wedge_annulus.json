@@ -1,0 +1,255 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "c",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 162.56349186104038,
+      "y": 159.5634918610405,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "a1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 167.56349186104038,
+      "y": 274.56349186104046,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "a2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 167.56349186104035,
+      "y": 54.56349186104049,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "b1",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 325.6269837220808,
+      "y": 317.6269837220809,
+      "width": 25.0,
+      "height": 35.0
+    },
+    {
+      "id": "b2",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 4.499999999999943,
+      "y": 325.1269837220809,
+      "width": 45.0,
+      "height": 20.0
+    },
+    {
+      "id": "b3",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 16.999999999999886,
+      "y": 14.000000000000057,
+      "width": 20.0,
+      "height": 20.0
+    },
+    {
+      "id": "b4",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]"
+      },
+      "x": 323.1269837220808,
+      "y": 12.0,
+      "width": 30.0,
+      "height": 24.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.algorithm": "radial",
+    "org.eclipse.elk.childAreaHeight": "335.126983722081",
+    "org.eclipse.elk.radial.radius": "110.0",
+    "org.eclipse.elk.padding": "[top=12.0,left=12.0,bottom=12.0,right=12.0]",
+    "org.eclipse.elk.spacing.portsSurrounding": "[top=0.0,left=0.0,bottom=0.0,right=0.0]",
+    "org.eclipse.elk.childAreaWidth": "341.12698372208075",
+    "org.eclipse.elk.radial.centerOnRoot": "true",
+    "org.eclipse.elk.spacing.nodeNode": "10.0",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.radial",
+    "org.eclipse.elk.radial.wedgeCriteria": "LEAF_NUMBER",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN",
+    "org.eclipse.elk.nodeLabels.padding": "[top=5.0,left=5.0,bottom=5.0,right=5.0]"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 365.12698372208075,
+  "height": 359.126983722081,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "c"
+      ],
+      "targets": [
+        "a1"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 182.56349186104038,
+            "y": 199.5634918610405
+          },
+          "endPoint": {
+            "x": 182.56349186104038,
+            "y": 274.56349186104046
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "c"
+      ],
+      "targets": [
+        "a2"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 182.56349186104038,
+            "y": 159.5634918610405
+          },
+          "endPoint": {
+            "x": 182.56349186104035,
+            "y": 84.56349186104049
+          }
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "sources": [
+        "a1"
+      ],
+      "targets": [
+        "b1"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 197.56349186104038,
+            "y": 293.9568901432423
+          },
+          "endPoint": {
+            "x": 325.6269837220808,
+            "y": 331.4658184869128
+          }
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "sources": [
+        "a1"
+      ],
+      "targets": [
+        "b2"
+      ],
+      "sections": [
+        {
+          "id": "s3",
+          "startPoint": {
+            "x": 167.56349186104038,
+            "y": 293.9568901432423
+          },
+          "endPoint": {
+            "x": 49.49999999999994,
+            "y": 328.53688629877826
+          }
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "sources": [
+        "a2"
+      ],
+      "targets": [
+        "b3"
+      ],
+      "sections": [
+        {
+          "id": "s4",
+          "startPoint": {
+            "x": 167.56349186104035,
+            "y": 65.1700935788387
+          },
+          "endPoint": {
+            "x": 36.999999999999886,
+            "y": 26.92893218813458
+          }
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "sources": [
+        "a2"
+      ],
+      "targets": [
+        "b4"
+      ],
+      "sections": [
+        {
+          "id": "s5",
+          "startPoint": {
+            "x": 197.56349186104035,
+            "y": 65.1700935788387
+          },
+          "endPoint": {
+            "x": 323.1269837220808,
+            "y": 28.393398282201794
+          }
+        }
+      ]
+    }
+  ]
+}

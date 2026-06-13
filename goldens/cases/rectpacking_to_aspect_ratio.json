@@ -1,0 +1,19 @@
+{
+  "id": "root",
+  "layoutOptions": {
+    "elk.algorithm": "rectpacking",
+    "elk.aspectRatio": "1.8",
+    "elk.rectpacking.whiteSpaceElimination.strategy": "TO_ASPECT_RATIO",
+    "elk.spacing.nodeNode": "10"
+  },
+  "children": [
+    { "id": "n1", "width": 50, "height": 45 },
+    { "id": "n2", "width": 35, "height": 30 },
+    { "id": "n3", "width": 60, "height": 60 },
+    { "id": "n4", "width": 25, "height": 40 },
+    { "id": "n5", "width": 45, "height": 22 },
+    { "id": "n6", "width": 70, "height": 33 },
+    { "id": "n7", "width": 30, "height": 50 },
+    { "id": "n8", "width": 40, "height": 27 }
+  ]
+}

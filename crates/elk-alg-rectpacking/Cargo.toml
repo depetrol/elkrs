@@ -1,0 +1,10 @@
+[package]
+name = "elk-alg-rectpacking"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+elk-alg-common = { path = "../elk-alg-common" }
+elk-core = { path = "../elk-core" }
+elk-graph = { path = "../elk-graph" }
