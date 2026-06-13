@@ -769,7 +769,8 @@ impl<'r> JsonExporter<'r> {
             if key == SPACING_INDIVIDUAL.id {
                 continue;
             }
-            if self.omit_unknown_options && self.registry.option_by_id(&key).is_none() {
+            // Java's JsonExporter.isKnown resolves the property id by suffix.
+            if self.omit_unknown_options && self.registry.option_by_suffix(&key).is_none() {
                 continue;
             }
             json_props.insert(key.to_string(), Value::String(value.to_java_string()));
@@ -786,7 +787,8 @@ impl<'r> JsonExporter<'r> {
             }
             let mut json_props = Map::new();
             for (key, value) in individual.properties.entries() {
-                if self.omit_unknown_options && self.registry.option_by_id(&key).is_none() {
+                // Java's JsonExporter.isKnown resolves the property id by suffix.
+                if self.omit_unknown_options && self.registry.option_by_suffix(&key).is_none() {
                     continue;
                 }
                 json_props.insert(key.to_string(), Value::String(value.to_java_string()));
