@@ -1,0 +1,155 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "ports": [
+        {
+          "id": "a_in",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "WEST"
+          },
+          "x": -4.0,
+          "y": 18.0,
+          "width": 4.0,
+          "height": 4.0
+        },
+        {
+          "id": "a_p1",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "NORTH"
+          },
+          "x": 28.0,
+          "y": -4.0,
+          "width": 4.0,
+          "height": 4.0
+        },
+        {
+          "id": "a_p2",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "EAST"
+          },
+          "x": 60.0,
+          "y": 10.666666666666666,
+          "width": 4.0,
+          "height": 4.0
+        },
+        {
+          "id": "a_out",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "EAST"
+          },
+          "x": 60.0,
+          "y": 25.333333333333332,
+          "width": 4.0,
+          "height": 4.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.portConstraints": "FIXED_SIDE",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 16.0,
+      "y": 26.0,
+      "width": 60.0,
+      "height": 40.0
+    },
+    {
+      "id": "b",
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.layered.crossingMinimization.positionId": "-1",
+        "org.eclipse.elk.layered.layering.layerId": "-1"
+      },
+      "x": 110.0,
+      "y": 33.33333333333333,
+      "width": 40.0,
+      "height": 40.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.portLabels.placement": "[OUTSIDE]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.algorithm": "layered",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 162.0,
+  "height": 85.33333333333333,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "a_out"
+      ],
+      "targets": [
+        "b"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 80.0,
+            "y": 53.33333333333333
+          },
+          "endPoint": {
+            "x": 110.0,
+            "y": 53.33333333333333
+          },
+          "incomingShape": "a_out",
+          "outgoingShape": "b"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "a_p1"
+      ],
+      "targets": [
+        "a_p2"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 46.0,
+            "y": 22.0
+          },
+          "endPoint": {
+            "x": 80.0,
+            "y": 38.666666666666664
+          },
+          "bendPoints": [
+            {
+              "x": 46.0,
+              "y": 12.0
+            },
+            {
+              "x": 90.0,
+              "y": 12.0
+            },
+            {
+              "x": 90.0,
+              "y": 38.666666666666664
+            }
+          ],
+          "incomingShape": "a_p1",
+          "outgoingShape": "a_p2"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}
