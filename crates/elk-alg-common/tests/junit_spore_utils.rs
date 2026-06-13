@@ -3,10 +3,40 @@
 //! copy of `r2` so it just touches `r1` (shortest distance fuzzily >= 0).
 
 use elk_alg_common::elkmath::{fuzzy_compare, shortest_distance};
+use elk_alg_common::spore::Node;
 use elk_alg_common::utils::overlap;
-use elk_graph::math::ElkRectangle;
+use elk_graph::math::{ElkRectangle, KVector};
 
 const TOLERANCE: f64 = 0.0001; // CompareFuzzy.TOLERANCE
+
+/// CompareFuzzy.eq
+fn feq(a: f64, b: f64) -> bool {
+    fuzzy_compare(a, b, TOLERANCE) == 0
+}
+
+/// The 15 rectangles built by the test's `init()` (`r2`..`r16`).
+fn rectangles() -> Vec<ElkRectangle> {
+    let r = |x, y, w, h| ElkRectangle::new(x, y, w, h);
+    vec![
+        r(40., 20., 20., 20.),   // r2
+        r(40., 40., 20., 20.),   // r3
+        r(30., 70., 20., 20.),   // r4
+        r(20., 80., 20., 20.),   // r5
+        r(10., 80., 20., 20.),   // r6
+        r(0., 80., 20., 20.),    // r7
+        r(-30., 70., 20., 20.),  // r8
+        r(-40., 40., 20., 20.),  // r9
+        r(-40., 20., 20., 20.),  // r10
+        r(-30., -20., 20., 20.), // r11
+        r(-20., -40., 20., 20.), // r12
+        r(0., -30., 20., 20.),   // r13
+        r(30., -30., 20., 20.),  // r14
+        r(20., 0., 20., 20.),    // r15
+        r(0., 60., 20., 20.),    // r16
+    ]
+}
+
+const R1: ElkRectangle = ElkRectangle::new(0., 0., 20., 60.);
 
 /// Mirror of the Java `testOverlapComputation` helper.
 fn test_overlap_computation(r1: &ElkRectangle, r2: &ElkRectangle) -> bool {
@@ -49,5 +79,67 @@ fn overlap_test() {
             test_overlap_computation(&r1, r2),
             "overlap computation failed for rectangle index {i}"
         );
+    }
+}
+
+/// Mirror of the Java `testUnderlapComputation` helper.
+fn test_underlap_computation(r1: &ElkRectangle, r2: &ElkRectangle) -> bool {
+    let n1 = Node::new(r1.center(), *r1);
+    let mut n2 = Node::new(r2.center(), *r2);
+    let underlap = n1.underlap(&n2);
+    // underlap equals the distance along the line between the two centers
+    let mut dir = n1.vertex;
+    dir.sub(n2.vertex);
+    if !feq(underlap, n1.distance(&n2, dir)) {
+        return false;
+    }
+    // move n2 toward n1 by `underlap`; they should then just touch
+    let mut step = n1.vertex;
+    step.sub(n2.vertex);
+    step.scale_to_length(underlap);
+    n2.translate(step);
+    feq(shortest_distance(&n1.rect, &n2.rect), 0.0)
+}
+
+#[test]
+fn underlap_test() {
+    for (i, r2) in rectangles().iter().enumerate() {
+        assert!(
+            test_underlap_computation(&R1, r2),
+            "underlap computation failed for rectangle index {i}"
+        );
+    }
+}
+
+#[test]
+fn distance_test() {
+    // (direction, should-collide)
+    let vectors: [(KVector, bool); 9] = [
+        (KVector::new(-20., 20.), true),
+        (KVector::new(-80., 0.), false),
+        (KVector::new(-20., 9.), false),
+        (KVector::new(0., 50.), false),
+        (KVector::new(-9.99, 50.), false),
+        (KVector::new(60., 60.), false),
+        (KVector::new(-30., 50.), true),
+        (KVector::new(-20., 130.), true),
+        (KVector::new(-20., -21.), false),
+    ];
+    let r14 = rectangles()[12]; // rectangles.get(12)
+    let n1 = Node::new(R1.center(), R1);
+    for (v, collide) in vectors {
+        let mut n2 = Node::new(r14.center(), r14);
+        let distance = n1.distance(&n2, v);
+        if collide {
+            let mut step = v;
+            step.scale_to_length(distance);
+            n2.translate(step);
+            assert!(
+                feq(shortest_distance(&n1.rect, &n2.rect), 0.0),
+                "expected collision (dist 0) for direction {v:?}"
+            );
+        } else {
+            assert!(distance.is_infinite(), "expected infinite distance for direction {v:?}");
+        }
     }
 }
