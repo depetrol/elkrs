@@ -82,6 +82,27 @@ against Java ELK, replicating its test suite.
   golden passes -> expand corpus (ports, labels, hierarchy, edge routing
   variants) porting more processors/phases -> remaining strategies.
 
+## Milestone: 120 goldens, 9 algorithms, 145 unit tests 2026-06-13
+
+All 9 ELK algorithms registered & pixel-exact on 120 golden cases: fixed,
+box, random, layered (default + directions + ports incl. inverted/north-south/
+external-import + self loops + labels + comments + layer constraints + all
+layering strategies [NS/longest-path(+source)/coffman/minwidth/stretch] +
+all placers [BK/simple/linear-segments/network-simplex] + node promotion +
+orthogonal/polyline/spline routing), force, stress, radial, rectpacking,
+mrtree, spore (overlap+compaction), disco, topdownpacking. Wave-1 JUnit
+unit tests replicated (145 tests). GOLDEN_NOTES.md records known caveats.
+
+In flight (wave 4 agents): compound/hierarchical layered + external-port
+processors + transferrer recursion + component group placers; hyperedge/
+hypernode/high-degree/horizontal-compactor (+compaction subpackage);
+wrapping (single/multi-edge, unzipper) + partition + model-order
+(cycle breakers, layerers, barycenter heuristic).
+
+Then: white-box JUnit processor tests (elk/test layered suite ~96 files),
+interactive strategies, broader differential fuzzing, final sweep of
+remaining TODO arms.
+
 ## Milestone: 63/63 goldens pixel-identical, 9 algorithms 2026-06-12
 
 Algorithms done (pixel-exact vs 0.11.0 oracle): fixed, box, random, layered
