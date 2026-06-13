@@ -12,10 +12,26 @@ Usage: fuzz_diff.py [N] [--seed S] [--algorithm A] [--keep-going]
 
 import json
 import random
+import re
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+# Java `Object.toString` identity-hash suffix (e.g. `DCGraph@7a8c8dcf`). This is
+# unreproducible across JVM runs — see GOLDEN_NOTES.md §2 — so we strip it from
+# oracle output before comparing, matching how the disco goldens are stored.
+_IDENTITY_HASH = re.compile(r"@[0-9a-f]+$")
+
+
+def _normalize(v):
+    if isinstance(v, str):
+        return _IDENTITY_HASH.sub("", v)
+    if isinstance(v, dict):
+        return {k: _normalize(x) for k, x in v.items()}
+    if isinstance(v, list):
+        return [_normalize(x) for x in v]
+    return v
 
 ROOT = Path(__file__).resolve().parent.parent
 ORACLE = ROOT / "oracle" / "target" / "elk-oracle-1.0.jar"
@@ -47,10 +63,18 @@ def rand_graph(rng, n_nodes, n_edges, with_ports, algorithm):
         for key, pool in LAYERED_GRAPH_OPTIONS.items():
             if rng.random() < 0.45:
                 opts[key] = rng.choice(pool)
+    # Position-driven algorithms (spore, stress, disco, radial interactive)
+    # layout from existing node positions; coincident centers trigger Java's
+    # time-seeded Math.random() perturbation (unreproducible). Give distinct
+    # positions on a jittered grid for those.
+    positioned = algorithm in ("sporeOverlap", "sporeCompaction", "stress")
     children = []
     for i in range(n_nodes):
         node = {"id": f"n{i}", "width": rng.choice([20, 30, 40, 25, 50]),
                 "height": rng.choice([20, 30, 40, 15, 35])}
+        if positioned:
+            node["x"] = (i % 4) * 90 + rng.randint(0, 30)
+            node["y"] = (i // 4) * 90 + rng.randint(0, 30)
         if with_ports and rng.random() < 0.4:
             node.setdefault("ports", [])
         children.append(node)
@@ -118,8 +142,9 @@ def main():
                 break
             continue
 
+        o_norm = json.dumps(_normalize(json.loads(o_out)))
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as of:
-            of.write(o_out); o_path = of.name
+            of.write(o_norm); o_path = of.name
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as rf:
             rf.write(r_out); r_path = rf.name
         cmp = subprocess.run(["python3", str(COMPARE), o_path, r_path],
