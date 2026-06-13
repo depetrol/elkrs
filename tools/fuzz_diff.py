@@ -50,9 +50,11 @@ LAYERED_GRAPH_OPTIONS = {
     "spacing.nodeNode": ["10", "20", "35"],
     "layered.spacing.nodeNodeBetweenLayers": ["10", "20", "40"],
     "spacing.edgeEdge": ["5", "10"],
-    "crossingMinimization.strategy": ["LAYER_SWEEP"],
-    "cycleBreaking.strategy": ["GREEDY", "DEPTH_FIRST"],
-    "layering.nodePromotion.strategy": ["NONE", "NIKOLOV", "NIKOLOV_IMPROVED"],
+    "crossingMinimization.strategy": ["LAYER_SWEEP", "NONE"],
+    "cycleBreaking.strategy": ["GREEDY", "DEPTH_FIRST", "MODEL_ORDER", "GREEDY_MODEL_ORDER"],
+    "layering.nodePromotion.strategy": ["NONE", "NIKOLOV", "NIKOLOV_IMPROVED",
+                                        "MODEL_ORDER_LEFT_TO_RIGHT", "MODEL_ORDER_RIGHT_TO_LEFT"],
+    "considerModelOrder.strategy": ["NONE", "NODES_AND_EDGES", "PREFER_EDGES", "PREFER_NODES"],
     "separateConnectedComponents": ["true", "false"],
 }
 
