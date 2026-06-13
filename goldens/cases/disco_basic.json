@@ -1,0 +1,10 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "disco" },
+  "children": [
+    { "id": "a", "x": 0, "y": 0, "width": 40, "height": 30 },
+    { "id": "b", "x": 100, "y": 0, "width": 40, "height": 30 },
+    { "id": "c", "x": 0, "y": 100, "width": 30, "height": 30 },
+    { "id": "d", "x": 60, "y": 90, "width": 50, "height": 20 } ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"],
+      "sections": [ { "id": "s1", "startPoint": {"x": 40, "y": 15}, "endPoint": {"x": 100, "y": 15} } ] } ] }

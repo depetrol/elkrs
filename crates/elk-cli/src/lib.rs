@@ -8,5 +8,7 @@ pub fn create_elk() -> elk_core::Elk {
     elk_alg_rectpacking::register(&mut elk.options, &mut elk.algorithms);
     elk_alg_mrtree::register(&mut elk.options, &mut elk.algorithms);
     elk_alg_topdownpacking::register(&mut elk.options, &mut elk.algorithms);
+    elk_alg_spore::register(&mut elk.options, &mut elk.algorithms);
+    elk_alg_disco::register(&mut elk.options, &mut elk.algorithms);
     elk
 }

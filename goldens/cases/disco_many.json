@@ -1,0 +1,73 @@
+{
+ "id": "root",
+ "layoutOptions": {
+  "elk.algorithm": "disco",
+  "org.eclipse.elk.aspectRatio": "0.7"
+ },
+ "children": [
+  {
+   "id": "m0",
+   "x": 0,
+   "y": 0,
+   "width": 20,
+   "height": 15
+  },
+  {
+   "id": "m1",
+   "x": 150,
+   "y": 0,
+   "width": 35,
+   "height": 33
+  },
+  {
+   "id": "m2",
+   "x": 300,
+   "y": 0,
+   "width": 50,
+   "height": 51
+  },
+  {
+   "id": "m3",
+   "x": 0,
+   "y": 130,
+   "width": 65,
+   "height": 69
+  },
+  {
+   "id": "m4",
+   "x": 150,
+   "y": 130,
+   "width": 80,
+   "height": 15
+  },
+  {
+   "id": "m5",
+   "x": 300,
+   "y": 130,
+   "width": 20,
+   "height": 33
+  },
+  {
+   "id": "m6",
+   "x": 0,
+   "y": 260,
+   "width": 35,
+   "height": 51
+  },
+  {
+   "id": "m7",
+   "x": 150,
+   "y": 260,
+   "width": 50,
+   "height": 69
+  },
+  {
+   "id": "m8",
+   "x": 300,
+   "y": 260,
+   "width": 65,
+   "height": 15
+  }
+ ],
+ "edges": []
+}

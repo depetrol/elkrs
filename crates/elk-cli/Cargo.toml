@@ -17,7 +17,9 @@ elk-alg-force = { path = "../elk-alg-force" }
 elk-alg-layered = { path = "../elk-alg-layered" }
 elk-alg-mrtree = { path = "../elk-alg-mrtree" }
 elk-alg-radial = { path = "../elk-alg-radial" }
+elk-alg-disco = { path = "../elk-alg-disco" }
 elk-alg-rectpacking = { path = "../elk-alg-rectpacking" }
+elk-alg-spore = { path = "../elk-alg-spore" }
 elk-alg-topdownpacking = { path = "../elk-alg-topdownpacking" }
 elk-core = { path = "../elk-core" }
 elk-graph = { path = "../elk-graph" }

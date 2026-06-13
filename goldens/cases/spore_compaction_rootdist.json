@@ -1,0 +1,13 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "sporeCompaction",
+    "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "MINIMUM_ROOT_DISTANCE",
+    "org.eclipse.elk.padding": "[top=12,left=12,bottom=12,right=12]" },
+  "children": [
+    { "id": "r0", "x": 100, "y": 100, "width": 40, "height": 40 },
+    { "id": "r1", "x": 0, "y": 0, "width": 30, "height": 30 },
+    { "id": "r2", "x": 220, "y": 10, "width": 35, "height": 25 },
+    { "id": "r3", "x": 10, "y": 210, "width": 25, "height": 35 },
+    { "id": "r4", "x": 230, "y": 220, "width": 45, "height": 20 } ],
+  "edges": [
+    { "id": "e1", "sources": ["r0"], "targets": ["r1"] },
+    { "id": "e2", "sources": ["r0"], "targets": ["r4"] } ] }

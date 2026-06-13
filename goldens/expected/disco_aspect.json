@@ -1,0 +1,89 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "p",
+      "x": 103.65169073074053,
+      "y": 77.19101443844431,
+      "width": 60.0,
+      "height": 60.0
+    },
+    {
+      "id": "q",
+      "x": 223.65169073074054,
+      "y": 107.19101443844431,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "r",
+      "x": 25.782505156587256,
+      "y": 16.147674229661305,
+      "width": 25.0,
+      "height": 80.0
+    },
+    {
+      "id": "s",
+      "x": 197.4558659917193,
+      "y": 56.3563422714179,
+      "width": 90.0,
+      "height": 20.0
+    },
+    {
+      "id": "t",
+      "x": 15.782505156587263,
+      "y": 130.63002062634902,
+      "width": 45.0,
+      "height": 45.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.algorithm": "disco",
+    "org.eclipse.elk.spacing.componentComponent": "30.0",
+    "org.eclipse.elk.padding": "[top=5.0,left=15.0,bottom=5.0,right=15.0]",
+    "org.eclipse.elk.disco.debug.discoPolys": "[ 01234567\n0XXXX____\n1X_______\n2X_______\n3XXXX_XXX\n4XXXXXXXX\n5XXXXXXXX\n6XXXXXXXX\n7XXXXXXXX\n8XXXX_XXX,  01234\n0XXXXX\n1XXXXX\n2XXXXX\n3XXXXX\n4XXXXX,  012\n0XXX\n1XXX\n2XXX\n3XXX\n4XXX\n5XXX\n6XXX\n7XXX\n8XXX\n9XXX\n0XXX,  012\n0XXX\n1XXX\n2XXX\n3XXX\n4XXX\n5XXX\n6XXX\n7XXX]",
+    "org.eclipse.elk.aspectRatio": "2.5",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.disco",
+    "org.eclipse.elk.disco.debug.discoGraph": "org.eclipse.elk.alg.disco.graph.DCGraph",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 336.26004125269804,
+  "height": 203.96469279337543,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "p"
+      ],
+      "targets": [
+        "q"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 163.65169073074054,
+            "y": 117.19101443844431
+          },
+          "endPoint": {
+            "x": 223.65169073074054,
+            "y": 122.19101443844431
+          },
+          "bendPoints": [
+            {
+              "x": 193.65169073074054,
+              "y": 119.19101443844431
+            }
+          ],
+          "incomingShape": "p",
+          "outgoingShape": "q"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "r0",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 50.0,
+      "y": 50.0,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "r1",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 12.0,
+      "y": 12.0,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "r2",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 50.0,
+      "y": 15.865168539325841,
+      "width": 35.0,
+      "height": 25.0
+    },
+    {
+      "id": "r3",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 15.929411764705883,
+      "y": 50.0,
+      "width": 25.0,
+      "height": 35.0
+    },
+    {
+      "id": "r4",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 93.27272727272725,
+      "y": 98.0,
+      "width": 45.0,
+      "height": 20.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.sporeCompaction",
+    "org.eclipse.elk.algorithm": "sporeCompaction",
+    "org.eclipse.elk.padding": "[top=12.0,left=12.0,bottom=12.0,right=12.0]",
+    "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "MINIMUM_ROOT_DISTANCE",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 150.27272727272725,
+  "height": 130.0,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "r0"
+      ],
+      "targets": [
+        "r1"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 50.0,
+            "y": 50.0
+          },
+          "endPoint": {
+            "x": 42.0,
+            "y": 42.0
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "r0"
+      ],
+      "targets": [
+        "r4"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 90.0,
+            "y": 86.60377358490567
+          },
+          "endPoint": {
+            "x": 103.72727272727272,
+            "y": 98.0
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

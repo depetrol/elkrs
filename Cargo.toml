@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/elk-graph", "crates/elk-core", "crates/elk-cli", "crates/elk-alg-layered", "crates/elk-alg-common", "crates/elk-alg-force", "crates/elk-alg-radial", "crates/elk-alg-rectpacking", "crates/elk-alg-mrtree", "crates/elk-alg-topdownpacking"]
+members = ["crates/elk-graph", "crates/elk-core", "crates/elk-cli", "crates/elk-alg-layered", "crates/elk-alg-common", "crates/elk-alg-force", "crates/elk-alg-radial", "crates/elk-alg-rectpacking", "crates/elk-alg-mrtree", "crates/elk-alg-topdownpacking", "crates/elk-alg-spore", "crates/elk-alg-disco"]
 
 [workspace.package]
 version = "0.1.0"

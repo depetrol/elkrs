@@ -1,0 +1,177 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "c0",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 8.0,
+      "y": 14.601372997711671,
+      "width": 30.0,
+      "height": 20.0
+    },
+    {
+      "id": "c1",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 46.0,
+      "y": 15.843478260869565,
+      "width": 40.0,
+      "height": 32.0
+    },
+    {
+      "id": "c2",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 94.0,
+      "y": 8.0,
+      "width": 50.0,
+      "height": 44.0
+    },
+    {
+      "id": "c3",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 152.0,
+      "y": 35.33913043478261,
+      "width": 60.0,
+      "height": 20.0
+    },
+    {
+      "id": "c4",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 41.62752205292702,
+      "y": 85.80313043478262,
+      "width": 30.0,
+      "height": 32.0
+    },
+    {
+      "id": "c5",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 79.62752205292702,
+      "y": 92.18713043478263,
+      "width": 40.0,
+      "height": 44.0
+    },
+    {
+      "id": "c6",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 127.62752205292702,
+      "y": 103.33913043478262,
+      "width": 50.0,
+      "height": 20.0
+    },
+    {
+      "id": "c7",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 179.67441860465118,
+      "y": 63.339130434782604,
+      "width": 60.0,
+      "height": 32.0
+    },
+    {
+      "id": "c8",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 60.18752205292702,
+      "y": 144.18713043478263,
+      "width": 30.0,
+      "height": 44.0
+    },
+    {
+      "id": "c9",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 98.18752205292702,
+      "y": 158.93913043478264,
+      "width": 40.0,
+      "height": 20.0
+    },
+    {
+      "id": "c10",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 146.18752205292702,
+      "y": 146.52313043478264,
+      "width": 50.0,
+      "height": 32.0
+    },
+    {
+      "id": "c11",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 204.18752205292702,
+      "y": 128.42713043478264,
+      "width": 60.0,
+      "height": 44.0
+    },
+    {
+      "id": "c12",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 37.965299830704794,
+      "y": 196.18713043478263,
+      "width": 30.0,
+      "height": 20.0
+    },
+    {
+      "id": "c13",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 70.21192292438673,
+      "y": 224.18713043478263,
+      "width": 40.0,
+      "height": 32.0
+    },
+    {
+      "id": "c14",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 118.21192292438673,
+      "y": 216.61676006441226,
+      "width": 50.0,
+      "height": 44.0
+    },
+    {
+      "id": "c15",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 194.0180305275033,
+      "y": 180.42713043478264,
+      "width": 60.0,
+      "height": 20.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.sporeCompaction",
+    "org.eclipse.elk.algorithm": "sporeCompaction",
+    "org.eclipse.elk.padding": "[top=8.0,left=8.0,bottom=8.0,right=8.0]",
+    "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "CIRCLE_UNDERLAP",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 272.187522052927,
+  "height": 268.61676006441223
+}

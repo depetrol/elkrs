@@ -1,0 +1,18 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "sporeCompaction",
+    "org.eclipse.elk.compaction.orthogonal": "true",
+    "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "CENTER_DISTANCE",
+    "org.eclipse.elk.processingOrder.rootSelection": "FIXED",
+    "org.eclipse.elk.processingOrder.preferredRoot": "h2",
+    "org.eclipse.elk.spacing.nodeNode": "5",
+    "org.eclipse.elk.padding": "[top=10,left=20,bottom=10,right=20]" },
+  "children": [
+    { "id": "h1", "x": 0, "y": 0, "width": 30, "height": 30 },
+    { "id": "h2", "x": 100, "y": 10, "width": 50, "height": 40 },
+    { "id": "h3", "x": 220, "y": 0, "width": 30, "height": 60 },
+    { "id": "h4", "x": 10, "y": 120, "width": 60, "height": 25 },
+    { "id": "h5", "x": 150, "y": 140, "width": 40, "height": 40 } ],
+  "edges": [
+    { "id": "e1", "sources": ["h1"], "targets": ["h2"] },
+    { "id": "e2", "sources": ["h2"], "targets": ["h3"] },
+    { "id": "e3", "sources": ["h4"], "targets": ["h5"] } ] }

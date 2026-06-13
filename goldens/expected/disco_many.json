@@ -1,0 +1,80 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "m0",
+      "x": 156.83484478971707,
+      "y": 111.66774627836932,
+      "width": 20.0,
+      "height": 15.0
+    },
+    {
+      "id": "m1",
+      "x": 86.77177799357318,
+      "y": 53.014518662382116,
+      "width": 35.0,
+      "height": 33.0
+    },
+    {
+      "id": "m2",
+      "x": 20.18443713054836,
+      "y": 202.90484703354122,
+      "width": 50.0,
+      "height": 51.0
+    },
+    {
+      "id": "m3",
+      "x": 68.29605206045406,
+      "y": 109.49436008636295,
+      "width": 65.0,
+      "height": 69.0
+    },
+    {
+      "id": "m4",
+      "x": 88.60185952540692,
+      "y": 12.361291046394882,
+      "width": 80.0,
+      "height": 15.0
+    },
+    {
+      "id": "m5",
+      "x": 142.93194105724064,
+      "y": 53.014518662382116,
+      "width": 20.0,
+      "height": 33.0
+    },
+    {
+      "id": "m6",
+      "x": 93.72322985981138,
+      "y": 202.90484703354122,
+      "width": 35.0,
+      "height": 51.0
+    },
+    {
+      "id": "m7",
+      "x": 13.232985264310173,
+      "y": 20.118550377585933,
+      "width": 50.0,
+      "height": 69.0
+    },
+    {
+      "id": "m8",
+      "x": 151.71347445531262,
+      "y": 201.04355598714633,
+      "width": 65.0,
+      "height": 15.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.aspectRatio": "0.7",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.disco",
+    "org.eclipse.elk.disco.debug.discoGraph": "org.eclipse.elk.alg.disco.graph.DCGraph",
+    "org.eclipse.elk.disco.debug.discoPolys": "[ 0123456789012\n0XXXXXXXXXXXXX\n1XXXXXXXXXXXXX\n2XXXXXXXXXXXXX\n3XXXXXXXXXXXXX\n4XXXXXXXXXXXXX\n5XXXXXXXXXXXXX\n6XXXXXXXXXXXXX\n7XXXXXXXXXXXXX\n8XXXXXXXXXXXXX,  01234567890\n0XXXXXXXXXXX\n1XXXXXXXXXXX\n2XXXXXXXXXXX\n3XXXXXXXXXXX\n4XXXXXXXXXXX\n5XXXXXXXXXXX\n6XXXXXXXXXXX\n7XXXXXXXXXXX\n8XXXXXXXXXXX,  01234567890\n0XXXXXXXXXXX\n1XXXXXXXXXXX\n2XXXXXXXXXXX\n3XXXXXXXXXXX\n4XXXXXXXXXXX\n5XXXXXXXXXXX\n6XXXXXXXXXXX\n7XXXXXXXXXXX,  01234567\n0XXXXXXXX\n1XXXXXXXX\n2XXXXXXXX\n3XXXXXXXX\n4XXXXXXXX\n5XXXXXXXX\n6XXXXXXXX\n7XXXXXXXX,  01234567\n0XXXXXXXX\n1XXXXXXXX\n2XXXXXXXX\n3XXXXXXXX\n4XXXXXXXX\n5XXXXXXXX,  012345\n0XXXXXX\n1XXXXXX\n2XXXXXX\n3XXXXXX\n4XXXXXX\n5XXXXXX,  012345678901234\n0XXXXXXXXXXXXXXX\n1XXXXXXXXXXXXXXX\n2XXXXXXXXXXXXXXX\n3XXXXXXXXXXXXXXX,  0123456789012\n0XXXXXXXXXXXXX\n1XXXXXXXXXXXXX\n2XXXXXXXXXXXXX\n3XXXXXXXXXXXXX,  012345\n0XXXXXX\n1XXXXXX\n2XXXXXX\n3XXXXXX]",
+    "org.eclipse.elk.algorithm": "disco",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 253.39791158586098,
+  "height": 292.127429126331
+}

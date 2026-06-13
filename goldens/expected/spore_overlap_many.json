@@ -1,0 +1,351 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "n0",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 194.9931095937785,
+      "y": 8.0,
+      "width": 30.0,
+      "height": 24.0
+    },
+    {
+      "id": "n1",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 47.999999999999986,
+      "y": 223.09059486723038,
+      "width": 55.0,
+      "height": 18.0
+    },
+    {
+      "id": "n2",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 166.99310959377857,
+      "y": 10.512690355329944,
+      "width": 20.0,
+      "height": 24.0
+    },
+    {
+      "id": "n3",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 49.22813263525302,
+      "y": 159.09059486723038,
+      "width": 55.0,
+      "height": 24.0
+    },
+    {
+      "id": "n4",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 218.09310959377837,
+      "y": 177.4496989600438,
+      "width": 40.0,
+      "height": 24.0
+    },
+    {
+      "id": "n5",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 114.22813263525303,
+      "y": 87.89059486723038,
+      "width": 20.0,
+      "height": 24.0
+    },
+    {
+      "id": "n6",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 226.6931095937784,
+      "y": 89.26349206349207,
+      "width": 25.0,
+      "height": 24.0
+    },
+    {
+      "id": "n7",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 304.49310959377834,
+      "y": 88.46349206349204,
+      "width": 20.0,
+      "height": 42.0
+    },
+    {
+      "id": "n8",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 8.0,
+      "y": 249.09059486723038,
+      "width": 55.0,
+      "height": 30.0
+    },
+    {
+      "id": "n9",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 266.09310959377837,
+      "y": 185.55314723590584,
+      "width": 55.0,
+      "height": 18.0
+    },
+    {
+      "id": "n10",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 332.49310959377834,
+      "y": 101.02205062205061,
+      "width": 55.0,
+      "height": 30.0
+    },
+    {
+      "id": "n11",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 266.09310959377837,
+      "y": 150.46349206349203,
+      "width": 30.0,
+      "height": 24.0
+    },
+    {
+      "id": "n12",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 232.99310959377846,
+      "y": 20.77777777777776,
+      "width": 25.0,
+      "height": 30.0
+    },
+    {
+      "id": "n13",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 319.59310959377837,
+      "y": 213.25314723590583,
+      "width": 20.0,
+      "height": 42.0
+    },
+    {
+      "id": "n14",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 66.42146596858639,
+      "y": 191.09059486723038,
+      "width": 30.0,
+      "height": 24.0
+    },
+    {
+      "id": "n15",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 79.2668066684022,
+      "y": 61.890594867230384,
+      "width": 30.0,
+      "height": 18.0
+    },
+    {
+      "id": "n16",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 199.9931095937784,
+      "y": 52.06349206349206,
+      "width": 25.0,
+      "height": 24.0
+    },
+    {
+      "id": "n17",
+      "layoutOptions": {
+        "org.eclipse.elk.margins": "[top=0.0,left=0.0,bottom=0.0,right=0.0]"
+      },
+      "x": 142.22813263525302,
+      "y": 84.06349206349206,
+      "width": 55.0,
+      "height": 24.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.algorithm": "sporeOverlap",
+    "org.eclipse.elk.padding": "[top=8.0,left=8.0,bottom=8.0,right=8.0]",
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.processingOrder.rootSelection": "CENTER_NODE",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.sporeOverlap",
+    "org.eclipse.elk.processingOrder.treeConstruction": "MINIMUM_SPANNING_TREE",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN",
+    "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "INVERTED_OVERLAP"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 395.49310959377834,
+  "height": 287.0905948672304,
+  "edges": [
+    {
+      "id": "e0",
+      "sources": [
+        "n0"
+      ],
+      "targets": [
+        "n3"
+      ],
+      "sections": [
+        {
+          "id": "s0",
+          "startPoint": {
+            "x": 199.4088655850262,
+            "y": 32.0
+          },
+          "endPoint": {
+            "x": 87.31237664400533,
+            "y": 159.09059486723038
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e1",
+      "sources": [
+        "n1"
+      ],
+      "targets": [
+        "n8"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 64.24999999999999,
+            "y": 241.09059486723038
+          },
+          "endPoint": {
+            "x": 54.249999999999986,
+            "y": 249.09059486723038
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "n2"
+      ],
+      "targets": [
+        "n13"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 185.6414332395182,
+            "y": 34.512690355329944
+          },
+          "endPoint": {
+            "x": 319.59310959377837,
+            "y": 220.37762581516034
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e3",
+      "sources": [
+        "n3"
+      ],
+      "targets": [
+        "n0"
+      ],
+      "sections": [
+        {
+          "id": "s3",
+          "startPoint": {
+            "x": 87.31237664400533,
+            "y": 159.09059486723038
+          },
+          "endPoint": {
+            "x": 199.4088655850262,
+            "y": 32.0
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e4",
+      "sources": [
+        "n4"
+      ],
+      "targets": [
+        "n5"
+      ],
+      "sections": [
+        {
+          "id": "s4",
+          "startPoint": {
+            "x": 222.83637229897164,
+            "y": 177.4496989600438
+          },
+          "endPoint": {
+            "x": 134.22813263525302,
+            "y": 107.75597248245923
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e5",
+      "sources": [
+        "n5"
+      ],
+      "targets": [
+        "n10"
+      ],
+      "sections": [
+        {
+          "id": "s5",
+          "startPoint": {
+            "x": 134.22813263525302,
+            "y": 100.57481251324903
+          },
+          "endPoint": {
+            "x": 332.49310959377834,
+            "y": 114.14045209549934
+          }
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

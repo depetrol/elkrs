@@ -1,0 +1,152 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "a",
+      "labels": [
+        {
+          "text": "A",
+          "id": "al",
+          "x": 10.0,
+          "y": 10.0,
+          "width": 20.0,
+          "height": 12.0
+        }
+      ],
+      "ports": [
+        {
+          "id": "ap1",
+          "labels": [
+            {
+              "text": "p",
+              "id": "apl",
+              "x": 10.0,
+              "y": 0.0,
+              "width": 12.0,
+              "height": 8.0
+            }
+          ],
+          "x": 50.0,
+          "y": 15.0,
+          "width": 8.0,
+          "height": 8.0
+        }
+      ],
+      "x": 11.814150102625206,
+      "y": 139.84195730901223,
+      "width": 50.0,
+      "height": 40.0
+    },
+    {
+      "id": "b",
+      "ports": [
+        {
+          "id": "bp1",
+          "x": -8.0,
+          "y": 12.0,
+          "width": 8.0,
+          "height": 8.0
+        }
+      ],
+      "x": 151.8141501026252,
+      "y": 149.84195730901223,
+      "width": 40.0,
+      "height": 40.0
+    },
+    {
+      "id": "c",
+      "x": 117.03854303307179,
+      "y": 62.117564378565675,
+      "width": 35.0,
+      "height": 35.0
+    },
+    {
+      "id": "d",
+      "x": 207.0385430330718,
+      "y": 72.11756437856567,
+      "width": 25.0,
+      "height": 50.0
+    },
+    {
+      "id": "e",
+      "x": 71.8141501026252,
+      "y": 13.241464310148856,
+      "width": 60.0,
+      "height": 22.0
+    },
+    {
+      "id": "f",
+      "x": 178.93171448119085,
+      "y": 14.08975717217863,
+      "width": 30.0,
+      "height": 30.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.disco",
+    "org.eclipse.elk.disco.debug.discoGraph": "org.eclipse.elk.alg.disco.graph.DCGraph",
+    "org.eclipse.elk.disco.debug.discoPolys": "[ 01234567890123\n0XXXXXX________\n1XXXXXX___XXXXX\n2XXXXXXXXXXXXXX\n3XXXXXXXXXXXXXX\n4XXXXXXXXXXXXXX\n5XXXXXX_XXXXXXX\n6XXXXXX___XXXXX\n7_________XXXXX\n8_________XXXXX,  012345678901234567890\n0XXXXXXXX_____________\n1XXXXXXXXXX____XXXXXXX\n2XXXXXXXXXXXXXXXXXXXXX\n3XXXXXXXXXXXXXXXXXXXXX\n4XXXXXXXXXXXXXXXXXXXXX\n5XXXXXXXX____XXXXXXXXX\n6XXXXXXXX______XXXXXXX\n7______________XXXXXXX,  012345\n0XXXXXX\n1XXXXXX\n2XXXXXX\n3XXXXXX\n4XXXXXX\n5XXXXXX,  012345678\n0XXXXXXXXX\n1XXXXXXXXX\n2XXXXXXXXX\n3XXXXXXXXX\n4XXXXXXXXX]",
+    "org.eclipse.elk.algorithm": "disco",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 266.4146431014886,
+  "height": 227.6283002052504,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "ap1"
+      ],
+      "targets": [
+        "bp1"
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 69.8141501026252,
+            "y": 158.84195730901223
+          },
+          "endPoint": {
+            "x": 143.8141501026252,
+            "y": 165.84195730901223
+          },
+          "incomingShape": "ap1",
+          "outgoingShape": "bp1"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "c"
+      ],
+      "targets": [
+        "d"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 152.0385430330718,
+            "y": 82.11756437856567
+          },
+          "endPoint": {
+            "x": 207.0385430330718,
+            "y": 92.11756437856567
+          },
+          "incomingShape": "c",
+          "outgoingShape": "d"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}

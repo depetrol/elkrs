@@ -1,0 +1,134 @@
+{
+ "id": "root",
+ "layoutOptions": {
+  "elk.algorithm": "disco"
+ },
+ "children": [
+  {
+   "id": "a",
+   "x": 0,
+   "y": 0,
+   "width": 50,
+   "height": 40,
+   "labels": [
+    {
+     "id": "al",
+     "text": "A",
+     "x": 10,
+     "y": 10,
+     "width": 20,
+     "height": 12
+    }
+   ],
+   "ports": [
+    {
+     "id": "ap1",
+     "x": 50,
+     "y": 15,
+     "width": 8,
+     "height": 8,
+     "labels": [
+      {
+       "id": "apl",
+       "text": "p",
+       "x": 10,
+       "y": 0,
+       "width": 12,
+       "height": 8
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b",
+   "x": 140,
+   "y": 10,
+   "width": 40,
+   "height": 40,
+   "ports": [
+    {
+     "id": "bp1",
+     "x": -8,
+     "y": 12,
+     "width": 8,
+     "height": 8
+    }
+   ]
+  },
+  {
+   "id": "c",
+   "x": 0,
+   "y": 150,
+   "width": 35,
+   "height": 35
+  },
+  {
+   "id": "d",
+   "x": 90,
+   "y": 160,
+   "width": 25,
+   "height": 50
+  },
+  {
+   "id": "e",
+   "x": 200,
+   "y": 140,
+   "width": 60,
+   "height": 22
+  },
+  {
+   "id": "f",
+   "x": 320,
+   "y": 40,
+   "width": 30,
+   "height": 30
+  }
+ ],
+ "edges": [
+  {
+   "id": "e1",
+   "sources": [
+    "ap1"
+   ],
+   "targets": [
+    "bp1"
+   ],
+   "sections": [
+    {
+     "id": "s1",
+     "startPoint": {
+      "x": 58,
+      "y": 19
+     },
+     "endPoint": {
+      "x": 132,
+      "y": 26
+     }
+    }
+   ]
+  },
+  {
+   "id": "e2",
+   "sources": [
+    "c"
+   ],
+   "targets": [
+    "d"
+   ],
+   "sections": [
+    {
+     "id": "s2",
+     "startPoint": {
+      "x": 35,
+      "y": 170
+     },
+     "endPoint": {
+      "x": 90,
+      "y": 180
+     }
+    }
+   ]
+  }
+ ]
+}

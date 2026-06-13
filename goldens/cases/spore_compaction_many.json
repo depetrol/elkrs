@@ -1,0 +1,122 @@
+{
+ "id": "root",
+ "layoutOptions": {
+  "elk.algorithm": "sporeCompaction",
+  "org.eclipse.elk.processingOrder.spanningTreeCostFunction": "CIRCLE_UNDERLAP"
+ },
+ "children": [
+  {
+   "id": "c0",
+   "x": 0,
+   "y": 0,
+   "width": 30,
+   "height": 20
+  },
+  {
+   "id": "c1",
+   "x": 90,
+   "y": 10,
+   "width": 40,
+   "height": 32
+  },
+  {
+   "id": "c2",
+   "x": 200,
+   "y": 0,
+   "width": 50,
+   "height": 44
+  },
+  {
+   "id": "c3",
+   "x": 310,
+   "y": 40,
+   "width": 60,
+   "height": 20
+  },
+  {
+   "id": "c4",
+   "x": 20,
+   "y": 120,
+   "width": 30,
+   "height": 32
+  },
+  {
+   "id": "c5",
+   "x": 140,
+   "y": 150,
+   "width": 40,
+   "height": 44
+  },
+  {
+   "id": "c6",
+   "x": 260,
+   "y": 160,
+   "width": 50,
+   "height": 20
+  },
+  {
+   "id": "c7",
+   "x": 380,
+   "y": 120,
+   "width": 60,
+   "height": 32
+  },
+  {
+   "id": "c8",
+   "x": 60,
+   "y": 260,
+   "width": 30,
+   "height": 44
+  },
+  {
+   "id": "c9",
+   "x": 180,
+   "y": 280,
+   "width": 40,
+   "height": 20
+  },
+  {
+   "id": "c10",
+   "x": 300,
+   "y": 260,
+   "width": 50,
+   "height": 32
+  },
+  {
+   "id": "c11",
+   "x": 420,
+   "y": 230,
+   "width": 60,
+   "height": 44
+  },
+  {
+   "id": "c12",
+   "x": 0,
+   "y": 380,
+   "width": 30,
+   "height": 20
+  },
+  {
+   "id": "c13",
+   "x": 120,
+   "y": 400,
+   "width": 40,
+   "height": 32
+  },
+  {
+   "id": "c14",
+   "x": 250,
+   "y": 390,
+   "width": 50,
+   "height": 44
+  },
+  {
+   "id": "c15",
+   "x": 390,
+   "y": 360,
+   "width": 60,
+   "height": 20
+  }
+ ],
+ "edges": []
+}

@@ -11,6 +11,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "elk-alg-disco"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-common",
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-alg-force"
 version = "0.1.0"
 dependencies = [
@@ -59,6 +68,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "elk-alg-spore"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-common",
+ "elk-core",
+ "elk-graph",
+]
+
+[[package]]
 name = "elk-alg-topdownpacking"
 version = "0.1.0"
 dependencies = [
@@ -70,11 +88,13 @@ dependencies = [
 name = "elk-cli"
 version = "0.1.0"
 dependencies = [
+ "elk-alg-disco",
  "elk-alg-force",
  "elk-alg-layered",
  "elk-alg-mrtree",
  "elk-alg-radial",
  "elk-alg-rectpacking",
+ "elk-alg-spore",
  "elk-alg-topdownpacking",
  "elk-core",
  "elk-graph",

@@ -1,0 +1,15 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "disco",
+    "org.eclipse.elk.aspectRatio": "2.5",
+    "org.eclipse.elk.spacing.componentComponent": "30",
+    "org.eclipse.elk.padding": "[top=5,left=15,bottom=5,right=15]" },
+  "children": [
+    { "id": "p", "x": 0, "y": 0, "width": 60, "height": 60 },
+    { "id": "q", "x": 120, "y": 30, "width": 30, "height": 30 },
+    { "id": "r", "x": 0, "y": 150, "width": 25, "height": 80 },
+    { "id": "s", "x": 200, "y": 200, "width": 90, "height": 20 },
+    { "id": "t", "x": 300, "y": 0, "width": 45, "height": 45 } ],
+  "edges": [
+    { "id": "e1", "sources": ["p"], "targets": ["q"],
+      "sections": [ { "id": "s1", "startPoint": {"x": 60, "y": 40}, "endPoint": {"x": 120, "y": 45},
+                      "bendPoints": [ {"x": 90, "y": 42} ] } ] } ] }

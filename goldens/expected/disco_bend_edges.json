@@ -1,0 +1,131 @@
+{
+  "id": "root",
+  "children": [
+    {
+      "id": "u",
+      "labels": [
+        {
+          "text": "u",
+          "id": "ul",
+          "x": 5.0,
+          "y": 5.0,
+          "width": 20.0,
+          "height": 10.0
+        }
+      ],
+      "x": 78.67970436143196,
+      "y": 64.57579305300237,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "v",
+      "x": 218.67970436143196,
+      "y": 134.57579305300237,
+      "width": 30.0,
+      "height": 30.0
+    },
+    {
+      "id": "w",
+      "x": 16.627748707217165,
+      "y": 13.41992609035799,
+      "width": 40.0,
+      "height": 25.0
+    },
+    {
+      "id": "x",
+      "x": 226.62774870721717,
+      "y": 33.41992609035799,
+      "width": 35.0,
+      "height": 35.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.edge.thickness": "2.0",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.disco",
+    "org.eclipse.elk.disco.debug.discoGraph": "org.eclipse.elk.alg.disco.graph.DCGraph",
+    "org.eclipse.elk.disco.debug.discoPolys": "[ 012345678901\n0XXXX________\n1XXXXXXX_____\n2XXXXXXXX____\n3XXXXXXXX____\n4_____XXXXXXX\n5_____XXXXXXX\n6_____XXXXXXX\n7________XXXX,  01234567890123456\n0XXXXX____________\n1XXXXXXXXXXX__XXXX\n2XXXXXXXXXXXXXXXXX\n3________XXXXXXXXX\n4_____________XXXX]",
+    "org.eclipse.elk.algorithm": "disco",
+    "org.eclipse.elk.hierarchyHandling": "SEPARATE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 302.25549741443433,
+  "height": 204.04767479757516,
+  "edges": [
+    {
+      "id": "e1",
+      "sources": [
+        "u"
+      ],
+      "targets": [
+        "v"
+      ],
+      "labels": [
+        {
+          "text": "edge",
+          "id": "e1l",
+          "x": 148.67970436143196,
+          "y": 94.57579305300237,
+          "width": 30.0,
+          "height": 10.0
+        }
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "startPoint": {
+            "x": 108.67970436143196,
+            "y": 79.57579305300237
+          },
+          "endPoint": {
+            "x": 218.67970436143196,
+            "y": 149.57579305300237
+          },
+          "bendPoints": [
+            {
+              "x": 168.67970436143196,
+              "y": 79.57579305300237
+            },
+            {
+              "x": 168.67970436143196,
+              "y": 149.57579305300237
+            }
+          ],
+          "incomingShape": "u",
+          "outgoingShape": "v"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    },
+    {
+      "id": "e2",
+      "sources": [
+        "w"
+      ],
+      "targets": [
+        "x"
+      ],
+      "sections": [
+        {
+          "id": "s2",
+          "startPoint": {
+            "x": 56.627748707217165,
+            "y": 25.41992609035799
+          },
+          "endPoint": {
+            "x": 226.62774870721717,
+            "y": 50.41992609035799
+          },
+          "incomingShape": "w",
+          "outgoingShape": "x"
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.junctionPoints": "()"
+      }
+    }
+  ]
+}
