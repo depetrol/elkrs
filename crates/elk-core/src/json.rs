@@ -27,6 +27,28 @@ fn id_string(v: &Value) -> Option<String> {
     }
 }
 
+/// Port of `JsonAdapter.getId`/`asId`: every element (node, port, edge, edge
+/// section) must have an id, and the id must be a string or an integer
+/// (`d % 1 == 0`); anything else is a `JsonImportException`.
+fn require_id(obj: &Map<String, Value>) -> Result<String, String> {
+    let idv = obj
+        .get("id")
+        .ok_or_else(|| "Every element must have an id.".to_string())?;
+    match idv {
+        Value::String(s) => Ok(s.clone()),
+        Value::Number(n) => {
+            let d = n.as_f64().unwrap_or(f64::NAN);
+            if d % 1.0 == 0.0 {
+                // Java converts to intValue, so "3.0" and "3" are the same id
+                Ok(format!("{}", d as i64))
+            } else {
+                Err(format!("Id must be a string or an integer: '{n}'."))
+            }
+        }
+        _ => Err(format!("Id must be a string or an integer: '{idv}'.")),
+    }
+}
+
 fn opt_double(obj: &Map<String, Value>, key: &str) -> Option<f64> {
     let v = obj.get(key)?.as_f64()?;
     // Java's doubleValueValid maps NaN/inf to 0.0
@@ -60,11 +82,10 @@ impl<'r> JsonImporter<'r> {
         node: NodeId,
         obj: &Map<String, Value>,
     ) -> Result<(), String> {
-        if let Some(idv) = obj.get("id") {
-            let id = id_string(idv).ok_or("node id must be string or number")?;
-            g.node_mut(node).identifier = Some(id.clone());
-            self.node_ids.insert(id, node);
-        }
+        // Java `register(node, jsonObj)`: the id is mandatory.
+        let id = require_id(obj)?;
+        g.node_mut(node).identifier = Some(id.clone());
+        self.node_ids.insert(id, node);
         self.transform_properties(g.node_mut(node).properties_mut(), obj);
         self.transform_individual_spacings(g.node_mut(node).properties_mut(), obj);
         {
@@ -108,11 +129,10 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<(), String> {
         let port = g.create_port(parent);
-        if let Some(idv) = obj.get("id") {
-            let id = id_string(idv).ok_or("port id must be string or number")?;
-            g.port_mut(port).identifier = Some(id.clone());
-            self.port_ids.insert(id, port);
-        }
+        // Java `register(port, jsonPort)`: the id is mandatory.
+        let id = require_id(obj)?;
+        g.port_mut(port).identifier = Some(id.clone());
+        self.port_ids.insert(id, port);
         self.transform_properties(g.port_mut(port).properties_mut(), obj);
         {
             let shape = &mut g.port_mut(port).shape;
@@ -221,9 +241,8 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<EdgeId, String> {
         let edge = g.create_edge(Some(parent));
-        if let Some(idv) = obj.get("id") {
-            g.edge_mut(edge).identifier = id_string(idv);
-        }
+        // Java `register(edge, jsonObj)`: the id is mandatory.
+        g.edge_mut(edge).identifier = Some(require_id(obj)?);
         if let Some(sources) = obj.get("sources").and_then(Value::as_array) {
             for s in sources {
                 let sid = id_string(s).ok_or("edge source id must be string or number")?;
@@ -257,9 +276,8 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<EdgeId, String> {
         let edge = g.create_edge(Some(parent));
-        if let Some(idv) = obj.get("id") {
-            g.edge_mut(edge).identifier = id_string(idv);
-        }
+        // Java `register(edge, jsonObj)`: the id is mandatory.
+        g.edge_mut(edge).identifier = Some(require_id(obj)?);
         let src_node = obj
             .get("source")
             .and_then(id_string_opt)
@@ -347,11 +365,10 @@ impl<'r> JsonImporter<'r> {
                     None => continue,
                 };
                 let section = g.create_section(edge);
-                if let Some(idv) = sobj.get("id") {
-                    let id = id_string(idv).ok_or("section id must be string or number")?;
-                    g.section_mut(section).identifier = Some(id.clone());
-                    section_ids.insert(id, section);
-                }
+                // Java `register(edgeSection, jsonSection)`: the id is mandatory.
+                let id = require_id(sobj)?;
+                g.section_mut(section).identifier = Some(id.clone());
+                section_ids.insert(id, section);
                 let start = sobj
                     .get("startPoint")
                     .and_then(Value::as_object)
