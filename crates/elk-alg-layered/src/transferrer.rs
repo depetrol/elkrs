@@ -299,6 +299,16 @@ fn apply_edge_layout(
             let (x, y) = (l.pos.x + edge_offset.x, l.pos.y + edge_offset.y);
             elk.label_mut(elklabel).shape.set_dimensions(w, h);
             elk.label_mut(elklabel).shape.set_location(x, y);
+
+            // Java: elklabel.setProperty(LabelDummySwitcher.INCLUDE_LABEL,
+            //           llabel.getProperty(LabelDummySwitcher.INCLUDE_LABEL))
+            let include_label: bool = a
+                .label(llabel)
+                .properties
+                .get(&crate::processors::label_dummy_switcher::INCLUDE_LABEL);
+            elk.label(elklabel)
+                .properties
+                .set(&crate::processors::label_dummy_switcher::INCLUDE_LABEL, include_label);
         }
     }
 

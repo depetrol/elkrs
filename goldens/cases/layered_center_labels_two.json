@@ -1,0 +1,12 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 50, "height": 30 },
+    { "id": "b", "width": 50, "height": 30 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"],
+      "labels": [
+        { "text": "alpha", "width": 40, "height": 12 },
+        { "text": "beta", "width": 28, "height": 12 }
+      ] }
+  ] }

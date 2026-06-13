@@ -4,12 +4,14 @@
 //! Element references are stored as arena ids. Properties whose Java type is
 //! a mutable shared object require read-modify-write at the call sites.
 
+use elk_core::adapters::LabelSide;
 use elk_core::options::PortSide;
 use elk_graph::math::{KVector, KVectorChain};
 use elk_graph::properties::{EnumSet, JavaCloneable, JavaString, Property};
 
-use crate::graph::{LEdgeId, LGraphId, LNodeId, LPortId};
+use crate::graph::{LEdgeId, LGraphId, LLabelId, LNodeId, LPortId};
 use crate::options_gen::{EdgeConstraint, GraphProperties, InLayerConstraint};
+use crate::processors::end_label_preprocessor::EndLabelCells;
 
 /// Reference back to the original `ElkGraph` element (Java
 /// `InternalProperties.ORIGIN`, typed `Object`).
@@ -46,6 +48,8 @@ internal_value!(LNodeId);
 internal_value!(LPortId);
 internal_value!(LEdgeId);
 internal_value!(LGraphId);
+internal_value!(LLabelId);
+internal_value!(EndLabelCells);
 
 pub static ORIGIN: Property<Origin> = Property::new("origin");
 pub static COORDINATE_SYSTEM_ORIGIN: Property<LGraphId> = Property::new("coordinateOrigin");
@@ -118,6 +122,30 @@ pub static WEIGHT: Property<f64> = Property::new("medianHeuristic.weight");
 pub static HIDDEN_NODES: Property<Vec<LNodeId>> = Property::new("hiddenNodes");
 pub static ORIGINAL_OPPOSITE_PORT: Property<LPortId> = Property::new("originalOppositePort");
 pub static END_LABEL_EDGE: Property<LEdgeId> = Property::new("endLabelEdge");
+/// Java `InternalProperties.REPRESENTED_LABELS` (`List<LLabel>` on a label
+/// dummy node).
+pub static REPRESENTED_LABELS: Property<Vec<LLabelId>> = Property::new("representedLabels");
+/// Java `InternalProperties.END_LABELS` (`Map<LPort, LabelCell>` on a node);
+/// stored as an ordered list of (port, cell) pairs.
+pub static END_LABELS: Property<EndLabelCells> = Property::new("endLabels");
+/// Java `InternalProperties.LABEL_SIDE` (set on label dummy nodes and on
+/// edge labels; distinct from `LabelSide.LABEL_SIDE`, see lgraph_adapters).
+pub static LABEL_SIDE: Property<LabelSide> =
+    Property::with_default("labelSide", || LabelSide::UNKNOWN);
 pub static ORIGINAL_PORT_CONSTRAINTS: Property<elk_core::options::PortConstraints> =
     Property::new("originalPortConstraints");
 pub static SPLINE_NS_PORT_Y_COORD: Property<f64> = Property::new("splines.nsPortY");
+/// Java `InternalProperties.SPLINE_SURVIVING_EDGE` (only set by the wrapping
+/// `BreakingPointRemover`, which is not ported yet).
+pub static SPLINE_SURVIVING_EDGE: Property<LEdgeId> = Property::new("splines.survivingEdge");
+/// Java `InternalProperties.SPLINE_ROUTE_START` (`List<SplineSegment>`); here
+/// indices into the graph's `SPLINE_SEGMENT_STORE`.
+pub static SPLINE_ROUTE_START: Property<Vec<i32>> = Property::new("splines.route.start");
+/// Java `InternalProperties.SPLINE_EDGE_CHAIN` (`List<LEdge>`).
+pub static SPLINE_EDGE_CHAIN: Property<Vec<LEdgeId>> = Property::new("splines.edgeChain");
+
+/// Rust-only: the arena of `SplineSegment`s shared between the
+/// `SplineEdgeRouter` and the `FinalSplineBendpointsCalculator` (Java shares
+/// the segment objects directly via `SPLINE_ROUTE_START`).
+pub static SPLINE_SEGMENT_STORE: Property<crate::p5edges::splines::SplineSegmentStore> =
+    Property::new("splines.segmentStore.rs");

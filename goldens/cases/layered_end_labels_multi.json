@@ -1,0 +1,19 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 50, "height": 30 },
+    { "id": "b", "width": 60, "height": 60,
+      "ports": [ { "id": "b_p1", "width": 8, "height": 8 } ] },
+    { "id": "c", "width": 50, "height": 30 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b_p1"],
+      "labels": [
+        { "text": "into b", "width": 40, "height": 12,
+          "layoutOptions": { "edgeLabels.placement": "HEAD" } }
+      ] },
+    { "id": "e2", "sources": ["b_p1"], "targets": ["c"],
+      "labels": [
+        { "text": "out of b", "width": 48, "height": 12,
+          "layoutOptions": { "edgeLabels.placement": "TAIL" } }
+      ] }
+  ] }

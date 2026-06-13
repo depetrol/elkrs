@@ -1,8 +1,19 @@
 //! Intermediate processors (`org.eclipse.elk.alg.layered.intermediate`).
 //! Each ported processor lives in its own module; unported ones fail loudly.
 
+pub mod comment_node_margin_calculator;
+pub mod comment_postprocessor;
+pub mod comment_preprocessor;
 pub mod edge_and_layer_constraint_edge_reverser;
+pub mod end_label_postprocessor;
+pub mod end_label_preprocessor;
+pub mod end_label_sorter;
+pub mod final_spline_bendpoints_calculator;
 pub mod graph_transformer;
+pub mod label_dummy_inserter;
+pub mod label_dummy_remover;
+pub mod label_dummy_switcher;
+pub mod label_side_selector;
 pub mod in_layer_constraint_processor;
 pub mod innermost_node_margin_calculator;
 pub mod inverted_port_processor;
@@ -12,6 +23,7 @@ pub mod layer_constraint_preprocessor;
 pub mod layer_size_and_graph_height_calculator;
 pub mod long_edge_joiner;
 pub mod long_edge_splitter;
+pub mod node_promotion;
 pub mod north_south_port_postprocessor;
 pub mod north_south_port_preprocessor;
 pub mod port_list_sorter;
@@ -51,6 +63,7 @@ pub fn process(
             graph_transformer::process(a, graph, graph_transformer::Mode::ToInternalLtr)
         }
         Ips::LAYER_CONSTRAINT_PREPROCESSOR => layer_constraint_preprocessor::process(a, graph),
+        Ips::NODE_PROMOTION => node_promotion::process(a, graph),
         Ips::LAYER_CONSTRAINT_POSTPROCESSOR => layer_constraint_postprocessor::process(a, graph),
         Ips::LONG_EDGE_SPLITTER => long_edge_splitter::process(a, graph),
         Ips::PORT_SIDE_PROCESSOR => port_side_processor::process(a, graph),
@@ -67,12 +80,19 @@ pub fn process(
             layer_size_and_graph_height_calculator::process(a, graph)
         }
         Ips::LONG_EDGE_JOINER => long_edge_joiner::process(a, graph),
-        Ips::END_LABEL_SORTER => {
-            // Only relevant when end labels exist; those graphs cannot be
-            // imported yet. The Java processor iterates and does nothing
-            // when no end labels are present.
-            Ok(())
+        Ips::FINAL_SPLINE_BENDPOINTS_CALCULATOR => {
+            final_spline_bendpoints_calculator::process(a, graph)
         }
+        Ips::COMMENT_PREPROCESSOR => comment_preprocessor::process(a, graph),
+        Ips::COMMENT_NODE_MARGIN_CALCULATOR => comment_node_margin_calculator::process(a, graph),
+        Ips::COMMENT_POSTPROCESSOR => comment_postprocessor::process(a, graph),
+        Ips::LABEL_DUMMY_INSERTER => label_dummy_inserter::process(a, graph),
+        Ips::LABEL_DUMMY_SWITCHER => label_dummy_switcher::process(a, graph),
+        Ips::LABEL_SIDE_SELECTOR => label_side_selector::process(a, graph),
+        Ips::LABEL_DUMMY_REMOVER => label_dummy_remover::process(a, graph),
+        Ips::END_LABEL_PREPROCESSOR => end_label_preprocessor::process(a, graph),
+        Ips::END_LABEL_SORTER => end_label_sorter::process(a, graph),
+        Ips::END_LABEL_POSTPROCESSOR => end_label_postprocessor::process(a, graph),
         Ips::REVERSED_EDGE_RESTORER => reversed_edge_restorer::process(a, graph),
         Ips::SELF_LOOP_PREPROCESSOR => self_loop_pre_processor::process(a, graph),
         Ips::SELF_LOOP_PORT_RESTORER => self_loop_port_restorer::process(a, graph),

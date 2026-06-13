@@ -1,0 +1,21 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 40, "height": 40 },
+    { "id": "b", "width": 40, "height": 40 },
+    { "id": "c", "width": 40, "height": 40 },
+    { "id": "d", "width": 40, "height": 40 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["c"], "targets": ["d"] },
+    { "id": "e4", "sources": ["a"], "targets": ["d"],
+      "labels": [ { "text": "median span", "width": 70, "height": 14 } ] },
+    { "id": "e5", "sources": ["a"], "targets": ["c"],
+      "labels": [
+        { "text": "to head", "width": 44, "height": 12,
+          "layoutOptions": {
+            "layered.edgeLabels.centerLabelPlacementStrategy": "HEAD_LAYER"
+          } }
+      ] }
+  ] }

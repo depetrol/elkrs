@@ -1,0 +1,14 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 60, "height": 40 },
+    { "id": "b", "width": 60, "height": 40 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"],
+      "labels": [
+        { "text": "head", "width": 30, "height": 12,
+          "layoutOptions": { "edgeLabels.placement": "HEAD" } },
+        { "text": "tail", "width": 26, "height": 12,
+          "layoutOptions": { "edgeLabels.placement": "TAIL" } }
+      ] }
+  ] }

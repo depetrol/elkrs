@@ -1,0 +1,13 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "n1", "width": 40, "height": 40 },
+    { "id": "n2", "width": 40, "height": 40 },
+    { "id": "n3", "width": 40, "height": 40 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["n1"], "targets": ["n2"],
+      "labels": [ { "text": "short", "width": 34, "height": 12 } ] },
+    { "id": "e2", "sources": ["n2"], "targets": ["n3"] },
+    { "id": "e3", "sources": ["n1"], "targets": ["n3"],
+      "labels": [ { "text": "long edge label", "width": 90, "height": 14 } ] }
+  ] }

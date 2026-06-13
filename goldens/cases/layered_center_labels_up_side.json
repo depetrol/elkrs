@@ -1,0 +1,15 @@
+{ "id": "root",
+  "layoutOptions": { "elk.algorithm": "layered",
+                     "layered.edgeLabels.sideSelection": "ALWAYS_UP" },
+  "children": [
+    { "id": "a", "width": 40, "height": 40 },
+    { "id": "b", "width": 40, "height": 40 },
+    { "id": "c", "width": 40, "height": 40 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"],
+      "labels": [ { "text": "above", "width": 36, "height": 12 } ] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"] },
+    { "id": "e3", "sources": ["a"], "targets": ["c"],
+      "labels": [ { "text": "also above", "width": 60, "height": 12 } ] }
+  ] }

@@ -764,6 +764,9 @@ impl<'r> JsonExporter<'r> {
         if props.is_empty() {
             return;
         }
+        // Java's JsonExporter adds the (possibly empty) layoutOptions object
+        // to the parent whenever the element has any properties at all; the
+        // unknown-option filtering happens only afterwards.
         let mut json_props = Map::new();
         for (key, value) in props.entries() {
             if key == SPACING_INDIVIDUAL.id {
@@ -775,9 +778,7 @@ impl<'r> JsonExporter<'r> {
             }
             json_props.insert(key.to_string(), Value::String(value.to_java_string()));
         }
-        if !json_props.is_empty() {
-            obj.insert("layoutOptions".into(), Value::Object(json_props));
-        }
+        obj.insert("layoutOptions".into(), Value::Object(json_props));
     }
 
     fn transform_individual_spacings(&self, props: &PropertyMap, obj: &mut Map<String, Value>) {

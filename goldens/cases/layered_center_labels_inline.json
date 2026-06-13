@@ -1,0 +1,15 @@
+{ "id": "root", "layoutOptions": { "elk.algorithm": "layered" },
+  "children": [
+    { "id": "a", "width": 50, "height": 30 },
+    { "id": "b", "width": 50, "height": 30 },
+    { "id": "c", "width": 50, "height": 30 }
+  ],
+  "edges": [
+    { "id": "e1", "sources": ["a"], "targets": ["b"],
+      "labels": [
+        { "text": "inline", "width": 36, "height": 12,
+          "layoutOptions": { "edgeLabels.inline": "true" } }
+      ] },
+    { "id": "e2", "sources": ["b"], "targets": ["c"],
+      "labels": [ { "text": "plain", "width": 30, "height": 12 } ] }
+  ] }
