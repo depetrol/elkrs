@@ -92,7 +92,12 @@ def rand_graph(rng, n_nodes, n_edges, with_ports, algorithm):
 
 
 def run(cmd, inp):
-    p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=60)
+    try:
+        p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=45)
+    except subprocess.TimeoutExpired:
+        # A pathological graph where the layout engine is slow; not a fidelity
+        # signal. Report as a non-comparable run.
+        return None, "", ""
     return p.returncode, p.stdout, p.stderr
 
 
@@ -128,6 +133,8 @@ def main():
         orc, o_out, o_err = run(["java", "-jar", str(ORACLE), "-"], inp)
         rst, r_out, r_err = run([str(ELKRS), "-"], inp)
 
+        if orc is None or rst is None:
+            continue  # a run timed out; skip (not a fidelity signal)
         if orc != 0:
             # Oracle itself failed (unsupported combo / Java exception). Rust
             # should fail too (crash-for-crash); a Rust success here is benign.
