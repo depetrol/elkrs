@@ -375,7 +375,7 @@ impl TimSortState {
         len2: usize,
         cmp: &mut F,
     ) {
-        let mut tmp: Vec<T> = a[base1..base1 + len1].to_vec();
+        let tmp: Vec<T> = a[base1..base1 + len1].to_vec();
         let mut cursor1 = 0usize; // into tmp
         let mut cursor2 = base2; // into a
         let mut dest = base1; // into a

@@ -481,7 +481,7 @@ mod tests {
 
     #[test]
     fn defaults_and_overrides() {
-        let mut m = PropertyMap::new();
+        let m = PropertyMap::new();
         assert_eq!(m.get(&SPACING), 20.0);
         assert!(!m.has(&SPACING));
         m.set(&SPACING, 5.0);
@@ -512,8 +512,8 @@ mod tests {
 
     #[test]
     fn copy_overwrites() {
-        let mut a = PropertyMap::new();
-        let mut b = PropertyMap::new();
+        let a = PropertyMap::new();
+        let b = PropertyMap::new();
         a.set(&SPACING, 1.0);
         b.set(&SPACING, 2.0);
         b.set(&FLAG, false);

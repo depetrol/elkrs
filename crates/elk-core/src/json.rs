@@ -8,7 +8,6 @@ use serde_json::{json, Map, Value};
 
 use crate::data::LayoutMetaDataRegistry;
 use crate::options::{self, SPACING_INDIVIDUAL};
-use crate::util::IndividualSpacings;
 
 pub struct JsonImporter<'r> {
     pub registry: &'r LayoutMetaDataRegistry,
@@ -467,7 +466,7 @@ impl<'r> JsonImporter<'r> {
 
     fn transform_individual_spacings(&self, props: &mut PropertyMap, obj: &Map<String, Value>) {
         if let Some(spacings) = obj.get("individualSpacings").and_then(Value::as_object) {
-            let mut individual = props
+            let individual = props
                 .try_get(&SPACING_INDIVIDUAL)
                 .unwrap_or_default();
             for (k, v) in spacings {

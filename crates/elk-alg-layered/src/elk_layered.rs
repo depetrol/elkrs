@@ -1,7 +1,7 @@
 //! Port of `ElkLayered`: the algorithm driver (flat layout only for now).
 
 use elk_core::javacompat::JavaRandom;
-use elk_core::options::{ContentAlignment, HierarchyHandling, PortSide, SizeConstraint, SizeOptions};
+use elk_core::options::{ContentAlignment, PortSide, SizeConstraint, SizeOptions};
 use elk_graph::math::KVector;
 use elk_graph::properties::EnumSet;
 

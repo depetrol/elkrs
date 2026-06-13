@@ -87,7 +87,7 @@ fn place_external_port_dummy_labels(
     }
     box_h += (labels.len() as f64 - 1.0) * label_label_spacing;
 
-    let mut box_x;
+    let box_x;
     let mut box_y = 0.0f64;
     let ext_port_side: PortSide = a.node(dummy).properties.get(&iprops::EXT_PORT_SIDE);
 

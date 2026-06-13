@@ -3,7 +3,6 @@
 use elk_core::javacompat::JavaRandom;
 use elk_core::registry::LayoutProvider;
 use elk_graph::graph::{ElkGraph, NodeId};
-use elk_graph::properties::EnumSet;
 
 use crate::model::{self, EadesModel, ForceModel, FruchtermanReingoldModel};
 use crate::options::{self, ForceModelStrategy};

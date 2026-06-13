@@ -1,7 +1,7 @@
 //! Port of `org.eclipse.elk.alg.layered.graph.LGraphUtil` (subset; grows as
 //! more of the algorithm is ported).
 
-use elk_core::options::{Alignment, Direction, PortConstraints, PortSide, SizeConstraint};
+use elk_core::options::{Direction, PortConstraints, PortSide, SizeConstraint};
 use elk_graph::math::KVector;
 use elk_graph::properties::{EnumSet, PropertyMap};
 

@@ -1,7 +1,7 @@
 //! Port of the parts of `org.eclipse.elk.core.util.ElkUtil` used by the
 //! engine and the basic layout providers.
 
-use elk_graph::graph::{EdgeId, ElkGraph, NodeId, PortId, SectionId, ShapeId};
+use elk_graph::graph::{EdgeId, ElkGraph, NodeId, PortId, SectionId};
 use elk_graph::math::{KVector, KVectorChain};
 use elk_graph::properties::{EnumSet, PropertyHolder};
 
