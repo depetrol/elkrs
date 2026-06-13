@@ -76,6 +76,34 @@ well-formed inputs.
   another algorithm from the global service are unsupported; unset (default)
   behaves identically.
 
+## 7. Compound layered: external-port edge cases
+
+Cross-hierarchy edges and external ports (`INCLUDE_CHILDREN`) are ported and
+byte-exact for the committed goldens (`layered_xhier_*`, `layered_extport_*`)
+and for all flat layered fuzz inputs. Three narrow compound cases are known
+to diverge or are deliberately unreached:
+
+- **Merged external port → multiple interior nodes.** When a *single* boundary
+  port is the source/target of several edges to different children of the same
+  compound node, the children's vertical order can differ from the oracle
+  (e.g. one WEST port feeding c1..c4: oracle orders `c3,c1,c2,c4`, the port
+  orders `c3,c4,c1,c2` — same head, scrambled tail). The barycenter stable sort
+  and comparator match Java exactly; the divergence is in the multi-sweep
+  barycenter dynamics of the external-port dummy, most likely a `JavaRandom`
+  stream offset introduced by the extra compound preprocessing before
+  crossing-minimization randomizes the first layer. Independent edges (one port
+  per child) are byte-exact; this needs one port shared by ≥2 interior edges.
+  Not triggered by the layered fuzzer (it generates flat graphs only).
+- **`ComponentGroupGraphPlacer`** (components processor for graphs with
+  external ports) is left as a crash-for-crash guard, not ported. It is
+  unreachable via the public API: top-level external ports throw an NPE during
+  import (§4), and nested graphs go through `hierarchicalLayout`, which never
+  invokes the components processor.
+- **`restoreDummy` PORT_LABELS branch** (N/S external-port-label margin
+  recomputation in the orthogonal router) returns `Err` rather than
+  recomputing — unreached by any input with N/S external ports carrying labels
+  under a `PORT_LABELS` size constraint.
+
 ## 6. Double formatting
 
 The exporter prints doubles via `fmt_java_double`, matching Java
