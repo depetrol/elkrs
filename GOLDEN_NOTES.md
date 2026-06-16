@@ -88,15 +88,25 @@ Two narrow compound cases are known to diverge or are deliberately unreached:
 
 - **Merged external port → multiple interior nodes.** When a *single* boundary
   port is the source/target of several edges to different children of the same
-  compound node, the children's vertical order can differ from the oracle
-  (e.g. one WEST port feeding c1..c4: oracle orders `c3,c1,c2,c4`, the port
-  orders `c3,c4,c1,c2` — same head, scrambled tail). The barycenter stable sort
-  and comparator match Java exactly; the divergence is in the multi-sweep
-  barycenter dynamics of the external-port dummy, most likely a `JavaRandom`
-  stream offset introduced by the extra compound preprocessing before
-  crossing-minimization randomizes the first layer. Independent edges (one port
-  per child) are byte-exact; this needs one port shared by ≥2 interior edges.
-  Not triggered by the layered fuzzer (it generates flat graphs only).
+  compound node, the children's vertical order can differ from the oracle. Only
+  bites at ≥4 children: k=2,3 are byte-exact; for k=4 the oracle orders
+  `c3,c1,c2,c4` while the port produces `c3,c4,c1,c2` (oracle appends new
+  targets at the tail; the port inserts them after the head). The order is
+  **deterministic** — identical across `randomSeed` 1/2/7/42 — so it is *not* a
+  `JavaRandom` desync (an exhaustive scan of every stream offset reproduces the
+  oracle for no single k). Root cause: in the hierarchical sweep the oracle
+  orders that children layer via the `preOrdered` barycenter-fill path
+  (`calculateBarycenters` + recursive-midpoint `fillInUnknownBarycenters` — the
+  k=8 fingerprint `c3,c1,c6,c7,c2,c8,c4,c5` is its signature), whereas the Rust
+  port reaches the `randomize=true` first-layer path (`setFirstLayerOrder`).
+  Both `BarycenterHeuristic` ports are byte-faithful in isolation; the two reach
+  a *different* `minimizeCrossings(preOrdered, randomize, forward)` branch for
+  this single-port-feeds-many layer. Pinpointing the branch needs a Java-side
+  trace (a `-javaagent`/instrumented ELK build logging the per-nested-graph
+  sweep flags), since the shared hierarchical-sweep path is exercised by all
+  `INCLUDE_CHILDREN` goldens and a blind change risks regressing them. Independent
+  edges (one port per child) are byte-exact; the layered fuzzer generates flat
+  graphs only, so it never hits this.
 - **`nodeLabels.placement` echo under `direction=UP`.** A node with an explicit
   `NODE_LABELS_PLACEMENT` (e.g. `[H_CENTER, V_TOP, INSIDE]`) laid out with
   `direction=UP` has the *echoed* placement option flipped to `V_BOTTOM` by the
