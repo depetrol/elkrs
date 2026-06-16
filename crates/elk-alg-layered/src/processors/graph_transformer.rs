@@ -109,8 +109,7 @@ fn rotate90_counter_clockwise(a: &mut LGraphArena, graph: LGraphId, nodes: &[LNo
 fn mirror_all_x(a: &mut LGraphArena, graph: LGraphId, nodes: &[LNodeId]) {
     mirror_x_nodes(a, nodes, graph);
     mirror_spacing_x(&mut a.graph_mut(graph).padding);
-    // Java: mirrorX(layeredGraph.getProperty(LayeredOptions.NODE_LABELS_PADDING))
-    // getProperty materializes the cloneable default and mutates it in place.
+    // materializes the cloneable default and mutates it in place.
     let mut padding = a.graph(graph).properties.get(&lopts::NODE_LABELS_PADDING);
     mirror_spacing_x(&mut padding);
     a.graph(graph).properties.set(&lopts::NODE_LABELS_PADDING, padding);
@@ -203,7 +202,7 @@ fn mirror_x_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
                 p.pos.x = (node_size.x - p.size.x) - p.pos.x;
                 p.anchor.x = p.size.x - p.anchor.x;
             }
-            // Java LPort.setSide recomputes the anchor unless it was explicitly supplied
+            // setting the side recomputes the anchor unless it was explicitly supplied
             let mirrored_side = mirrored_port_side_x(a.port(port).side);
             a.port_set_side(port, mirrored_side);
             reverse_index(a, port);
@@ -215,7 +214,7 @@ fn mirror_x_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
                     bend_point.x = offset - bend_point.x;
                 }
 
-                // Mirror junction points (Java getProperty materializes the empty default)
+                // Mirror junction points (materializes the empty default)
                 if let Some(mut junction_points) =
                     a.edge(edge).properties.get_opt(&lopts::JUNCTION_POINTS)
                 {
@@ -636,8 +635,7 @@ fn transposed_port_side(side: PortSide) -> PortSide {
 /// Transposes the placement of edge
 /// labels in the graph.
 fn transpose_edge_label_placement(a: &mut LGraphArena, graph: LGraphId) {
-    // Java checks getProperty() != null; the option has a non-null default,
-    // so the transposed value is always set.
+    // the option has a non-null default, so the transposed value is always set.
     let old_side: EdgeLabelSideSelection =
         a.graph(graph).properties.get(&lopts::EDGE_LABELS_SIDE_SELECTION);
     a.graph(graph)

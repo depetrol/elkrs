@@ -14,5 +14,5 @@ pub use transformer::LGraphToCGraphTransformer;
 pub use vertical_segment::VerticalSegment;
 
 /// Re-export of the common compaction tolerance helpers under the name used by
-/// the Java `org.eclipse.elk.alg.common.compaction.oned.CompareFuzzy`.
+/// `org.eclipse.elk.alg.common.compaction.oned.CompareFuzzy`.
 pub use elk_alg_common::compaction::compare_fuzzy;

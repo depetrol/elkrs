@@ -189,8 +189,8 @@ pub fn vertical_spacing_by_type(
 }
 
 /// Like [`horizontal_spacing_by_type`] but returns `None` when no spacing
-/// property is defined for the type pair (Java leaves the mapping `null`, in
-/// which case the value is only ever queried for pairs that actually occur).
+/// property is defined for the type pair (the value is only ever queried for
+/// pairs that actually occur).
 /// Used by the compaction spacing handler, which eagerly precomputes a table.
 pub fn try_horizontal_spacing_by_type(
     a: &LGraphArena,

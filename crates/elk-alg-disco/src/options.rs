@@ -4,11 +4,9 @@
 //! `org.eclipse.elk.alg.common.compaction.options.PolyominoOptions` that
 //! DisCo consults.
 //!
-//! Note: the Java oracle never registers `PolyominoOptions` with its
-//! `LayoutMetaDataService` (only `DisCoMetaDataProvider`), so the four
-//! `org.eclipse.elk.polyomino.*` options are unknown to it and silently
-//! dropped from inputs/outputs; this port mirrors that by not registering
-//! them either.
+//! Note: `PolyominoOptions` is never registered (only `DisCoMetaDataProvider`),
+//! so the four `org.eclipse.elk.polyomino.*` options are unknown and silently
+//! dropped from inputs/outputs.
 
 use elk_core::data::{parse_enum, LayoutMetaDataRegistry, OptionData, OptionKind, Targets};
 use elk_graph::elk_enum;
@@ -31,13 +29,13 @@ pub static COMPONENT_COMPACTION_STRATEGY: Property<CompactionStrategy> = Propert
 pub static COMPONENT_COMPACTION_COMPONENT_LAYOUT_ALGORITHM: Property<String> =
     Property::new("org.eclipse.elk.disco.componentCompaction.componentLayoutAlgorithm");
 
-/// Java holds the `DCGraph` object here (printed as `DCGraph@<identityhash>`
-/// by the JSON exporter); this port stores a string stand-in.
+/// Holds the `DCGraph` object (printed as `DCGraph@<identityhash>` by the JSON
+/// exporter); this port stores a string stand-in.
 pub static DEBUG_DISCO_GRAPH: Property<String> =
     Property::new("org.eclipse.elk.disco.debug.discoGraph");
 
-/// Java holds the `List<DCPolyomino>` here; this port stores its exact
-/// `toString()` rendition.
+/// Holds the `List<DCPolyomino>`; this port stores its exact `toString()`
+/// rendition.
 pub static DEBUG_DISCO_POLYS: Property<String> =
     Property::new("org.eclipse.elk.disco.debug.discoPolys");
 
@@ -45,7 +43,7 @@ pub static DEBUG_DISCO_POLYS: Property<String> =
 
 pub use elk_core::options::{EDGE_THICKNESS, SPACING_COMPONENT_COMPONENT};
 
-/// `CoreOptions.ASPECT_RATIO` (no default; null in Java).
+/// `CoreOptions.ASPECT_RATIO` (no default).
 pub static ASPECT_RATIO: Property<f64> = Property::new("org.eclipse.elk.aspectRatio");
 
 /// `CoreOptions.PADDING` (default `new ElkPadding(12)`).
@@ -63,9 +61,8 @@ pub static POLYOMINO_FILL: Property<bool> =
 pub fn register_disco_options(reg: &mut LayoutMetaDataRegistry) {
     reg.register_option(OptionData { id: "org.eclipse.elk.disco.componentCompaction.strategy", group: "componentCompaction", kind: OptionKind::Enum(parse_enum::<CompactionStrategy>), targets: Targets::PARENTS, legacy_ids: &[] });
     reg.register_option(OptionData { id: "org.eclipse.elk.disco.componentCompaction.componentLayoutAlgorithm", group: "componentCompaction", kind: OptionKind::Str, targets: Targets::PARENTS, legacy_ids: &[] });
-    // Java registers these as Type.OBJECT (hidden, debug only); they never
-    // appear in inputs, but registering them keeps the JSON exporter from
-    // dropping them.
+    // These are Type.OBJECT (hidden, debug only); they never appear in inputs,
+    // but registering them keeps the JSON exporter from dropping them.
     reg.register_option(OptionData { id: "org.eclipse.elk.disco.debug.discoGraph", group: "debug", kind: OptionKind::Str, targets: Targets::PARENTS, legacy_ids: &[] });
     reg.register_option(OptionData { id: "org.eclipse.elk.disco.debug.discoPolys", group: "debug", kind: OptionKind::Str, targets: Targets::PARENTS, legacy_ids: &[] });
 }

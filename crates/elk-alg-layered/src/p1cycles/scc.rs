@@ -12,9 +12,9 @@ use super::group_model_order_calculator::GroupModelOrderCalculator;
 /// Which SCC variant: determines `findNodes`.
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum SccVariant {
-    /// `SCCModelOrderCycleBreaker.findNodes` (base — abstract in Java, but the
-    /// MODEL_ORDER path is the GreedyModelOrder; here base is used by neither
-    /// strategy directly. Kept for completeness/reuse).
+    /// The base model-order `findNodes` variant; the MODEL_ORDER path is the
+    /// GreedyModelOrder, so this base is used by neither strategy directly.
+    /// Kept for completeness/reuse.
     ModelOrder,
     Connectivity,
     NodeType,

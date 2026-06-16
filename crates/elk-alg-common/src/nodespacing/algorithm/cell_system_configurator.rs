@@ -97,9 +97,8 @@ pub fn configure_cell_system_size_contributions<G: AdapterGraph>(node_context: &
         // The middle row now needs to contribute width and height, and the
         // center cell of the inside node label container needs to contribute
         // width and height as well.
-        // NOTE: faithfully ported Java quirk -- the Java code calls
-        // setContributesToMinimumHeight(true) twice in a row here instead of
-        // also setting the width contribution.
+        // NOTE: quirk -- setContributesToMinimumHeight(true) is called twice
+        // in a row here instead of also setting the width contribution.
         node_context
             .cells
             .set_contributes_to_minimum_height(node_context.node_container_middle_row, true);

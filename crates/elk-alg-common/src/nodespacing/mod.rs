@@ -89,8 +89,7 @@ pub fn process_node_size<G: AdapterGraph>(
     let mut horizontal_layout_mode = true;
     // If no layout direction is specified, or the layout direction is set to
     // undefined, use horizontal layout mode (which yields vertically stacked
-    // labels). (In Java the graph may be null here; with our adapter the graph
-    // is always present.)
+    // labels). (With our adapter the graph is always present.)
     if g.graph_properties().has(&options::DIRECTION) {
         let layout_direction: Direction = g.graph_properties().get(&options::DIRECTION);
         horizontal_layout_mode =
@@ -157,10 +156,9 @@ pub fn process_node_size<G: AdapterGraph>(
 }
 
 ///
-/// Java passes a `null` graph to the node context here and the spacing
-/// lookups go through `node.getGraph()`; with our adapter that parent graph
-/// is `g` itself, so lookups fall back to `g`'s graph properties (and from
-/// there to the property defaults, like Java does for root nodes).
+/// Spacing lookups go through the node's parent graph; with our adapter that
+/// parent graph is `g` itself, so lookups fall back to `g`'s graph properties
+/// (and from there to the property defaults for root nodes).
 pub fn compute_inside_node_label_padding<G: AdapterGraph>(
     g: &G,
     node: G::N,
@@ -245,7 +243,7 @@ mod tests {
     use elk_graph::math::Spacing;
 
     /// End-to-end test: a 30x30 node with two zero-size FREE ports (one WEST
-    /// input, one EAST output), default options. Hand trace of the Java code:
+    /// input, one EAST output), default options. Hand trace:
     ///
     /// * Defaults: `NODE_SIZE_CONSTRAINTS = {}` (so `areSizeConstraintsFixed`
     ///   is true and the node keeps its 30x30 size), `PORT_CONSTRAINTS =

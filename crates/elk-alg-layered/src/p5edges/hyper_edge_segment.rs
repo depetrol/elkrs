@@ -1,6 +1,6 @@
 //!
-//! Instances of this struct represent the "trunk" of a hyper edge. Java uses
-//! an object graph; here segments and their dependencies live in a
+//! Instances of this struct represent the "trunk" of a hyper edge. Segments and
+//! their dependencies live in a
 //! [`SegmentStore`] arena and reference each other through indices.
 
 use std::collections::HashMap;
@@ -18,13 +18,13 @@ pub type DependencyId = usize;
 pub struct HyperEdgeSegment {
     /// ports represented by this hypernode.
     pub ports: Vec<LPortId>,
-    /// mark value used for cycle breaking (Java accesses it directly).
+    /// mark value used for cycle breaking.
     pub mark: i32,
     /// the routing slot determines the horizontal distance to the preceding layer.
     pub routing_slot: i32,
-    /// start position of this edge segment (Java `startPosition`, NaN initially).
+    /// start position of this edge segment (NaN initially).
     pub start_position: f64,
-    /// end position of this edge segment (Java `endPosition`, NaN initially).
+    /// end position of this edge segment (NaN initially).
     pub end_position: f64,
     /// sorted list of coordinates where incoming connections enter this segment.
     pub incoming_connection_coordinates: Vec<f64>,
@@ -69,32 +69,26 @@ impl HyperEdgeSegment {
         }
     }
 
-    /// Java `getStartCoordinate`.
     pub fn start_coordinate(&self) -> f64 {
         self.start_position
     }
 
-    /// Java `getEndCoordinate`.
     pub fn end_coordinate(&self) -> f64 {
         self.end_position
     }
 
-    /// Java `getLength`.
     pub fn length(&self) -> f64 {
         self.end_coordinate() - self.start_coordinate()
     }
 
-    /// Java `representsHyperedge`.
     pub fn represents_hyperedge(&self) -> bool {
         self.incoming_connection_coordinates.len() + self.outgoing_connection_coordinates.len() > 2
     }
 
-    /// Java `isDummy`.
     pub fn is_dummy(&self) -> bool {
         self.split_partner.is_some() && self.split_by.is_none()
     }
 
-    /// Java `recomputeExtent`.
     pub fn recompute_extent(&mut self) {
         self.start_position = f64::NAN;
         self.end_position = f64::NAN;
@@ -107,8 +101,7 @@ impl HyperEdgeSegment {
     }
 }
 
-/// Java private `recomputeExtent(LinkedList<Double>)`; assumes the positions
-/// are sorted ascendingly.
+/// Assumes the positions are sorted ascendingly.
 fn recompute_extent_with(start_position: &mut f64, end_position: &mut f64, positions: &[f64]) {
     if !positions.is_empty() {
         let first = positions[0];
@@ -118,7 +111,7 @@ fn recompute_extent_with(start_position: &mut f64, end_position: &mut f64, posit
         if start_position.is_nan() {
             *start_position = first;
         } else {
-            // Java Math.min; operands are never NaN here
+            // min; operands are never NaN here
             *start_position = if *start_position <= first { *start_position } else { first };
         }
 
@@ -126,19 +119,19 @@ fn recompute_extent_with(start_position: &mut f64, end_position: &mut f64, posit
         if end_position.is_nan() {
             *end_position = last;
         } else {
-            // Java Math.max; operands are never NaN here
+            // max; operands are never NaN here
             *end_position = if *end_position >= last { *end_position } else { last };
         }
     }
 }
 
-/// Java private static `insertSorted`. Note the Java quirk: each existing
-/// value is converted through `Double.floatValue()` (a float cast) before
-/// being compared with the new value.
+/// `insertSorted`. Note the quirk: each existing value is converted through
+/// `Double.floatValue()` (a float cast) before being compared with the new
+/// value.
 pub(super) fn insert_sorted(list: &mut Vec<f64>, value: f64) {
     let mut insert_index = list.len();
     for (i, &existing) in list.iter().enumerate() {
-        let next = existing as f32 as f64; // Java: listIter.next().floatValue()
+        let next = existing as f32 as f64;
         if next == value {
             // an exactly equal value is already present in the list
             return;
@@ -163,14 +156,13 @@ impl SegmentStore {
         Self::default()
     }
 
-    /// Java `new HyperEdgeSegment(routingStrategy)`.
     pub fn create_segment(&mut self) -> SegmentId {
         let id = self.segments.len();
         self.segments.push(HyperEdgeSegment::new());
         id
     }
 
-    /// Java `HyperEdgeSegment.addPortPositions`: adds the positions of the
+    /// Adds the positions of the
     /// given port and all (transitively) connected ports.
     pub fn add_port_positions(
         &mut self,
@@ -194,8 +186,7 @@ impl SegmentStore {
         // update start and end coordinates
         self.segments[seg].recompute_extent();
 
-        // add connected ports (Java getConnectedPorts: predecessor ports
-        // followed by successor ports)
+        // add connected ports (predecessor ports followed by successor ports)
         let mut connected_ports: Vec<LPortId> = Vec::new();
         for &edge in &a.port(port).incoming_edges {
             connected_ports.push(a.edge(edge).source.unwrap());
@@ -210,7 +201,7 @@ impl SegmentStore {
         }
     }
 
-    /// Java `HyperEdgeSegment.simulateSplit`: returns `(newSplit,
+    /// Returns `(newSplit,
     /// newSplitPartner)`. The new segments live in this store but are not part
     /// of any segment list.
     pub fn simulate_split(&mut self, seg: SegmentId) -> (SegmentId, SegmentId) {
@@ -238,8 +229,7 @@ impl SegmentStore {
         (new_split, new_split_partner)
     }
 
-    /// Java `HyperEdgeSegment.splitAt`: splits this segment into two and
-    /// returns the new segment.
+    /// Splits this segment into two and returns the new segment.
     pub fn split_at(&mut self, seg: SegmentId, split_position: f64) -> SegmentId {
         let split_partner = self.create_segment();
         self.segments[seg].split_partner = Some(split_partner);

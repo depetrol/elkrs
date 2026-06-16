@@ -93,7 +93,7 @@ impl EadesRadial {
         util::center_nodes_on_radi(g, node, x_pos, y_pos);
 
         let number_of_leafs = self.annulus_wedge_criteria.calculate_wedge_space(g, node);
-        // Java quirk preserved: `currentRadius / currentRadius + radius`
+        // quirk preserved: `currentRadius / currentRadius + radius`
         // (NaN for the root, acos(1 + radius) = NaN for radius > 0), so the
         // else branch below is effectively always taken.
         let tau = 2.0 * (current_radius / current_radius + self.radius).acos();

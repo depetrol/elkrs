@@ -13,8 +13,7 @@ use crate::options_gen as lopts;
 pub static LABEL_SIDE: Property<LabelSide> =
     Property::with_default("org.eclipse.elk.labelSide", || LabelSide::UNKNOWN);
 
-/// The node filter mirrors the Java
-/// predicate parameter.
+/// The node filter mirrors the predicate parameter.
 pub struct LGraphAdapter<'a> {
     pub arena: &'a mut LGraphArena,
     pub graph: LGraphId,
@@ -51,7 +50,7 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
         &self.arena.graph(self.graph).properties
     }
 
-    /// Java `LGraphAdapter.getNodes`: nodes from the LAYERS (not layerless),
+    /// `LGraphAdapter.getNodes`: nodes from the LAYERS (not layerless),
     /// filtered, plus comment nodes when transparent.
     fn nodes(&self) -> Vec<LNodeId> {
         let a = &*self.arena;
@@ -98,14 +97,14 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
     fn node_ports(&self, n: LNodeId) -> Vec<LPortId> {
         self.arena.node(n).ports.clone()
     }
-    /// Java `LNodeAdapter.getIncomingEdges` returns an empty list.
+    /// `LNodeAdapter.getIncomingEdges` returns an empty list.
     fn node_incoming_edges(&self, _n: LNodeId) -> Vec<LEdgeId> {
         Vec::new()
     }
     fn node_outgoing_edges(&self, _n: LNodeId) -> Vec<LEdgeId> {
         Vec::new()
     }
-    /// Java `LNodeAdapter.sortPortList`: only sorts when port order is fixed,
+    /// `LNodeAdapter.sortPortList`: only sorts when port order is fixed,
     /// using the PortListSorter comparator (side, then index/position).
     fn sort_port_list(&mut self, n: LNodeId) {
         let order_fixed = self
@@ -166,7 +165,7 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
     fn set_port_margin(&mut self, p: LPortId, margin: Spacing) {
         self.arena.port_mut(p).margin = margin;
     }
-    /// Java `LPortAdapter.getIncomingEdges` incl. transparent north/south
+    /// `LPortAdapter.getIncomingEdges` incl. transparent north/south
     /// handling and the self loop holder's hidden incoming edges.
     fn port_incoming_edges(&self, p: LPortId) -> Vec<LEdgeId> {
         let a = &*self.arena;
@@ -183,7 +182,7 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
             }
         }
         // Add the incoming edges from the self loop holder if asked for one
-        // (Java: SELF_LOOP_HOLDER property)
+        // (SELF_LOOP_HOLDER property)
         if let Some(slh) = &a.node(node).self_loop_holder {
             if let Some(slp) = slh.sl_port_idx(p) {
                 for &sle in &slh.sl_ports[slp].incoming_sl_edges {
@@ -208,7 +207,7 @@ impl<'a> AdapterGraph for LGraphAdapter<'a> {
             }
         }
         // Add the outgoing edges from the self loop holder if asked for one
-        // (Java: SELF_LOOP_HOLDER property)
+        // (SELF_LOOP_HOLDER property)
         if let Some(slh) = &a.node(node).self_loop_holder {
             if let Some(slp) = slh.sl_port_idx(p) {
                 for &sle in &slh.sl_ports[slp].outgoing_sl_edges {

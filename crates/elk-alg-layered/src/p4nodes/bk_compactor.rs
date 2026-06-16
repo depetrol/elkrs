@@ -32,9 +32,9 @@ struct ClassEdge {
 pub struct BKCompactor {
     /// Specific threshold strategy to be used for execution.
     thresh_strategy: ThresholdStrategy,
-    /// Representation of the class graph (Java keeps a `HashMap<LNode,
-    /// ClassNode>`; an insertion-ordered map is used here for determinism,
-    /// see `place_classes` for why this cannot change the outcome).
+    /// Representation of the class graph; an insertion-ordered map is used
+    /// here for determinism, see `place_classes` for why this cannot change
+    /// the outcome.
     sink_nodes: IndexMap<LNodeId, usize>,
     class_nodes: Vec<ClassNode>,
 }
@@ -324,9 +324,9 @@ impl BKCompactor {
     /// Propagates shifts through the
     /// class graph in a longest path layering fashion.
     ///
-    /// Java iterates a `HashMap`'s values to seed the queue, which has no
-    /// defined order; since every class node is dequeued only after all of
-    /// its predecessors have been fully processed and min/max are
+    /// The queue is seeded from the class node values, which have no defined
+    /// order; since every class node is dequeued only after all of its
+    /// predecessors have been fully processed and min/max are
     /// order-insensitive, the resulting shifts are independent of that order.
     fn place_classes(&mut self, a: &LGraphArena, bal: &mut BKAlignedLayout) {
         // collect sinks of the class graph

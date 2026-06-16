@@ -21,8 +21,8 @@ pub struct LGraphToCGraphTransformer {
     pub graph: LGraphId,
     /// current style of edge routing.
     pub edge_routing: EdgeRouting,
-    /// comment box -> (other node, offset). Insertion-ordered like Java's
-    /// `HashMap` iteration is here forced to be deterministic.
+    /// comment box -> (other node, offset). Insertion-ordered to keep the
+    /// iteration deterministic.
     comment_offsets: Vec<(LNodeId, LNodeId, KVector)>,
 
     /// LNodeId -> CNodeId.
@@ -55,7 +55,7 @@ impl LGraphToCGraphTransformer {
         }
     }
 
-    /// Java `transform(LGraph)`.
+    /// `transform(LGraph)`.
     pub fn transform(&mut self, a: &mut LGraphArena, graph: LGraphId) -> CGraph {
         self.graph = graph;
         self.edge_routing = a.graph(graph).properties.get(&lopts::EDGE_ROUTING);
@@ -190,10 +190,8 @@ impl LGraphToCGraphTransformer {
                 Some(n) => n,
                 None => continue,
             };
-            // only iterate the segments that are keys in the map (i.e. survivors)
-            // Java iterates `verticalSegmentsMap.keySet()` which includes both
-            // survivors and joined entries — all mapped to a CNode. We mirror
-            // that by iterating every mapped segment.
+            // iterate every mapped segment (both survivors and joined entries,
+            // all mapped to a CNode)
             let constraints = self.segments[vs_idx].constraints.clone();
             for other in constraints {
                 if let Some(other_node) =
@@ -207,7 +205,7 @@ impl LGraphToCGraphTransformer {
         }
     }
 
-    /// Java `collectVerticalSegmentsOrthogonal`. Returns the list of created
+    /// `collectVerticalSegmentsOrthogonal`. Returns the list of created
     /// segments (stored in `self.segments`, indices returned in order).
     fn collect_vertical_segments_orthogonal(
         &mut self,
@@ -373,7 +371,7 @@ impl LGraphToCGraphTransformer {
         result
     }
 
-    /// Java `collectVerticalSegmentsSplines`. Each spline's non-straight
+    /// `collectVerticalSegmentsSplines`. Each spline's non-straight
     /// segments become vertical segments; consecutive ones are linked by a
     /// constraint. `affected_bounding_boxes` indexes `self.spline_store`.
     fn collect_vertical_segments_splines(
@@ -383,8 +381,8 @@ impl LGraphToCGraphTransformer {
     ) -> Vec<usize> {
         let mut result: Vec<usize> = Vec::new();
 
-        // Java streams layers -> nodes -> outgoing edges -> SPLINE_ROUTE_START,
-        // filtering null. The store holds the actual segment data.
+        // iterate layers -> nodes -> outgoing edges -> SPLINE_ROUTE_START,
+        // skipping absent ones. The store holds the actual segment data.
         let layers = a.graph(graph).layers.clone();
         for layer in layers {
             let nodes = a.layer(layer).nodes.clone();
@@ -418,7 +416,6 @@ impl LGraphToCGraphTransformer {
                             &jps,
                         );
                         vs.represented_ledges.push(s_edge);
-                        // Java: vs.affectedBoundingBoxes.add(s.boundingBox).
                         vs.affected_bounding_boxes.push(seg);
 
                         let idx = self.push_segment(vs);
@@ -500,7 +497,6 @@ impl LGraphToCGraphTransformer {
 
         let mut vs_lock = Quadruplet::new();
         // lock in the direction with fewer distinct ports connected.
-        // Java: distinct source ports vs distinct target ports of representedLEdges.
         let mut inc: Vec<crate::graph::LPortId> = Vec::new();
         let mut out: Vec<crate::graph::LPortId> = Vec::new();
         for &e in &self.segments[vs_idx].represented_ledges {
@@ -549,7 +545,7 @@ impl LGraphToCGraphTransformer {
 
     // ---------------------------------------------------------- applyLayout
 
-    /// Java `applyLayout`. Applies compacted positions back to the LGraph and
+    /// `applyLayout`. Applies compacted positions back to the LGraph and
     /// updates its size and offset.
     pub fn apply_layout(&mut self, a: &mut LGraphArena, cgraph: &CGraph) {
         // apply compacted positions to LNodes
@@ -573,7 +569,6 @@ impl LGraphToCGraphTransformer {
                 for b in bends {
                     a.edge_mut(b.edge).bend_points.0[b.index].x += delta_x;
                 }
-                // Java: vs.affectedBoundingBoxes.forEach(bb -> bb.x += deltaX).
                 let bbs = self.segments[vs].affected_bounding_boxes.clone();
                 if let Some(store) = self.spline_store.as_mut() {
                     for seg in bbs {
@@ -641,7 +636,7 @@ impl LGraphToCGraphTransformer {
         self.apply_external_port_positions(a, cgraph, top_left, bottom_right);
     }
 
-    /// Java `applyLayout` spline branch: offset spline self loops and adjust
+    /// `applyLayout` spline branch: offset spline self loops and adjust
     /// the control points of straight segments. Writes the store back.
     fn apply_spline_layout(&mut self, a: &mut LGraphArena, cgraph: &CGraph) {
         // offset selfloops of splines (not part of the compaction graph)
@@ -661,8 +656,8 @@ impl LGraphToCGraphTransformer {
             }
         }
 
-        // offset straight segments. Java streams layers -> nodes -> outgoing ->
-        // SPLINE_ROUTE_START, filtering null/empty.
+        // offset straight segments. iterate layers -> nodes -> outgoing ->
+        // SPLINE_ROUTE_START, skipping absent/empty ones.
         let layers = a.graph(self.graph).layers.clone();
         for layer in layers {
             let nodes = a.layer(layer).nodes.clone();
@@ -678,7 +673,8 @@ impl LGraphToCGraphTransformer {
             }
         }
 
-        // write the (mutated) store back for the FinalSplineBendpointsCalculator
+        // write the (mutated) store back for the
+        // FinalSplineBendpointsCalculator
         if let Some(store) = self.spline_store.take() {
             a.graph(self.graph)
                 .properties
@@ -686,7 +682,7 @@ impl LGraphToCGraphTransformer {
         }
     }
 
-    /// Java `adjustSplineControlPoints`.
+    /// `adjustSplineControlPoints`.
     fn adjust_spline_control_points(&mut self, cgraph: &CGraph, spline: &[SegIdx]) {
         if spline.is_empty() {
             return;
@@ -717,7 +713,7 @@ impl LGraphToCGraphTransformer {
         }
     }
 
-    /// Java `firstNonStraightSegment`.
+    /// `firstNonStraightSegment`.
     fn first_non_straight_segment(
         &self,
         spline: &[SegIdx],
@@ -736,7 +732,7 @@ impl LGraphToCGraphTransformer {
         None
     }
 
-    /// Java `adjustControlPointBetweenSegments`.
+    /// `adjustControlPointBetweenSegments`.
     fn adjust_control_point_between_segments(
         &mut self,
         cgraph: &CGraph,

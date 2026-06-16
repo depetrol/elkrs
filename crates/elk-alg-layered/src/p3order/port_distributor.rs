@@ -53,7 +53,7 @@ impl SweepPortDistributor {
     }
 
     /// The barycenter heuristic casts the distributor to
-    /// `AbstractBarycenterPortDistributor` in Java (ClassCastException
+    /// `AbstractBarycenterPortDistributor` (ClassCastException
     /// otherwise — unreachable, the GraphInfoHolder pairs them correctly).
     pub fn as_barycenter_mut(&mut self) -> &mut PortDistributor {
         match self {
@@ -144,7 +144,7 @@ pub struct PortDistributor {
 }
 
 impl PortDistributor {
-    /// Java `new NodeRelativePortDistributor(numLayers)` /
+    /// `new NodeRelativePortDistributor(numLayers)` /
     /// `new LayerTotalPortDistributor(numLayers)`.
     pub fn new(kind: PortDistributorKind, num_layers: usize) -> PortDistributor {
         PortDistributor {
@@ -549,7 +549,7 @@ impl PortDistributor {
     /// position values as a hint for the clockwise order of ports.
     fn sort_ports(&self, a: &mut LGraphArena, node: LNodeId) {
         let mut ports = a.node(node).ports.clone();
-        // Collections.sort is stable; so is Vec::sort_by.
+        // Vec::sort_by is stable.
         ports.sort_by(|&port1, &port2| {
             let side1 = a.port(port1).side;
             let side2 = a.port(port2).side;

@@ -21,7 +21,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     algorithms.register(AlgorithmData {
         id: "org.eclipse.elk.rectpacking",
         name: "ELK Rectangle Packing",
-        // RectPackingOptions.java registers no supportedFeatures.
+        // no supportedFeatures.
         features: EnumSet::none(),
         create: || Box::new(provider::RectPackingLayoutProvider),
     });

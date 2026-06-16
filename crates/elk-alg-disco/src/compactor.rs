@@ -156,7 +156,7 @@ fn compute_low_res_dimension(dim: f64, cell_size: f64) -> i32 {
 }
 
 /// Returns the exact replica of the
-/// `List<DCPolyomino>.toString()` debug string Java stores on the graph.
+/// `List<DCPolyomino>.toString()` debug string stored on the graph.
 pub fn compact(graph: &mut DCGraph) -> String {
     // upper bound on the size of a grid cell, from the paper
     let upper_bound = 100.0;
@@ -184,7 +184,7 @@ pub fn compact(graph: &mut DCGraph) -> String {
     }
 
     // 2.) Pack the polyominoes (the Polyominoes holder never receives the
-    // graph's properties in Java, so the packing always uses the defaults).
+    // graph's properties, so the packing always uses the defaults).
     for (id, poly) in polys.iter_mut().enumerate() {
         graph.components[poly.representee].id = id as i32;
     }
@@ -194,7 +194,7 @@ pub fn compact(graph: &mut DCGraph) -> String {
     // 3.) Apply layout back to the DCGraph.
     apply_to_dc_graph(graph, &polys, &grid, grid_cell_size_x, grid_cell_size_y);
 
-    // Debug property: Java stores the List<DCPolyomino>; its toString is the
+    // Debug property: stores the List<DCPolyomino>; its toString is the
     // concatenation of the TwoBitGrid renditions.
     let strings: Vec<String> = polys.iter().map(|p| p.poly.grid.java_to_string()).collect();
     format!("[{}]", strings.join(", "))

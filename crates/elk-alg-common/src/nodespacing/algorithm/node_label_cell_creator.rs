@@ -69,8 +69,8 @@ fn create_node_label_cell_containers<G: AdapterGraph>(
     );
     node_context.inside_node_label_container = Some(inside);
 
-    // (Java checks nodeLabelsPadding != null; it never is, since the property
-    // has a default value.)
+    // (The node labels padding is never absent, since the property has a
+    // default value.)
     *node_context.cells.padding_mut(inside) = node_context.node_labels_padding;
     node_context
         .cells

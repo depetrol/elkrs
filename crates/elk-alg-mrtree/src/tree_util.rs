@@ -26,7 +26,7 @@ pub fn get_children(arena: &TArena, n: TNodeId) -> Vec<TNodeId> {
 }
 
 /// All graph edges into `n` (matched
-/// by the Java `id` field), excluding same-level edges (with Java's boxed
+/// by the `id` field), excluding same-level edges (with boxed
 /// `Integer !=` semantics) and edges whose `toString` duplicates a previous
 /// match; sorted by source x position.
 pub fn get_all_incoming_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec<TEdgeId> {
@@ -50,7 +50,7 @@ pub fn get_all_incoming_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec
 }
 
 /// All graph edges out of `n`
-/// (matched by the Java `id` field, excluding the SUPER_ROOT by label),
+/// (matched by the `id` field, excluding the SUPER_ROOT by label),
 /// excluding same-level edges and `toString` duplicates; sorted by target x.
 pub fn get_all_outgoing_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec<TEdgeId> {
     let mut re: Vec<TEdgeId> = Vec::new();
@@ -149,7 +149,6 @@ pub fn get_lowest_parent(arena: &TArena, n: TNodeId, graph: &TGraph) -> Option<T
         KVector::new(node.pos.x + node.size.x / 2.0, node.pos.y + node.size.y / 2.0)
             .dot_product(dir_vec)
     };
-    // Java: parents.stream().map(key).max(naturalOrder()).get()
     let lowest_parent_pos = parents
         .iter()
         .map(|&x| key(x))

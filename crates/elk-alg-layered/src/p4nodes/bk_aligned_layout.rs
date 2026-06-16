@@ -6,7 +6,7 @@ use crate::spacings;
 
 use super::neighborhood_information::{nid, NeighborhoodInformation};
 
-/// Vertical direction enumeration (Java `BKAlignedLayout.VDirection`).
+/// Vertical direction enumeration.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum VDirection {
     /// Iteration direction top-down.
@@ -15,7 +15,7 @@ pub enum VDirection {
     Up,
 }
 
-/// Horizontal direction enumeration (Java `BKAlignedLayout.HDirection`).
+/// Horizontal direction enumeration.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum HDirection {
     /// Iterating from right to left.
@@ -25,7 +25,7 @@ pub enum HDirection {
 }
 
 /// All per-node arrays are indexed by the node's scratch id (`nid`), assigned
-/// by `NeighborhoodInformation::build_for`. `None` entries mirror Java's
+/// by `NeighborhoodInformation::build_for`. `None` entries represent
 /// `null` entries in the boxed `Double[]`/`LNode[]` arrays.
 pub struct BKAlignedLayout {
     /// The root node of each node in a block.

@@ -167,12 +167,11 @@ impl NodeLabelPlacement {
 }
 
 impl SizeConstraint {
-    /// Java `SizeConstraint.fixed()`: empty set.
+    /// Empty set.
     pub fn fixed() -> EnumSet<SizeConstraint> {
         EnumSet::none()
     }
 
-    /// Java `SizeConstraint.free()`.
     pub fn free() -> EnumSet<SizeConstraint> {
         EnumSet::of(&[
             SizeConstraint::PORTS,

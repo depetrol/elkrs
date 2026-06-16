@@ -43,7 +43,7 @@ fn create_dummy_node(
     edge_to_split: LEdgeId,
 ) -> LNodeId {
     let dummy = a.create_node(graph);
-    // Java's LNode(graph) constructor doesn't add to layerless nodes
+    // the LNode(graph) constructor doesn't add to layerless nodes
     a.node_mut(dummy).graph = Some(graph);
     a.node_mut(dummy).node_type = NodeType::LONG_EDGE;
     a.node(dummy)

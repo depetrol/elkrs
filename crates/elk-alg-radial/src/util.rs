@@ -29,7 +29,7 @@ pub fn fuzzy_compare(a: f64, b: f64, tolerance: f64) -> Ordering {
     }
 }
 
-/// Java `ElkGraphUtil.allOutgoingEdges`: the node's own outgoing edges
+/// `ElkGraphUtil.allOutgoingEdges`: the node's own outgoing edges
 /// followed by those of its ports.
 pub fn all_outgoing_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     let n = g.node(node);
@@ -40,7 +40,7 @@ pub fn all_outgoing_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     edges
 }
 
-/// Java `ElkGraphUtil.allIncomingEdges`.
+/// `ElkGraphUtil.allIncomingEdges`.
 pub fn all_incoming_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     let n = g.node(node);
     let mut edges = n.incoming_edges.clone();
@@ -94,7 +94,7 @@ pub fn get_number_of_leaves(g: &ElkGraph, node: NodeId) -> i32 {
 /// Compares two nodes by their
 /// polar angle derived from the `CoreOptions.POSITION` property.
 ///
-/// Java NPEs when `POSITION` is unset; here the unset case yields `(0, 0)`.
+/// When `POSITION` is unset the result is `(0, 0)`.
 pub fn polar_compare(
     g: &ElkGraph,
     radial_offset: f64,
@@ -136,9 +136,7 @@ pub fn get_next_level_nodes(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
     successors
 }
 
-/// Java returns a `HashSet` whose
-/// iteration order is undefined (identity hashes); here insertion order of
-/// the deduplicated successors is used instead, which is deterministic.
+/// Deduplicated successors in insertion order, which is deterministic.
 pub fn get_next_level_node_set(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
     let mut successors = Vec::new();
     for &node in nodes {

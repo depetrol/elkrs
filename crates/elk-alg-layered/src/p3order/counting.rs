@@ -1,7 +1,7 @@
 //!
-//! The Java `IInitializable` pattern is flattened into explicit
-//! `init_at_*` functions that are called by `GraphInfoHolder` in exactly
-//! the same traversal order as `IInitializable.init`.
+//! The `IInitializable` pattern is flattened into explicit `init_at_*`
+//! functions that are called by `GraphInfoHolder` in exactly the same
+//! traversal order as `IInitializable.init`.
 
 use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
@@ -115,11 +115,10 @@ const INDEXING_SIDE: PortSide = PortSide::WEST;
 const STACK_SIDE: PortSide = PortSide::EAST;
 
 /// Port positions are tracked in an array
-/// indexed by the `LPort.id` scratch field (Java `portPositions[port.id]`;
-/// the ids are assigned 0..nPorts-1 per graph by the initialization
-/// traversal). The array can be shared between several counters (Java passes
-/// the same `int[]` to multiple counters, e.g. in the greedy switch
-/// `SwitchDecider`).
+/// indexed by the `LPort.id` scratch field (`portPositions[port.id]`; the
+/// ids are assigned 0..nPorts-1 per graph by the initialization traversal).
+/// The array can be shared between several counters (the same `int[]` is
+/// passed to multiple counters, e.g. in the greedy switch `SwitchDecider`).
 pub struct CrossingsCounter {
     port_positions: Rc<RefCell<Vec<i32>>>,
     index_tree: Option<BinaryIndexedTree>,
@@ -132,7 +131,7 @@ impl CrossingsCounter {
         Self::new_shared(Rc::new(RefCell::new(port_positions)))
     }
 
-    /// Java `new CrossingsCounter(int[] portPositions)` with a shared array.
+    /// `new CrossingsCounter(int[] portPositions)` with a shared array.
     pub fn new_shared(port_positions: Rc<RefCell<Vec<i32>>>) -> Self {
         CrossingsCounter {
             port_positions,
@@ -143,7 +142,7 @@ impl CrossingsCounter {
     }
 
     /// Mutable access to the shared port position array (used by the
-    /// hyperedge crossings counter, which shares it in Java).
+    /// hyperedge crossings counter, which shares it).
     pub fn port_positions_mut(&mut self) -> RefMut<'_, Vec<i32>> {
         self.port_positions.borrow_mut()
     }
@@ -287,8 +286,8 @@ impl CrossingsCounter {
         lower_node: LNodeId,
         side: PortSide,
     ) -> Vec<LPortId> {
-        // Java uses a TreeSet ordered by port position; ports with equal
-        // positions are deduplicated (positions are unique per port here).
+        // Ordered by port position; ports with equal positions are
+        // deduplicated (positions are unique per port here).
         let mut ports: BTreeMap<i32, LPortId> = BTreeMap::new();
         for node in [upper_node, lower_node] {
             for port in in_north_south_east_west_order(a, node, side) {
@@ -672,13 +671,13 @@ impl CrossingsCounter {
 // HyperedgeCrossingsCounter
 
 ///
-/// NOTE on fidelity: Java's `Hyperedge.compareTo` and
+/// NOTE on fidelity: `Hyperedge.compareTo` and
 /// `HyperedgeCorner.compareTo` fall back to `hashCode()` differences as a
 /// tiebreaker, which is JVM-nondeterministic. We use the (deterministic)
-/// hyperedge creation order instead, which is one valid instance of Java's
+/// hyperedge creation order instead, which is one valid instance of that
 /// nondeterministic behavior.
 struct Hyperedge {
-    /// creation index, replaces Java's identity hash code as a tiebreaker
+    /// creation index, replaces the identity hash code as a tiebreaker
     id: usize,
     edges: Vec<LEdgeId>,
     ports: Vec<LPortId>,
@@ -792,7 +791,7 @@ pub fn count_hyperedge_crossings(
     // Gather hyperedges
     let mut hyperedges: Vec<Hyperedge> = Vec::new();
     let mut port2hyperedge: HashMap<LPortId, usize> = HashMap::new();
-    // insertion-ordered set of live hyperedge ids (Java: LinkedHashSet)
+    // insertion-ordered set of live hyperedge ids
     let mut hyperedge_set: Vec<usize> = Vec::new();
     for &node in left_layer {
         for &source_port in &a.node(node).ports {
@@ -1120,9 +1119,8 @@ impl AllCrossingsCounter {
 
     pub fn init_after_traversal(&mut self) {
         let port_pos = vec![0; self.n_ports as usize];
-        // Java also creates the HyperedgeCrossingsCounter here, sharing the
-        // same array; in this port the hyperedge counter is a function that
-        // borrows the array on demand.
+        // The hyperedge counter is a function that borrows this array on
+        // demand instead of holding its own reference.
         self.crossing_counter = Some(CrossingsCounter::new(port_pos));
     }
 }

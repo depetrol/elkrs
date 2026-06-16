@@ -7,7 +7,7 @@ use elk_graph::math::{KVector, Spacing};
 use elk_graph::properties::{JavaString, Property};
 
 /// Value stored under `org.eclipse.elk.resolvedAlgorithm`
-/// (Java `LayoutAlgorithmData`; only the id matters for layout).
+/// (only the id matters for layout).
 #[derive(Clone, Debug, PartialEq)]
 pub struct ResolvedAlgorithm(pub String);
 
@@ -39,7 +39,6 @@ pub mod boxl {
         Property::with_default("org.eclipse.elk.spacing.nodeNode", || 15.0);
     pub static PRIORITY: Property<i32> =
         Property::with_default("org.eclipse.elk.priority", || 0);
-    // Java: `1.3f` widened to double
     pub static ASPECT_RATIO: Property<f64> =
         Property::with_default("org.eclipse.elk.aspectRatio", || 1.3f32 as f64);
 }

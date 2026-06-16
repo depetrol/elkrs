@@ -1,8 +1,7 @@
 //!
 //! Calculates the number of crossings for edges incident to two nodes. In
 //! the case where there is free port order and two edges go into one port,
-//! this crossing counter can in some cases count too few crossings (just
-//! like the Java original; see the ignored test in the Java test class).
+//! this crossing counter can in some cases count too few crossings.
 
 use std::collections::HashMap;
 
@@ -16,10 +15,9 @@ use super::super::counting::in_north_south_east_west_order;
 pub struct BetweenLayerEdgeTwoNodeCrossingsCounter {
     upper_lower_crossings: i32,
     lower_upper_crossings: i32,
-    /// the free layer (Java keeps the whole `currentNodeOrder` but only ever
-    /// reads `currentNodeOrder[freeLayerIndex]` after construction)
+    /// the free layer (only `currentNodeOrder[freeLayerIndex]` is read after
+    /// construction)
     free_layer: Vec<LNodeId>,
-    /// Java: `Map<LPort, Integer>` (HashMap; only keyed access, never iterated)
     port_positions: HashMap<LPortId, i32>,
     eastern_adjacencies: HashMap<LNodeId, AdjacencyList>,
     western_adjacencies: HashMap<LNodeId, AdjacencyList>,
@@ -129,7 +127,6 @@ impl BetweenLayerEdgeTwoNodeCrossingsCounter {
 
     fn add_eastern_crossings(&mut self, a: &LGraphArena, upper_node: LNodeId, lower_node: LNodeId) {
         self.ensure_adjacencies(a, PortSide::EAST);
-        // Java: upperAdjacencies = getAdjacencyFor(upperNode, EAST, ...)
         // (each fetch resets the saved list to its original state)
         let mut upper = self.eastern_adjacencies.remove(&upper_node).unwrap();
         upper.reset();
@@ -156,8 +153,8 @@ impl BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /// Since calculating adjacencies is a little expensive, it is only done
-    /// once for each configuration and the sorted adjacencies saved (Java
-    /// `getAdjacencyFor`'s lazy fill of the map).
+    /// once for each configuration and the sorted adjacencies saved
+    /// (`getAdjacencyFor`'s lazy fill of the map).
     fn ensure_adjacencies(&mut self, a: &LGraphArena, side: PortSide) {
         let port_positions = &self.port_positions;
         let adjacencies = match side {
@@ -269,7 +266,7 @@ impl AdjacencyList {
                 }
             }
         }
-        // Collections.sort: stable, compares positions only.
+        // stable sort, compares positions only.
         list.adjacency_list.sort_by(|x, y| x.position.cmp(&y.position));
         list
     }

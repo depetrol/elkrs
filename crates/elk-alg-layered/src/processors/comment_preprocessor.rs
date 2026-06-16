@@ -73,7 +73,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `processBox`: process a comment box by putting it into a property of
+/// `processBox`: process a comment box by putting it into a property of
 /// the corresponding node.
 fn process_box(
     a: &mut LGraphArena,
@@ -122,8 +122,8 @@ fn process_box(
         top_first = !only_bottom;
     }
 
-    // Determine the list (property) the comment box is added to. Java keeps
-    // aliases of the lists; here we remember which property won.
+    // Determine the list (property) the comment box is added to. We remember
+    // which property won.
     let use_top: bool;
     if top_first {
         // determine the position to use, favoring the top position
@@ -216,7 +216,7 @@ fn process_box(
     a.edge_mut(edge).bend_points.0.clear();
 }
 
-/// Java `LPort.getConnectedPorts`: the source ports of all incoming edges
+/// `LPort.getConnectedPorts`: the source ports of all incoming edges
 /// followed by the target ports of all outgoing edges.
 fn port_connected_ports(a: &LGraphArena, port: LPortId) -> Vec<LPortId> {
     let p = a.port(port);
@@ -230,7 +230,7 @@ fn port_connected_ports(a: &LGraphArena, port: LPortId) -> Vec<LPortId> {
     result
 }
 
-/// Java `removeHierarchicalPortDummyNode`.
+/// `removeHierarchicalPortDummyNode`.
 fn remove_hierarchical_port_dummy_node(a: &mut LGraphArena, opposite_port: LPortId) {
     if let Some(dummy) = a
         .port(opposite_port)

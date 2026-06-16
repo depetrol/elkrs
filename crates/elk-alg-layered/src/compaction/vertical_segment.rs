@@ -1,6 +1,6 @@
 //!
 //! Represents a vertical segment on a single `LEdge` that is merged with
-//! intersecting `VerticalSegment`s. Mirrors the Java mutable struct; ELK's
+//! intersecting `VerticalSegment`s. The
 //! `KVector` affected-bend lists reference the actual bend points of edges, so
 //! here we keep the indices needed to mutate them back during `applyLayout`.
 
@@ -21,8 +21,8 @@ pub struct BendRef {
 }
 
 /// A reference to a single junction point inside an edge's `JUNCTION_POINTS`
-/// chain (Java holds the `KVector` object directly; here we keep the location
-/// so the original can be offset during `applyLayout`).
+/// chain; we keep the location so the original can be offset during
+/// `applyLayout`.
 #[derive(Clone, Copy, Debug)]
 pub struct JpRef {
     pub edge: LEdgeId,
@@ -32,13 +32,13 @@ pub struct JpRef {
 #[derive(Clone, Debug)]
 pub struct VerticalSegment {
     /// Nodes that may become the parent of the CNode representing this segment
-    /// (Java `potentialGroupParents`, holds `CNode`s — here CNode ids).
+    /// (`potentialGroupParents`, holding CNode ids).
     pub potential_group_parents: Vec<usize>,
     /// Edges that contribute at least partly to this vertical segment.
     pub represented_ledges: Vec<LEdgeId>,
     /// Bend points within this segment's hitbox; adjusted after compaction.
     /// Each entry references a concrete bend in an edge's bend chain so that we
-    /// can mutate the originals (Java holds the `KVector` objects directly).
+    /// can mutate the originals.
     pub affected_bends: Vec<BendRef>,
     /// Bounding boxes (e.g. of splines) to be adjusted after compaction
     /// (unused for orthogonal; kept for fidelity / future spline support).
@@ -60,13 +60,12 @@ pub struct VerticalSegment {
 }
 
 impl VerticalSegment {
-    /// Java constructor `VerticalSegment(bend1, bend2, cNode, lEdge)`.
+    /// Constructs a vertical segment from two bend points, a CNode and an LEdge.
     ///
     /// `bend1_ref`/`bend2_ref` reference the concrete bend points (when they
     /// originate from the edge's bend chain). Synthetic bends (created for the
-    /// n/s port segment) have `None` and are not adjusted afterwards — this
-    /// matches Java, where the synthetic `new KVector(...)` is a throwaway not
-    /// part of the edge.
+    /// n/s port segment) have `None` and are not adjusted afterwards — the
+    /// synthetic `KVector` is a throwaway not part of the edge.
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         bend1: KVector,
@@ -117,7 +116,7 @@ impl VerticalSegment {
         }
     }
 
-    /// Joins this segment with `other` (Java `joinWith`). `other` is unaltered.
+    /// Joins this segment with `other` (`joinWith`). `other` is unaltered.
     pub fn join_with(&mut self, other: &VerticalSegment, other_index: usize) {
         self.represented_ledges.extend(other.represented_ledges.iter().copied());
         self.affected_bends.extend(other.affected_bends.iter().copied());
@@ -146,14 +145,14 @@ impl VerticalSegment {
         self.joined.push(other_index);
     }
 
-    /// Java `intersects`.
+    /// `intersects`.
     pub fn intersects(&self, o: &VerticalSegment) -> bool {
         compare_fuzzy::eq(self.hitbox.x, o.hitbox.x)
             && !(compare_fuzzy::lt(self.hitbox.bottom_left().y, o.hitbox.y)
                 || compare_fuzzy::lt(o.hitbox.bottom_left().y, self.hitbox.y))
     }
 
-    /// Java `compareTo`.
+    /// `compareTo`.
     pub fn compare_to(&self, o: &VerticalSegment) -> Ordering {
         let d = compare_fuzzy::fuzzy_compare(self.hitbox.x, o.hitbox.x, compare_fuzzy::TOLERANCE);
         if d == Ordering::Equal {

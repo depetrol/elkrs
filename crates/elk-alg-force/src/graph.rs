@@ -1,11 +1,11 @@
 //! The force algorithm's internal
 //! graph model (FGraph, FNode, FEdge, FLabel, FBendpoint, FParticle).
 //!
-//! Java uses an object graph; here all elements live in arenas inside
+//! All elements live in arenas inside
 //! [`FArena`] and reference each other through typed indices. [`FGraph`]
 //! instances (the full graph and its connected components) hold id lists
-//! into the shared arena, mirroring how Java's `ComponentsProcessor` moves
-//! node *references* between `FGraph` objects.
+//! into the shared arena; components are formed by moving node ids between
+//! `FGraph` objects.
 
 use elk_core::javacompat::JavaRandom;
 use elk_graph::graph::{EdgeId, LabelId, NodeId};
@@ -32,8 +32,8 @@ id_type!(FEdgeId);
 id_type!(FLabelId);
 id_type!(FBendpointId);
 
-/// Any `FParticle` (node, label or bend point). Java compares particles by
-/// object identity; ids serve the same purpose here.
+/// Any `FParticle` (node, label or bend point). Particles are compared by
+/// id.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum FParticleId {
     Node(FNodeId),
@@ -47,7 +47,7 @@ pub struct FNode {
     pub position: KVector,
     pub size: KVector,
     pub displacement: KVector,
-    /// Java's public `id` field (component-local index).
+    /// Public `id` field (component-local index).
     pub id: i32,
     pub label: String,
     /// `InternalProperties.ORIGIN`.

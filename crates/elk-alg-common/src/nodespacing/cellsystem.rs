@@ -1,6 +1,5 @@
 //!
-//! Java models the cell system as an object graph with shared mutable cells;
-//! here all cells live in a [`CellSystem`] arena and are referenced by
+//! All cells live in a [`CellSystem`] arena and are referenced by
 //! [`CellId`]. Container cells reference their children by id.
 
 use elk_core::adapters::AdapterGraph;
@@ -372,8 +371,8 @@ impl<L: Copy> CellSystem<L> {
             CellKind::Strip(s) => {
                 let mut width = 0.0f64;
                 if s.container_mode == Strip::Vertical {
-                    // Take the maximum of the child cells. Note that Java uses
-                    // the contribution flag directly here, without the
+                    // Take the maximum of the child cells. Note that the
+                    // contribution flag is used directly here, without the
                     // atomic-cell-with-zero-content special case.
                     for cell_id in s.cells.iter().flatten() {
                         if self.is_contributing_to_minimum_width(*cell_id) {

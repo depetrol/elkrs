@@ -20,8 +20,8 @@ impl PropertyHolder for IndividualSpacings {
 
 impl JavaString for IndividualSpacings {
     fn java_string(&self) -> String {
-        // Java inherits Object.toString; the exact form never matters for
-        // layout. Mirror the option entries instead for debuggability.
+        // The exact form never matters for layout. Mirror the option entries
+        // instead for debuggability.
         let entries: Vec<String> =
             self.properties.entries().iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect();
         format!("IndividualSpacings({})", entries.join(", "))

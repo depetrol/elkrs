@@ -80,7 +80,6 @@ pub static WIDTH_APPROXIMATION_STRATEGY: Property<WidthApproximationStrategy> =
     Property::with_default("org.eclipse.elk.rectpacking.widthApproximation.strategy", || {
         WidthApproximationStrategy::GREEDY
     });
-/// Java: `private static final double WIDTH_APPROXIMATION_TARGET_WIDTH_DEFAULT = (-1);`
 pub static WIDTH_APPROXIMATION_TARGET_WIDTH: Property<f64> =
     Property::with_default("org.eclipse.elk.rectpacking.widthApproximation.targetWidth", || -1.0);
 pub static WIDTH_APPROXIMATION_OPTIMIZATION_GOAL: Property<OptimizationGoal> =
@@ -112,9 +111,9 @@ pub static WHITE_SPACE_ELIMINATION_STRATEGY: Property<WhiteSpaceEliminationStrat
     });
 
 // -------------------------------------------------------- InternalProperties
-// The ROWS property holds the row structure in Java; in this port it lives in
-// a context struct passed between the phases instead (it is never serialized
-// since its id is not registered with the metadata service).
+// The ROWS property holds the row structure in a context struct passed between
+// the phases (it is never serialized since its id is not registered with the
+// metadata service).
 
 pub static ADDITIONAL_HEIGHT: Property<f64> = Property::new("additionalHeight");
 pub static DRAWING_HEIGHT: Property<f64> = Property::new("drawingHeight");

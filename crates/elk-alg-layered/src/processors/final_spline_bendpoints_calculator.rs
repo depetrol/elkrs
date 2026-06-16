@@ -17,9 +17,9 @@ use crate::p5edges::splines::{
 
 /// Avoiding magic number problems.
 const ONE_HALF: f64 = 0.5;
-/// Java `NODE_TO_STRAIGHTENING_CP_GAP`.
+/// `NODE_TO_STRAIGHTENING_CP_GAP`.
 pub const NODE_TO_STRAIGHTENING_CP_GAP: f64 = 5.0;
-/// Java `SLOPPY_CENTER_CP_MULTIPLIER`.
+/// `SLOPPY_CENTER_CP_MULTIPLIER`.
 const SLOPPY_CENTER_CP_MULTIPLIER: f64 = 0.4;
 
 struct Ctx {
@@ -29,7 +29,7 @@ struct Ctx {
     compaction_strategy: GraphCompactionStrategy,
 }
 
-/// Java `FinalSplineBendpointsCalculator.process`.
+/// `FinalSplineBendpointsCalculator.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let ctx = Ctx {
         edge_edge_spacing: a.graph(graph).properties.get(&lopts::SPACING_EDGE_EDGE_BETWEEN_LAYERS),
@@ -45,7 +45,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     index_nodes_per_layer(a, graph);
 
     // the spline segments computed by the SplineEdgeRouter (absent if the
-    // graph has no layers; Java simply finds no SPLINE_ROUTE_START edges then)
+    // graph has no layers, in which case no SPLINE_ROUTE_START edges are found)
     let mut store: SplineSegmentStore = a
         .graph(graph)
         .properties
@@ -94,7 +94,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `indexNodesPerLayer`.
+/// `indexNodesPerLayer`.
 fn index_nodes_per_layer(a: &mut LGraphArena, graph: LGraphId) {
     for &layer in &a.graph(graph).layers.clone() {
         let nodes = a.layer(layer).nodes.clone();
@@ -104,7 +104,7 @@ fn index_nodes_per_layer(a: &mut LGraphArena, graph: LGraphId) {
     }
 }
 
-/// Java `calculateControlPoints`: dispatches the calculation of NUB control
+/// `calculateControlPoints`: dispatches the calculation of NUB control
 /// points for the passed segment.
 fn calculate_control_points(a: &mut LGraphArena, store: &mut SplineSegmentStore, seg: SegIdx, ctx: &Ctx) {
     // with hyperedges it can happen that this method is called multiple times for the
@@ -152,7 +152,7 @@ fn calculate_control_points(a: &mut LGraphArena, store: &mut SplineSegmentStore,
     }
 }
 
-/// Java `calculateControlPointsStraight`: adds a single control point halfway
+/// `calculateControlPointsStraight`: adds a single control point halfway
 /// between the source and target layer.
 fn calculate_control_points_straight(a: &mut LGraphArena, store: &SplineSegmentStore, seg: SegIdx) {
     let segment = &store.segments[seg];
@@ -166,7 +166,7 @@ fn calculate_control_points_straight(a: &mut LGraphArena, store: &SplineSegmentS
     a.edge_mut(edge).bend_points.0.push(halfway);
 }
 
-/// Java `calculateControlPointsInvertedEdge`.
+/// `calculateControlPointsInvertedEdge`.
 fn calculate_control_points_inverted_edge(
     a: &mut LGraphArena,
     store: &SplineSegmentStore,
@@ -222,7 +222,7 @@ fn calculate_control_points_inverted_edge(
     bps.push(target_straight_cp);
 }
 
-/// Java `calculateControlPointsConservative`.
+/// `calculateControlPointsConservative`.
 fn calculate_control_points_conservative(
     a: &mut LGraphArena,
     store: &SplineSegmentStore,
@@ -267,7 +267,7 @@ fn calculate_control_points_conservative(
     bps.push(target_straight_cp);
 }
 
-/// Java `calculateControlPointsSloppy`.
+/// `calculateControlPointsSloppy`.
 fn calculate_control_points_sloppy(
     a: &mut LGraphArena,
     store: &SplineSegmentStore,
@@ -376,7 +376,7 @@ fn calculate_control_points_sloppy(
     }
 }
 
-/// Java `nodeToBoundingBox`.
+/// `nodeToBoundingBox`.
 fn node_to_bounding_box(a: &LGraphArena, node: LNodeId) -> ElkRectangle {
     let n = a.node(node);
     let pos = n.pos;
@@ -390,7 +390,7 @@ fn node_to_bounding_box(a: &LGraphArena, node: LNodeId) -> ElkRectangle {
     )
 }
 
-/// Java `Math.signum(double)`.
+/// `Math.signum(double)`.
 fn java_signum(x: f64) -> f64 {
     if x == 0.0 || x.is_nan() {
         x
@@ -401,8 +401,8 @@ fn java_signum(x: f64) -> f64 {
     }
 }
 
-/// Java `computeSloppyCenterY`. Note the Java quirks: the *source* is checked
-/// for null while the *target*'s node is inspected, and vice versa.
+/// Computes the sloppy center Y coordinate. Note the quirks: the *source* is
+/// checked for null while the *target*'s node is inspected, and vice versa.
 fn compute_sloppy_center_y(
     a: &LGraphArena,
     edge: LEdgeId,
@@ -436,7 +436,7 @@ fn compute_sloppy_center_y(
         + (y_target_anchor - y_source_anchor) * (SLOPPY_CENTER_CP_MULTIPLIER * degree_diff as f64)
 }
 
-/// Java `calculateBezierBendPoints`: collects all NUB control points computed
+/// `calculateBezierBendPoints`: collects all NUB control points computed
 /// for a spline segment chain and converts them to bezier control points.
 fn calculate_bezier_bend_points(
     a: &mut LGraphArena,
@@ -537,7 +537,7 @@ fn calculate_bezier_bend_points(
     Ok(())
 }
 
-/// Java `insertStraighteningControlPoints`.
+/// `insertStraighteningControlPoints`.
 fn insert_straightening_control_points(
     all_cps: &mut Vec<KVector>,
     src_port_side: PortSide,
@@ -571,7 +571,7 @@ fn insert_straightening_control_points(
     all_cps.insert(pos, straighten_ending);
 }
 
-/// Java `absMin`.
+/// `absMin`.
 fn abs_min(d1: f64, d2: f64) -> f64 {
     if d1.abs() < d2.abs() {
         d1
@@ -580,7 +580,7 @@ fn abs_min(d1: f64, d2: f64) -> f64 {
     }
 }
 
-/// Java `segmentAllowsSloppyRouting`.
+/// `segmentAllowsSloppyRouting`.
 fn segment_allows_sloppy_routing(
     a: &LGraphArena,
     store: &SplineSegmentStore,
@@ -616,7 +616,7 @@ fn segment_allows_sloppy_routing(
     true
 }
 
-/// Java `segmentNodeDistanceThreshold`.
+/// `segmentNodeDistanceThreshold`.
 fn segment_node_distance_threshold(a: &LGraphArena, n: LNodeId) -> f64 {
     a.layer(a.node(n).layer.unwrap()).size.x - a.node(n).size.x / 2.0
 }

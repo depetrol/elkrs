@@ -14,21 +14,19 @@ const MIN_VERT_DIFF: f64 = 1.0;
 /// factor for spacing apart layers between which edges are routed.
 const LAYER_SPACE_FAC: f64 = 0.4;
 
-/// Java `PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT`.
 pub(crate) fn is_external_west_or_east_port(a: &LGraphArena, node: LNodeId) -> bool {
     let ext_port_side: PortSide = a.node(node).properties.get(&iprops::EXT_PORT_SIDE);
     a.node(node).node_type == NodeType::EXTERNAL_PORT
         && (ext_port_side == PortSide::WEST || ext_port_side == PortSide::EAST)
 }
 
-/// Java `LPort.getAbsoluteAnchor()`.
+/// Absolute anchor position of a port.
 fn abs_anchor(a: &LGraphArena, port: LPortId) -> KVector {
     let p = a.port(port);
     let n = a.node(p.node.unwrap());
     KVector::new(n.pos.x + p.pos.x + p.anchor.x, n.pos.y + p.pos.y + p.anchor.y)
 }
 
-/// Java `PolylineEdgeRouter.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let sloped_edge_zone_width: f64 = a
         .graph(graph)
@@ -39,7 +37,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let edge_space_fac = f64::min(1.0, edge_spacing / node_spacing);
 
     // Set of already created junction points, to avoid multiple points at the
-    // same position (Java: a `HashSet<KVector>`, queried by value equality).
+    // same position (queried by value equality).
     let mut created_junction_points: Vec<KVector> = Vec::new();
 
     let mut xpos = 0.0f64;
@@ -148,7 +146,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Actual Edge Routing Code
 
-/// Java `processNode`: inserts bend points for edges incident to this node.
+/// Inserts bend points for edges incident to this node.
 fn process_node(
     a: &mut LGraphArena,
     node: LNodeId,
@@ -211,7 +209,7 @@ fn process_node(
     }
 }
 
-/// Java `processInLayerEdge`: in-layer edges get an extra bend point halfway
+/// In-layer edges get an extra bend point halfway
 /// between the edge's upper and lower end.
 fn process_in_layer_edge(a: &mut LGraphArena, edge: LEdgeId, layer_x_pos: f64, edge_spacing: f64) {
     let source_port = a.edge(edge).source.unwrap();
@@ -234,7 +232,6 @@ fn process_in_layer_edge(a: &mut LGraphArena, edge: LEdgeId, layer_x_pos: f64, e
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility Methods
 
-/// Java `calculateWestInLayerEdgeYDiff`.
 fn calculate_west_in_layer_edge_y_diff(a: &LGraphArena, layer: LayerId) -> f64 {
     let mut max_y_diff = 0.0f64;
 
@@ -254,7 +251,6 @@ fn calculate_west_in_layer_edge_y_diff(a: &LGraphArena, layer: LayerId) -> f64 {
     max_y_diff
 }
 
-/// Java `addBendPoint`.
 fn add_bend_point(
     a: &mut LGraphArena,
     edge: LEdgeId,
@@ -276,7 +272,7 @@ fn add_bend_point(
 
         if add_junction_point && !created_junction_points.contains(&bend_point) {
             // create a new junction point for the edge at the bend point's position
-            // (the JUNCTION_POINTS default is materialized by getProperty)
+            // (the JUNCTION_POINTS default is materialized on access)
             let mut junction_points: KVectorChain =
                 a.edge(edge).properties.get(&lopts::JUNCTION_POINTS);
             junction_points.add_last(bend_point);
@@ -286,7 +282,7 @@ fn add_bend_point(
     }
 }
 
-/// Java `isInLayerDummy`: a node is considered an in-layer dummy if it is of
+/// A node is considered an in-layer dummy if it is of
 /// type `LONG_EDGE` and has an incident in-layer edge.
 fn is_in_layer_dummy(a: &LGraphArena, node: LNodeId) -> bool {
     if a.node(node).node_type == NodeType::LONG_EDGE {

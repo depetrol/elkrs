@@ -1,19 +1,18 @@
-//! The reachable subset of `p5edges/splines/SplinesMath.java` plus the
-//! pieces of `org.eclipse.elk.core.math.ElkMath` used by the spline routing
+//! The reachable subset of `SplinesMath` plus the
+//! pieces of `ElkMath` used by the spline routing
 //! code (bezier approximation, rectangle/line intersection tests).
 
 use elk_core::options::PortSide;
 use elk_graph::math::{ElkRectangle, KVector};
 
-/// Java `SplinesMath.EPSILON` (differences below this are treated as zero).
+/// Differences below this are treated as zero.
 const EPSILON: f64 = 0.00000001;
 
-/// Java `SplinesMath.HALF_PI`.
 pub const HALF_PI: f64 = std::f64::consts::PI / 2.0;
-/// Java `SplinesMath.THREE_HALF_PI` (computed as `HALF_PI + HALF_PI + HALF_PI`).
+/// Computed as `HALF_PI + HALF_PI + HALF_PI`.
 pub const THREE_HALF_PI: f64 = HALF_PI + HALF_PI + HALF_PI;
 
-/// Java `SplinesMath.portSideToDirection`: converts a `PortSide` to the
+/// Converts a `PortSide` to the
 /// direction from a node's center to the given side in radians.
 pub fn port_side_to_direction(side: PortSide) -> f64 {
     match side {
@@ -25,7 +24,6 @@ pub fn port_side_to_direction(side: PortSide) -> f64 {
     }
 }
 
-/// Java `SplinesMath.isBetween(double, double, double)`.
 pub fn is_between(value: f64, boundary0: f64, boundary1: f64) -> bool {
     if (boundary0 - value).abs() < EPSILON || (boundary1 - value).abs() < EPSILON {
         return true;
@@ -40,7 +38,7 @@ pub fn is_between(value: f64, boundary0: f64, boundary1: f64) -> bool {
 // ---------------------------------------------------------------------------
 // ElkMath subset
 
-/// table of precomputed factorial values (Java `ElkMath.FACT_TABLE`).
+/// table of precomputed factorial values.
 const FACT_TABLE: [i64; 21] = [
     1,
     1,
@@ -65,7 +63,7 @@ const FACT_TABLE: [i64; 21] = [
     2432902008176640000,
 ];
 
-/// Java `ElkMath.powf` (float variant, used by `factd` for large inputs).
+/// Float variant, used by `factd` for large inputs.
 fn powf(a: f32, b: i32) -> f32 {
     let mut result: f32 = 1.0;
     let mut base = a;
@@ -86,7 +84,6 @@ fn powf(a: f32, b: i32) -> f32 {
     }
 }
 
-/// Java `ElkMath.powd`.
 fn powd(a: f64, b: i32) -> f64 {
     let mut result: f64 = 1.0;
     let mut base = a;
@@ -107,7 +104,6 @@ fn powd(a: f64, b: i32) -> f64 {
     }
 }
 
-/// Java `ElkMath.factd`.
 fn factd(x: i32) -> f64 {
     assert!(x >= 0, "The input must be positive");
     if (x as usize) < FACT_TABLE.len() {
@@ -118,7 +114,6 @@ fn factd(x: i32) -> f64 {
     }
 }
 
-/// Java `ElkMath.binomiald`.
 fn binomiald(n: i32, k: i32) -> f64 {
     assert!(n >= 0 && k >= 0, "k and n must be positive");
     assert!(k <= n, "k must be smaller than n");
@@ -131,7 +126,6 @@ fn binomiald(n: i32, k: i32) -> f64 {
     }
 }
 
-/// Java `ElkMath.getPointOnBezierSegment`.
 fn get_point_on_bezier_segment(t: f64, control_points: &[KVector]) -> KVector {
     let n = control_points.len() as i32 - 1;
     let mut px = 0.0;
@@ -145,7 +139,6 @@ fn get_point_on_bezier_segment(t: f64, control_points: &[KVector]) -> KVector {
     KVector::new(px, py)
 }
 
-/// Java `ElkMath.approximateBezierSegment(int, KVector...)`.
 pub fn approximate_bezier_segment(result_size: i32, control_points: &[KVector]) -> Vec<KVector> {
     if result_size <= 0 {
         return Vec::new();
@@ -160,7 +153,6 @@ pub fn approximate_bezier_segment(result_size: i32, control_points: &[KVector]) 
     result
 }
 
-/// Java `ElkMath.DOUBLE_EQ_EPSILON`.
 const DOUBLE_EQ_EPSILON: f64 = 0.00001;
 
 /// Guava `DoubleMath.fuzzyEquals`.
@@ -182,7 +174,7 @@ fn fuzzy_compare(a: f64, b: f64, tolerance: f64) -> i32 {
     }
 }
 
-/// Java `ElkMath.intersects(KVector, KVector, KVector, KVector)` (line-line).
+/// Line-line intersection test.
 fn lines_intersect(l11: KVector, l12: KVector, l21: KVector, l22: KVector) -> bool {
     let u0 = l11;
     let v0 = KVector::new(l12.x - l11.x, l12.y - l11.y);
@@ -206,7 +198,6 @@ fn lines_intersect(l11: KVector, l12: KVector, l21: KVector, l22: KVector) -> bo
         && fuzzy_compare(t, 1.0, DOUBLE_EQ_EPSILON) < 0
 }
 
-/// Java `ElkMath.contains(ElkRectangle, KVector)`.
 fn rect_contains_point(rect: &ElkRectangle, p: KVector) -> bool {
     let min_x = rect.x;
     let max_x = rect.x + rect.width;
@@ -215,12 +206,10 @@ fn rect_contains_point(rect: &ElkRectangle, p: KVector) -> bool {
     (p.x > min_x && p.x < max_x) && (p.y > min_y && p.y < max_y)
 }
 
-/// Java `ElkMath.contains(ElkRectangle, KVector, KVector)`.
 pub fn rect_contains_line(rect: &ElkRectangle, p1: KVector, p2: KVector) -> bool {
     rect_contains_point(rect, p1) && rect_contains_point(rect, p2)
 }
 
-/// Java `ElkMath.intersects(ElkRectangle, KVector, KVector)`.
 pub fn rect_intersects_line(rect: &ElkRectangle, p1: KVector, p2: KVector) -> bool {
     // simple cases first: fully contained
     if rect_contains_line(rect, p1, p2) {

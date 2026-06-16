@@ -286,7 +286,7 @@ fn create_balanced_layout(
     let no_of_layouts = layouts.len();
     let mut balanced = BKAlignedLayout::new(node_count, None, None);
     let mut width = vec![0.0f64; no_of_layouts];
-    // Java initializes these to Integer.MAX_VALUE / Integer.MIN_VALUE
+    // initialized to the integer min/max bounds
     let mut min = vec![i32::MAX as f64; no_of_layouts];
     let mut max = vec![i32::MIN as f64; no_of_layouts];
     let mut min_width_layout = 0usize;
@@ -356,8 +356,7 @@ pub fn get_edge(a: &LGraphArena, source: LNodeId, target: LNodeId) -> Option<LEd
 }
 
 /// Finds all blocks of a given layout,
-/// mapped from root node to block contents (keys in first-discovery order,
-/// matching Java's `LinkedHashMap`).
+/// mapped from root node to block contents (keys in first-discovery order).
 pub fn get_blocks(
     a: &LGraphArena,
     graph: LGraphId,
@@ -399,8 +398,7 @@ fn check_order_constraint(a: &LGraphArena, graph: LGraphId, bal: &BKAlignedLayou
                 + a.node(node).margin.bottom;
 
             if top > pos && bottom > pos {
-                // Update the position inside the layer (Java recomputes the
-                // exact same expression as `bottom`)
+                // Update the position inside the layer
                 pos = bottom;
             } else {
                 // We've found an overlap
@@ -476,7 +474,7 @@ mod tests {
         (g, [na, nb, nc, nd])
     }
 
-    /// Hand trace of the Java code for the diamond graph, RIGHTDOWN layout
+    /// Hand trace for the diamond graph, RIGHTDOWN layout
     /// (the layout selected with favorStraightEdges=true since it is the
     /// first of the two smallest layouts; sizes are RD=45, RU=65, LD=45,
     /// LU=65):

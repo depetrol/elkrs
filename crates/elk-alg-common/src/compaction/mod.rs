@@ -1,5 +1,5 @@
 //!
-//! The Java object graph (CNode <-> CGroup <-> CGraph with bidirectional
+//! The object graph (CNode <-> CGroup <-> CGraph with bidirectional
 //! references) is modelled here with index-based arenas held inside [`CGraph`].
 
 use std::cmp::Ordering;
@@ -22,7 +22,7 @@ pub type CNodeId = usize;
 /// Index of a [`CGroup`] within a [`CGraph`].
 pub type CGroupId = usize;
 
-/// Tolerance-affected double comparisons (Java `CompareFuzzy`).
+/// Tolerance-affected double comparisons.
 pub mod compare_fuzzy {
     pub const TOLERANCE: f64 = 0.0001;
 
@@ -62,7 +62,7 @@ pub mod compare_fuzzy {
     }
 }
 
-/// Opaque origin of a [`CNode`], set by the caller (Java `CNode.origin`).
+/// Opaque origin of a [`CNode`], set by the caller.
 /// The compaction core does not interpret these; the layered transformer
 /// distinguishes nodes from vertical segments via the variants.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
@@ -75,8 +75,7 @@ pub enum CNodeOrigin {
     VerticalSegment(u32),
 }
 
-/// Internal class representing a 4-tuple used as a 'compaction lock' (Java
-/// `Quadruplet`).
+/// A 4-tuple used as a 'compaction lock'.
 #[derive(Clone, Copy, Default, Debug)]
 pub struct Quadruplet {
     pub left: bool,
@@ -90,7 +89,7 @@ impl Quadruplet {
         Quadruplet::default()
     }
 
-    /// Java `set(l, r, u, d)`.
+    /// Sets all four flags at once.
     pub fn set_all(&mut self, l: bool, r: bool, u: bool, d: bool) {
         self.left = l;
         self.right = r;
@@ -126,7 +125,7 @@ impl Quadruplet {
     }
 }
 
-/// Representation of a node/box in the constraint graph (Java `CNode`).
+/// Representation of a node/box in the constraint graph.
 #[derive(Clone, Debug)]
 pub struct CNode {
     pub id: i32,
@@ -156,15 +155,15 @@ impl Default for CNode {
     }
 }
 
-/// A group of [`CNode`]s whose relative distances are preserved (Java `CGroup`).
+/// A group of [`CNode`]s whose relative distances are preserved.
 #[derive(Clone, Debug)]
 pub struct CGroup {
     pub id: i32,
     pub master: Option<CNodeId>,
-    /// Java uses a `LinkedHashSet`; we keep insertion order in a `Vec`.
+    /// Insertion order is kept in a `Vec`.
     pub cnodes: Vec<CNodeId>,
     pub start_pos: f64,
-    /// Java uses a `HashSet`; insertion-ordered `Vec` (membership-checked).
+    /// Insertion-ordered `Vec` (membership-checked).
     pub incoming_constraints: Vec<CNodeId>,
     pub out_degree: i32,
     pub out_degree_real: i32,
@@ -190,7 +189,7 @@ impl Default for CGroup {
     }
 }
 
-/// Representation of a constraint graph (Java `CGraph`).
+/// Representation of a constraint graph.
 #[derive(Clone, Debug, Default)]
 pub struct CGraph {
     pub cnodes: Vec<CNode>,
@@ -209,7 +208,7 @@ impl CGraph {
         self.supported_directions.contains(&direction)
     }
 
-    // ---- node/group creation mirroring the Java builder API ----
+    // ---- node/group creation ----
 
     /// Creates a new [`CNode`] and appends it; returns its id.
     pub fn add_cnode(&mut self, node: CNode) -> CNodeId {
@@ -218,8 +217,7 @@ impl CGraph {
         id
     }
 
-    /// Java `CGroup.of().nodes(n).create(graph)` — wraps the given nodes in a
-    /// fresh group. Returns the group id.
+    /// Wraps the given nodes in a fresh group. Returns the group id.
     pub fn add_cgroup_with(&mut self, nodes: &[CNodeId], master: Option<CNodeId>) -> CGroupId {
         let gid = self.cgroups.len();
         self.cgroups.push(CGroup { master, ..Default::default() });
@@ -229,7 +227,7 @@ impl CGraph {
         gid
     }
 
-    /// Java `CGroup.addCNode`.
+    /// Adds a node to the given group.
     pub fn group_add_cnode(&mut self, group: CGroupId, node: CNodeId) {
         if self.cnodes[node].cgroup.is_some() {
             panic!("CNode belongs to another CGroup.");
@@ -242,24 +240,23 @@ impl CGraph {
     }
 }
 
-/// Adds `value` to `vec` only if it isn't present already (Java `HashSet.add`).
+/// Adds `value` to `vec` only if it isn't present already.
 pub(crate) fn set_add(vec: &mut Vec<CNodeId>, value: CNodeId) {
     if !vec.contains(&value) {
         vec.push(value);
     }
 }
 
-/// A function evaluating whether a node may move in the passed direction
-/// (Java `ILockFunction`).
+/// A function evaluating whether a node may move in the passed direction.
 pub type LockFun<'a> = Box<dyn Fn(&CGraph, CNodeId, Direction) -> bool + 'a>;
 
-/// Reports the spacings between pairs of [`CNode`]s (Java `ISpacingsHandler`).
+/// Reports the spacings between pairs of [`CNode`]s.
 pub trait SpacingsHandler {
     fn horizontal_spacing(&self, cgraph: &CGraph, n1: CNodeId, n2: CNodeId) -> f64;
     fn vertical_spacing(&self, cgraph: &CGraph, n1: CNodeId, n2: CNodeId) -> f64;
 }
 
-/// Default handler returning no spacing (Java `DEFAULT_SPACING_HANDLER`).
+/// Default handler returning no spacing.
 pub struct DefaultSpacingsHandler;
 impl SpacingsHandler for DefaultSpacingsHandler {
     fn horizontal_spacing(&self, _: &CGraph, _: CNodeId, _: CNodeId) -> f64 {

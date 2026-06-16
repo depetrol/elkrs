@@ -61,7 +61,7 @@ pub fn set_node_width<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>)
     }
 
     // Set the cell system's width and tell it to compute horizontal
-    // coordinates and widths. (Like Java, this uses the local `width`, not the
+    // coordinates and widths. (This uses the local `width`, not the
     // potentially larger node size in the fixed-graph-size case.)
     let node_cell_rectangle = node_context.cells.rect_mut(node_context.node_container);
     node_cell_rectangle.x = 0.0;

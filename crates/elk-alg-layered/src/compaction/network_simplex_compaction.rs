@@ -257,13 +257,13 @@ fn is_north_south(side: PortSide) -> bool {
     side == PortSide::NORTH || side == PortSide::SOUTH
 }
 
-/// Java `LPort.OUTPUT_PREDICATE`: the port has outgoing but no incoming edges.
+/// The output predicate: the port has outgoing but no incoming edges.
 fn is_output(a: &LGraphArena, port: LPortId) -> bool {
     let p = a.port(port);
     !p.outgoing_edges.is_empty() && p.incoming_edges.is_empty()
 }
 
-/// Java `LPort.INPUT_PREDICATE`: the port has incoming but no outgoing edges.
+/// The input predicate: the port has incoming but no outgoing edges.
 fn is_input(a: &LGraphArena, port: LPortId) -> bool {
     let p = a.port(port);
     !p.incoming_edges.is_empty() && p.outgoing_edges.is_empty()

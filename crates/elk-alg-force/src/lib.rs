@@ -29,7 +29,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     algorithms.register(AlgorithmData {
         id: "org.eclipse.elk.stress",
         name: "ELK Stress",
-        // StressOptions.java registers no supportedFeatures
+        // no supportedFeatures
         features: EnumSet::none(),
         create: || Box::new(stress::StressLayoutProvider),
     });

@@ -36,7 +36,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `process(LNode, List<LNode>, List<LNode>)`: process a node with its
+/// `process(LNode, List<LNode>, List<LNode>)`: process a node with its
 /// connected comment boxes.
 fn process_node(
     a: &mut LGraphArena,
@@ -129,7 +129,7 @@ fn process_node(
     }
 }
 
-/// Java `getBoxPort`: retrieves the port of the given comment box that
+/// `getBoxPort`: retrieves the port of the given comment box that
 /// connects it with the corresponding node, reconnecting the edge that the
 /// pre-processor disconnected.
 fn get_box_port(a: &mut LGraphArena, comment_box: LNodeId) -> Option<LPortId> {

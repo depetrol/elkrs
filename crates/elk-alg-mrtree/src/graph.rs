@@ -1,16 +1,16 @@
 //! The tree algorithm's internal
 //! graph model (TGraph, TNode, TEdge).
 //!
-//! Java uses an object graph; here all elements live in arenas inside
+//! All elements live in arenas inside
 //! [`TArena`] and reference each other through typed indices. [`TGraph`]
 //! instances (the full graph and its connected components) hold id lists
-//! into the shared arena, mirroring how Java's `ComponentsProcessor` moves
-//! node *references* between `TGraph` objects.
+//! into the shared arena; components are formed by moving node ids between
+//! `TGraph` objects.
 //!
-//! Java's `InternalProperties` entries are plain fields here. None of those
+//! The `InternalProperties` entries are plain fields here. None of those
 //! property ids ("ROOT", "FAN", "PRELIM", ...) is a registered layout option,
 //! so although `ElkGraphImporter.applyLayout` copies them onto the output
-//! nodes in Java, the JSON exporter filters them out — making fields
+//! nodes, the JSON exporter filters them out — making fields
 //! behaviorally equivalent. The one exception is
 //! `MrTreeOptions.TREE_LEVEL` (`org.eclipse.elk.mrtree.treeLevel`), which is
 //! a registered option visible in the output; it is kept in the node's
@@ -40,7 +40,7 @@ id_type!(TEdgeId);
 
 #[derive(Default, Debug)]
 pub struct TNode {
-    /// Java's public `id` field (reassigned by several processors; the
+    /// Public `id` field (reassigned by several processors; the
     /// SUPER_ROOT dummy shares id 0 with a real node, faithfully kept).
     pub id: i32,
     pub label: String,
@@ -93,7 +93,7 @@ pub struct TEdge {
     pub source: TNodeId,
     pub target: TNodeId,
     /// During edge routing this chain accumulates *all* points including the
-    /// eventual start and end point, exactly like the Java `bendPoints`.
+    /// eventual start and end point.
     pub bend_points: KVectorChain,
     pub properties: PropertyMap,
     /// `InternalProperties.ORIGIN`.
@@ -210,7 +210,7 @@ pub fn add_child(arena: &mut TArena, graph: &mut TGraph, parent: TNodeId, child:
     arena.node_mut(child).incoming.push(new_edge);
 }
 
-/// Replicates Java's reference comparison of two boxed `Integer` property
+/// Reference comparison of two boxed `Integer` property
 /// values (`getProperty(TREE_LEVEL) != getProperty(TREE_LEVEL)` in
 /// `TreeUtil`): equal values are `==` only while inside the Integer cache
 /// range [-128, 127]; outside it every boxing creates a fresh object.

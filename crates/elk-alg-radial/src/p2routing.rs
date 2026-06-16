@@ -58,7 +58,6 @@ fn route_edges(g: &mut ElkGraph, node: NodeId) {
                 target_x = source_x + vector.x;
                 target_y = source_y + vector.y;
 
-                // Java: ElkGraphUtil.firstEdgeSection(edge, true, true) —
                 // reset the first section and remove all others.
                 g.edge_mut(edge).sections.truncate(1);
                 let section = g.first_edge_section(edge, true);

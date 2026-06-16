@@ -1,4 +1,4 @@
-//! The reachable subset of `p5edges/splines/NubSpline.java`: the
+//! The reachable subset of `NubSpline`: the
 //! clamped uniform constructor, conversion to bezier form, and extraction of
 //! the bezier control points. The derivation / inversion / extremum machinery
 //! is only used by `NubsSelfLoop`, which is itself unreachable in ELK 0.11.0
@@ -6,10 +6,8 @@
 
 use elk_graph::math::KVector;
 
-/// Java `NubSpline.EPSILON`.
 const EPSILON: f64 = 0.000001;
 
-/// Java `NubSpline.PolarCP`.
 #[derive(Clone, Debug)]
 struct PolarCP {
     cp: KVector,
@@ -17,13 +15,11 @@ struct PolarCP {
 }
 
 impl PolarCP {
-    /// Java `PolarCP(KVector, List<Double>)`.
     fn new(control_point: KVector, polar_coordinate: &[f64]) -> PolarCP {
         PolarCP { cp: control_point, polar_coordinate: polar_coordinate.to_vec() }
     }
 
-    /// Java `PolarCP(PolarCP, PolarCP, double)`: calculates the new PolarCP
-    /// from the two given ones during knot insertion.
+    /// Calculates the new PolarCP from the two given ones during knot insertion.
     fn combine(first_cp: &PolarCP, second_cp: &PolarCP, new_knot: f64) -> PolarCP {
         let first_factor = first_cp.polar_coordinate[0];
         let second_factor = *second_cp.polar_coordinate.last().unwrap();
@@ -68,9 +64,9 @@ pub struct NubSpline {
 }
 
 impl NubSpline {
-    /// Java `NubSpline(boolean clamped, int dimension, List<KVector>)` with
-    /// `clamped == true`. Note that the Java constructor mutates the passed
-    /// list (padding it at the front); this is replicated on the owned `Vec`.
+    /// Clamped constructor (`clamped == true`). Note that the constructor
+    /// mutates the passed list (padding it at the front); this is replicated on
+    /// the owned `Vec`.
     pub fn new_clamped(dimension: usize, mut k_vectors: Vec<KVector>) -> NubSpline {
         assert!(dimension >= 1, "The dimension must be at least 1!");
 
@@ -122,7 +118,7 @@ impl NubSpline {
         spline
     }
 
-    /// Java `createUniformKnotVector` (clamped variant).
+    /// Clamped variant.
     fn create_uniform_knot_vector(&mut self, clamped: bool, size: usize) {
         assert!(
             size >= 2 * self.dim_nubs,
@@ -158,7 +154,6 @@ impl NubSpline {
         }
     }
 
-    /// Java `getMultiplicity`.
     fn get_multiplicity(&self, knot_to_check: f64) -> usize {
         let mut count = 0;
         for &current_knot in &self.knot_vector {
@@ -172,8 +167,8 @@ impl NubSpline {
         count
     }
 
-    /// Java `insertKnotAtCurrentPosition`. The two cursors emulate the Java
-    /// `ListIterator` positions ("between" indices) over `control_points` and
+    /// The two cursors emulate `ListIterator`
+    /// positions ("between" indices) over `control_points` and
     /// `knot_vector` respectively.
     fn insert_knot_at_current_position(
         &mut self,
@@ -236,7 +231,7 @@ impl NubSpline {
         }
     }
 
-    /// Java `toBezier`: converts this NubSpline to a bezier spline. All inner
+    /// Converts this NubSpline to a bezier spline. All inner
     /// knots of the knotVector get the multiplicity of dimNUBS.
     pub fn to_bezier(&mut self) {
         let mut iter_knot: usize = 0;
@@ -293,8 +288,7 @@ impl NubSpline {
         self.is_bezier = true;
     }
 
-    /// Java `getBezierCP()`: all bezier control points without the source and
-    /// target vectors.
+    /// All bezier control points without the source and target vectors.
     pub fn get_bezier_cp(&mut self) -> Vec<KVector> {
         if !self.is_bezier {
             self.to_bezier();

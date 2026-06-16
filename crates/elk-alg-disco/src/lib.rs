@@ -35,8 +35,7 @@ impl LayoutProvider for DisCoLayoutProvider {
             .get(&options::SPACING_COMPONENT_COMPONENT);
 
         // If desired, apply a layout algorithm to the connected components
-        // themselves. (Java resolves it from the LayoutMetaDataService; this
-        // port has no global registry to draw providers from.)
+        // themselves. (This port has no global registry to draw providers from.)
         if g.node(layout_node)
             .properties
             .has(&options::COMPONENT_COMPACTION_COMPONENT_LAYOUT_ALGORITHM)
@@ -69,7 +68,7 @@ impl LayoutProvider for DisCoLayoutProvider {
         // 3.) Apply the new layout to the input graph.
         transformer.apply_layout(g, &result);
 
-        // Java stores the DCGraph object itself here; the JSON oracle prints
+        // Stores the DCGraph object itself here; the JSON oracle prints
         // it as "...DCGraph@<identityhash>". The identity hash cannot be
         // reproduced, so the expected goldens strip the "@..." suffix.
         g.node(layout_node).properties.set(

@@ -47,7 +47,7 @@ pub struct OrthogonalRoutingGenerator {
 }
 
 impl OrthogonalRoutingGenerator {
-    /// Java constructor (the debug prefix is accepted for parity but unused;
+    /// Constructor (the debug prefix is accepted for parity but unused;
     /// debug graph output is not ported).
     pub fn new(direction: RoutingDirection, edge_spacing: f64, _debug_prefix: &str) -> Self {
         OrthogonalRoutingGenerator {
@@ -61,9 +61,9 @@ impl OrthogonalRoutingGenerator {
     ///////////////////////////////////////////////////////////////////////////////
     // Edge Routing
 
-    /// Java `routeEdges`: routes edges between the given layers and returns
+    /// `routeEdges`: routes edges between the given layers and returns
     /// the number of routing slots. The random number generator replaces
-    /// Java's `InternalProperties.RANDOM` graph property.
+    /// the `InternalProperties.RANDOM` graph property.
     pub fn route_edges(
         &mut self,
         a: &mut LGraphArena,
@@ -157,7 +157,7 @@ impl OrthogonalRoutingGenerator {
     ///////////////////////////////////////////////////////////////////////////////
     // Hyper Edge Graph Creation
 
-    /// Java `createHyperEdgeSegments`: creates hyperedge segments for the given layer.
+    /// `createHyperEdgeSegments`: creates hyperedge segments for the given layer.
     fn create_hyper_edge_segments(
         &self,
         a: &LGraphArena,
@@ -169,7 +169,6 @@ impl OrthogonalRoutingGenerator {
     ) {
         if let Some(nodes) = nodes {
             for &node in nodes {
-                // Java: node.getPorts(PortType.OUTPUT, portSide)
                 for &port in &a.node(node).ports {
                     if a.port(port).outgoing_edges.is_empty() || a.port(port).side != port_side {
                         continue;
@@ -190,7 +189,7 @@ impl OrthogonalRoutingGenerator {
         }
     }
 
-    /// Java `createDependencyIfNecessary`: creates dependencies between the
+    /// `createDependencyIfNecessary`: creates dependencies between the
     /// two given hyperedge segments, if one is needed. Returns the number of
     /// critical dependencies that were added.
     pub(super) fn create_dependency_if_necessary(
@@ -281,7 +280,7 @@ impl OrthogonalRoutingGenerator {
         critical_dependency_count
     }
 
-    /// Java `countConflicts`: counts the number of conflicts for the given
+    /// `countConflicts`: counts the number of conflicts for the given
     /// (sorted) lists of positions, or [`CRITICAL_CONFLICTS_DETECTED`] if a
     /// critical conflict was detected.
     fn count_conflicts(&self, posis1: &[f64], posis2: &[f64]) -> i32 {
@@ -323,7 +322,7 @@ impl OrthogonalRoutingGenerator {
     ///////////////////////////////////////////////////////////////////////////////
     // Cycle Breaking
 
-    /// Java `breakCriticalCycles`: finds and breaks critical cycles by
+    /// `breakCriticalCycles`: finds and breaks critical cycles by
     /// splitting edge segments.
     fn break_critical_cycles(
         &self,
@@ -344,7 +343,7 @@ impl OrthogonalRoutingGenerator {
     }
 }
 
-/// Java static `countCrossings`: counts the number of positions in the
+/// `countCrossings`: counts the number of positions in the
 /// critical area between `start` and `end`.
 pub(super) fn count_crossings(posis: &[f64], start: f64, end: f64) -> i32 {
     let mut crossings = 0;
@@ -358,7 +357,7 @@ pub(super) fn count_crossings(posis: &[f64], start: f64, end: f64) -> i32 {
     crossings
 }
 
-/// Java `minimumHorizontalSegmentDistance`: minimum distance between any two
+/// `minimumHorizontalSegmentDistance`: minimum distance between any two
 /// adjacent source connections and any two adjacent target connections.
 fn minimum_horizontal_segment_distance(store: &SegmentStore, edge_segments: &[SegmentId]) -> f64 {
     let min_incoming_distance = minimum_difference(
@@ -372,7 +371,7 @@ fn minimum_horizontal_segment_distance(store: &SegmentStore, edge_segments: &[Se
             .flat_map(|&s| store.segments[s].outgoing_connection_coordinates.iter().copied()),
     );
 
-    // Java Math.min; operands are never NaN
+    // Math.min; operands are never NaN
     if min_incoming_distance <= min_outgoing_distance {
         min_incoming_distance
     } else {
@@ -380,10 +379,9 @@ fn minimum_horizontal_segment_distance(store: &SegmentStore, edge_segments: &[Se
     }
 }
 
-/// Java `minimumDifference`: the smallest difference between any two numbers
+/// `minimumDifference`: the smallest difference between any two numbers
 /// in the given stream; `Double.MAX_VALUE` if there are less than two.
 fn minimum_difference(numbers: impl Iterator<Item = f64>) -> f64 {
-    // Java: numberStream.sorted().distinct()
     let mut numbers: Vec<f64> = numbers.collect();
     numbers.sort_by(|x, y| x.total_cmp(y));
     numbers.dedup_by(|x, y| x.to_bits() == y.to_bits());
@@ -403,9 +401,9 @@ fn minimum_difference(numbers: impl Iterator<Item = f64>) -> f64 {
     min_difference
 }
 
-/// Java static `breakNonCriticalCycles`: finds and breaks non-critical cycles
+/// `breakNonCriticalCycles`: finds and breaks non-critical cycles
 /// by removing and reversing non-critical dependencies. (Also used by the
-/// self loop routing code in Java.)
+/// self loop routing code.)
 pub fn break_non_critical_cycles(
     store: &mut SegmentStore,
     edge_segments: &[SegmentId],
@@ -428,7 +426,7 @@ pub fn break_non_critical_cycles(
 ///////////////////////////////////////////////////////////////////////////////
 // Topological Ordering
 
-/// Java `topologicalNumbering`: performs a topological numbering of the given
+/// `topologicalNumbering`: performs a topological numbering of the given
 /// hyperedge segments.
 fn topological_numbering(store: &mut SegmentStore, segments: &[SegmentId]) {
     // determine sources, targets, incoming count and outgoing count; targets

@@ -22,18 +22,18 @@ pub enum RoutingDirection {
 pub struct BaseRoutingDirectionStrategy {
     direction: RoutingDirection,
     /// set of already created junction points, to avoid multiple points at
-    /// the same position (Java uses a `HashSet<KVector>` with
-    /// coordinate-based equality; we use a Vec with linear lookup).
+    /// the same position (a Vec with linear lookup, using coordinate-based
+    /// equality).
     created_junction_points: Vec<KVector>,
 }
 
 impl BaseRoutingDirectionStrategy {
-    /// Java `forRoutingDirection`.
+    /// `forRoutingDirection`.
     pub fn for_routing_direction(direction: RoutingDirection) -> Self {
         BaseRoutingDirectionStrategy { direction, created_junction_points: Vec::new() }
     }
 
-    /// Java `getPortPositionOnHyperNode`.
+    /// `getPortPositionOnHyperNode`.
     pub fn port_position_on_hyper_node(&self, a: &LGraphArena, port: LPortId) -> f64 {
         let p = a.port(port);
         let node = a.node(p.node.unwrap());
@@ -45,7 +45,7 @@ impl BaseRoutingDirectionStrategy {
         }
     }
 
-    /// Java `getSourcePortSide`.
+    /// `getSourcePortSide`.
     pub fn source_port_side(&self) -> PortSide {
         match self.direction {
             RoutingDirection::WestToEast => PortSide::EAST,
@@ -54,7 +54,7 @@ impl BaseRoutingDirectionStrategy {
         }
     }
 
-    /// Java `getTargetPortSide`.
+    /// `getTargetPortSide`.
     pub fn target_port_side(&self) -> PortSide {
         match self.direction {
             RoutingDirection::WestToEast => PortSide::WEST,
@@ -63,17 +63,17 @@ impl BaseRoutingDirectionStrategy {
         }
     }
 
-    /// Java `getCreatedJunctionPoints`.
+    /// `getCreatedJunctionPoints`.
     pub fn created_junction_points(&self) -> &[KVector] {
         &self.created_junction_points
     }
 
-    /// Java `clearCreatedJunctionPoints`.
+    /// `clearCreatedJunctionPoints`.
     pub fn clear_created_junction_points(&mut self) {
         self.created_junction_points.clear();
     }
 
-    /// Java `calculateBendPoints` (dispatches to the strategy subclass).
+    /// `calculateBendPoints` (dispatches to the strategy subclass).
     pub fn calculate_bend_points(
         &mut self,
         a: &mut LGraphArena,
@@ -169,16 +169,14 @@ impl BaseRoutingDirectionStrategy {
     /// connection coordinate, depending on the routing direction.
     fn make_bend(&self, segment_coordinate: f64, connection_coordinate: f64) -> KVector {
         match self.direction {
-            // Java: new KVector(currentX, sourceY)
             RoutingDirection::WestToEast => KVector::new(segment_coordinate, connection_coordinate),
-            // Java: new KVector(sourceX, currentY)
             RoutingDirection::NorthToSouth | RoutingDirection::SouthToNorth => {
                 KVector::new(connection_coordinate, segment_coordinate)
             }
         }
     }
 
-    /// Java `addJunctionPointIfNecessary`. The `vertical` flag is implied by
+    /// `addJunctionPointIfNecessary`. The `vertical` flag is implied by
     /// the routing direction (`true` for west-to-east).
     fn add_junction_point_if_necessary(
         &mut self,
@@ -192,7 +190,7 @@ impl BaseRoutingDirectionStrategy {
         let p = if vertical { pos.y } else { pos.x };
 
         // If we already have this junction point, don't bother
-        // (Java KVector equality: coordinate comparison with ==)
+        // (KVector equality: coordinate comparison with ==)
         if self.created_junction_points.iter().any(|jp| jp.x == pos.x && jp.y == pos.y) {
             return;
         }
@@ -221,8 +219,6 @@ impl BaseRoutingDirectionStrategy {
 
         if point_inside_edge_segment || point_at_segment_boundary {
             // create a new junction point for the edge at the bend point's position
-            // (Java getProperty materializes the KVectorChain default; we
-            // read-modify-write, which leaves the same end state)
             let mut junction_points = a.edge(edge).properties.get(&lopts::JUNCTION_POINTS);
             junction_points.add_last(pos);
             a.edge(edge).properties.set(&lopts::JUNCTION_POINTS, junction_points);

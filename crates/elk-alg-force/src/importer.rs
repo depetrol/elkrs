@@ -56,8 +56,8 @@ fn transform_nodes(
         fgraph.nodes.push(new_node);
         elem_map.insert(knode, new_node);
 
-        // Java normalizes UNDEFINED port constraints here, but the result is
-        // never used ("TODO consider ports" in the original).
+        // UNDEFINED port constraints would be normalized here, but the result
+        // is never used (ports are not yet considered).
     }
 }
 
@@ -156,8 +156,7 @@ pub fn apply_layout(arena: &FArena, fgraph: &FGraph, g: &mut ElkGraph, _layout_n
     // process the edges
     for &fedge in &fgraph.edges {
         let kedge = arena.edge(fedge).origin.expect("force edge without origin");
-        // Java: ElkGraphUtil.firstEdgeSection(kedge, true, true) — reset the
-        // first section and remove all others.
+        // reset the first section and remove all others.
         let kedge_section = g.first_edge_section(kedge, true);
         g.edge_mut(kedge).sections.truncate(1);
 

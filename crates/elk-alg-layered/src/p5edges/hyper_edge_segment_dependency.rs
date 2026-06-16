@@ -7,7 +7,6 @@ use super::hyper_edge_segment::{DependencyId, SegmentId, SegmentStore};
 /// non-zero weight used for critical dependencies.
 pub const CRITICAL_DEPENDENCY_WEIGHT: i32 = 1;
 
-/// Java `HyperEdgeSegmentDependency.DependencyType`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum DependencyType {
     /// Regular dependencies are ones that, if ignored, may cause additional crossings.
@@ -27,7 +26,7 @@ pub struct HyperEdgeSegmentDependency {
     pub weight: i32,
 }
 
-/// Java private constructor: creates a dependency and adds it to the incident
+/// Creates a dependency and adds it to the incident
 /// dependency lists of the given segments.
 fn create(
     store: &mut SegmentStore,
@@ -48,7 +47,6 @@ fn create(
     dep
 }
 
-/// Java `createAndAddRegular`.
 pub fn create_and_add_regular(
     store: &mut SegmentStore,
     source: SegmentId,
@@ -58,7 +56,6 @@ pub fn create_and_add_regular(
     create(store, DependencyType::Regular, source, target, weight)
 }
 
-/// Java `createAndAddCritical`.
 pub fn create_and_add_critical(
     store: &mut SegmentStore,
     source: SegmentId,
@@ -67,13 +64,11 @@ pub fn create_and_add_critical(
     create(store, DependencyType::Critical, source, target, CRITICAL_DEPENDENCY_WEIGHT)
 }
 
-/// Java `remove`.
 pub fn remove(store: &mut SegmentStore, dep: DependencyId) {
     set_source(store, dep, None);
     set_target(store, dep, None);
 }
 
-/// Java `reverse`.
 pub fn reverse(store: &mut SegmentStore, dep: DependencyId) {
     let old_source = store.dependencies[dep].source;
     let old_target = store.dependencies[dep].target;
@@ -82,7 +77,7 @@ pub fn reverse(store: &mut SegmentStore, dep: DependencyId) {
     set_target(store, dep, old_source);
 }
 
-/// Java `setSource` (updates the segments' outgoing dependency lists).
+/// Updates the segments' outgoing dependency lists.
 pub fn set_source(store: &mut SegmentStore, dep: DependencyId, new_source: Option<SegmentId>) {
     if let Some(old) = store.dependencies[dep].source {
         store.segments[old].outgoing_segment_dependencies.retain(|&d| d != dep);
@@ -95,7 +90,7 @@ pub fn set_source(store: &mut SegmentStore, dep: DependencyId, new_source: Optio
     }
 }
 
-/// Java `setTarget` (updates the segments' incoming dependency lists).
+/// Updates the segments' incoming dependency lists.
 pub fn set_target(store: &mut SegmentStore, dep: DependencyId, new_target: Option<SegmentId>) {
     if let Some(old) = store.dependencies[dep].target {
         store.segments[old].incoming_segment_dependencies.retain(|&d| d != dep);

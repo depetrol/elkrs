@@ -35,7 +35,7 @@ impl LayerSweepTypeDecider {
     }
 
     pub fn init_at_layer_level(&mut self, a: &mut LGraphArena, l: usize, node_order: &[Vec<LNodeId>]) {
-        // nodeOrder[l][0].getLayer().id = l (throws on empty layers in Java, too)
+        // nodeOrder[l][0].getLayer().id = l (throws on empty layers)
         let layer = a.node(node_order[l][0]).layer.unwrap();
         a.layer_mut(layer).id = l as i32;
         self.node_info[l] = vec![NodeInfo::default(); node_order[l].len()];

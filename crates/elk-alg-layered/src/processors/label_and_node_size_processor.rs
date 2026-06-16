@@ -9,8 +9,6 @@ use crate::options_gen as lopts;
 use crate::options_gen::GraphProperties;
 
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
-    // Java: NodeDimensionCalculation.calculateLabelAndNodeSizes(
-    //           LGraphAdapters.adapt(graph, true, true, NORMAL-filter))
     {
         let mut adapter = LGraphAdapter::new(a, graph, true, true, |arena, n| {
             arena.node(n).node_type == NodeType::NORMAL

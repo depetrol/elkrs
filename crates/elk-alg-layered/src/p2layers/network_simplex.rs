@@ -72,7 +72,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 
 /// Determines all connected
 /// components of the graph. The component with the most nodes is kept at the
-/// front of the list (Java adds it via `addFirst`).
+/// front of the list.
 fn connected_components(a: &mut LGraphArena, the_nodes: &[LNodeId]) -> VecDeque<Vec<LNodeId>> {
     // initialize required attributes
     let mut node_visited = vec![false; the_nodes.len()];
@@ -260,7 +260,7 @@ mod tests {
 
     /// PRIORITY_SHORTNESS weights the edge: heavy edge m->z is kept short,
     /// so m moves towards z (and the balancer moves it back into the
-    /// emptier layer 1 afterwards, exactly as in Java).
+    /// emptier layer 1 afterwards).
     #[test]
     fn priority_shortness_weights_edges() {
         let mut a = LGraphArena::new();

@@ -7,7 +7,7 @@ use super::one_dimensional_compactor::OneDimensionalCompactor;
 use super::CGroupId;
 
 /// Compacts a constraint graph using a technique similar to longest-path
-/// layering (Java `LongestPathCompaction.compact`).
+/// layering.
 pub fn longest_path_compact(compactor: &mut OneDimensionalCompactor) {
     // calculating the left-most position of any element
     let mut min_start_pos = f64::INFINITY;

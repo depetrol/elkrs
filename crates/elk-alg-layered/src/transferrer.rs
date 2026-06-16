@@ -113,7 +113,7 @@ pub fn apply_layout(
     Ok(())
 }
 
-/// Java `LGraphUtil.isDescendant` (LGraph hierarchy).
+/// `LGraphUtil.isDescendant` (LGraph hierarchy).
 fn lnode_is_descendant(a: &LGraphArena, child: LNodeId, parent: LNodeId) -> bool {
     let mut current_graph = a.node_graph(child);
     loop {
@@ -225,7 +225,7 @@ fn apply_node_layout(
     }
 }
 
-/// Java `PortLabelPlacement.isFixed(Set)`.
+/// `PortLabelPlacement.isFixed(Set)`.
 fn port_label_placement_is_fixed(
     placement: EnumSet<elk_core::options::PortLabelPlacement>,
 ) -> bool {
@@ -233,7 +233,7 @@ fn port_label_placement_is_fixed(
         && !placement.contains(elk_core::options::PortLabelPlacement::OUTSIDE)
 }
 
-/// Java `NodeFlexibility.getNodeFlexibility(node).isFlexibleSizeWhereSpacePermits()`.
+/// `NodeFlexibility.getNodeFlexibility(node).isFlexibleSizeWhereSpacePermits()`.
 fn node_flexibility_is_flexible_size_where_space_permits(a: &LGraphArena, lnode: LNodeId) -> bool {
     use crate::options_gen::NodeFlexibility;
     let nf: Option<NodeFlexibility> = a
@@ -313,8 +313,6 @@ fn apply_edge_layout(
             elk.label_mut(elklabel).shape.set_dimensions(w, h);
             elk.label_mut(elklabel).shape.set_location(x, y);
 
-            // Java: elklabel.setProperty(LabelDummySwitcher.INCLUDE_LABEL,
-            //           llabel.getProperty(LabelDummySwitcher.INCLUDE_LABEL))
             let include_label: bool = a
                 .label(llabel)
                 .properties

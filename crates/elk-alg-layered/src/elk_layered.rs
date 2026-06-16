@@ -15,7 +15,7 @@ use crate::phases::PipelineStep;
 use crate::processors;
 
 pub fn do_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
-    // the random number generator (Java: stored in the RANDOM property)
+    // the random number generator
     let mut random = make_random(a, lgraph);
 
     let pipeline = configurator::prepare_graph_for_layout(a, lgraph)?;
@@ -30,12 +30,11 @@ pub fn do_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// The random number generator created from `RANDOM_SEED` (Java stores a
-/// `Random` instance in the `RANDOM` graph property).
+/// The random number generator created from `RANDOM_SEED`.
 fn make_random(a: &LGraphArena, lgraph: LGraphId) -> JavaRandom {
     let random_seed: i32 = a.graph(lgraph).properties.get(&lopts::RANDOM_SEED);
     if random_seed == 0 {
-        JavaRandom::new(1) // Java uses time-based here; not reproducible
+        JavaRandom::new(1) // time-based seed would not be reproducible
     } else {
         JavaRandom::new(random_seed as i64)
     }
@@ -61,7 +60,7 @@ fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Stri
     // Make sure hierarchical processors don't break control flow (#228).
     review_and_correct_hierarchical_processors(a, lgraph, &graphs)?;
 
-    // Random number generator is created from the root graph (Java RANDOM).
+    // Random number generator is created from the root graph.
     let mut random = make_random(a, lgraph);
 
     // Get list of processors for each graph, since they can be different.
@@ -100,11 +99,10 @@ fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Stri
                     // Continue with the graph at the bottom of the hierarchy.
                     break;
                 } else {
-                    // Operates on full hierarchy and is not root. Java consumes
-                    // this processor from the per-graph iterator (via next())
-                    // before breaking, so the non-root graph SKIPS the
-                    // hierarchical processor (which the root runs on its behalf)
-                    // and resumes at the next processor on the following visit.
+                    // Operates on full hierarchy and is not root. The non-root
+                    // graph SKIPS the hierarchical processor (which the root runs
+                    // on its behalf) and resumes at the next processor on the
+                    // following visit.
                     graphs_and_algorithms[gi].2 += 1;
                     break;
                 }
@@ -115,9 +113,9 @@ fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Stri
     Ok(())
 }
 
-/// Java: a processor is hierarchy-aware iff it is a `LayerSweepCrossingMinimizer`.
-/// In this port that is the LAYER_SWEEP crossing minimization phase and the
-/// one/two-sided greedy switch intermediate processors.
+/// A processor is hierarchy-aware iff it is the LAYER_SWEEP crossing
+/// minimization phase or the one/two-sided greedy switch intermediate
+/// processors.
 fn is_hierarchy_aware(step: PipelineStep) -> bool {
     use crate::options_gen::CrossingMinimizationStrategy;
     use crate::phases::IntermediateProcessorStrategy as Ips;
@@ -151,8 +149,7 @@ fn run_step(
 /// Breadth-first search in the
 /// compound graph with reversed order (innermost graphs first).
 fn collect_all_graphs_bottom_up(a: &LGraphArena, root: LGraphId) -> Vec<LGraphId> {
-    // collectedGraphs and continueSearching are ArrayDeques used as stacks
-    // (push = addFirst, pop = removeFirst).
+    // both deques are used as stacks (push = push_front, pop = pop_front).
     let mut collected: std::collections::VecDeque<LGraphId> = std::collections::VecDeque::new();
     let mut to_search: std::collections::VecDeque<LGraphId> = std::collections::VecDeque::new();
     collected.push_front(root);
@@ -223,7 +220,7 @@ fn layout(
         }
     }
 
-    // move all nodes away from the layers (Java: end of ElkLayered#layout)
+    // move all nodes away from the layers
     let layers = a.graph(lgraph).layers.clone();
     for layer in layers {
         let nodes = a.layer(layer).nodes.clone();

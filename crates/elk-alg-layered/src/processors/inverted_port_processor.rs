@@ -45,15 +45,14 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
                 continue;
             }
 
-            // Look for input ports on the right side (Java getPorts(INPUT, EAST)
-            // is a lazy filter over the port list; the port list itself is not
-            // modified here, so evaluating the predicates per port suffices)
+            // Look for input ports on the right side. The port list itself is
+            // not modified here, so evaluating the predicates per port suffices.
             let ports = a.node(node).ports.clone();
             for &port in &ports {
                 if a.port(port).side != PortSide::EAST || a.port(port).incoming_edges.is_empty() {
                     continue;
                 }
-                // Copy of the current list of edges (Java toEdgeArray)
+                // Copy of the current list of edges
                 let edge_array = a.port(port).incoming_edges.clone();
                 for edge in edge_array {
                     create_east_port_side_dummies(a, graph, port, edge, &mut unassigned_nodes);
@@ -237,7 +236,7 @@ fn set_long_edge_source_and_target(
     // Set the LONG_EDGE_SOURCE property
     if source_node_type == NodeType::LONG_EDGE {
         // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
-        // (Java setProperty(null) removes the entry when unset)
+        // (an absent source removes the entry when unset)
         match a.node(source_node).properties.try_get(&iprops::LONG_EDGE_SOURCE) {
             Some(s) => {
                 a.node(long_edge_dummy).properties.set(&iprops::LONG_EDGE_SOURCE, s);

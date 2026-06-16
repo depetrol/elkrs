@@ -93,8 +93,7 @@ fn calculate_horizontal_node_size_required_by_fixed_ratio_ports<G: AdapterGraph>
         let current_port_width = g.port_size(current_port).x;
 
         // If port labels are to be respected, we need to calculate the port's
-        // margins to do so. (Java calls this inside the loop; the call is
-        // idempotent, but we keep the structure.)
+        // margins to do so. (This call inside the loop is idempotent.)
         if node_context.size_constraints.contains(SizeConstraint::PORT_LABELS) {
             setup_port_margins(g, node_context, port_side);
         }
@@ -164,8 +163,6 @@ fn fuzzy_equals(a: f64, b: f64, tolerance: f64) -> bool {
 }
 
 pub fn min_size_required_to_respect_spacing(spacing: f64, first_ratio: f64, second_ratio: f64) -> f64 {
-    // Java asserts second_ratio >= first_ratio (disabled at runtime)
-
     // Some failsafing
     if fuzzy_equals(first_ratio, second_ratio, EQUALITY_TOLERANCE) {
         0.0

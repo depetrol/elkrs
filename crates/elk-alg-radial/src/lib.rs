@@ -25,7 +25,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     algorithms.register(AlgorithmData {
         id: "org.eclipse.elk.radial",
         name: "ELK Radial",
-        // RadialOptions.java registers no supportedFeatures
+        // no supportedFeatures
         features: EnumSet::none(),
         create: || Box::new(provider::RadialLayoutProvider),
     });

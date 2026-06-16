@@ -18,7 +18,7 @@ elk_enum! {
     }
 }
 
-/// A layout algorithm implementation (Java `AbstractLayoutProvider`).
+/// A layout algorithm implementation.
 pub trait LayoutProvider {
     /// Lays out the children of `node` within `node`.
     fn layout(&mut self, g: &mut ElkGraph, node: NodeId) -> Result<(), String>;

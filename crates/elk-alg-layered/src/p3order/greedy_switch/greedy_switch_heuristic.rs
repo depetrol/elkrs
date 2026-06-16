@@ -32,7 +32,7 @@ pub struct GreedySwitchHeuristic {
 }
 
 impl GreedySwitchHeuristic {
-    /// Java `new GreedySwitchHeuristic(greedyType, graphData)`; the needed
+    /// `new GreedySwitchHeuristic(greedyType, graphData)`; the needed
     /// `graphData` bits (`hasParent`, `dontSweepInto`) are stored as fields.
     pub fn new(greedy_type: CrossMinType) -> Self {
         GreedySwitchHeuristic {

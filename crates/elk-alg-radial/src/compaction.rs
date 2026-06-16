@@ -131,7 +131,7 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
             AnnulusWedgeCompaction::new(g, graph, root).compact(g)
         }
         // The provider only schedules this processor for COMPACTOR != NONE;
-        // Java's CompactionStrategy.create would throw here.
+        // CompactionStrategy.create would throw here.
         CompactionStrategy::NONE => {
             panic!("No implementation is available for the layout option NONE")
         }

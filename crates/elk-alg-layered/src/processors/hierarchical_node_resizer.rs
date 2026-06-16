@@ -44,8 +44,8 @@ fn graph_layout_to_node(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Str
     // Process external ports.
     let child_nodes = a.graph(lgraph).layerless_nodes.clone();
     for child_node in child_nodes {
-        // Java: `origin instanceof LPort`. The external-port dummy's ORIGIN
-        // points to the LPort on the parent node it represents.
+        // The external-port dummy's ORIGIN points to the LPort on the parent
+        // node it represents.
         if let Some(Origin::LPort(port)) = a.node(child_node).properties.try_get(&iprops::ORIGIN) {
             let psize = a.port(port).size;
             let port_position =

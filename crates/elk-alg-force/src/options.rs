@@ -24,15 +24,13 @@ elk_enum! {
 }
 
 // ------------------------------------------------------------- ForceOptions
-// Core option ids with the algorithm-specific defaults from ForceOptions.java.
+// Core option ids with the algorithm-specific defaults.
 
 pub static PRIORITY: Property<i32> = Property::with_default("org.eclipse.elk.priority", || 1);
 pub static SPACING_NODE_NODE: Property<f64> =
     Property::with_default("org.eclipse.elk.spacing.nodeNode", || 80.0);
 pub static SPACING_EDGE_LABEL: Property<f64> =
     Property::with_default("org.eclipse.elk.spacing.edgeLabel", || 5.0);
-/// Java: `private static final double ASPECT_RATIO_DEFAULT = 1.6f;` — the
-/// float literal is widened to double, hence the `1.6f32 as f64`.
 pub static ASPECT_RATIO: Property<f64> =
     Property::with_default("org.eclipse.elk.aspectRatio", || 1.6f32 as f64);
 pub static RANDOM_SEED: Property<i32> =
@@ -60,7 +58,7 @@ pub static ITERATIONS: Property<i32> =
     Property::with_bounds("org.eclipse.elk.force.iterations", || 300, Some(|| 1), None);
 pub static REPULSIVE_POWER: Property<i32> =
     Property::with_bounds("org.eclipse.elk.force.repulsivePower", || 0, Some(|| 0), None);
-// Lower bound in Java is ExclusiveBounds.greaterThan(0); bounds are only used
+// Lower bound is ExclusiveBounds.greaterThan(0); bounds are only used
 // by `checkProperties`, which the force importer has commented out.
 pub static TEMPERATURE: Property<f64> =
     Property::with_default("org.eclipse.elk.force.temperature", || 0.001);

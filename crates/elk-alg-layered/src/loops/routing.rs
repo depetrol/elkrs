@@ -26,7 +26,7 @@ const UNCONNECTED_PORT_PENALTY: i32 = 1;
 /// The penalty an edge incurs for passing a port with connections.
 const CONNECTED_PORT_PENALTY: i32 = 3;
 
-/// The `LPort` ID of a self loop port (Java `COMPARE_BY_ID` comparator key).
+/// The `LPort` ID of a self loop port (the `COMPARE_BY_ID` comparator key).
 fn l_port_id(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_port: SlPortIdx) -> i32 {
     a.port(sl_holder.sl_ports[sl_port].l_port).id
 }
@@ -39,7 +39,7 @@ pub fn determine_loop_routes(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder
     assign_port_ids(a, &l_ports);
     sort_hyper_loop_port_lists(a, sl_holder);
 
-    // Penalty array, computed on demand (Java `portPenalties`)
+    // Penalty array, computed on demand
     let mut port_penalties: Option<Vec<i32>> = None;
 
     // Now assign stuff! Preferrably, assign leftmost and rightmost ports...
@@ -115,8 +115,7 @@ fn determine_two_side_opposing_loop_routes(
     sl_loop: SlLoopIdx,
     port_penalties: &mut Option<Vec<i32>>,
 ) {
-    // Java: getSLPortsBySide().keySet().toArray() iterates a HashMap key set
-    // (unspecified order); we use first-insertion order. This only matters
+    // We use first-insertion order. This only matters
     // when both options have equal penalties.
     let sides: Vec<PortSide> = sl_holder.sl_hyper_loops[sl_loop].sl_port_sides.clone();
     debug_assert!(sides.len() == 2);
@@ -214,7 +213,7 @@ fn determine_four_side_loop_routes(
     slh_loop.rightmost_port = Some(worst_left_port);
 }
 
-/// Java `assignLeftmostRightmostPorts`.
+/// Assigns the loop's leftmost and rightmost ports from the given sides.
 fn assign_leftmost_rightmost_ports(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -259,7 +258,7 @@ fn highest_port_on_side(
         .unwrap()
 }
 
-/// Java `computeEdgePenalty`: the penalty incurred by an edge running from
+/// `computeEdgePenalty`: the penalty incurred by an edge running from
 /// the leftmost port clockwise to the rightmost port.
 fn compute_edge_penalty(
     a: &LGraphArena,
@@ -297,7 +296,7 @@ fn compute_edge_penalty(
     }
 }
 
-/// Java `computePenalties`: accumulated port penalties.
+/// `computePenalties`: accumulated port penalties.
 fn compute_penalties(a: &LGraphArena, sl_holder: &SelfLoopHolder) -> Vec<i32> {
     let ports = &a.node(sl_holder.l_node).ports;
     let mut port_penalties = Vec::with_capacity(ports.len());
@@ -321,7 +320,7 @@ fn compute_penalties(a: &LGraphArena, sl_holder: &SelfLoopHolder) -> Vec<i32> {
 // LabelPlacer
 
 /// Label management is not ported; it only
-/// runs in Java when a label manager is configured on the graph.
+/// runs when a label manager is configured on the graph.
 pub fn place_labels(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     assign_side_and_alignment(a, sl_holder);
 
@@ -408,15 +407,14 @@ fn assign_side_and_alignment(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder
     }
 }
 
-/// Removes the inline edge label property from the loop's labels (Java:
-/// `label.setProperty(EDGE_LABELS_INLINE, null)`).
+/// Removes the inline edge label property from the loop's labels.
 fn remove_inline_property(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_loop: SlLoopIdx) {
     for &label in &sl_holder.sl_hyper_loops[sl_loop].sl_labels.as_ref().unwrap().l_labels {
         a.label(label).properties.unset(&lopts::EDGE_LABELS_INLINE);
     }
 }
 
-/// Java `assignOneSidedSimpleSideAndAlignment`.
+/// `assignOneSidedSimpleSideAndAlignment`.
 fn assign_one_sided_simple_side_and_alignment(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -450,7 +448,7 @@ fn assign_one_sided_simple_side_and_alignment(
     }
 }
 
-/// Java `assignOneSidedSequencedSideAndAlignment`.
+/// `assignOneSidedSequencedSideAndAlignment`.
 fn assign_one_sided_sequenced_side_and_alignment(
     a: &mut LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -523,7 +521,7 @@ fn assign_one_sided_sequenced_side_and_alignment(
     }
 }
 
-/// Java `assignTwoSidesCornerSideAndAlignment`.
+/// `assignTwoSidesCornerSideAndAlignment`.
 fn assign_two_sides_corner_side_and_alignment(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -551,7 +549,7 @@ fn assign_two_sides_corner_side_and_alignment(
     }
 }
 
-/// Java `assignTwoSidesOpposingAndThreeSidesSideAndAlignment`.
+/// `assignTwoSidesOpposingAndThreeSidesSideAndAlignment`.
 fn assign_two_sides_opposing_and_three_sides_side_and_alignment(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -598,8 +596,8 @@ fn assign_two_sides_opposing_and_three_sides_side_and_alignment(
     }
 }
 
-/// Java `assignFourSidesSideAndAlignment`. Note: faithfully preserves the
-/// Java quirk that `rightmostPortSide` is computed from the *leftmost* port.
+/// `assignFourSidesSideAndAlignment`. Note: faithfully preserves the
+/// quirk that `rightmostPortSide` is computed from the *leftmost* port.
 fn assign_four_sides_side_and_alignment(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -621,7 +619,7 @@ fn assign_four_sides_side_and_alignment(
     }
 }
 
-/// Java `assignSideAndAlignment` (the setter variant).
+/// `assignSideAndAlignment` (the setter variant).
 fn set_side_and_alignment(
     sl_holder: &mut SelfLoopHolder,
     sl_loop: SlLoopIdx,
@@ -635,7 +633,7 @@ fn set_side_and_alignment(
     sl_labels.alignment_reference_sl_port = alignment_reference;
 }
 
-/// Java `computeCoordinates`.
+/// `computeCoordinates`.
 fn compute_coordinates(a: &LGraphArena, sl_holder: &mut SelfLoopHolder, sl_loop: SlLoopIdx) {
     let node_size_x = a.node(sl_holder.l_node).size.x;
 
@@ -727,7 +725,7 @@ pub fn assign_routing_slots(
     );
 }
 
-/// Java `computeLabelCrossingMatrix`: `true` entries mean the labels with the
+/// `computeLabelCrossingMatrix`: `true` entries mean the labels with the
 /// corresponding IDs overlap.
 fn compute_label_crossing_matrix(sl_holder: &mut SelfLoopHolder) -> Vec<Vec<bool>> {
     // We need to start by giving the labels proper IDs
@@ -760,7 +758,7 @@ fn compute_label_crossing_matrix(sl_holder: &mut SelfLoopHolder) -> Vec<Vec<bool
     crossing_matrix
 }
 
-/// Java `labelsOverlap(SelfHyperLoop, SelfHyperLoop)`.
+/// `labelsOverlap(SelfHyperLoop, SelfHyperLoop)`.
 fn labels_overlap(sl_loop1: &super::SelfHyperLoop, sl_loop2: &super::SelfHyperLoop) -> bool {
     // There won't be overlaps unless both loops have labels
     let (sl_labels1, sl_labels2) = match (&sl_loop1.sl_labels, &sl_loop2.sl_labels) {
@@ -786,7 +784,7 @@ fn labels_overlap(sl_loop1: &super::SelfHyperLoop, sl_loop2: &super::SelfHyperLo
     start1 <= end2 && end1 >= start2
 }
 
-/// Java `computeLoopActivity`: each loop is mapped to an array indexed by
+/// `computeLoopActivity`: each loop is mapped to an array indexed by
 /// port indices indicating whether the loop runs along the given port.
 fn compute_loop_activity(a: &LGraphArena, sl_holder: &SelfLoopHolder) -> Vec<Vec<bool>> {
     let l_port_count = a.node(sl_holder.l_node).ports.len();
@@ -813,7 +811,7 @@ fn compute_loop_activity(a: &LGraphArena, sl_holder: &SelfLoopHolder) -> Vec<Vec
     result
 }
 
-/// Java `createDependencies`: creates the necessary dependencies between the
+/// `createDependencies`: creates the necessary dependencies between the
 /// hyper loops with the given indices.
 fn create_dependencies(
     a: &LGraphArena,
@@ -863,7 +861,7 @@ fn create_dependencies(
     }
 }
 
-/// Java `countCrossings`.
+/// `countCrossings`.
 fn count_crossings(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -883,7 +881,7 @@ fn count_crossings(
     crossings
 }
 
-/// Java `doAssignRoutingSlots`.
+/// `doAssignRoutingSlots`.
 fn do_assign_routing_slots(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -901,7 +899,7 @@ fn do_assign_routing_slots(
     shift_towards_node(a, sl_holder, sl_loop_activity_over_ports, label_crossing_matrix);
 }
 
-/// Java `assignRawRoutingSlotsToSegments`.
+/// `assignRawRoutingSlotsToSegments`.
 fn assign_raw_routing_slots_to_segments(store: &mut SegmentStore, segments: &[SegmentId]) {
     let mut sinks: VecDeque<SegmentId> = VecDeque::new();
 
@@ -935,7 +933,7 @@ fn assign_raw_routing_slots_to_segments(store: &mut SegmentStore, segments: &[Se
     }
 }
 
-/// Java `assignRawRoutingSlotsToLoops`.
+/// `assignRawRoutingSlotsToLoops`.
 fn assign_raw_routing_slots_to_loops(
     sl_holder: &mut SelfLoopHolder,
     store: &SegmentStore,
@@ -951,7 +949,7 @@ fn assign_raw_routing_slots_to_loops(
     }
 }
 
-/// Java `shiftTowardsNode`: moves the self loops towards the node on each of
+/// `shiftTowardsNode`: moves the self loops towards the node on each of
 /// the node's sides to avoid empty routing slots.
 fn shift_towards_node(
     a: &LGraphArena,
@@ -975,7 +973,7 @@ fn shift_towards_node(
     }
 }
 
-/// Java `shiftTowardsNodeOnSide`.
+/// `shiftTowardsNodeOnSide`.
 fn shift_towards_node_on_side(
     a: &LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -1062,7 +1060,7 @@ fn shift_towards_node_on_side(
     }
 }
 
-/// Java `labelsOverlap(..., labelCrossingMatrix)`.
+/// `labelsOverlap(..., labelCrossingMatrix)`.
 fn labels_overlap_by_matrix(
     sl_holder: &SelfLoopHolder,
     sl_loop1: SlLoopIdx,
@@ -1089,9 +1087,9 @@ enum EdgeRoutingDirection {
     CounterClockwise,
 }
 
-/// Selects which of the self loop routers runs (Java instantiates
-/// `OrthogonalSelfLoopRouter`, `PolylineSelfLoopRouter` or
-/// `SplineSelfLoopRouter`; the latter two only override `modifyBendPoints`).
+/// Selects which of the self loop routers runs: `OrthogonalSelfLoopRouter`,
+/// `PolylineSelfLoopRouter` or `SplineSelfLoopRouter` (the latter two only
+/// override `modifyBendPoints`).
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum SelfLoopRouterKind {
     Orthogonal,
@@ -1165,7 +1163,7 @@ pub fn route_self_loops(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder, kin
     a.node_mut(l_node).margin = new_node_margins;
 }
 
-/// Java `computeEdgeRoutingDirection`: computes how the edge reaches its
+/// `computeEdgeRoutingDirection`: computes how the edge reaches its
 /// target.
 fn compute_edge_routing_direction(
     a: &LGraphArena,
@@ -1206,7 +1204,7 @@ fn compute_edge_routing_direction(
     }
 }
 
-/// Java `placeLabels` (the router's private method): places any labels of the
+/// `placeLabels` (the router's private method): places any labels of the
 /// given self loop.
 fn place_loop_labels(
     a: &LGraphArena,
@@ -1262,7 +1260,7 @@ fn place_loop_labels(
     }
 }
 
-/// Java `updateNewNodeMargins(KVector, LMargin, KVector)`: extends the node
+/// `updateNewNodeMargins(KVector, LMargin, KVector)`: extends the node
 /// margins to include the given bend point.
 fn update_new_node_margins(node_size: KVector, new_node_margins: &mut Spacing, bend_point: KVector) {
     new_node_margins.left = f64::max(new_node_margins.left, -bend_point.x);
@@ -1272,7 +1270,7 @@ fn update_new_node_margins(node_size: KVector, new_node_margins: &mut Spacing, b
     new_node_margins.bottom = f64::max(new_node_margins.bottom, bend_point.y - node_size.y);
 }
 
-/// Java `computeRoutingSlotPositions`: the position of each routing slot on
+/// `computeRoutingSlotPositions`: the position of each routing slot on
 /// each side, leaving enough space for labels between adjacent routing slots
 /// on the north and south sides.
 fn compute_routing_slot_positions(
@@ -1309,7 +1307,7 @@ fn compute_routing_slot_positions(
     positions
 }
 
-/// Java `initializeWithMaxLabelHeight`.
+/// `initializeWithMaxLabelHeight`.
 fn initialize_with_max_label_height(
     positions: &mut [Vec<f64>; PORT_SIDE_COUNT],
     sl_holder: &SelfLoopHolder,
@@ -1330,7 +1328,7 @@ fn initialize_with_max_label_height(
     }
 }
 
-/// Java `computePositions`.
+/// `computePositions`.
 fn compute_positions(
     a: &LGraphArena,
     positions: &mut [Vec<f64>; PORT_SIDE_COUNT],
@@ -1362,7 +1360,7 @@ fn compute_positions(
     }
 }
 
-/// Java `computeBaselinePosition`: the offset from the node origin to add to
+/// `computeBaselinePosition`: the offset from the node origin to add to
 /// escape the area occupied by ports.
 fn compute_baseline_position(
     a: &LGraphArena,
@@ -1382,7 +1380,7 @@ fn compute_baseline_position(
     }
 }
 
-/// Java `computeOrthogonalBendPoints`.
+/// `computeOrthogonalBendPoints`.
 fn compute_orthogonal_bend_points(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -1400,7 +1398,7 @@ fn compute_orthogonal_bend_points(
     bend_points
 }
 
-/// Java `addOuterBendPoint`.
+/// `addOuterBendPoint`.
 fn add_outer_bend_point(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -1430,7 +1428,7 @@ fn add_outer_bend_point(
     bend_points.push(result);
 }
 
-/// Java `addCornerBendPoints`.
+/// `addCornerBendPoints`.
 fn add_corner_bend_points(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -1506,7 +1504,7 @@ fn add_corner_bend_points(
     }
 }
 
-/// Java `getBaseVector`.
+/// `getBaseVector`.
 fn get_base_vector(
     port_side: PortSide,
     routing_slot: i32,
@@ -1521,7 +1519,7 @@ fn get_base_vector(
     }
 }
 
-/// Java `adjustVectorForLabelSide`: ensures that an inline label is centered
+/// `adjustVectorForLabelSide`: ensures that an inline label is centered
 /// on the bend point.
 fn adjust_vector_for_label_side(
     port_side_component: &mut KVector,
@@ -1540,12 +1538,12 @@ fn adjust_vector_for_label_side(
 // ---------------------------------------------------------------------------
 // PolylineSelfLoopRouter
 
-/// Java `PolylineSelfLoopRouter.CORNER_DISTANCE`.
+/// `PolylineSelfLoopRouter.CORNER_DISTANCE`.
 const CORNER_DISTANCE: f64 = 10.0;
-/// Java `PolylineSelfLoopRouter.TOLERANCE` for double comparisons.
+/// `PolylineSelfLoopRouter.TOLERANCE` for double comparisons.
 const POLYLINE_TOLERANCE: f64 = 0.01;
 
-/// Java `PolylineSelfLoopRouter.modifyBendPoints`: turns a vector chain of
+/// `PolylineSelfLoopRouter.modifyBendPoints`: turns a vector chain of
 /// orthogonal bend points into polyline bend points by cutting the corners.
 fn polyline_modify_bend_points(
     a: &LGraphArena,
@@ -1568,7 +1566,7 @@ fn polyline_modify_bend_points(
     cut_corners(&bend_points, CORNER_DISTANCE)
 }
 
-/// Java `Math.signum(double)`.
+/// `Math.signum(double)`.
 fn java_signum(x: f64) -> f64 {
     if x == 0.0 || x.is_nan() {
         x
@@ -1579,7 +1577,7 @@ fn java_signum(x: f64) -> f64 {
     }
 }
 
-/// Java `PolylineSelfLoopRouter.nearZeroToZero`.
+/// `PolylineSelfLoopRouter.nearZeroToZero`.
 fn near_zero_to_zero(mut vector: KVector) -> KVector {
     if vector.x >= -POLYLINE_TOLERANCE && vector.x <= POLYLINE_TOLERANCE {
         vector.x = 0.0;
@@ -1590,7 +1588,7 @@ fn near_zero_to_zero(mut vector: KVector) -> KVector {
     vector
 }
 
-/// Java `PolylineSelfLoopRouter.cutCorners`: replaces each inner bend point by
+/// `PolylineSelfLoopRouter.cutCorners`: replaces each inner bend point by
 /// two which are ideally `distance` away from the original bend point. The
 /// first and last point are not included in the returned list.
 fn cut_corners(bend_points: &[KVector], distance: f64) -> Vec<KVector> {
@@ -1646,12 +1644,12 @@ fn cut_corners(bend_points: &[KVector], distance: f64) -> Vec<KVector> {
 // ---------------------------------------------------------------------------
 // SplineSelfLoopRouter
 
-/// Java `SplineSelfLoopRouter.DIM`.
+/// `SplineSelfLoopRouter.DIM`.
 const SPLINE_SELF_LOOP_DIM: usize = 3;
-/// Java `SplineSelfLoopRouter.HALF`.
+/// `SplineSelfLoopRouter.HALF`.
 const HALF: f64 = 0.5;
 
-/// Java `SplineSelfLoopRouter.relativePortAnchor`.
+/// `SplineSelfLoopRouter.relativePortAnchor`.
 fn relative_port_anchor(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_port: SlPortIdx) -> KVector {
     let l_port = a.port(sl_holder.sl_ports[sl_port].l_port);
     let mut anchor = l_port.pos;
@@ -1659,7 +1657,7 @@ fn relative_port_anchor(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_port: Sl
     anchor
 }
 
-/// Java `SplineSelfLoopRouter.modifyBendPoints`.
+/// `SplineSelfLoopRouter.modifyBendPoints`.
 fn spline_modify_bend_points(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -1692,7 +1690,7 @@ fn spline_modify_bend_points(
     .get_bezier_cp()
 }
 
-/// Java `SplineSelfLoopRouter.addSplineControlPoints`: inserts spline control
+/// `SplineSelfLoopRouter.addSplineControlPoints`: inserts spline control
 /// points between each consecutive pair of bend points as computed by the
 /// orthogonal self loop router, slightly offset away from the node.
 fn add_spline_control_points(

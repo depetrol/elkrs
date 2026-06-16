@@ -21,7 +21,7 @@ use crate::options_gen as lopts;
 use crate::options_gen::GraphProperties;
 use crate::phases::{IntermediateProcessorStrategy as Ips, LayeredPhases, ProcessorConfiguration};
 
-/// Java `EdgeRouterFactory.factoryFor`: maps the edge routing option to the
+/// `EdgeRouterFactory.factoryFor`: maps the edge routing option to the
 /// router actually used (UNDEFINED and ORTHOGONAL map to orthogonal).
 pub fn effective_routing(routing: EdgeRouting) -> EdgeRouting {
     match routing {
@@ -103,7 +103,7 @@ pub fn processor_configuration(
             Ok(())
         }
         EdgeRouting::POLYLINE => {
-            // Java `PolylineEdgeRouter.getLayoutProcessorConfiguration`
+            // `PolylineEdgeRouter.getLayoutProcessorConfiguration`
             let graph_properties: EnumSet<GraphProperties> =
                 a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
 
@@ -148,7 +148,7 @@ pub fn processor_configuration(
             Ok(())
         }
         EdgeRouting::SPLINES => {
-            // Java `SplineEdgeRouter.getLayoutProcessorConfiguration`
+            // `SplineEdgeRouter.getLayoutProcessorConfiguration`
             let graph_properties: EnumSet<GraphProperties> =
                 a.graph(graph).properties.get(&iprops::GRAPH_PROPERTIES);
 
@@ -177,8 +177,8 @@ pub fn processor_configuration(
             }
 
             if graph_properties.contains(GraphProperties::NORTH_SOUTH_PORTS) {
-                // NOTE: unlike the other routers, the Java SplineEdgeRouter adds the
-                // NORTH_SOUTH_PORT_POSTPROCESSOR *before* phase 5 (replicated faithfully).
+                // NOTE: unlike the other routers, the SplineEdgeRouter adds the
+                // NORTH_SOUTH_PORT_POSTPROCESSOR *before* phase 5.
                 config
                     .add_before(
                         LayeredPhases::P3_NODE_ORDERING,

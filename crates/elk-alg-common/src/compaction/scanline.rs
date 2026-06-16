@@ -7,7 +7,7 @@ use super::one_dimensional_compactor::OneDimensionalCompactor;
 use super::CNodeId;
 
 /// Entry point used by the base scanline algorithm: a single sweep over all
-/// nodes (Java `ScanlineConstraintCalculator.calculateConstraints`).
+/// nodes.
 pub fn scanline_constraints(compactor: &mut OneDimensionalCompactor) {
     sweep(compactor, |_, _| true);
 }
@@ -87,7 +87,7 @@ fn insert(
         panic!("Invalid hitboxes for scanline constraint calculation.");
     }
 
-    // (Java prints to stderr if there's overlap; non-fatal, omit.)
+    // (Overlap here is non-fatal; omit.)
 
     let node_id = compactor.cgraph.cnodes[node].id as usize;
     cand[node_id] = match intervals.lower(node) {
@@ -175,7 +175,7 @@ impl IntervalSet {
         (lo, false)
     }
 
-    /// Java `TreeSet.add`; returns false if an equal element already exists.
+    /// Adds an element; returns false if an equal element already exists.
     fn add(&mut self, compactor: &OneDimensionalCompactor, node: CNodeId) -> bool {
         let (idx, exists) = self.locate(compactor, node);
         if exists {
@@ -202,7 +202,7 @@ impl IntervalSet {
         }
     }
 
-    /// Greatest element strictly less than `node` (Java `lower`).
+    /// Greatest element strictly less than `node`.
     fn lower(&self, node: CNodeId) -> Option<CNodeId> {
         let pos = self.items.iter().position(|&n| n == node)?;
         if pos == 0 {
@@ -212,7 +212,7 @@ impl IntervalSet {
         }
     }
 
-    /// Least element strictly greater than `node` (Java `higher`).
+    /// Least element strictly greater than `node`.
     fn higher(&self, node: CNodeId) -> Option<CNodeId> {
         let pos = self.items.iter().position(|&n| n == node)?;
         if pos + 1 < self.items.len() {
@@ -223,7 +223,7 @@ impl IntervalSet {
     }
 }
 
-/// `overlap` predicate (Java) — kept for completeness / potential debugging.
+/// `overlap` predicate — kept for completeness / potential debugging.
 #[allow(dead_code)]
 fn overlap(compactor: &OneDimensionalCompactor, n1: Option<CNodeId>, n2: Option<CNodeId>) -> bool {
     match (n1, n2) {

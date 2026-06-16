@@ -17,7 +17,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
                 && a.node(l_node).self_loop_holder.is_some()
             {
                 // Take the holder out of the node for the duration of the
-                // processing (Java mutates it by reference)
+                // processing
                 let mut sl_holder = a.node_mut(l_node).self_loop_holder.take().unwrap();
                 process_node(a, l_node, &mut sl_holder);
                 a.node_mut(l_node).self_loop_holder = Some(sl_holder);

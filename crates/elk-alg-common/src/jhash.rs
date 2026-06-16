@@ -1,30 +1,30 @@
 //! A faithful replica of `java.util.HashSet` (JDK 8+ `HashMap` backing) for
-//! value types with Java-style `hashCode`/`equals`. Iteration order of Java
+//! value types with `hashCode`/`equals`. Iteration order of these
 //! hash sets leaks into layout results (e.g. the Bowyer-Watson triangulation
 //! feeds a stable sort whose tie-breaking depends on set order), so we model
 //! the bucket table exactly: lazy allocation at capacity 16, load factor
 //! 0.75, tail insertion, and capacity-doubling resizes that split each bucket
 //! into a lo/hi list preserving relative order. `clear` keeps the table
-//! capacity, like Java.
+//! capacity.
 //!
 //! Treeification (chains of 9+ entries with table capacity >= 64) is not
 //! implemented and panics; it cannot occur for the small inputs this code is
 //! used for without colliding hash codes.
 
-/// Java `Object.hashCode`/`equals` for a value type.
+/// `Object.hashCode`/`equals` for a value type.
 pub trait JHashEq {
     fn jhash(&self) -> i32;
     fn jeq(&self, other: &Self) -> bool;
 }
 
-/// Java `Double.hashCode` (via `doubleToLongBits`).
+/// `Double.hashCode` (via `doubleToLongBits`).
 pub fn java_double_hash(d: f64) -> i32 {
     // doubleToLongBits canonicalizes NaN; layout coordinates are not NaN.
     let bits = d.to_bits() as i64;
     (bits ^ ((bits as u64) >> 32) as i64) as i32
 }
 
-/// Java `KVector.hashCode()`:
+/// `KVector.hashCode()`:
 /// `Double.valueOf(x).hashCode() + Integer.reverse(Double.valueOf(y).hashCode())`.
 pub fn java_kvector_hash(x: f64, y: f64) -> i32 {
     java_double_hash(x).wrapping_add(java_double_hash(y).reverse_bits())
@@ -40,9 +40,9 @@ struct Entry<T> {
     value: T,
 }
 
-/// Java `HashSet<T>` with exact iteration order.
+/// `HashSet<T>` with exact iteration order.
 pub struct JavaHashSet<T> {
-    /// `None` until the first insertion (Java's lazy table allocation).
+    /// `None` until the first insertion (lazy table allocation).
     table: Option<Vec<Vec<Entry<T>>>>,
     size: usize,
     threshold: usize,
@@ -67,7 +67,7 @@ impl<T: JHashEq> JavaHashSet<T> {
         self.size == 0
     }
 
-    /// Java `HashSet.add`: returns false if an equal element already exists.
+    /// `HashSet.add`: returns false if an equal element already exists.
     pub fn add(&mut self, value: T) -> bool {
         if self.table.is_none() {
             // resize(): default capacity 16, threshold 12
@@ -81,7 +81,7 @@ impl<T: JHashEq> JavaHashSet<T> {
         let bucket = &mut table[idx];
         for e in bucket.iter() {
             if e.hash == hash && e.value.jeq(&value) {
-                return false; // already present; Java keeps the existing key
+                return false; // already present; the existing key is kept
             }
         }
         bucket.push(Entry { hash, value });
@@ -101,7 +101,7 @@ impl<T: JHashEq> JavaHashSet<T> {
         true
     }
 
-    /// Java `HashSet.remove`.
+    /// `HashSet.remove`.
     pub fn remove(&mut self, value: &T) -> bool {
         let Some(table) = self.table.as_mut() else { return false };
         let hash = spread(value.jhash());
@@ -130,7 +130,7 @@ impl<T: JHashEq> JavaHashSet<T> {
             .any(|e| e.hash == hash && e.value.jeq(value))
     }
 
-    /// Java `HashMap.clear`: keeps the current table capacity.
+    /// `HashMap.clear`: keeps the current table capacity.
     pub fn clear(&mut self) {
         if let Some(table) = self.table.as_mut() {
             for bucket in table.iter_mut() {
@@ -140,7 +140,7 @@ impl<T: JHashEq> JavaHashSet<T> {
         self.size = 0;
     }
 
-    /// Iterates in Java HashMap iteration order (table order, chain order).
+    /// Iterates in `HashMap` iteration order (table order, chain order).
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.table
             .iter()
@@ -181,7 +181,6 @@ mod tests {
 
     #[test]
     fn iteration_order_matches_java_small() {
-        // Java: new HashSet<Integer>() add 5, 21 (collide mod 16), 3, 1.
         // Table 16: bucket1=[1], bucket3=[3], bucket5=[5,21].
         let mut s = JavaHashSet::new();
         for v in [5, 21, 3, 1] {

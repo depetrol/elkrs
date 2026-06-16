@@ -37,8 +37,7 @@ pub fn overlap(r1: &ElkRectangle, r2: &ElkRectangle) -> f64 {
     ) + 1.0
 }
 
-/// The four edges of a rectangle, in Java's
-/// order.
+/// The four edges of a rectangle.
 pub fn get_rect_edges(r: &ElkRectangle) -> [(KVector, KVector); 4] {
     [
         (r.position(), r.top_right()),

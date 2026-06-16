@@ -76,8 +76,7 @@ impl ElkGraphImporter {
         }
 
         // create Nodes representing the ElkNodes
-        // Divergence: Java perturbs coinciding center points with the
-        // time-seeded Math.random(); we use a fixed-seed java.util.Random.
+        // Perturbs coinciding center points with a fixed-seed java.util.Random.
         let mut random: Option<elk_core::javacompat::JavaRandom> = None;
         let children = g.node(input_graph).children.clone();
         for elk_node in children {

@@ -148,7 +148,7 @@ fn is_connected_to_current_layer(a: &LGraphArena, st: &Df, node: LNodeId) -> boo
             (directly, via_dummy)
         } else {
             let directly = src_type == NodeType::NORMAL && a.node(src).id == st.current_layer_id;
-            // Java unconditionally takes the first incoming edge here.
+            // unconditionally takes the first incoming edge here.
             let inc = a.node_incoming_edges(src);
             let via_dummy = src_type == NodeType::LABEL
                 && inc.first().map_or(false, |&first| {

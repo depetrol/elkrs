@@ -111,7 +111,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `placeLabelsForHorizontalLayout`.
+/// `placeLabelsForHorizontalLayout`.
 fn place_labels_for_horizontal_layout(
     a: &mut LGraphArena,
     labels: &[LLabelId],
@@ -128,7 +128,7 @@ fn place_labels_for_horizontal_layout(
     }
 }
 
-/// Java `placeLabelsForVerticalLayout`.
+/// `placeLabelsForVerticalLayout`.
 fn place_labels_for_vertical_layout(
     a: &mut LGraphArena,
     labels: &[LLabelId],

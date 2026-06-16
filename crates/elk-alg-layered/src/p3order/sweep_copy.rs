@@ -22,7 +22,7 @@ pub struct SweepCopy {
 }
 
 impl SweepCopy {
-    /// Copies on construction (Java `SweepCopy(LNode[][])`).
+    /// Copies on construction (`SweepCopy(LNode[][])`).
     pub fn new(a: &LGraphArena, node_order_in: &[Vec<LNodeId>]) -> Self {
         let node_order = node_order_in.to_vec();
         let mut port_orders = Vec::with_capacity(node_order_in.len());
@@ -52,8 +52,6 @@ impl SweepCopy {
         // on; as a consequence the configured port side may not be valid
         // anymore and has to be corrected
         let mut north_south_port_dummies: Vec<LNodeId> = Vec::new();
-        // Java: HashSet — iteration order only affects independent per-node
-        // operations; we use an insertion-ordered set for determinism.
         let mut update_port_order: Vec<LNodeId> = Vec::new();
 
         // iterate the layers

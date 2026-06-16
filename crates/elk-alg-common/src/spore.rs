@@ -11,8 +11,8 @@ use crate::utils::get_rect_edges;
 /// `InternalProperties.FUZZINESS`.
 pub const FUZZINESS: f64 = 0.0001;
 
-/// A rectangle plus center point. Identity (Java
-/// object identity) is the index into the owning `Vec<Node>`.
+/// A rectangle plus center point. Identity is the index into the owning
+/// `Vec<Node>`.
 #[derive(Clone, Debug)]
 pub struct Node {
     /// The original center point from the time of creation.

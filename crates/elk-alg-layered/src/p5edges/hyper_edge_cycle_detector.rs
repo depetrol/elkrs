@@ -10,7 +10,7 @@ use elk_core::javacompat::JavaRandom;
 use super::hyper_edge_segment::{DependencyId, SegmentId, SegmentStore};
 use super::hyper_edge_segment_dependency::DependencyType;
 
-/// Java `detectCycles`: finds a set of dependencies whose reversal or removal
+/// `detectCycles`: finds a set of dependencies whose reversal or removal
 /// will make the graph acyclic.
 pub fn detect_cycles(
     store: &mut SegmentStore,
@@ -45,7 +45,7 @@ pub fn detect_cycles(
     result
 }
 
-/// Java `initialize`: sets mark, in/out weights of each segment and fills the
+/// `initialize`: sets mark, in/out weights of each segment and fills the
 /// sources and sinks lists. Marks end up at -1 .. -segments.len().
 fn initialize(
     store: &mut SegmentStore,
@@ -100,7 +100,7 @@ fn initialize(
     }
 }
 
-/// Java `computeLinearOrderingMarks`.
+/// `computeLinearOrderingMarks`.
 fn compute_linear_ordering_marks(
     store: &mut SegmentStore,
     segments: &[SegmentId],
@@ -109,9 +109,6 @@ fn compute_linear_ordering_marks(
     critical_only: bool,
     random: &mut JavaRandom,
 ) {
-    // Java: Sets.newTreeSet(segments), ordered by the segments' marks (which
-    // are unique negative numbers at this point and are only modified after
-    // removal from the set).
     let mut unprocessed: BTreeMap<i32, SegmentId> =
         segments.iter().map(|&s| (store.segments[s].mark, s)).collect();
     let mut max_segments: Vec<SegmentId> = Vec::new();
@@ -182,7 +179,7 @@ fn compute_linear_ordering_marks(
     }
 }
 
-/// Java `updateNeighbors`: updates in-weight and out-weight values of the
+/// `updateNeighbors`: updates in-weight and out-weight values of the
 /// neighbors of the given node, simulating its removal from the graph.
 fn update_neighbors(
     store: &mut SegmentStore,

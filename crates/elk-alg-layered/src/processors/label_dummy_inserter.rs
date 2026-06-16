@@ -80,7 +80,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `edgeNeedsToBeProcessed`: not a self-loop and has center edge labels.
+/// `edgeNeedsToBeProcessed`: not a self-loop and has center edge labels.
 fn edge_needs_to_be_processed(a: &LGraphArena, edge: LEdgeId) -> bool {
     a.edge_source_node(edge) != a.edge_target_node(edge)
         && a.edge(edge).labels.iter().any(|&label| {
@@ -91,7 +91,7 @@ fn edge_needs_to_be_processed(a: &LGraphArena, edge: LEdgeId) -> bool {
         })
 }
 
-/// Java `retrieveThickness`: the edge's thickness; negative values are
+/// `retrieveThickness`: the edge's thickness; negative values are
 /// replaced by zero (and set on the edge).
 fn retrieve_thickness(a: &mut LGraphArena, edge: LEdgeId) -> f64 {
     let mut thickness: f64 = a.edge(edge).properties.get(&lopts::EDGE_THICKNESS);
@@ -102,9 +102,8 @@ fn retrieve_thickness(a: &mut LGraphArena, edge: LEdgeId) -> f64 {
     thickness
 }
 
-/// Java `createLabelDummy`. The `REPRESENTED_LABELS` property is set by the
-/// caller once the represented labels have been collected (Java sets an alias
-/// of the still-empty list here).
+/// `createLabelDummy`. The `REPRESENTED_LABELS` property is set by the
+/// caller once the represented labels have been collected.
 fn create_label_dummy(
     a: &mut LGraphArena,
     graph: LGraphId,

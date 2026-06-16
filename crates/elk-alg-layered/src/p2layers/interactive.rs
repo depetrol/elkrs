@@ -8,7 +8,7 @@ use indexmap::IndexSet;
 use crate::graph::{LGraphArena, LGraphId, LNodeId, LayerId};
 
 /// Utility class for marking horizontal regions that are already covered by
-/// some nodes (Java `InteractiveLayerer.LayerSpan`).
+/// some nodes.
 struct LayerSpan {
     start: f64,
     end: f64,
@@ -29,7 +29,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
         maxx = (minx + 1.0).max(maxx);
 
         // look for a position in the sorted list where the node can be
-        // inserted. We model Java's ListIterator: `cursor` is the index of
+        // inserted. We model a ListIterator: `cursor` is the index of
         // the element that would be returned by the next `next()` call.
         let mut cursor = 0usize;
         let mut found_span: Option<usize> = None;
@@ -55,8 +55,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
                     let span_end = current_spans[idx].end;
                     current_spans[fs].nodes.extend(span_nodes);
                     current_spans[fs].end = current_spans[fs].end.max(span_end);
-                    // spanIter.remove() removes the last element returned by
-                    // next() (index `idx`).
+                    // remove the last element returned by next() (index `idx`).
                     current_spans.remove(idx);
                     cursor -= 1; // iterator cursor shifts back after removal
                     if fs > idx {
@@ -67,9 +66,9 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
             }
         }
         if found_span.is_none() {
-            // no intersecting span was found, so create a new one. Java
-            // `spanIter.add(foundSpan)` inserts before the element that would
-            // be returned by next() (index `cursor`).
+            // no intersecting span was found, so create a new one. Insert
+            // before the element that would be returned by next() (index
+            // `cursor`).
             current_spans.insert(
                 cursor,
                 LayerSpan { start: minx, end: maxx, nodes: vec![node] },

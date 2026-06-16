@@ -59,7 +59,7 @@ fn process_node(a: &mut LGraphArena, graph: LGraphId, node: LNodeId) {
     }
 }
 
-/// Java `needsSorting`: a port requires its end labels to be sorted if there
+/// `needsSorting`: a port requires its end labels to be sorted if there
 /// are end labels of at least two edges there.
 fn needs_sorting(a: &LGraphArena, port: LPortId) -> bool {
     let mut edges_with_end_labels = 0;
@@ -91,7 +91,7 @@ fn needs_sorting(a: &LGraphArena, port: LPortId) -> bool {
     edges_with_end_labels >= 2
 }
 
-/// Java `initialize`: gives nodes and ports ascending IDs.
+/// `initialize`: gives nodes and ports ascending IDs.
 fn initialize(a: &mut LGraphArena, graph: LGraphId) {
     let mut next_element_id = 0;
     let layers = a.graph(graph).layers.clone();
@@ -112,7 +112,7 @@ fn initialize(a: &mut LGraphArena, graph: LGraphId) {
 //////////////////////////////////////////////////////////////////////////////
 // Sorting
 
-/// Java `sort`: sorts the labels contained in the given label cell.
+/// `sort`: sorts the labels contained in the given label cell.
 fn sort(a: &LGraphArena, port_label_cell: &mut LabelCell) {
     let mut label_groups = create_label_groups(a, port_label_cell);
     label_groups.sort_by(|group1, group2| compare_label_groups(a, group1, group2));
@@ -125,9 +125,8 @@ fn sort(a: &LGraphArena, port_label_cell: &mut LabelCell) {
     }
 }
 
-/// Java `createLabelGroups`: groups labels from the same edge. (Java collects
-/// the groups in a `HashMap<LEdge, LabelGroup>` and returns its values; here
-/// insertion order — order of first label occurrence — is used.)
+/// `createLabelGroups`: groups labels from the same edge. The groups are
+/// collected in insertion order — order of first label occurrence.
 fn create_label_groups(a: &LGraphArena, port_label_cell: &LabelCell) -> Vec<LabelGroup> {
     let mut groups: Vec<LabelGroup> = Vec::new();
 
@@ -148,7 +147,7 @@ fn create_label_groups(a: &LGraphArena, port_label_cell: &LabelCell) -> Vec<Labe
     groups
 }
 
-/// Java `LabelGroup`: a group of labels belonging to a single edge.
+/// `LabelGroup`: a group of labels belonging to a single edge.
 struct LabelGroup {
     /// The edge the labels belong to. This can be a dummy edge if the original
     /// edge was broken by a label dummy.
@@ -157,7 +156,7 @@ struct LabelGroup {
     labels: Vec<LLabelId>,
 }
 
-/// Java `LABEL_GROUP_COMPARATOR`.
+/// `LABEL_GROUP_COMPARATOR`.
 fn compare_label_groups(
     a: &LGraphArena,
     group1: &LabelGroup,

@@ -1,9 +1,8 @@
 //! Ports of `org.eclipse.elk.alg.common.TEdge`, `TTriangle`,
 //! `BowyerWatsonTriangulation` and `NaiveMinST`.
 //!
-//! All Java `HashSet`s whose iteration order leaks into results are modeled
-//! with [`JavaHashSet`]; vertex identity is by coordinate value, exactly like
-//! Java's `KVector.equals`.
+//! All hash sets whose iteration order leaks into results are modeled
+//! with [`JavaHashSet`]; vertex identity is by exact coordinate value.
 
 use elk_graph::math::KVector;
 
@@ -14,7 +13,7 @@ use crate::tree::Forest;
 /// `InternalProperties.FUZZINESS`.
 pub const FUZZINESS: f64 = 0.0001;
 
-/// Java `KVector.equals` (exact coordinate comparison).
+/// Exact coordinate comparison of two vertices.
 pub fn kv_eq(a: KVector, b: KVector) -> bool {
     a.x == b.x && a.y == b.y
 }
@@ -149,8 +148,8 @@ pub fn bowyer_watson_triangulate(vertices: &[KVector]) -> JavaHashSet<TEdge> {
             for t_edge in triangle.t_edges() {
                 let mut on_boundary = true;
                 for other in &invalid_triangles {
-                    // Java compares object identity (other != triangle); the
-                    // list never contains duplicate triangles, so value
+                    // Comparison is by object identity (other != triangle);
+                    // the list never contains duplicate triangles, so value
                     // inequality is equivalent here.
                     if !std::ptr::eq(other, triangle) && other.contains_edge(&t_edge) {
                         on_boundary = false;
@@ -206,7 +205,7 @@ pub fn naive_min_st(
     // determine edge weights, in set iteration order
     let mut edge_list: Vec<(TEdge, f64)> = t_edges.iter().map(|e| (*e, cost(e))).collect();
 
-    // sort edges by weight (stable; Java Double.compareTo == total_cmp here)
+    // sort edges by weight (stable, using total_cmp)
     edge_list.sort_by(|a, b| a.1.total_cmp(&b.1));
 
     // LinkedHashSet preserving order; entries removed as they are used.
@@ -224,8 +223,6 @@ pub fn naive_min_st(
             if removed[i] {
                 continue;
             }
-            // Java: `weight.get(edge) <= minWeight` with minWeight = +inf is
-            // true for every weight except NaN.
             if weight.is_nan() {
                 continue;
             }

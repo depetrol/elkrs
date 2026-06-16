@@ -28,9 +28,8 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `hideSelfLoops` / `hideSelfLoop`: hides all self loop edges by
-/// removing them from their ports, to be restored once edge routing has
-/// finished.
+/// `hideSelfLoops` / `hideSelfLoop`: hides all self loop edges by removing
+/// them from their ports, to be restored once edge routing has finished.
 fn hide_self_loops(a: &mut LGraphArena, sl_holder: &SelfLoopHolder) {
     for sl_loop in &sl_holder.sl_hyper_loops {
         for &sl_edge in &sl_loop.sl_edges {
@@ -41,8 +40,8 @@ fn hide_self_loops(a: &mut LGraphArena, sl_holder: &SelfLoopHolder) {
     }
 }
 
-/// Java `hidePorts`: possibly hides all ports whose only incident edges are
-/// self loops. This is only done if port constraints are not at least
+/// `hidePorts`: possibly hides all ports whose only incident edges are self
+/// loops. This is only done if port constraints are not at least
 /// `FIXED_ORDER`.
 fn hide_ports(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     let l_node = sl_holder.l_node;

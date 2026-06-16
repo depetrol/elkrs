@@ -55,7 +55,7 @@ fn perform_wrapping(a: &mut LGraphArena, graph: LGraphId, store: &mut BPInfoStor
     let mut reverse = false;
     let mut idx: i32 = 1;
 
-    // Java iterates with a ListIterator starting just after the inserted layer.
+    // Iterate starting just after the inserted layer.
     let mut li = 1usize;
     loop {
         let layers = a.graph(graph).layers.clone();

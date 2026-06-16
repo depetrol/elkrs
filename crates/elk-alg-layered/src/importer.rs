@@ -151,8 +151,6 @@ impl<'g> ElkGraphImporter<'g> {
 
         // Size constraints are not empty, so calculate the size the node and
         // label placement code thing would like to give the graph.
-        // Java: GraphAdapter = adapt(elkgraph.getParent()),
-        //       NodeAdapter = adaptSingleNode(elkgraph)
         let min_size = {
             let mut adapter =
                 elk_core::adapters::ElkGraphAdapter::adapt_single_node(self.elk, elkgraph);
@@ -480,8 +478,8 @@ impl<'g> ElkGraphImporter<'g> {
     /// self loops.
     fn has_inside_self_loops(&self, elknode: NodeId) -> bool {
         if self.elk.node(elknode).properties.get(&copts::INSIDE_SELF_LOOPS_ACTIVATE) {
-            // ElkGraphUtil.allOutgoingEdges: the node's own outgoing edges
-            // plus those of its ports
+            // all outgoing edges: the node's own outgoing edges plus those of
+            // its ports
             let mut edges: Vec<EdgeId> = self.elk.node(elknode).outgoing_edges.clone();
             for &port in &self.elk.node(elknode).ports {
                 edges.extend(self.elk.port(port).outgoing_edges.iter().copied());
@@ -621,12 +619,9 @@ impl<'g> ElkGraphImporter<'g> {
     }
 
     /// The `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`
-    /// call in `createLGraph`:
-    /// `computeInsideNodeLabelPadding(elkgraph.getParent() == null ? null :
-    /// ElkGraphAdapters.adapt(elkgraph.getParent()),
-    /// ElkGraphAdapters.adaptSingleNode(elkgraph), Direction.RIGHT)`.
+    /// call in `createLGraph`.
     ///
-    /// Note that this also performs Java's property accesses on `elkgraph`
+    /// Note that this also performs property accesses on `elkgraph`
     /// (the `NodeContext` constructor materializes Cloneable defaults like
     /// `NODE_LABELS_PLACEMENT` on it).
     fn compute_inside_node_label_padding(
@@ -730,8 +725,8 @@ impl<'g> ElkGraphImporter<'g> {
         elkport: PortId,
         a: &mut LGraphArena,
     ) -> Result<(), String> {
-        // Java dereferences elkgraph.getParent() further below; a top-level
-        // graph with external ports throws a NullPointerException there.
+        // The parent is dereferenced further below; a top-level graph with
+        // external ports is unsupported and errors here.
         let elkparent = self.elk.node(elkgraph).parent.ok_or_else(|| {
             "NullPointerException: external ports on the top-level graph are not supported by \
              ELK Layered (elkgraph.getParent() is null in transformExternalPort)"
@@ -1251,7 +1246,6 @@ impl<'g> ElkGraphImporter<'g> {
                         target_point = Some(tp);
                     }
                 }
-                // Java: targetLNode.getGraph() — the graph the target node is in
                 let target_graph = a.node_graph(target_lnode);
                 lgraph_util::create_port(a, target_lnode, target_point, port_type, target_graph)
             }
@@ -1338,7 +1332,7 @@ impl<'g> ElkGraphImporter<'g> {
     }
 }
 
-/// Java `LayeredOptions.ALGORITHM_ID.endsWith(elknode.getProperty(ALGORITHM))`
+/// `LayeredOptions.ALGORITHM_ID.endsWith(elknode.getProperty(ALGORITHM))`
 /// when the algorithm property is set.
 fn uses_elk_layered(elk: &ElkGraph, elknode: NodeId) -> bool {
     match elk.node(elknode).properties.try_get::<String>(&copts::ALGORITHM) {
@@ -1347,7 +1341,7 @@ fn uses_elk_layered(elk: &ElkGraph, elknode: NodeId) -> bool {
     }
 }
 
-/// Java `PortLabelPlacement.isFixed(Set)`.
+/// `PortLabelPlacement.isFixed(Set)`.
 fn port_label_placement_is_fixed(placement: EnumSet<copts::PortLabelPlacement>) -> bool {
     !placement.contains(copts::PortLabelPlacement::INSIDE)
         && !placement.contains(copts::PortLabelPlacement::OUTSIDE)
@@ -1407,7 +1401,7 @@ fn edge_endpoint_error() -> String {
         .to_string()
 }
 
-/// Java `ElkEdge.isSelfloop` on the original graph.
+/// `ElkEdge.isSelfloop` on the original graph.
 pub fn is_elk_self_loop(elk: &ElkGraph, edge: EdgeId) -> bool {
     let e = elk.edge(edge);
     let mut nodes = e
@@ -1421,7 +1415,7 @@ pub fn is_elk_self_loop(elk: &ElkGraph, edge: EdgeId) -> bool {
     }
 }
 
-/// Java `ElkEdge.isHyperedge`.
+/// `ElkEdge.isHyperedge`.
 pub fn is_elk_hyperedge(elk: &ElkGraph, edge: EdgeId) -> bool {
     let e = elk.edge(edge);
     e.sources.len() + e.targets.len() > 2

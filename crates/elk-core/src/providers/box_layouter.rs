@@ -17,7 +17,6 @@ pub struct BoxLayoutProvider;
 
 impl LayoutProvider for BoxLayoutProvider {
     fn layout(&mut self, g: &mut ElkGraph, layout_node: NodeId) -> Result<(), String> {
-        // Java: float objSpacing = ...floatValue()
         let obj_spacing =
             g.node(layout_node).properties.get(&boxl::SPACING_NODE_NODE) as f32;
         let padding = g.node(layout_node).properties.get(&boxl::PADDING);
@@ -542,7 +541,7 @@ fn merge_and_place_mixed(
     let n = group_list.len();
     let mut cum_area_array = vec![0.0f64; n];
 
-    // Java PriorityQueue ordered by area; keys captured at insertion time.
+    // Priority queue ordered by area; keys captured at insertion time.
     let mut pq: JavaPriorityQueue<(f64, usize)> =
         JavaPriorityQueue::new(|a, b| a.0.total_cmp(&b.0));
     for &gi in &group_list {

@@ -5,8 +5,7 @@ use elk_graph::properties::Property;
 
 use crate::nodespacing::internal::NodeContext;
 
-/// Copy of the layered algorithm's `PORT_RATIO_OR_POSITION` internal option
-/// (port of the copy declared in Java's `PortPlacementCalculator`).
+/// Copy of the layered algorithm's `PORT_RATIO_OR_POSITION` internal option.
 pub static PORT_RATIO_OR_POSITION: Property<f64> =
     Property::with_default("portRatioOrPosition", || 0.0);
 

@@ -81,7 +81,7 @@ impl GreedyPortDistributor {
         side: PortSide,
         use_hierarchical_crosscounter: bool,
     ) -> bool {
-        // Java works on the live port side (sub-)list view, reversed for
+        // Works on the live port side (sub-)list view, reversed for
         // SOUTH/WEST; switches write through into the node's port list.
         let view = a.node_port_side_view(node, side);
         let mut ports: Vec<LPortId> = if side == PortSide::SOUTH || side == PortSide::WEST {
@@ -160,8 +160,8 @@ impl GreedyPortDistributor {
             .as_mut()
             .unwrap()
             .switch_ports(a, ports[top_port], ports[bottom_port]);
-        // write through to the node's real port list (Java mutates the
-        // port side sublist view)
+        // write through to the node's real port list (the port side
+        // sublist view is mutated)
         let node_ports = &mut a.node_mut(node).ports;
         let i1 = node_ports.iter().position(|&p| p == ports[top_port]).unwrap();
         let i2 = node_ports.iter().position(|&p| p == ports[bottom_port]).unwrap();

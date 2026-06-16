@@ -34,7 +34,7 @@ fn process_ew_layer(a: &mut LGraphArena, layer: LayerId) {
     let mut nodes = a.layer(layer).nodes.clone();
 
     // Sort: external-port dummies to the top, by PORT_RATIO_OR_POSITION ascending.
-    // Java NodeComparator: non-external nodes compare as "greater" (sorted to bottom).
+    // Non-external nodes compare as "greater" (sorted to bottom).
     nodes.sort_by(|&n1, &n2| {
         use std::cmp::Ordering;
         let t1 = a.node(n1).node_type == NodeType::EXTERNAL_PORT;
@@ -85,8 +85,8 @@ fn process_northern_and_southern_port_dummies(a: &mut LGraphArena, graph: LGraph
     // Index 0 corresponds to a possible new first layer; index i+1 corresponds
     // to existing layer i; index layer_count+1 corresponds to a possible new
     // last layer.
-    // Java keys these maps on the original dummy's ORIGIN (an LPort). Since each
-    // original north/south dummy maps 1:1 to its origin port, keying on the
+    // These maps could be keyed on the original dummy's ORIGIN (an LPort). Since
+    // each original north/south dummy maps 1:1 to its origin port, keying on the
     // original dummy node id is equivalent and avoids hashing Origin.
     let mut ext_port_to_dummy: Vec<indexmap::IndexMap<LNodeId, LNodeId>> =
         Vec::with_capacity(layer_count + 2);
@@ -138,8 +138,6 @@ fn process_northern_and_southern_port_dummies(a: &mut LGraphArena, graph: LGraph
                 if !is_north_south_dummy(a, target_node) {
                     continue;
                 }
-                // Java: nextMap is the freshly appended entry, at index
-                // (curr_idx + 2) given the two pre-loop entries.
                 let next_dummy = match ext_port_to_dummy[curr_idx + 2].get(&target_node).copied() {
                     Some(d) => d,
                     None => {
@@ -161,9 +159,6 @@ fn process_northern_and_southern_port_dummies(a: &mut LGraphArena, graph: LGraph
         if node_list.is_empty() {
             continue;
         }
-        // Java: i==0 -> new first layer; i==extPortToDummyNodeMap.size()-1 ->
-        // new last layer; else layers.get(i-1) on the (possibly already
-        // mutated) layer list. Replicated literally.
         let layer = if i == 0 {
             let l = a.create_layer(graph);
             a.graph_mut(graph).layers.insert(0, l);

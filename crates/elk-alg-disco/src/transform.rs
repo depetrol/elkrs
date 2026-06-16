@@ -47,9 +47,7 @@ fn target_port(g: &ElkGraph, edge: EdgeId) -> Option<PortId> {
 }
 
 /// Connected components via
-/// depth-first search. (Java stores adjacency in identity-hashed sets whose
-/// iteration order is nondeterministic; only component membership matters
-/// for the result, which is identical here.)
+/// depth-first search. (Only component membership matters for the result.)
 pub fn split(g: &ElkGraph, graph: NodeId) -> Vec<Vec<NodeId>> {
     let children = g.node(graph).children.clone();
 
@@ -179,8 +177,8 @@ pub enum ElementKey {
 
 pub struct ElkGraphTransformer {
     parent: NodeId,
-    /// element -> DCElement index (insertion-ordered; Java uses an
-    /// identity-hashed `HashMap`, whose order does not influence geometry).
+    /// element -> DCElement index (insertion-ordered; order does not
+    /// influence geometry).
     element_mapping: Vec<(ElementKey, usize)>,
     incoming_extensions_mapping: Vec<(EdgeId, DCDirection)>,
     outgoing_extensions_mapping: Vec<(EdgeId, DCDirection)>,
@@ -505,7 +503,7 @@ impl ElkGraphTransformer {
                     points.offset(offset);
                     elk_core::elkutil::apply_vector_chain(g, &points, section);
                     // getProperty(JUNCTION_POINTS) materializes the default
-                    // (an empty KVectorChain) like Java does.
+                    // (an empty KVectorChain).
                     let mut jps: KVectorChain = g
                         .edge(edge)
                         .properties

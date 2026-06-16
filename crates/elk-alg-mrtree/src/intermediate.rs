@@ -71,7 +71,7 @@ pub fn fan_processor(arena: &mut TArena, graph: &TGraph) {
     let root = graph.nodes.iter().copied().find(|&n| arena.node(n).root);
     let root = match root {
         Some(r) => r,
-        None => return, // Java would NPE; a root always exists in practice
+        None => return, // a root always exists in practice
     };
 
     calculate_fan(arena, vec![root], &mut glo_fan_map, &mut glo_desc_map);
@@ -100,7 +100,7 @@ fn calculate_fan(
     let mut next_level: Vec<TNodeId> = Vec::new();
 
     let mut id: Option<String> = None;
-    // Java compares the previous provisional id by *reference*; within a
+    // The previous provisional id is compared by *reference*; within a
     // level the provisional ids of siblings are the same String object and
     // different parents always produce distinct id strings, so comparing by
     // content is equivalent.
@@ -158,7 +158,7 @@ fn calculate_fan(
 // ------------------------------------------------------------ LevelProcessor
 
 /// Computes the treeLevel property for each
-/// node. The level map is keyed by the Java `id` field, so a SUPER_ROOT
+/// node. The level map is keyed by the `id` field, so a SUPER_ROOT
 /// (which shares id 0 with a real node) overwrites/receives that node's
 /// level, exactly like the original.
 pub fn level_processor(arena: &mut TArena, graph: &TGraph) {
@@ -431,7 +431,7 @@ pub fn untreeifyer(arena: &mut TArena, graph: &TGraph) {
 /// A `TreeSet<TNode>` with a comparator over the projection of the node
 /// position onto the direction vector: elements whose keys compare equal via
 /// `Double.compare` are treated as the *same* element (add is rejected,
-/// remove removes the resident element), exactly like Java's TreeSet.
+/// remove removes the resident element).
 struct NodeTreeSet {
     /// sorted ascending by key, unique keys
     items: Vec<(f64, TNodeId)>,
@@ -502,7 +502,7 @@ pub fn compaction_processor(arena: &mut TArena, graph: &mut TGraph) {
     compute_node_constraints(arena, graph, node_node_spacing / 2.0 / 2.0);
 
     // Simple one dimensional compaction \w level preservation.
-    // Java sorts the graph's node list in place, affecting all later
+    // The graph's node list is sorted in place, affecting all later
     // processors' iteration order.
     let dir_vec = tree_util::get_direction_vector(dir);
     let mut nodes = std::mem::take(&mut graph.nodes);
@@ -623,7 +623,7 @@ pub fn compaction_processor(arena: &mut TArena, graph: &mut TGraph) {
                 }
             }
 
-            // update tree level of node; Java uses levels.indexOf(level),
+            // update tree level of node; levels.indexOf(level) is used,
             // which finds the first level pair *equal* to the found one
             if let Some(level) = level {
                 let target = levels[level];
@@ -758,7 +758,7 @@ fn get_lowest_dependent_node(arena: &TArena, n: TNodeId, d: Direction) -> Option
         return Some(cons[0]);
     }
 
-    // Java's Stream.min/max keep the *first* extremal element on ties
+    // Stream.min/max keep the *first* extremal element on ties
     // (reduce keeps `a` when compare(a, b) <= 0 resp. >= 0).
     fn stream_min(items: &[TNodeId], key: impl Fn(TNodeId) -> f64) -> Option<TNodeId> {
         items.iter().copied().reduce(|a, b| if key(a).total_cmp(&key(b)).is_le() { a } else { b })

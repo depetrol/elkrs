@@ -13,10 +13,9 @@ use crate::internal_properties::Origin;
 use crate::options_gen as lopts;
 use crate::options_gen::OrderingStrategy;
 
-/// Java `USE_NEW_APPROACH = true`: the dummy nodes' order is not fixed at
-/// this point; only the relation between dummies and their regular node is
-/// constrained. (The old approach's code paths are dead in Java and are not
-/// ported.)
+/// `USE_NEW_APPROACH = true`: the dummy nodes' order is not fixed at this
+/// point; only the relation between dummies and their regular node is
+/// constrained. (The old approach's code paths are dead and are not ported.)
 const USE_NEW_APPROACH: bool = true;
 
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
@@ -264,7 +263,7 @@ fn sort_port_list(a: &mut LGraphArena, node: LNodeId) {
         }
     }
 
-    // With all IDs assigned, sort the port list (stable, like Collections.sort)
+    // With all IDs assigned, sort the port list (stable)
     let mut sorted = a.node(node).ports.clone();
     sorted.sort_by(|&port1, &port2| {
         let side1 = a.port(port1).side;
@@ -602,9 +601,8 @@ fn create_north_south_self_loop_dummy_nodes(
     a.edge_set_target(self_loop, Some(south_dummy_input_port));
 
     north_dummy_nodes.insert(0, north_dummy);
-    // Java would throw a NullPointerException here if the list were null; north-south
-    // self-loops can only be encountered while processing the northern ports, where
-    // the southern list is always present.
+    // North-south self-loops can only be encountered while processing the
+    // northern ports, where the southern list is always present.
     south_dummy_nodes
         .expect("north-south self-loop encountered while processing southern ports")
         .push(south_dummy);

@@ -14,7 +14,7 @@ use crate::options_gen::NodePromotionStrategy;
 /// key -> list-of-values map with a reverse value -> key map.
 #[derive(Default)]
 struct BiLayerMap {
-    /// keys in insertion order (Java LinkedHashMap key set)
+    /// keys in insertion order
     keys: Vec<i32>,
     /// key -> ordered values
     key_to_values: HashMap<i32, Vec<LNodeId>>,
@@ -51,8 +51,8 @@ impl BiLayerMap {
         self.value_to_key[&value]
     }
 
-    /// Like Java `getValues`: returns a copy (the callers below re-read the
-    /// map on every access to replicate Java's live-list semantics).
+    /// Returns a copy of the values (the callers below re-read the map on
+    /// every access to replicate live-list semantics).
     fn get_values(&self, key: i32) -> Vec<LNodeId> {
         self.key_to_values.get(&key).cloned().unwrap_or_default()
     }
@@ -78,7 +78,7 @@ impl BiLayerMap {
     }
 }
 
-/// All state of one NodePromotion run (Java instance fields).
+/// All state of one NodePromotion run.
 struct NodePromotion {
     /// Holds all nodes of the graph that have incoming edges.
     nodes_with_incoming_edges: Vec<LNodeId>,
@@ -543,12 +543,11 @@ impl NodePromotion {
 
     /// `funky(reduced_dummies, iteration_counter)` decides whether to go on.
     ///
-    /// Note one subtle Java quirk that must be replicated exactly: the
-    /// initial `currentWidthBackup`/`currentWidthPixelBackup` are *aliases*
-    /// of the live lists (`List<Integer> currentWidthBackup = currentWidth;`,
-    /// no copy!), while `layeringBackup` is a real copy. Until the first
-    /// *successful* promotion replaces the backups with real copies, a failed
-    /// promotion therefore does not roll the width lists back: the first
+    /// Note one subtle behavior that must be preserved exactly: the initial
+    /// `current_width_backup`/`current_width_pixel_backup` are *aliases* of the
+    /// live lists (no copy!), while `layering_backup` is a real copy. Until the
+    /// first *successful* promotion replaces the backups with real copies, a
+    /// failed promotion therefore does not roll the width lists back: the first
     /// failure freezes the (already mutated) state as the backup, and later
     /// failures restore to that frozen state.
     fn promotion_magic(&mut self, a: &LGraphArena, funky: impl Fn(i32, i32) -> bool) {
@@ -558,7 +557,6 @@ impl NodePromotion {
         let mut layering_backup = self.layers.clone();
         let mut dummy_backup = self.dummy_node_count;
         let mut height_backup = self.max_height;
-        // Java: aliases of the live lists, not copies (see above).
         let mut width_backup_is_alias = true;
         let mut current_width_backup: Vec<i32> = Vec::new();
         let mut current_width_pixel_backup: Vec<f64> = Vec::new();
@@ -595,10 +593,6 @@ impl NodePromotion {
                     self.layers = layering_backup.clone();
                     self.dummy_node_count = dummy_backup;
                     if width_backup_is_alias {
-                        // Java: `currentWidth = newArrayList(currentWidthBackup)`
-                        // where the backup still aliases the live (mutated)
-                        // list — the "restore" keeps the mutated values and
-                        // detaches the backup, freezing this state.
                         current_width_backup = self.current_width.clone();
                         current_width_pixel_backup = self.current_width_pixel.clone();
                         width_backup_is_alias = false;
@@ -747,7 +741,7 @@ mod tests {
 
     /// Layers: [a, b] [c] [d] with edges a->c and b->d; b->d spans layer 1
     /// (creates a dummy). Promoting d into c's layer removes that dummy
-    /// (hand-traced against the Java heuristic).
+    /// (hand-traced).
     #[test]
     fn promotes_node_to_reduce_dummies() {
         let mut a = LGraphArena::new();

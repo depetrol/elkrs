@@ -19,7 +19,7 @@ impl SortingStrategy {
     }
 }
 
-/// Java's `IDSorter` comparator (stable sort by `RadialOptions.ORDER_ID`).
+/// The `IDSorter` comparator (stable sort by `RadialOptions.ORDER_ID`).
 fn id_sort(g: &ElkGraph, nodes: &mut [NodeId]) {
     nodes.sort_by(|&n1, &n2| {
         let order_id1: i32 = g.node(n1).properties.get(&ORDER_ID);
@@ -42,7 +42,7 @@ impl RadialSorter for IdSorter {
 
 #[derive(Default)]
 pub struct PolarCoordinateSorter {
-    /// Java's lazily created `idSorter` field.
+    /// The lazily created `idSorter` field.
     initialized: bool,
 }
 

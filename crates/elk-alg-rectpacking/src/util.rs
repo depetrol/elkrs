@@ -1,10 +1,8 @@
 //!
-//! Java's model objects reference each other freely (a block knows its parent
-//! row and its stack, rows own block lists, stacks share blocks with rows).
-//! Here all rows, blocks and stacks live in a [`PackArena`] and reference
+//! All rows, blocks and stacks live in a [`PackArena`] and reference
 //! each other through ids; the rectangles themselves are `ElkNode`s
-//! referenced by `NodeId` whose coordinates are read/written on the graph,
-//! exactly like Java mutates the `ElkNode`s directly.
+//! referenced by `NodeId` whose coordinates are read/written directly on the
+//! graph.
 
 use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::math::{ElkRectangle, KVector};
@@ -64,8 +62,7 @@ impl DrawingData {
         d
     }
 
-    /// Java `calcAreaAspectRatioScaleMeasure`: only recomputes when both
-    /// dimensions are positive.
+    /// Only recomputes when both dimensions are positive.
     fn calc_area_aspect_ratio_scale_measure(&mut self) {
         if self.drawing_width > 0.0 && self.drawing_height > 0.0 {
             self.area = self.drawing_width * self.drawing_height;
@@ -409,8 +406,7 @@ impl PackArena {
         r.children.push(block);
     }
 
-    /// Like Java's `List.remove(Object)`, the
-    /// width adjustment happens even if the block is not in the list.
+    /// The width adjustment happens even if the block is not in the list.
     pub fn row_remove_block(&mut self, row: RowId, block: BlockId) {
         let block_width = self.block(block).width;
         let r = self.row_mut(row);
@@ -420,7 +416,7 @@ impl PackArena {
         r.width -=
             block_width + if r.children.is_empty() { 0.0 } else { r.node_node_spacing };
 
-        // Java: double newMaxHeight = Double.MIN_VALUE (smallest positive double).
+        // smallest positive double
         let mut new_max_height = f64::from_bits(1);
         let children = self.row(row).children.clone();
         for child in children {

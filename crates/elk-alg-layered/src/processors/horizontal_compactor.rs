@@ -103,7 +103,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `getLNodeOrNull`.
+/// `getLNodeOrNull`.
 fn l_node_or_null(origin: CNodeOrigin) -> Option<LNodeId> {
     match origin {
         CNodeOrigin::LNode(n) => Some(LNodeId(n)),
@@ -111,7 +111,7 @@ fn l_node_or_null(origin: CNodeOrigin) -> Option<LNodeId> {
     }
 }
 
-/// The special `ISpacingsHandler` for LGraphs (Java's anonymous class).
+/// The special `ISpacingsHandler` for LGraphs.
 #[derive(Clone)]
 struct SpecialSpacingsHandler {
     /// per-LNode node type.
@@ -161,9 +161,9 @@ impl SpecialSpacingsHandler {
                 }
                 let nt1 = node_type_from_index(t1);
                 let nt2 = node_type_from_index(t2);
-                // Java leaves some type-pair mappings null and only queries them
-                // for pairs that actually become adjacent; here the table is
-                // precomputed, so absent pairs stay NaN (never legitimately read).
+                // Some type-pair mappings are only queried for pairs that
+                // actually become adjacent; here the table is precomputed, so
+                // absent pairs stay NaN (never legitimately read).
                 horiz[t1][t2] = spacings::try_horizontal_spacing_by_type(a, graph, nt1, nt2)
                     .unwrap_or(f64::NAN);
                 vert[t1][t2] = spacings::try_vertical_spacing_by_type(a, graph, nt1, nt2)
@@ -179,7 +179,7 @@ impl SpecialSpacingsHandler {
         }
     }
 
-    /// Java `isVerticalSegmentsOfSameEdge`.
+    /// `isVerticalSegmentsOfSameEdge`.
     fn is_vertical_segments_of_same_edge(&self, cg: &CGraph, n1: CNodeId, n2: CNodeId) -> bool {
         let v1 = match cg.cnodes[n1].origin {
             CNodeOrigin::VerticalSegment(v) => v as usize,

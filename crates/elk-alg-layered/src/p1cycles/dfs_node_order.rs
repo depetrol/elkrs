@@ -63,7 +63,6 @@ fn dfs(
     let mut model_order_map: BTreeMap<i32, Vec<LEdgeId>> = BTreeMap::new();
     for e in a.node_outgoing_edges(node) {
         let target = a.edge_target_node(e);
-        // Java: e.getTarget().getNode().getProperty(MODEL_ORDER) == null
         if !a.node(target).properties.has(&iprops::MODEL_ORDER) {
             let key = i32::MAX - model_order_map.len() as i32;
             model_order_map.entry(key).or_default().push(e);

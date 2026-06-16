@@ -7,8 +7,7 @@ use crate::graph::{LGraphArena, LGraphId, LNodeId, LayerId, NodeType};
 use crate::options_gen as lopts;
 use crate::spacings;
 
-/// property for maximal priority of incoming edges (Java
-/// `Property<Integer>("linearSegments.inputPrio", 0)`).
+/// property for maximal priority of incoming edges.
 static INPUT_PRIO: Property<i32> = Property::with_default("linearSegments.inputPrio", || 0);
 /// property for maximal priority of outgoing edges.
 static OUTPUT_PRIO: Property<i32> = Property::with_default("linearSegments.outputPrio", || 0);
@@ -198,7 +197,7 @@ fn create_dependency_graph_edges(
     for &layer in &a.graph(graph).layers.clone() {
         let nodes: Vec<LNodeId> = a.layer(layer).nodes.clone();
         if nodes.is_empty() {
-            // Ignore empty layers (note: Java skips the layerIndex increment)
+            // Ignore empty layers (note: the layerIndex increment is skipped)
             continue;
         }
 
@@ -216,7 +215,7 @@ fn create_dependency_graph_edges(
             // Get the current node's segment
             let mut current_segment = a.node(cur).id as usize;
 
-            // Check if we have a cycle (see Java comment)
+            // Check if we have a cycle
             if segment_list[current_segment].index_in_last_layer >= 0 {
                 let mut cycle_segment: Option<usize> = None;
                 for &cycle_node in nodes
@@ -241,7 +240,7 @@ fn create_dependency_graph_edges(
                     if let Some(prev) = previous_node {
                         let cur_id = a.node(cur).id as usize;
                         incoming_count_list[cur_id] -= 1;
-                        // List.remove(Object): remove the first occurrence
+                        // remove the first occurrence
                         let prev_list = &mut outgoing_list[a.node(prev).id as usize];
                         if let Some(pos) =
                             prev_list.iter().position(|&s| s == current_segment as i32)
@@ -335,7 +334,7 @@ fn fill_segment(a: &mut LGraphArena, node: LNodeId, segment: &mut LinearSegment)
     if node_type == NodeType::LONG_EDGE || node_type == NodeType::NORTH_SOUTH_PORT {
         // Check if any of this dummy's successors can join its segment
         for source_port in a.node(node).ports.clone() {
-            // LPort.getSuccessorPorts(): target ports of the outgoing edges
+            // the successor ports: target ports of the outgoing edges
             for edge in a.port(source_port).outgoing_edges.clone() {
                 let target_port = a.edge(edge).target.unwrap();
                 let target_node = a.port(target_port).node.unwrap();
@@ -369,7 +368,7 @@ fn create_unbalanced_placement(
 ) {
     let layers: Vec<LayerId> = a.graph(graph).layers.clone();
 
-    // index of a node's layer in the graph's layer list (Java Layer.getIndex)
+    // index of a node's layer in the graph's layer list
     let layer_index = |a: &LGraphArena, node: LNodeId| -> usize {
         let l = a.node(node).layer.unwrap();
         layers.iter().position(|&x| x == l).unwrap()

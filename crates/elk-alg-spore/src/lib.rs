@@ -40,8 +40,7 @@ fn check_underlying_layout_algorithm(g: &ElkGraph, layout_node: NodeId) -> Resul
         .properties
         .has(&options::UNDERLYING_LAYOUT_ALGORITHM)
     {
-        // Java looks the algorithm up in the LayoutMetaDataService and runs
-        // it first; this port has no global registry to draw providers from.
+        // This port has no global registry to draw providers from.
         return Err(
             "org.eclipse.elk.underlyingLayoutAlgorithm is not supported by this port".to_string(),
         );
@@ -130,7 +129,7 @@ impl LayoutProvider for OverlapRemovalLayoutProvider {
             phases::spanning_tree_phase(&mut graph, |gr, e| importer.cost(gr, e));
             phases::grow_tree_phase(&mut graph);
 
-            // update node positions (clears tree and tEdges; Java keeps the
+            // update node positions (clears tree and tEdges; keeps the
             // overlapEdges set object — and thus its table capacity — alive)
             if let Some(set) = graph.t_edges.take() {
                 overlap_edges = set;

@@ -23,8 +23,8 @@ impl LayoutProvider for RadialLayoutProvider {
             execute_node_micro_layout(g, layout_node);
         }
 
-        // pre calculate the root node (Java stores it in
-        // InternalProperties.ROOT_NODE; here it is passed to each processor)
+        // pre calculate the root node (passed to each processor instead of
+        // being stored in InternalProperties.ROOT_NODE)
         let root = util::find_root(g, layout_node)
             .ok_or_else(|| "The given graph is not a tree!".to_string())?;
 

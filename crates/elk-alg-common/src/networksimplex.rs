@@ -1,9 +1,9 @@
 //!
-//! Java uses an object graph; here all nodes and edges live in arenas inside
+//! All nodes and edges live in arenas inside
 //! [`NGraph`] and reference each other through [`NNodeId`] / [`NEdgeId`].
-//! `NGraph.nodes` (the ordered node list Java iterates over) is kept as an
+//! `NGraph.nodes` (the ordered node list) is kept as an
 //! explicit `Vec<NNodeId>` so that removal/re-insertion order during subtree
-//! handling matches Java exactly.
+//! handling is preserved.
 //!
 //! Not ported: `NGraph.writeDebugGraph` (EMF debug output) and the `NNode.type`
 //! debug label, both without semantic effect.
@@ -22,26 +22,25 @@ pub struct NEdgeId(pub u32);
 pub struct NNode {
     /// A public id, unused internally, use it for whatever you want.
     pub id: i32,
-    /// Stand-in for Java's `Object origin`: an index into whatever structure
+    /// An index into whatever structure
     /// this node was derived from (-1 if unset).
     pub origin: i32,
     /// The layer this node is currently assigned to.
     pub layer: i32,
-    /// Incoming edges (Java `incomingEdges`).
+    /// Incoming edges.
     pub incoming_edges: Vec<NEdgeId>,
-    /// Outgoing edges (Java `outgoingEdges`).
+    /// Outgoing edges.
     pub outgoing_edges: Vec<NEdgeId>,
     /// Internally set and used id to index arrays.
     internal_id: usize,
     /// Whether this node is part of the spanning tree.
     tree_node: bool,
-    /// Tree edges incident to this node with unknown cut values (ArrayList in Java).
+    /// Tree edges incident to this node with unknown cut values.
     unknown_cutvalues: Vec<NEdgeId>,
 }
 
 impl NNode {
-    /// Incoming edges first, then outgoing
-    /// edges (the order of Java's cached union list).
+    /// Incoming edges first, then outgoing edges.
     pub fn connected_edges(&self) -> Vec<NEdgeId> {
         let mut all = Vec::with_capacity(self.incoming_edges.len() + self.outgoing_edges.len());
         all.extend_from_slice(&self.incoming_edges);
@@ -54,8 +53,8 @@ impl NNode {
 pub struct NEdge {
     /// A public id, unused internally, use it for whatever you want.
     pub id: i32,
-    /// Stand-in for Java's `Object origin` (-1 if unset). Note that Java's
-    /// `NEdge.of(Object origin)` actually ignores its argument (a Java bug),
+    /// Object origin (-1 if unset). Note that
+    /// `NEdge.of(Object origin)` actually ignores its argument (a bug),
     /// so edge origins are never set by the layerer either.
     pub origin: i32,
     /// The source node of this edge.
@@ -64,7 +63,7 @@ pub struct NEdge {
     pub target: NNodeId,
     /// The weight of this edge.
     pub weight: f64,
-    /// The minimum length of this edge (Java default 1).
+    /// The minimum length of this edge (default 1).
     pub delta: i32,
     /// Internally set and used id to index arrays.
     internal_id: usize,
@@ -87,7 +86,7 @@ impl NEdge {
 /// Arena plus the ordered node list.
 #[derive(Default, Debug)]
 pub struct NGraph {
-    /// The nodes of the network simplex graph (ordered; Java `nodes`).
+    /// The nodes of the network simplex graph (ordered).
     pub nodes: Vec<NNodeId>,
     node_arena: Vec<NNode>,
     edge_arena: Vec<NEdge>,
@@ -132,7 +131,7 @@ impl NGraph {
     /// Creates an edge and registers it with
     /// the source's outgoing and the target's incoming edge lists.
     ///
-    /// Panics on self-loops (Java throws `IllegalStateException`).
+    /// Panics on self-loops.
     pub fn add_edge(&mut self, source: NNodeId, target: NNodeId, weight: f64, delta: i32) -> NEdgeId {
         if source == target {
             panic!("Network simplex does not support self-loops: {:?}", source);
@@ -263,7 +262,7 @@ impl NGraph {
     }
 }
 
-/// Removes the first occurrence of `value` from `v` (Java `List.remove(Object)`).
+/// Removes the first occurrence of `value` from `v`.
 fn remove_first<T: PartialEq>(v: &mut Vec<T>, value: T) {
     if let Some(pos) = v.iter().position(|x| *x == value) {
         v.remove(pos);
@@ -285,7 +284,7 @@ const FUZZY_ST_ZERO: f64 = -1e-10;
 pub struct NetworkSimplex<'g> {
     /// The graph all methods in this struct operate on.
     graph: &'g mut NGraph,
-    /// Number of nodes per layer of a previous layering (Java `previousLayeringNodeCounts`).
+    /// Number of nodes per layer of a previous layering.
     previous_layering_node_counts: Option<Vec<i32>>,
     /// Whether to apply balancing.
     balance: bool,
@@ -294,8 +293,7 @@ pub struct NetworkSimplex<'g> {
 
     /// All edges in the graph, in iteration order.
     edges: Vec<NEdgeId>,
-    /// All edges that are part of the spanning tree (insertion-ordered, like
-    /// Java's `LinkedHashSet`).
+    /// All edges that are part of the spanning tree (insertion-ordered).
     tree_edges: Vec<NEdgeId>,
     /// All source nodes of the graph (no incoming edges).
     sources: Vec<NNodeId>,
@@ -311,7 +309,7 @@ pub struct NetworkSimplex<'g> {
     /// The cut value of every edge.
     cutvalue: Vec<f64>,
     /// Subtree nodes removed prior to execution, with their single edge
-    /// (Java `subtreeNodesStack`, used as a stack).
+    /// (used as a stack).
     subtree_nodes_stack: Vec<(NNodeId, NEdgeId)>,
 }
 
@@ -895,7 +893,7 @@ mod tests {
     }
 
     /// Diamond plus a chain tail: n0->n1, n0->n2, n1->n3, n2->n3, n3->n4.
-    /// Hand-traced against the Java implementation: the initial topological
+    /// Hand-traced: the initial topological
     /// numbering is already optimal, no exchanges happen, balancing moves
     /// nothing.
     #[test]
@@ -958,7 +956,7 @@ mod tests {
         assert_eq!(layers(&g, &[a, b, c, z, m]), vec![0, 1, 2, 3, 2]);
     }
 
-    /// Same graph as above, but with balancing: Java's balancing only looks
+    /// Same graph as above, but with balancing: balancing only looks
     /// at layer fillings (not edge weights) and moves m back to the less
     /// crowded layer 1.
     #[test]

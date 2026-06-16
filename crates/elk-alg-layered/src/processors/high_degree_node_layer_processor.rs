@@ -40,7 +40,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     }
     let ctx = Ctx { degree_threshold, tree_height_threshold };
 
-    // iterate through all layers, mirroring the Java ListIterator cursor.
+    // iterate through all layers, mirroring a ListIterator cursor.
     // `cursor` is the index of the *next* layer to be returned (i.e. one past
     // the current layer once we've called next()).
     let mut cursor = 0usize;

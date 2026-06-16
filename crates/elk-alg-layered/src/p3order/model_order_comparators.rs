@@ -1,5 +1,5 @@
 //!
-//! The Java comparators carry mutable transitive-ordering state
+//! The comparators carry mutable transitive-ordering state
 //! (`biggerThan` / `smallerThan`) that is updated during the sort, so they
 //! cannot be plain stateless closures. Each comparator is a struct that
 //! borrows the arena and owns its ordering maps; sorts are driven through
@@ -175,7 +175,7 @@ impl<'a> ModelOrderNodeComparator<'a> {
                             return 1;
                         }
                     }
-                    // assert(false) in Java; fall back to edge model order.
+                    // assert(false) here; fall back to edge model order.
                     let n1_edge_order = self.model_order_from_connected_edges(n1);
                     let n2_edge_order = self.model_order_from_connected_edges(n2);
                     if n1_edge_order > n2_edge_order {
@@ -349,7 +349,7 @@ impl<'a> ModelOrderNodeComparator<'a> {
         } else if t1 == NodeType::NORMAL && t2 == NodeType::LONG_EDGE {
             let dummy_source_node = self.first_incoming_source_node(n2);
             let dummy_target_node = self.first_outgoing_target_node(n2);
-            // Java uses n1.getLayer().id here (quirk preserved).
+            // Uses n1.getLayer().id here (quirk preserved).
             let dummy_layer_id = self.layer_id(n1);
             if self.layer_id(dummy_source_node) != dummy_layer_id
                 && self.layer_id(dummy_target_node) != dummy_layer_id
@@ -525,7 +525,7 @@ impl<'a> ModelOrderPortComparator<'a> {
         self.a.layer(self.a.node(n).layer.unwrap()).id
     }
 
-    /// `PortSide` ordinal (NORTH < EAST < SOUTH < WEST). Mirrors Java enum order.
+    /// `PortSide` ordinal (NORTH < EAST < SOUTH < WEST). Mirrors the enum order.
     fn side_ordinal(side: PortSide) -> i32 {
         match side {
             PortSide::UNDEFINED => 0,

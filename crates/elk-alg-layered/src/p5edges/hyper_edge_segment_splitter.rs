@@ -7,7 +7,7 @@ use super::hyper_edge_segment::{DependencyId, SegmentId, SegmentStore};
 use super::hyper_edge_segment_dependency as dependency;
 use super::orthogonal_routing_generator::{count_crossings, OrthogonalRoutingGenerator};
 
-/// Java `FreeArea`: a free area between two horizontal edge segments.
+/// A free area between two horizontal edge segments.
 struct FreeArea {
     start_position: f64,
     end_position: f64,
@@ -21,14 +21,14 @@ impl FreeArea {
     }
 }
 
-/// Java `AreaRating`: what would happen if a segment was connected to its
+/// What would happen if a segment was connected to its
 /// split partner through an area.
 struct AreaRating {
     dependencies: i32,
     crossings: i32,
 }
 
-/// Java `splitSegments`: breaks critical dependency cycles by resolving the
+/// Breaks critical dependency cycles by resolving the
 /// given dependencies, splitting one of the involved segments per dependency.
 /// New segments are added to `segments`.
 pub fn split_segments(
@@ -49,9 +49,8 @@ pub fn split_segments(
     // For each dependency, choose which segment to split
     let segments_to_split = decide_which_segments_to_split(store, dependencies_to_resolve);
 
-    // Split the segments in order from smallest to largest (Java uses a
-    // stable sort over the insertion-ordered set, comparing the lengths with
-    // Double.compare)
+    // Split the segments in order from smallest to largest (a stable sort over
+    // the insertion-ordered set, comparing the lengths)
     let mut sorted_segments_to_split = segments_to_split;
     sorted_segments_to_split
         .sort_by(|&s1, &s2| store.segments[s1].length().total_cmp(&store.segments[s2].length()));
@@ -64,7 +63,6 @@ pub fn split_segments(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Finding Space
 
-/// Java `findFreeAreas`.
 fn find_free_areas(
     store: &SegmentStore,
     segments: &[SegmentId],
@@ -99,8 +97,7 @@ fn find_free_areas(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Split Segment Decisions
 
-/// Java `decideWhichSegmentsToSplit` (returns the insertion-ordered set as a
-/// Vec; Java uses a LinkedHashSet).
+/// Returns the insertion-ordered set as a Vec.
 fn decide_which_segments_to_split(
     store: &mut SegmentStore,
     dependencies: &[DependencyId],
@@ -143,7 +140,7 @@ fn decide_which_segments_to_split(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Actual Splitting
 
-/// Java `split`: splits the given segment at the optimal position.
+/// Splits the given segment at the optimal position.
 fn split(
     generator: &OrthogonalRoutingGenerator,
     store: &mut SegmentStore,
@@ -166,7 +163,6 @@ fn split(
     update_dependencies(generator, store, segment, segments);
 }
 
-/// Java `updateDependencies`.
 fn update_dependencies(
     generator: &OrthogonalRoutingGenerator,
     store: &mut SegmentStore,
@@ -197,7 +193,6 @@ fn update_dependencies(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Split Position Computation
 
-/// Java `computePositionToSplitAndUpdateFreeAreas`.
 fn compute_position_to_split_and_update_free_areas(
     store: &mut SegmentStore,
     segment: SegmentId,
@@ -247,7 +242,6 @@ fn compute_position_to_split_and_update_free_areas(
     split_position
 }
 
-/// Java `chooseBestAreaIndex`.
 fn choose_best_area_index(
     store: &mut SegmentStore,
     segment: SegmentId,
@@ -280,7 +274,7 @@ fn choose_best_area_index(
     best_area_index
 }
 
-/// Java `rateArea`: rates what would happen if the given split segments were
+/// Rates what would happen if the given split segments were
 /// connected through the given area.
 fn rate_area(
     store: &mut SegmentStore,
@@ -329,7 +323,6 @@ fn rate_area(
     rating
 }
 
-/// Java `updateConsideringBothOrderings`.
 fn update_considering_both_orderings(
     store: &SegmentStore,
     rating: &mut AreaRating,
@@ -353,7 +346,6 @@ fn update_considering_both_orderings(
     }
 }
 
-/// Java `countCrossingsForSingleOrdering`.
 fn count_crossings_for_single_ordering(store: &SegmentStore, left: SegmentId, right: SegmentId) -> i32 {
     count_crossings(
         &store.segments[left].outgoing_connection_coordinates,
@@ -366,7 +358,6 @@ fn count_crossings_for_single_ordering(store: &SegmentStore, left: SegmentId, ri
     )
 }
 
-/// Java `isBetter`.
 fn is_better(
     curr_area: &FreeArea,
     curr_rating: &AreaRating,
@@ -391,7 +382,7 @@ fn is_better(
     false
 }
 
-/// Java `useArea`: when an area is used, it falls into two parts which may be
+/// When an area is used, it falls into two parts which may be
 /// usable themselves.
 fn use_area(free_areas: &mut Vec<FreeArea>, used_area_index: usize, critical_conflict_threshold: f64) {
     let old_area = free_areas.remove(used_area_index);
@@ -416,7 +407,6 @@ fn use_area(free_areas: &mut Vec<FreeArea>, used_area_index: usize, critical_con
     }
 }
 
-/// Java `center(double, double)`.
 fn center(p1: f64, p2: f64) -> f64 {
     (p1 + p2) / 2.0
 }

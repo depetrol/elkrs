@@ -7,12 +7,12 @@ use std::cmp::Ordering;
 use crate::graph::{LGraphArena, LGraphId, LNodeId, LayerId};
 use crate::options_gen as lopts;
 
-/// Replica of `java.util.PriorityQueue` with Java's exact sift semantics and
+/// Replica of `java.util.PriorityQueue` with its exact sift semantics and
 /// comparison call pattern. The comparator is passed per operation because it
-/// closes over state that is mutated between operations (like Java's
-/// comparator object reading mutable fields).
+/// closes over state that is mutated between operations (the comparator object
+/// reads mutable fields).
 ///
-/// Java's comparator-using siftDown compares `(child, right)` and
+/// The comparator-using siftDown compares `(child, right)` and
 /// `(inserted, child)`; this matters here because CoffmanGraham's comparator
 /// is not consistent (see `compare_nodes_in_topo`).
 struct JavaPq {
@@ -97,7 +97,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let mut out_deg = vec![0i32; index as usize];
     let mut topo_ord = vec![0i32; index as usize];
     // for each node, the positions of incoming nodes in the topological
-    // ordering (Java `inTopo` multimap; the lists are sorted by construction)
+    // ordering (the lists are sorted by construction)
     let mut in_topo: Vec<Vec<i32>> = vec![Vec::new(); index as usize];
 
     // --------------------------
@@ -256,11 +256,10 @@ fn create_layer(a: &mut LGraphArena, graph: LGraphId, layers: &mut Vec<LayerId>)
     layer
 }
 
-///    are the same object, so the loop continues; equal values >= 128 are
-///    distinct objects, so Java enters the branch and `Integer.compare`
-///    returns 0 immediately.
-/// 2. The post-loop check uses `hasNext()` (cursor < size), not
-///    `hasPrevious()`. With backwards iteration from the end, `hasNext()` is
+///    are treated as identical and the loop continues; equal values >= 128 are
+///    treated as distinct, so the branch returns 0 immediately.
+/// 2. The post-loop check uses `has_next` (cursor < size), not
+///    `has_previous`. With backwards iteration from the end, `has_next` is
 ///    false exactly when the iterator never moved (or the list is empty).
 fn compare_nodes_in_topo(
     a: &LGraphArena,
@@ -285,8 +284,6 @@ fn compare_nodes_in_topo(
         if iu != iv {
             return iu.cmp(&iv);
         } else if !(-128..=127).contains(&iu) {
-            // Java: boxed Integers outside the cache are distinct objects,
-            // `iu != iv` is true and Integer.compare(iu, iv) returns 0
             return Ordering::Equal;
         }
         // equal cached boxes: same object, continue with earlier values

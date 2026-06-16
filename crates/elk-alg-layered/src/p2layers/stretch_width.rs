@@ -31,8 +31,8 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     sorted_layerless_nodes.sort_by(|&o1, &o2| a.node(o2).id.cmp(&a.node(o1).id));
 
     // --- computeSuccessors: re-assigns node ids in sorted order ----------
-    // (The successor sets themselves are computed in Java but never read;
-    // only the id assignment has an observable effect.)
+    // (The successor sets themselves are never read; only the id assignment
+    // has an observable effect.)
     for (i, &node) in sorted_layerless_nodes.iter().enumerate() {
         a.node_mut(node).id = i as i32;
     }
@@ -71,7 +71,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     dummy_size /= minimum_node_size;
     let mut max_width = maximum_node_size / minimum_node_size;
 
-    // average out-degree; Java computes this in float arithmetic
+    // average out-degree; computed in float arithmetic
     let upper_layer_influence = get_average_out_degree(a, graph) as f64;
 
     // Layer currently worked on; add the first layer to the graph
@@ -83,7 +83,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // Copy the outDegree array
     let mut remaining_out_going = out_degree.clone();
 
-    // number of nodes placed in the current layer (Java: alreadyPlacedNodes set)
+    // number of nodes placed in the current layer
     let mut already_placed_count = 0usize;
 
     while !temp_layerless_nodes.is_empty() {

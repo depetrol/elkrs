@@ -1,8 +1,6 @@
 //!
-//! Java keeps a persistent 2D array of single-node `ConstraintGroup`s plus
-//! temporary merged groups; since all per-group state is reset at the start
-//! of each `processConstraints` run, this port builds a fresh local group
-//! arena per run, which is behaviorally identical.
+//! Since all per-group state is reset at the start of each `processConstraints`
+//! run, this builds a fresh local group arena per run.
 
 use std::collections::HashMap;
 
@@ -12,7 +10,7 @@ use crate::internal_properties as iprops;
 use super::barycenter_heuristic::BarycenterState;
 
 /// Delta that two barycenters can differ by to still be considered equal.
-/// (Unused at runtime — Java only uses it in assertions.)
+/// (Unused at runtime — only used in assertions.)
 #[allow(unused)]
 const BARYCENTER_EQUALITY_DELTA: f32 = 0.0001f32;
 
@@ -20,7 +18,7 @@ pub struct ForsterConstraintResolver {
     /// Whether there are successor constraints between non-dummies.
     constraints_between_non_dummies: bool,
     /// the layout units for handling dummy nodes for north / south ports
-    /// (Java: LinkedHashMultimap; values per key in insertion order).
+    /// (values per key in insertion order).
     layout_units: HashMap<LNodeId, Vec<LNodeId>>,
     /// the barycenter values of every node in the graph, indexed by
     /// `layer.id` and `node.id`.
@@ -36,9 +34,9 @@ struct ConstraintGroup {
     degree: i32,
     /// List of nodes this vertex consists of.
     nodes: Vec<LNodeId>,
-    /// List of outgoing constraints (None = Java null).
+    /// List of outgoing constraints (None = null).
     outgoing_constraints: Option<Vec<usize>>,
-    /// List of incoming constraints (None = Java null).
+    /// List of incoming constraints (None = null).
     incoming_constraints: Option<Vec<usize>>,
     /// The number of incoming constraints.
     incoming_constraints_count: i32,
@@ -85,7 +83,7 @@ impl ForsterConstraintResolver {
     }
 
     pub fn init_at_layer_level(&mut self, l: usize, node_order: &[Vec<LNodeId>]) {
-        // Java allocates the barycenterStates / constraintGroups rows here;
+        // The barycenterStates / constraintGroups rows are allocated here;
         // the actual entries are created at node level.
         self.barycenter_states[l] = Vec::with_capacity(node_order[l].len());
     }
@@ -108,10 +106,10 @@ impl ForsterConstraintResolver {
     /// in-layer successor constraints.
     pub fn process_constraints(&mut self, a: &LGraphArena, nodes: &mut Vec<LNodeId>) {
         // If there are successor constraints between regular (or normal)
-        // nodes, we have to apply a two-stage process (see Java comment).
+        // nodes, we have to apply a two-stage process.
         if self.constraints_between_non_dummies {
             self.process_constraints_stage(a, nodes, true);
-            // Java re-creates the per-node constraint groups here
+            // The per-node constraint groups are re-created here
             // (initAtNodeLevel(node, false)); with the local group arena
             // below this is implicit.
         }
@@ -249,7 +247,7 @@ impl ForsterConstraintResolver {
                     let group_barycenter = self.barycenter_of(a, groups, gid).unwrap();
                     for predecessor in incoming {
                         let pred_barycenter = self.barycenter_of(a, groups, predecessor).unwrap();
-                        // Java compares Double.floatValue()s for equality
+                        // Compares Double.floatValue()s for equality
                         if pred_barycenter as f32 == group_barycenter as f32 {
                             let pred_index = list.iter().position(|&g| g == predecessor).unwrap();
                             let group_index = list.iter().position(|&g| g == gid).unwrap();

@@ -1,6 +1,5 @@
 //!
-//! Java attaches shared, mutable `SplineSegment` objects to edges via the
-//! `SPLINE_ROUTE_START` property. Here all segments live in a
+//! All segments live in a
 //! [`SplineSegmentStore`] that is stored as a graph property
 //! (`iprops::SPLINE_SEGMENT_STORE`); edges reference segments by index.
 
@@ -21,12 +20,9 @@ use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
 use crate::options_gen::SplineRoutingMode;
 
-/// Java `SplineEdgeRouter.MAX_VERTICAL_DIFF_FOR_STRAIGHT`.
 const MAX_VERTICAL_DIFF_FOR_STRAIGHT: f64 = 0.2;
-/// Java `SplineEdgeRouter.SPLINE_DIMENSION`.
 pub const SPLINE_DIMENSION: usize = 3;
 
-/// Java `SplineEdgeRouter.SideToProcess`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum SideToProcess {
     Left,
@@ -38,7 +34,6 @@ pub type SegIdx = usize;
 /// Index of a [`Dependency`] in the [`SplineSegmentStore`].
 pub type DepIdx = usize;
 
-/// Java `SplineSegment.EdgeInformation`.
 #[derive(Clone, Debug, PartialEq, Default)]
 pub struct EdgeInformation {
     pub start_y: f64,
@@ -49,7 +44,7 @@ pub struct EdgeInformation {
     pub inverted_right: bool,
 }
 
-/// Java `SplineEdgeRouter.Dependency`. A dependency pointing from segment A
+/// A dependency pointing from segment A
 /// to segment B means that A must lay left of B.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dependency {
@@ -58,15 +53,14 @@ pub struct Dependency {
     pub weight: i32,
 }
 
-/// Java `SplineSegment` (data part; the per-layer-pair dependency lists store
-/// indices into the segment store's dependency arena).
+/// Data part of a spline segment; the per-layer-pair dependency lists store
+/// indices into the segment store's dependency arena.
 #[derive(Clone, Debug, PartialEq)]
 pub struct SplineSegment {
-    /// see Java `handled`
     pub handled: bool,
-    /// Java `leftPorts` (a `HashSet`; iteration over it is order-insensitive)
+    /// left ports (a set; iteration over it is order-insensitive)
     pub left_ports: Vec<LPortId>,
-    /// Java `rightPorts`
+    /// right ports
     pub right_ports: Vec<LPortId>,
     pub outgoing: Vec<DepIdx>,
     pub incoming: Vec<DepIdx>,
@@ -74,8 +68,8 @@ pub struct SplineSegment {
     pub inweight: i32,
     pub outweight: i32,
     pub rank: i32,
-    /// Java `edges` (a `HashSet`; only `iterator().next()` order matters,
-    /// which is JVM-nondeterministic in Java and never output-relevant)
+    /// edges (a set; only the first-element iteration order matters,
+    /// which is never output-relevant)
     pub edges: Vec<LEdgeId>,
     pub is_straight: bool,
     pub bounding_box: ElkRectangle,
@@ -91,7 +85,7 @@ pub struct SplineSegment {
     pub hyper_edge_top_y_pos: f64,
     pub hyper_edge_bottom_y_pos: f64,
     pub center_control_point_y: f64,
-    /// Java `edgeInformation` map (`HashMap<LEdge, EdgeInformation>`)
+    /// edge information map (keyed by edge)
     pub edge_information: Vec<(LEdgeId, EdgeInformation)>,
 }
 
@@ -127,13 +121,13 @@ impl Default for SplineSegment {
     }
 }
 
-// Hyper-Edge constants (Java `SplineSegment`)
+// Hyper-Edge constants
 const HYPEREDGE_POS_OUTER_RATE: f64 = 0.9;
 const HYPEREDGE_POS_MID_RATE: f64 = 1.0 - HYPEREDGE_POS_OUTER_RATE;
 const ONE_HALF: f64 = 0.5;
 
 impl SplineSegment {
-    /// Java constructor for a 1:n hyper-edge.
+    /// Constructor for a 1:n hyper-edge.
     fn new_hyper(
         a: &LGraphArena,
         single_port: LPortId,
@@ -179,7 +173,7 @@ impl SplineSegment {
         seg
     }
 
-    /// Java constructor for a hyper-edge consisting of a single edge.
+    /// Constructor for a hyper-edge consisting of a single edge.
     fn new_single(
         a: &LGraphArena,
         edge: LEdgeId,
@@ -211,7 +205,7 @@ impl SplineSegment {
         seg
     }
 
-    /// Java `HashSet.add` semantics for the port sets.
+    /// Set-add semantics for the port sets.
     fn add_left_port(&mut self, port: LPortId) {
         if !self.left_ports.contains(&port) {
             self.left_ports.push(port);
@@ -224,7 +218,6 @@ impl SplineSegment {
         }
     }
 
-    /// Java `addEdge`.
     fn add_edge(&mut self, a: &LGraphArena, edge: LEdgeId) {
         if !self.edges.contains(&edge) {
             self.edges.push(edge);
@@ -243,12 +236,11 @@ impl SplineSegment {
         self.edge_information.push((edge, ei));
     }
 
-    /// Java `isHyperEdge`.
     pub fn is_hyper_edge(&self) -> bool {
         self.edges.len() > 1
     }
 
-    /// Java `getEdgeInformation` lookup (the Java `edgeInformation` map).
+    /// `getEdgeInformation` lookup (the `edgeInformation` map).
     pub fn edge_information(&self, edge: LEdgeId) -> &EdgeInformation {
         &self
             .edge_information
@@ -258,7 +250,6 @@ impl SplineSegment {
             .1
     }
 
-    /// Java `setRelevantPositions`.
     fn set_relevant_positions(&mut self, source_y: f64, target_y_min: f64, target_y_max: f64) {
         self.bounding_box.y = f64::min(source_y, target_y_min);
         self.bounding_box.height = f64::max(source_y, target_y_max) - self.bounding_box.y;
@@ -300,8 +291,7 @@ impl JavaCloneable for SplineSegmentStore {
 }
 
 impl SplineSegmentStore {
-    /// Java `new Dependency(source, target, weight)` (registers the dependency
-    /// with both endpoints).
+    /// Creates a dependency and registers it with both endpoints.
     fn create_dependency(&mut self, source: SegIdx, target: SegIdx, weight: i32) {
         let dep = self.deps.len();
         self.deps.push(Dependency { source, target, weight });
@@ -310,17 +300,14 @@ impl SplineSegmentStore {
     }
 }
 
-/// Java `SplineEdgeRouter.isStraight`.
 pub fn is_straight(first_y: f64, second_y: f64) -> bool {
     (first_y - second_y).abs() < MAX_VERTICAL_DIFF_FOR_STRAIGHT
 }
 
-/// Java `SplineEdgeRouter.isNormalNode`.
 pub fn is_normal_node(nt: NodeType) -> bool {
     nt == NodeType::NORMAL || nt == NodeType::BREAKING_POINT
 }
 
-/// Java `SplineEdgeRouter.isQualifiedAsStartingNode`.
 pub fn is_qualified_as_starting_node(nt: NodeType) -> bool {
     nt == NodeType::NORMAL
         || nt == NodeType::NORTH_SOUTH_PORT
@@ -328,14 +315,14 @@ pub fn is_qualified_as_starting_node(nt: NodeType) -> bool {
         || nt == NodeType::BREAKING_POINT
 }
 
-/// Java `LPort.getAbsoluteAnchor()`.
+/// Absolute anchor position of a port.
 pub(crate) fn abs_anchor(a: &LGraphArena, port: LPortId) -> KVector {
     let p = a.port(port);
     let n = a.node(p.node.unwrap());
     KVector::new(n.pos.x + p.pos.x + p.anchor.x, n.pos.y + p.pos.y + p.anchor.y)
 }
 
-/// Java `SplineSegment.anchorY`: for north/south ports the y coordinate
+/// For north/south ports the y coordinate
 /// stored by the `NorthSouthPortPostprocessor` is used.
 pub(crate) fn anchor_y(a: &LGraphArena, p: LPortId) -> f64 {
     let side = a.port(p).side;
@@ -352,7 +339,6 @@ pub(crate) fn anchor_y(a: &LGraphArena, p: LPortId) -> f64 {
 // ---------------------------------------------------------------------------
 // SplineEdgeRouter.process
 
-/// Java `SplineEdgeRouter.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
     if a.graph(graph).layers.is_empty() {
         a.graph_mut(graph).size.x = 0.0;
@@ -526,8 +512,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
     Ok(())
 }
 
-/// Java `createSegmentsAndComputeRanking` (returns the segments created for
-/// the current pair of layers).
+/// Returns the segments created for the current pair of layers.
 fn create_segments_and_compute_ranking(
     a: &LGraphArena,
     store: &mut SplineSegmentStore,
@@ -620,7 +605,7 @@ fn create_segments_and_compute_ranking(
     Ok(spline_segments_layer)
 }
 
-/// Java `clearThenFillMappings`: returns `(leftPorts, rightPorts,
+/// Returns `(leftPorts, rightPorts,
 /// edgesRemaining)` for the current pair of layers and updates the start edge
 /// list and the successor map.
 fn clear_then_fill_mappings(
@@ -680,9 +665,6 @@ fn clear_then_fill_mappings(
 
     if let Some(right) = right_layer {
         for &node in &a.layer(right).nodes {
-            // (Java collects self loops on all port sides into `selfLoopsLayer`
-            // here, but that set is never read afterwards.)
-
             // iterate over all outgoing edges on the right layer
             for &source_port in &a.node(node).ports {
                 if a.port(source_port).side != PortSide::WEST {
@@ -726,7 +708,6 @@ fn clear_then_fill_mappings(
     (left_ports_layer, right_ports_layer, edges_remaining_layer)
 }
 
-/// Java `computeSloppySpacing`.
 fn compute_sloppy_spacing(
     a: &LGraphArena,
     right_layer: LayerId,
@@ -753,7 +734,6 @@ fn compute_sloppy_spacing(
     sloppy_layer_spacing_factor * f64::min(1.0, edge_edge_spacing / node_node_spacing) * max_vert_diff
 }
 
-/// Java `findAndAddSuccessor`.
 fn find_and_add_successor(
     a: &LGraphArena,
     successing_edge: &mut HashMap<LEdgeId, LEdgeId>,
@@ -773,7 +753,7 @@ fn find_and_add_successor(
     }
 }
 
-/// Java `createSplineSegments` (single-edge segments for the remaining edges).
+/// Single-edge segments for the remaining edges.
 fn create_spline_segments(
     a: &LGraphArena,
     store: &mut SplineSegmentStore,
@@ -811,7 +791,6 @@ fn create_spline_segments(
     Ok(())
 }
 
-/// Java `createSplineSegmentsForHyperEdges`.
 #[allow(clippy::too_many_arguments)]
 fn create_spline_segments_for_hyper_edges(
     a: &LGraphArena,
@@ -903,8 +882,7 @@ fn create_spline_segments_for_hyper_edges(
     }
 }
 
-/// Java `createDependency`: calculates the "must lay left of" dependency for
-/// two spline segments.
+/// Calculates the "must lay left of" dependency for two spline segments.
 fn create_dependency(a: &LGraphArena, store: &mut SplineSegmentStore, edge0: SegIdx, edge1: SegIdx) {
     if store.segments[edge0].hyper_edge_top_y_pos > store.segments[edge1].hyper_edge_bottom_y_pos
         || store.segments[edge1].hyper_edge_top_y_pos > store.segments[edge0].hyper_edge_bottom_y_pos
@@ -968,7 +946,6 @@ fn create_dependency(a: &LGraphArena, store: &mut SplineSegmentStore, edge0: Seg
 // ---------------------------------------------------------------------------
 // Cycle Breaking
 
-/// Java `breakCycles`.
 fn break_cycles(store: &mut SplineSegmentStore, edges: &[SegIdx], random: &mut JavaRandom) {
     let mut sources: VecDeque<SegIdx> = VecDeque::new();
     let mut sinks: VecDeque<SegIdx> = VecDeque::new();
@@ -1080,7 +1057,6 @@ fn break_cycles(store: &mut SplineSegmentStore, edges: &[SegIdx], random: &mut J
     }
 }
 
-/// Java `updateNeighbors`.
 fn update_neighbors(
     store: &mut SplineSegmentStore,
     edge: SegIdx,
@@ -1115,7 +1091,6 @@ fn update_neighbors(
 // ---------------------------------------------------------------------------
 // Topological Ordering
 
-/// Java `topologicalNumbering`.
 fn topological_numbering(store: &mut SplineSegmentStore, edges: &[SegIdx]) {
     // determine sources, targets, incoming count and outgoing count; targets are only
     // added to the list if they only connect westward ports
@@ -1187,7 +1162,6 @@ fn topological_numbering(store: &mut SplineSegmentStore, edges: &[SegIdx]) {
 // ---------------------------------------------------------------------------
 // Convenience
 
-/// Java `getEdgeChain`.
 fn get_edge_chain(successing_edge: &HashMap<LEdgeId, LEdgeId>, start: LEdgeId) -> Vec<LEdgeId> {
     let mut edge_chain = Vec::new();
     let mut current = Some(start);
@@ -1198,7 +1172,6 @@ fn get_edge_chain(successing_edge: &HashMap<LEdgeId, LEdgeId>, start: LEdgeId) -
     edge_chain
 }
 
-/// Java `getSplinePath`.
 fn get_spline_path(
     a: &LGraphArena,
     store: &mut SplineSegmentStore,

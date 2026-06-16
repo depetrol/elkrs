@@ -10,8 +10,8 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     let props = &g.node(graph).properties;
     let mut sorter = props.get(&options::SORTER).create();
     let spacing: f64 = props.get(&options::SPACING_NODE_NODE);
-    // Overlap removal keeps the default compaction step of 1 (Java never
-    // calls setCompactionStep here).
+    // Overlap removal keeps the default compaction step of 1
+    // (setCompactionStep is never called here).
     let ext = RadiusExtension { compaction_step: 1, spacing, root };
 
     let successors = util::get_successors(g, root);
@@ -20,8 +20,8 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
 
 /// Extend the radii until the nodes are non-overlapping.
 ///
-/// Java iterates a `HashSet` for the next level (undefined order); here the
-/// deterministic insertion order from `get_next_level_node_set` is used.
+/// The next level is iterated in the deterministic insertion order from
+/// `get_next_level_node_set`.
 fn extend(
     g: &mut ElkGraph,
     ext: &RadiusExtension,
@@ -31,7 +31,7 @@ fn extend(
     if nodes.is_empty() {
         return;
     }
-    // Save old positions (Java stores all, but only the first is used)
+    // Save old positions (all are stored, but only the first is used)
     let first_old = (g.node(nodes[0]).shape.x, g.node(nodes[0]).shape.y);
     while ext.overlap_layer(g, &nodes) {
         ext.contract_layer(g, &nodes, false);
@@ -47,7 +47,7 @@ fn extend(
     }
 
     if let Some(sorter) = sorter.as_mut() {
-        // Java sorts a copy that is then discarded; only the sorter's side
+        // A copy is sorted that is then discarded; only the sorter's side
         // effects (e.g. PolarCoordinateSorter assigning order ids) remain.
         let mut copy = next_level_nodes.clone();
         sorter.sort(g, &mut copy);

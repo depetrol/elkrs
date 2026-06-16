@@ -15,7 +15,7 @@ use crate::options_gen::CenterEdgeLabelPlacementStrategy;
 pub static INCLUDE_LABEL: Property<bool> =
     Property::with_default("edgelabelcenterednessanalysis.includelabel", || false);
 
-/// Java `CenterEdgeLabelPlacementStrategy.usesLabelSizeInformation`.
+/// `CenterEdgeLabelPlacementStrategy.usesLabelSizeInformation`.
 fn uses_label_size_information(strategy: CenterEdgeLabelPlacementStrategy) -> bool {
     matches!(
         strategy,
@@ -70,7 +70,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `assignIdsToLayers`: zero-based IDs in layer order.
+/// `assignIdsToLayers`: zero-based IDs in layer order.
 fn assign_ids_to_layers(a: &mut LGraphArena, graph: LGraphId) {
     let layers = a.graph(graph).layers.clone();
     for (layer_index, layer) in layers.into_iter().enumerate() {
@@ -78,7 +78,7 @@ fn assign_ids_to_layers(a: &mut LGraphArena, graph: LGraphId) {
     }
 }
 
-/// Java `gatherLabelDummyInfos`: the graph's label dummies as
+/// `gatherLabelDummyInfos`: the graph's label dummies as
 /// `LabelDummyInfo`s, indexed by placement strategy ordinal.
 fn gather_label_dummy_infos(
     a: &LGraphArena,
@@ -102,7 +102,7 @@ fn gather_label_dummy_infos(
     infos
 }
 
-/// Java `calculateLayerWidths`.
+/// `calculateLayerWidths`.
 fn calculate_layer_widths(a: &LGraphArena, graph: LGraphId, layer_widths: &mut [f64]) {
     for &layer in &a.graph(graph).layers {
         layer_widths[a.layer(layer).id as usize] = find_max_non_dummy_node_width(a, layer);
@@ -128,7 +128,7 @@ fn find_max_non_dummy_node_width(a: &LGraphArena, layer: LayerId) -> f64 {
     max_width
 }
 
-/// Java `processStrategy`: executes label dummy switching on the given list
+/// `processStrategy`: executes label dummy switching on the given list
 /// of label dummy infos.
 fn process_strategy(
     a: &mut LGraphArena,
@@ -182,7 +182,7 @@ fn process_strategy(
 //////////////////////////////////////////////////////////////////////////////
 // Widest Layer
 
-/// Java `findWidestLayerTargetId`.
+/// `findWidestLayerTargetId`.
 fn find_widest_layer_target_id(info: &LabelDummyInfo, layer_widths: &[f64]) -> i32 {
     // Find the widest layer among those the long edge dummies are placed in
     let mut widest_layer_index = info.leftmost_layer_id;
@@ -199,7 +199,7 @@ fn find_widest_layer_target_id(info: &LabelDummyInfo, layer_widths: &[f64]) -> i
 //////////////////////////////////////////////////////////////////////////////
 // Center Layer
 
-/// Java `findCenterLayerTargetId`.
+/// `findCenterLayerTargetId`.
 fn find_center_layer_target_id(
     a: &LGraphArena,
     info: &LabelDummyInfo,
@@ -222,7 +222,7 @@ fn find_center_layer_target_id(
     info.leftmost_layer_id + info.left_long_edge_dummies.len() as i32
 }
 
-/// Java `computeLayerWidthSums`.
+/// `computeLayerWidthSums`.
 fn compute_layer_width_sums(a: &LGraphArena, info: &LabelDummyInfo, layer_widths: &[f64]) -> Vec<f64> {
     // The minimum space that we think will be left between layers
     let lgraph = a.node_graph(info.label_dummy);
@@ -269,7 +269,7 @@ fn compute_layer_width_sums(a: &LGraphArena, info: &LabelDummyInfo, layer_widths
 //////////////////////////////////////////////////////////////////////////////
 // Median Layer
 
-/// Java `findMedianLayerTargetId`.
+/// `findMedianLayerTargetId`.
 fn find_median_layer_target_id(info: &LabelDummyInfo) -> i32 {
     // Find the median of the layers spanned by the long edge this label dummy is part of
     let layers = info.total_dummy_count();
@@ -281,7 +281,7 @@ fn find_median_layer_target_id(info: &LabelDummyInfo) -> i32 {
 //////////////////////////////////////////////////////////////////////////////
 // End Layer
 
-/// Java `findEndLayerTargetId`.
+/// `findEndLayerTargetId`.
 fn find_end_layer_target_id(a: &LGraphArena, info: &LabelDummyInfo, head_layer: bool) -> i32 {
     let reversed = is_part_of_reversed_edge(a, info);
 
@@ -292,7 +292,7 @@ fn find_end_layer_target_id(a: &LGraphArena, info: &LabelDummyInfo, head_layer: 
     }
 }
 
-/// Java `setEndLayerNodeAlignment`.
+/// `setEndLayerNodeAlignment`.
 fn set_end_layer_node_alignment(a: &mut LGraphArena, info: &LabelDummyInfo) {
     let is_head_label =
         info.placement_strategy == CenterEdgeLabelPlacementStrategy::HEAD_LAYER;
@@ -311,7 +311,7 @@ fn set_end_layer_node_alignment(a: &mut LGraphArena, info: &LabelDummyInfo) {
     }
 }
 
-/// Java `isPartOfReversedEdge`.
+/// `isPartOfReversedEdge`.
 fn is_part_of_reversed_edge(a: &LGraphArena, info: &LabelDummyInfo) -> bool {
     debug_assert!(a.node(info.label_dummy).node_type == NodeType::LABEL);
 
@@ -326,7 +326,7 @@ fn is_part_of_reversed_edge(a: &LGraphArena, info: &LabelDummyInfo) -> bool {
 //////////////////////////////////////////////////////////////////////////////
 // Space Efficient
 
-/// Java `computeSpaceEfficientAssignment`.
+/// `computeSpaceEfficientAssignment`.
 fn compute_space_efficient_assignment(
     a: &mut LGraphArena,
     label_dummy_infos: &[LabelDummyInfo],
@@ -365,7 +365,7 @@ fn compute_space_efficient_assignment(
     }
 }
 
-/// Java `performTrivialAssignments`. Returns indices into `label_dummy_infos`
+/// `performTrivialAssignments`. Returns indices into `label_dummy_infos`
 /// of the labels that remain unassigned.
 fn perform_trivial_assignments(
     a: &mut LGraphArena,
@@ -387,7 +387,7 @@ fn perform_trivial_assignments(
     remaining_labels
 }
 
-/// Java `assignToWiderLayer`: assigns the given label dummy to the first
+/// `assignToWiderLayer`: assigns the given label dummy to the first
 /// layer wide enough to house it, returning whether that succeeded.
 fn assign_to_wider_layer(
     a: &mut LGraphArena,
@@ -413,7 +413,7 @@ fn assign_to_wider_layer(
     false
 }
 
-/// Java `findPotentiallyWidestLayer`. `sorted_infos` holds indices into
+/// `findPotentiallyWidestLayer`. `sorted_infos` holds indices into
 /// `label_dummy_infos`, sorted descendingly by label width; `label_index`
 /// indexes into `sorted_infos`.
 fn find_potentially_widest_layer(
@@ -470,7 +470,7 @@ fn find_potentially_widest_layer(
 //////////////////////////////////////////////////////////////////////////////
 // Swapping Utilities
 
-/// Java `assignLayer`: assigns the label dummy to the layer with the given
+/// `assignLayer`: assigns the label dummy to the layer with the given
 /// index, updating layer width information.
 fn assign_layer(
     a: &mut LGraphArena,
@@ -505,7 +505,7 @@ fn assign_layer(
     }
 }
 
-/// Java `swapNodes`: swaps the label dummy with the given long edge dummy.
+/// `swapNodes`: swaps the label dummy with the given long edge dummy.
 fn swap_nodes(a: &mut LGraphArena, label_dummy: LNodeId, long_edge_dummy: LNodeId) {
     // Find the layers and the positions inside the layers of the dummy nodes
     let layer1 = a.node(label_dummy).layer.unwrap();
@@ -546,7 +546,7 @@ fn swap_nodes(a: &mut LGraphArena, label_dummy: LNodeId, long_edge_dummy: LNodeI
     }
 }
 
-/// Java `updateLongEdgeSourceLabelDummyInfo`: updates the
+/// `updateLongEdgeSourceLabelDummyInfo`: updates the
 /// `LONG_EDGE_BEFORE_LABEL_DUMMY` property of long edge dummies preceding the
 /// given label dummy node.
 fn update_long_edge_source_label_dummy_info(a: &mut LGraphArena, info: &LabelDummyInfo) {
@@ -565,7 +565,7 @@ fn update_long_edge_source_label_dummy_info(a: &mut LGraphArena, info: &LabelDum
 //////////////////////////////////////////////////////////////////////////////
 // Label Dummy Info Class
 
-/// Java `LabelDummyInfo`: a label dummy along with the long edge dummies to
+/// `LabelDummyInfo`: a label dummy along with the long edge dummies to
 /// its left and right.
 struct LabelDummyInfo {
     /// The label dummy node.
@@ -634,7 +634,7 @@ impl LabelDummyInfo {
         info
     }
 
-    /// Java `gatherLeftLongEdgeDummies`.
+    /// `gatherLeftLongEdgeDummies`.
     fn gather_left_long_edge_dummies(&mut self, a: &LGraphArena) {
         let mut source = self.label_dummy;
         loop {
@@ -650,7 +650,7 @@ impl LabelDummyInfo {
         self.left_long_edge_dummies.reverse();
     }
 
-    /// Java `gatherRightLongEdgeDummies`.
+    /// `gatherRightLongEdgeDummies`.
     fn gather_right_long_edge_dummies(&mut self, a: &LGraphArena) {
         let mut target = self.label_dummy;
         loop {
@@ -663,12 +663,12 @@ impl LabelDummyInfo {
         }
     }
 
-    /// Java `totalDummyCount`.
+    /// `totalDummyCount`.
     fn total_dummy_count(&self) -> i32 {
         self.rightmost_layer_id - self.leftmost_layer_id + 1
     }
 
-    /// Java `ithDummyNode`.
+    /// `ithDummyNode`.
     fn ith_dummy_node(&self, i: usize) -> LNodeId {
         if i < self.left_long_edge_dummies.len() {
             // The i-th dummy is a long edge dummy to the label dummy's left

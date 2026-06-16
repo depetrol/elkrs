@@ -3,8 +3,8 @@
 //! `MrTreeMetaDataProvider` and the enums `OrderWeighting`,
 //! `TreeifyingOrder`, `EdgeRoutingMode`, `CompactionMode`).
 //!
-//! The members of Java's `InternalProperties` are plain struct fields on the
-//! TGraph model in this port (see `graph.rs`); none of their ids collide with
+//! The members of `InternalProperties` are plain struct fields on the
+//! TGraph model (see `graph.rs`); none of their ids collide with
 //! registered layout options, so they are never visible in JSON output.
 
 use elk_core::data::{parse_enum, LayoutMetaDataRegistry, OptionData, OptionKind, Targets};
@@ -37,7 +37,7 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// (Declared in Java but not referenced by the algorithm; the
+    /// (Declared but not referenced by the algorithm; the
     /// `compaction` option is a plain boolean.)
     pub enum CompactionMode {
         NONE,
@@ -47,7 +47,7 @@ elk_enum! {
 }
 
 // -------------------------------------------------------------- MrTreeOptions
-// Core option ids with the algorithm-specific defaults from MrTreeOptions.java.
+// Core option ids with the algorithm-specific defaults.
 
 pub static PADDING: Property<ElkPadding> =
     Property::with_default("org.eclipse.elk.padding", || Spacing::uniform(20.0));
@@ -55,8 +55,6 @@ pub static SPACING_NODE_NODE: Property<f64> =
     Property::with_default("org.eclipse.elk.spacing.nodeNode", || 20.0);
 pub static SPACING_EDGE_NODE: Property<f64> =
     Property::with_default("org.eclipse.elk.spacing.edgeNode", || 3.0);
-/// Java: `private static final double ASPECT_RATIO_DEFAULT = 1.6f;` — float
-/// literal widened to double.
 pub static ASPECT_RATIO: Property<f64> =
     Property::with_default("org.eclipse.elk.aspectRatio", || 1.6f32 as f64);
 pub static PRIORITY: Property<i32> = Property::with_default("org.eclipse.elk.priority", || 1);

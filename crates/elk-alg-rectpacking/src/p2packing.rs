@@ -156,7 +156,6 @@ fn compact(
         if arena.block(block).children.is_empty() {
             eprintln!("There should not be an empty block. Empty blocks are directly removed.");
             arena.row_remove_block(row, block);
-            // Java: blockId--; continue; → net unchanged index.
             something_was_changed = true;
             continue;
         }
@@ -224,7 +223,6 @@ fn compact(
             }
             let nb = match next_block {
                 None => {
-                    // Java: blockId--; continue; → net unchanged index.
                     continue;
                 }
                 Some(nb) => nb,
@@ -639,7 +637,6 @@ impl RowFillingAndCompaction {
                 }
                 arena.row_reset_stacks(current_row);
                 arena.row_mut(current_row).width = target_width;
-                // Java: rowIdx--; → loop increment brings it back to the same row.
                 continue;
             } else {
                 self.adjust_width_and_height(arena, current_row);
@@ -669,7 +666,7 @@ impl RowFillingAndCompaction {
                             self.potential_row_width_decrease_max,
                             last_stack_width + extra,
                         );
-                        // Java quirk: min over the just-updated *max*.
+                        // Quirk: min over the just-updated *max*.
                         self.potential_row_width_decrease_min = f64::min(
                             self.potential_row_width_decrease_max,
                             last_stack_width + extra,
@@ -746,7 +743,7 @@ impl RowFillingAndCompaction {
 // ------------------------------------------------------------------ Compactor
 
 /// Returns the rows of the first packing run;
-/// they take the place of the Java `InternalProperties.ROWS` graph property.
+/// they take the place of the `InternalProperties.ROWS` graph property.
 pub fn compactor(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<RowId> {
     let aspect_ratio: f64 = g.node(graph).properties.get(&options::ASPECT_RATIO);
     let node_node_spacing: f64 = g.node(graph).properties.get(&options::SPACING_NODE_NODE);
@@ -771,14 +768,14 @@ pub fn compactor(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<
         // Calculate new target width and configure clone.
         configure_second_iteration(g, graph, clone, &drawing);
         // Run additional compaction step. (The rows of this run only live on
-        // the clone in Java and are discarded.)
+        // the clone and are discarded.)
         let mut second_it = RowFillingAndCompaction::new(aspect_ratio, node_node_spacing);
         let (new_drawing, _clone_rows) = second_it.start(arena, g, clone, &padding);
 
         // Compare scale measure and choose the best packing.
         let new_sm = new_drawing.scale_measure();
 
-        // Java: newSM >= oldSM && newSM == (double) newSM (a NaN check).
+        // NaN check.
         if new_sm >= old_sm && !new_sm.is_nan() {
             // If the new packing is better apply packing to original graph.
             let clone_children = g.node(clone).children.clone();
@@ -884,7 +881,7 @@ fn copy_position(g: &mut ElkGraph, node: NodeId, other: NodeId) {
 
 // ------------------------------------------------------------- SimplePlacement
 
-/// Returns the rows (Java `ROWS`).
+/// Returns the rows (the `ROWS` structure).
 pub fn simple_placement(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<RowId> {
     let target_width: f64 = g.node(graph).properties.get(&options::TARGET_WIDTH);
     let node_node_spacing: f64 = g.node(graph).properties.get(&options::SPACING_NODE_NODE);
@@ -895,8 +892,7 @@ pub fn simple_placement(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) 
 
     // Initial placement for rectangles in blocks in each row.
     let rows = place(arena, g, &children, target_width, node_node_spacing);
-    // Put every block in its own block stack. (Java also has a dead
-    // `rows == null` branch; `place` never returns null.)
+    // Put every block in its own block stack.
     for &row in &rows {
         let blocks = arena.row(row).children.clone();
         for block in blocks {

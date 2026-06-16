@@ -30,7 +30,7 @@ pub struct CrossHierarchyEdge {
 }
 
 impl CrossHierarchyEdge {
-    /// Java `CrossHierarchyEdge.getActualSource`.
+    /// `CrossHierarchyEdge.getActualSource`.
     fn actual_source(&self, a: &LGraphArena) -> LPortId {
         let src = a.edge(self.edge).source.unwrap();
         let node = a.port(src).node.unwrap();
@@ -44,7 +44,7 @@ impl CrossHierarchyEdge {
         src
     }
 
-    /// Java `CrossHierarchyEdge.getActualTarget`.
+    /// `CrossHierarchyEdge.getActualTarget`.
     fn actual_target(&self, a: &LGraphArena) -> LPortId {
         let tgt = a.edge(self.edge).target.unwrap();
         let node = a.port(tgt).node.unwrap();
@@ -77,7 +77,7 @@ impl JavaCloneable for CrossHierarchyMap {
     const CLONEABLE: bool = false;
 }
 
-/// Internal representation of an external port; mirrors the Java inner class.
+/// Internal representation of an external port.
 struct ExternalPort {
     orig_edges: Vec<LEdgeId>,
     new_edge: LEdgeId,
@@ -87,7 +87,7 @@ struct ExternalPort {
     exported: bool,
 }
 
-/// Mutable state of the preprocessor (the Java instance fields).
+/// Mutable state of the preprocessor.
 struct Preprocessor {
     cross_hierarchy_map: CrossHierarchyMap,
     /// map of ports to their assigned dummy nodes in the nested graphs.
@@ -615,8 +615,7 @@ impl Preprocessor {
     }
 
     /// The created/reused external
-    /// port is recorded in `created` and `current` (mirroring Java's identity
-    /// comparison of the returned port).
+    /// port is recorded in `created` and `current`.
     #[allow(clippy::too_many_arguments)]
     fn introduce_hierarchical_edge_segment(
         &mut self,
@@ -913,7 +912,7 @@ fn create_external_port_properties(a: &LGraphArena, graph: LGraphId) -> Property
     holder
 }
 
-/// Java `PortLabelPlacement.isFixed(Set)`.
+/// `PortLabelPlacement.isFixed(Set)`.
 fn port_label_placement_is_fixed(placement: EnumSet<PortLabelPlacement>) -> bool {
     !placement.contains(PortLabelPlacement::INSIDE)
         && !placement.contains(PortLabelPlacement::OUTSIDE)
@@ -935,7 +934,7 @@ fn get_shallowest_edge_segment(edge_segments: &[CrossHierarchyEdge]) -> i64 {
 }
 
 /// Sort cross-hierarchy edge segments from source to target
-/// (Java `CrossHierarchyEdgeComparator`, applied via a stable sort).
+/// (via a stable sort).
 fn sort_segments(a: &LGraphArena, segments: &mut [CrossHierarchyEdge], top: LGraphId) {
     segments.sort_by(|e1, e2| compare_segments(a, e1, e2, top));
 }
@@ -1100,7 +1099,7 @@ pub fn postprocess(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `LPort.getAbsoluteAnchor`.
+/// `LPort.getAbsoluteAnchor`.
 fn port_absolute_anchor(a: &LGraphArena, port: LPortId) -> KVector {
     let p = a.port(port);
     let node = p.node.unwrap();

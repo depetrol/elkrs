@@ -29,7 +29,7 @@ impl JavaRandom {
         self.next(32)
     }
 
-    /// `nextInt(bound)`, Java's rejection sampling.
+    /// `nextInt(bound)`, with rejection sampling.
     pub fn next_int_bound(&mut self, bound: i32) -> i32 {
         assert!(bound > 0, "bound must be positive");
         if (bound & -bound) == bound {
@@ -64,8 +64,8 @@ impl JavaRandom {
     }
 }
 
-/// `java.util.PriorityQueue`: binary min-heap with Java's exact sift
-/// semantics, so tie-breaking matches the JVM element order.
+/// A binary min-heap replicating `java.util.PriorityQueue`'s exact sift-up /
+/// sift-down order, so tie-breaking matches its element ordering bit-for-bit.
 pub struct JavaPriorityQueue<T> {
     heap: Vec<T>,
     cmp: fn(&T, &T) -> std::cmp::Ordering,
@@ -145,7 +145,7 @@ impl<T> JavaPriorityQueue<T> {
 /// OpenJDK's TimSort, which matters when the comparator carries state (e.g. the
 /// model-order comparators' transitive-ordering maps).
 ///
-/// `cmp(a, b)` returns negative / zero / positive like Java's `compare`.
+/// `cmp(a, b)` returns negative / zero / positive like a comparator's `compare`.
 pub fn tim_sort<T, F>(a: &mut [T], mut cmp: F)
 where
     T: Clone,
@@ -499,7 +499,7 @@ impl TimSortState {
     ) {
         let tmp: Vec<T> = a[base2..base2 + len2].to_vec();
         // Cursors are kept as i64 (they legitimately reach -1 between the
-        // copy and the following decrement, matching the Java code).
+        // copy and the following decrement).
         let mut cursor1: i64 = (base1 + len1 - 1) as i64; // into a
         let mut cursor2: i64 = len2 as i64 - 1; // into tmp
         let mut dest: i64 = (base2 + len2 - 1) as i64; // into a

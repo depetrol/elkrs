@@ -1,8 +1,7 @@
 //! The layered algorithm's
 //! internal graph model (LGraph, LNode, LPort, LEdge, LLabel, Layer).
 //!
-//! Java uses an object graph with bidirectional references; here all
-//! elements live in arenas inside [`LGraphArena`] and reference each other
+//! All elements live in arenas inside [`LGraphArena`] and reference each other
 //! through typed indices. One arena holds every element of a layout run,
 //! including nested graphs (compound layout).
 
@@ -47,7 +46,7 @@ pub use elk_core::options::PortSide as Side;
 
 #[derive(Default, Debug)]
 pub struct LGraph {
-    /// scratch id (Java `LGraphElement.id`)
+    /// scratch id (`LGraphElement.id`)
     pub id: i32,
     pub size: KVector,
     pub padding: Spacing,
@@ -81,9 +80,9 @@ pub struct LNode {
     pub pos: KVector,
     pub size: KVector,
     pub properties: PropertyMap,
-    /// The `InternalProperties.SELF_LOOP_HOLDER` property: Java
-    /// stores a mutable `SelfLoopHolder` object on the node; here it is a
-    /// dedicated field so mutations stay by-reference like in Java.
+    /// The `InternalProperties.SELF_LOOP_HOLDER` property: a mutable
+    /// `SelfLoopHolder` object on the node, stored here as a
+    /// dedicated field so mutations stay by-reference.
     pub self_loop_holder: Option<Box<crate::loops::SelfLoopHolder>>,
     /// cached port side index ranges (after PortListSorter)
     port_side_indices: Option<[(usize, usize); 5]>,
@@ -255,7 +254,7 @@ impl LGraphArena {
         id
     }
 
-    /// Java `new Layer(graph)` — does NOT add the layer to the graph's list.
+    /// `new Layer(graph)` — does NOT add the layer to the graph's list.
     pub fn create_layer(&mut self, graph: LGraphId) -> LayerId {
         let id = LayerId(self.layers.len() as u32);
         self.layers.push(Layer { graph: Some(graph), ..Default::default() });
@@ -381,8 +380,7 @@ impl LGraphArena {
         result
     }
 
-    /// All connected edges (per port: incoming first, then outgoing —
-    /// Java's `CombineIter` order).
+    /// All connected edges (per port: incoming first, then outgoing).
     pub fn node_connected_edges(&self, node: LNodeId) -> Vec<LEdgeId> {
         let mut result = Vec::new();
         for &port in &self.node(node).ports {
@@ -419,7 +417,7 @@ impl LGraphArena {
             .collect()
     }
 
-    /// Input ports (with incoming edges), Java `getPorts(PortType.INPUT)`.
+    /// Input ports (with incoming edges), `getPorts(PortType.INPUT)`.
     pub fn node_input_ports(&self, node: LNodeId) -> Vec<LPortId> {
         self.node(node)
             .ports
@@ -429,7 +427,7 @@ impl LGraphArena {
             .collect()
     }
 
-    /// Output ports (with outgoing edges), Java `getPorts(PortType.OUTPUT)`.
+    /// Output ports (with outgoing edges), `getPorts(PortType.OUTPUT)`.
     pub fn node_output_ports(&self, node: LNodeId) -> Vec<LPortId> {
         self.node(node)
             .ports
@@ -473,8 +471,7 @@ impl LGraphArena {
         n.port_sides_cached = true;
     }
 
-    /// Invalidate the cache (Java has no explicit invalidation; the port
-    /// list sorter re-caches).
+    /// Invalidate the cache (the port list sorter re-caches).
     pub fn node_invalidate_port_side_cache(&mut self, node: LNodeId) {
         let n = self.node_mut(node);
         n.port_side_indices = None;
@@ -544,8 +541,7 @@ impl LGraphArena {
         )
     }
 
-    /// All nodes of the graph: layerless nodes plus nodes in layers
-    /// (matches the common Java iteration patterns).
+    /// All nodes of the graph: layerless nodes plus nodes in layers.
     pub fn graph_all_nodes(&self, graph: LGraphId) -> Vec<LNodeId> {
         let g = self.graph(graph);
         let mut result = g.layerless_nodes.clone();

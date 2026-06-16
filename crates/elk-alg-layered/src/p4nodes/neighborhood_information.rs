@@ -5,13 +5,13 @@ use crate::graph::{LEdgeId, LGraphArena, LGraphId, LNodeId, LayerId};
 use crate::options_gen as lopts;
 
 /// Scratch id of a node (assigned by [`NeighborhoodInformation::build_for`]);
-/// used to index the placer's per-node arrays (Java `n.id`).
+/// used to index the placer's per-node arrays (`n.id`).
 #[inline]
 pub fn nid(a: &LGraphArena, n: LNodeId) -> usize {
     a.node(n).id as usize
 }
 
-/// Scratch id of a layer (Java `l.id`).
+/// Scratch id of a layer (`l.id`).
 #[inline]
 pub fn lid(a: &LGraphArena, l: LayerId) -> usize {
     a.layer(l).id as usize
@@ -101,8 +101,7 @@ impl NeighborhoodInformation {
                     }
                 }
 
-                // Java uses a stable sort with a comparator on the neighbor's
-                // index within its layer.
+                // stable sort by the neighbor's index within its layer.
                 result.sort_by_key(|&(neighbor, _)| self.node_index[nid(a, neighbor)]);
 
                 self.left_neighbors.push(result);

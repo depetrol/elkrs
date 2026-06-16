@@ -1,7 +1,6 @@
 //! Arena-based ELK graph model mirroring `org.eclipse.elk.graph`.
 //!
-//! Java uses an EMF object graph with bidirectional containment references.
-//! Here all elements live in arenas inside [`ElkGraph`] and reference each
+//! All elements live in arenas inside [`ElkGraph`] and reference each
 //! other through typed indices, which keeps ownership simple and iteration
 //! deterministic.
 
@@ -27,15 +26,14 @@ id_type!(EdgeId);
 id_type!(LabelId);
 id_type!(SectionId);
 
-/// A node or a port — anything an edge can connect to
-/// (Java `ElkConnectableShape`).
+/// A node or a port — anything an edge can connect to.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum ShapeId {
     Node(NodeId),
     Port(PortId),
 }
 
-/// Any graph element that can own labels (Java `ElkGraphElement`).
+/// Any graph element that can own labels.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum ElementId {
     Node(NodeId),
@@ -44,7 +42,7 @@ pub enum ElementId {
     Label(LabelId),
 }
 
-/// Shape geometry shared by nodes, ports and labels (Java `ElkShape`).
+/// Shape geometry shared by nodes, ports and labels.
 #[derive(Clone, Default, Debug)]
 pub struct Shape {
     pub x: f64,
@@ -73,7 +71,7 @@ pub struct ElkNode {
     pub parent: Option<NodeId>,
     pub children: Vec<NodeId>,
     pub ports: Vec<PortId>,
-    /// Edges contained in this node (Java `containedEdges`); for edges, the
+    /// Edges contained in this node; for edges, the
     /// containing node is the lowest common ancestor rule's assigned parent.
     pub contained_edges: Vec<EdgeId>,
     /// Edges that have this node among their sources/targets.
@@ -237,9 +235,8 @@ impl ElkGraph {
         id
     }
 
-    /// Creates an edge contained in `containing_node` (Java
-    /// `ElkGraphUtil.createEdge`). Use [`ElkGraph::connect`] to hook up
-    /// endpoints, or [`ElkGraph::create_simple_edge`] for both at once.
+    /// Creates an edge contained in `containing_node`. Use [`ElkGraph::connect`]
+    /// to hook up endpoints, or [`ElkGraph::create_simple_edge`] for both at once.
     pub fn create_edge(&mut self, containing_node: Option<NodeId>) -> EdgeId {
         let id = EdgeId(self.edges.len() as u32);
         self.edges.push(ElkEdge { containing_node, ..Default::default() });
@@ -265,7 +262,7 @@ impl ElkGraph {
         }
     }
 
-    /// Java `ElkGraphUtil.createSimpleEdge`: connects source and target and
+    /// Connects source and target and
     /// sets the containing node to their lowest common ancestor ("best
     /// containment").
     pub fn create_simple_edge(&mut self, source: ShapeId, target: ShapeId) -> EdgeId {
@@ -285,8 +282,7 @@ impl ElkGraph {
 
     // ----------------------------------------------------------- navigation
 
-    /// The node a connectable shape belongs to (Java
-    /// `ElkGraphUtil.connectableShapeToNode`).
+    /// The node a connectable shape belongs to.
     pub fn shape_node(&self, shape: ShapeId) -> NodeId {
         match shape {
             ShapeId::Node(n) => n,
@@ -294,7 +290,7 @@ impl ElkGraph {
         }
     }
 
-    /// The port if the shape is a port (Java `connectableShapeToPort`).
+    /// The port if the shape is a port.
     pub fn shape_port(&self, shape: ShapeId) -> Option<PortId> {
         match shape {
             ShapeId::Port(p) => Some(p),
@@ -324,7 +320,7 @@ impl ElkGraph {
         depth
     }
 
-    /// Recomputes the edge's containment (Java `ElkGraphUtil.updateContainment`).
+    /// Recomputes the edge's containment.
     pub fn update_containment(&mut self, edge: EdgeId) {
         let best = self.find_best_edge_containment(edge);
         let old = self.edge(edge).containing_node;
@@ -408,8 +404,7 @@ impl ElkGraph {
         result
     }
 
-    /// First section of the edge, creating one if absent
-    /// (Java `ElkGraphUtil.firstEdgeSection`).
+    /// First section of the edge, creating one if absent.
     pub fn first_edge_section(&mut self, edge: EdgeId, reset: bool) -> SectionId {
         if let Some(&s) = self.edge(edge).sections.first() {
             if reset {
@@ -437,8 +432,7 @@ impl ElkGraph {
 
     /// True if the edge connects two elements with the same parent node
     /// or a node to one of its descendants — i.e. no hierarchy crossing
-    /// (mirrors Java `ElkGraphUtil.isInsideSelfLoop` & co. usage patterns;
-    /// hierarchy checks are refined where algorithms need them).
+    /// (hierarchy checks are refined where algorithms need them).
     pub fn is_hierarchical(&self, edge: EdgeId) -> bool {
         let e = self.edge(edge);
         let mut parents = e

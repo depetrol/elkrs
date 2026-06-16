@@ -116,8 +116,7 @@ impl LayoutProvider for FixedLayoutProvider {
     }
 }
 
-/// Java `ElkGraphUtil.allOutgoingEdges`: edges with the node or one of its
-/// ports as source.
+/// Edges with the node or one of its ports as source.
 pub fn all_outgoing_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     let mut edges = g.node(node).outgoing_edges.clone();
     for &port in &g.node(node).ports {
@@ -126,7 +125,7 @@ pub fn all_outgoing_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     edges
 }
 
-/// Java `ElkGraphUtil.allIncomingEdges`.
+/// Edges with the node or one of its ports as target.
 pub fn all_incoming_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     let mut edges = g.node(node).incoming_edges.clone();
     for &port in &g.node(node).ports {
@@ -148,8 +147,8 @@ fn process_edge(g: &mut ElkGraph, edge: EdgeId, _edge_routing: EdgeRouting) -> R
             if g.edge(edge).sections.is_empty() {
                 g.create_section(edge);
             } else if g.edge(edge).sections.len() > 1 {
-                // Java hits an IllegalStateException here (ListIterator.remove
-                // without next); replicate by failing loudly.
+                // An edge with multiple sections is an invalid state here;
+                // fail loudly.
                 return Err("FixedLayoutProvider: edge with multiple sections".to_string());
             }
             let section = g.edge(edge).sections[0];

@@ -81,7 +81,7 @@ fn transform_edges(
     for &elknode in &g.node(parent_node).children {
         for elkedge in all_outgoing_edges(g, elknode) {
             // exclude edges that pass hierarchy bounds and self-loops
-            // (Java checks isHierarchical twice instead of isHyperedge,
+            // (isHierarchical is checked twice instead of isHyperedge,
             // so hyperedges are NOT excluded; targets[0] is used)
             if !g.is_hierarchical(elkedge) && !is_selfloop(g, elkedge) {
                 // find the corresponding source and target tNode of edge
@@ -136,7 +136,7 @@ pub fn apply_layout(arena: &TArena, tgraph: &TGraph, g: &mut ElkGraph) {
         if let Some(elknode) = arena.node(tnode).origin {
             let pos = arena.node(tnode).pos;
             g.node_mut(elknode).shape.set_location(pos.x, pos.y);
-            // Java copies the entire tNode property map back; internal
+            // The entire tNode property map is copied back; internal
             // (unregistered) entries are invisible in JSON output, so only
             // the PropertyMap (which includes the registered treeLevel) is
             // copied here.
@@ -149,7 +149,6 @@ pub fn apply_layout(arena: &TArena, tgraph: &TGraph, g: &mut ElkGraph) {
     for &tedge in &tgraph.edges {
         if let Some(elkedge) = arena.edge(tedge).origin {
             let bend_points = &arena.edge(tedge).bend_points;
-            // Java: ElkGraphUtil.firstEdgeSection(elkedge, true, true)
             let edge_section = g.first_edge_section(elkedge, true);
             g.edge_mut(elkedge).sections.truncate(1);
             elkutil::apply_vector_chain(g, bend_points, edge_section);

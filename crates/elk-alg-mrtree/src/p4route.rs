@@ -72,7 +72,7 @@ fn middle_to_middle_edge_route(arena: &mut TArena, tedge: TEdgeId) {
     chain.0.insert(0, source_point);
     chain.0.push(target_point);
 
-    // correct the source and target points (in Java these are the aliased
+    // correct the source and target points (these are the aliased
     // first/last chain elements, mutated in order)
     let next = chain.0[1];
     let mut first = chain.0[0];
@@ -101,8 +101,8 @@ fn avoid_overlap(arena: &mut TArena, graph: &TGraph) {
 
 // --------------------------------------------- MultiLevelEdgeNodeNodeGap
 
-/// The Java class registers the bend
-/// point `KVector` objects by reference; this port stores `(edge, index)`
+/// The bend
+/// point `KVector` objects are registered by reference; this stores `(edge, index)`
 /// of the first of the two bend points instead (the index stays valid since
 /// later additions only append to the chain).
 struct MultiLevelEdgeNodeNodeGap {
@@ -333,7 +333,7 @@ fn avoid_overlap_special_edges(
                             continue 'levels;
                         }
                         // (the `first.x` in the second comparison replicates
-                        // a typo in the Java original)
+                        // a typo in the original)
                         if i == 0 && start.y < first.x && arena.node(e_target).pos.y < first.y {
                             continue 'levels;
                         }
@@ -644,7 +644,6 @@ fn avoid_overlap_set_start_points(
                 p_level = KVector::new(x, level_end_coord);
                 p_node = KVector::new(x, node.pos.y + node.size.y);
             }
-            // Java: addFirst(level point); addFirst(node point)
             let chain = &mut arena.edge_mut(out).bend_points;
             chain.0.insert(0, p_level);
             chain.0.insert(0, p_node);

@@ -318,8 +318,7 @@ fn constrained_inside_port_label_placement<G: AdapterGraph>(
         overlap_remover.remove_overlaps()
     };
 
-    // Write the moved rectangles back into the cell system (in Java the
-    // remover mutates the cell rectangles directly)
+    // Write the moved rectangles back into the cell system
     for &(index, handle) in &handles {
         let port_label_cell = node_context.port_contexts[index].port_label_cell.unwrap();
         *node_context.cells.rect_mut(port_label_cell) = overlap_remover.rectangle(handle);

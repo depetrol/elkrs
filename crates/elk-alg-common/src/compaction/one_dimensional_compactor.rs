@@ -5,14 +5,14 @@ use super::{
     set_add, CGraph, CGroupId, CNodeId, DefaultSpacingsHandler, LockFun, SpacingsHandler,
 };
 
-/// A constraint calculation algorithm (Java `IConstraintCalculationAlgorithm`).
+/// A constraint calculation algorithm.
 /// Implemented for trait objects so subclasses (e.g. the edge-aware scanline)
 /// can hold their own state.
 pub trait ConstraintCalculationAlgorithm {
     fn calculate_constraints(&mut self, compactor: &mut OneDimensionalCompactor);
 }
 
-/// A compaction algorithm (Java `ICompactionAlgorithm`).
+/// A compaction algorithm.
 pub trait CompactionAlgorithm {
     fn compact(&mut self, compactor: &mut OneDimensionalCompactor);
 }
@@ -41,7 +41,7 @@ impl ConstraintCalculationAlgorithm for ScanlineConstraintCalculator {
     }
 }
 
-/// Implements the compaction of a [`CGraph`] (Java `OneDimensionalCompactor`).
+/// Implements the compaction of a [`CGraph`].
 pub struct OneDimensionalCompactor {
     pub cgraph: CGraph,
     pub lock_fun: Option<LockFun<'static>>,
@@ -53,7 +53,7 @@ pub struct OneDimensionalCompactor {
 }
 
 impl OneDimensionalCompactor {
-    /// Java constructor.
+    /// Constructor.
     pub fn new(cgraph: CGraph) -> Self {
         let mut odc = OneDimensionalCompactor {
             cgraph,
@@ -272,7 +272,7 @@ impl OneDimensionalCompactor {
         self
     }
 
-    /// Java `isLocked(CNode, Direction)`.
+    /// Whether the given node is locked in the given direction.
     pub fn is_locked_node(&self, node: CNodeId, dir: Direction) -> bool {
         if let Some(f) = &self.lock_fun {
             return f(&self.cgraph, node, dir);
@@ -280,7 +280,7 @@ impl OneDimensionalCompactor {
         false
     }
 
-    /// Java `isLocked(CGroup, Direction)`.
+    /// Whether the given group is locked in the given direction.
     pub fn is_locked_group(&self, group: CGroupId, dir: Direction) -> bool {
         for &n in &self.cgraph.cgroups[group].cnodes {
             if self.is_locked_node(n, dir) {
@@ -295,7 +295,7 @@ impl OneDimensionalCompactor {
         self
     }
 
-    /// Java `calculateGroupOffsets`.
+    /// Calculates the offsets of all groups.
     pub fn calculate_group_offsets(&mut self) -> &mut Self {
         let group_count = self.cgraph.cgroups.len();
         for g in 0..group_count {

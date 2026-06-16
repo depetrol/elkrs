@@ -6,7 +6,7 @@ use crate::options::{
     self, CHILD_AREA_HEIGHT, CHILD_AREA_WIDTH, MARGINS, NODE_SIZE_FIXED_GRAPH_SIZE, PADDING,
 };
 
-/// Java `Double.MIN_VALUE` (smallest positive double, not the most negative).
+/// `Double.MIN_VALUE` (smallest positive double, not the most negative).
 const JAVA_DOUBLE_MIN_VALUE: f64 = 4.9406564584124654e-324;
 
 /// Calculate the size of the graph and

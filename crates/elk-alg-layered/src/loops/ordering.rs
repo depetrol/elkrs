@@ -26,7 +26,7 @@ impl Target {
     }
 }
 
-/// Java `Target.values()` in declaration order.
+/// `Target.values()` in declaration order.
 const ASSIGNMENT_TARGETS: [Target; 8] = [
     Target { first_side: PortSide::NORTH, second_side: PortSide::NORTH },
     Target { first_side: PortSide::SOUTH, second_side: PortSide::SOUTH },
@@ -52,7 +52,7 @@ pub fn assign_port_sides(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     }
 }
 
-/// Returns the loop's hidden self loop ports (Java `hiddenSelfLoopPortStream`).
+/// Returns the loop's hidden self loop ports (`hiddenSelfLoopPortStream`).
 fn hidden_sl_ports(sl_holder: &SelfLoopHolder, sl_loop: &SelfHyperLoop) -> Vec<SlPortIdx> {
     sl_loop
         .sl_ports
@@ -62,7 +62,7 @@ fn hidden_sl_ports(sl_holder: &SelfLoopHolder, sl_loop: &SelfHyperLoop) -> Vec<S
         .collect()
 }
 
-/// Java `assignToNorthSide`.
+/// `assignToNorthSide`.
 fn assign_to_north_side(a: &mut LGraphArena, sl_holder: &SelfLoopHolder) {
     for sl_loop in &sl_holder.sl_hyper_loops {
         for sl_port in hidden_sl_ports(sl_holder, sl_loop) {
@@ -71,7 +71,7 @@ fn assign_to_north_side(a: &mut LGraphArena, sl_holder: &SelfLoopHolder) {
     }
 }
 
-/// Java `assignToNorthOrSouthSide`: greedy distribution onto north / south.
+/// `assignToNorthOrSouthSide`: greedy distribution onto north / south.
 fn assign_to_north_or_south_side(a: &mut LGraphArena, sl_holder: &SelfLoopHolder) {
     let mut north_ports = 0usize;
     let mut south_ports = 0usize;
@@ -96,7 +96,7 @@ fn assign_to_north_or_south_side(a: &mut LGraphArena, sl_holder: &SelfLoopHolder
     }
 }
 
-/// Java `assignToAllSides`.
+/// `assignToAllSides`.
 fn assign_to_all_sides(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     // Obtain a list of self hyper loops, ordered descendingly by the number of
     // involved ports
@@ -115,7 +115,7 @@ fn assign_to_all_sides(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     }
 }
 
-/// Java `assignToTarget`.
+/// `assignToTarget`.
 fn assign_to_target(
     a: &mut LGraphArena,
     sl_holder: &mut SelfLoopHolder,
@@ -210,8 +210,8 @@ pub fn restore_ports(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     sl_holder.are_ports_hidden = false;
 }
 
-/// Java `gatherSelfLoopsByType`: loop indices per [`SelfLoopType`], in holder
-/// order (Java `ArrayListMultimap`).
+/// `gatherSelfLoopsByType`: loop indices per [`SelfLoopType`], in holder
+/// order (`ArrayListMultimap`).
 fn gather_self_loops_by_type(sl_holder: &SelfLoopHolder) -> [Vec<SlLoopIdx>; 5] {
     let mut loops: [Vec<SlLoopIdx>; 5] = Default::default();
     for (idx, sl_loop) in sl_holder.sl_hyper_loops.iter().enumerate() {
@@ -230,7 +230,7 @@ fn type_ordinal(t: SelfLoopType) -> usize {
     }
 }
 
-/// Java `processOneSideLoops`.
+/// `processOneSideLoops`.
 fn process_one_side_loops(
     a: &LGraphArena,
     sl_holder: &SelfLoopHolder,
@@ -295,7 +295,7 @@ fn process_one_side_loops(
     }
 }
 
-/// Java `computePortListSplitIndex`. Note: this preserves the Java
+/// `computePortListSplitIndex`. Note: this preserves the original
 /// implementation verbatim, including the quirk that the second search also
 /// tests for a *positive* (not non-negative) net flow and reuses
 /// `positiveNetFlowIndex` in its bounds check.
@@ -332,7 +332,7 @@ fn compute_port_list_split_index(sl_holder: &SelfLoopHolder, sorted_ports: &[SlP
     sorted_ports.len() / 2
 }
 
-/// Java `processTwoSideCornerLoops`.
+/// `processTwoSideCornerLoops`.
 fn process_two_side_corner_loops(
     sl_holder: &SelfLoopHolder,
     sl_loops_by_type: &[Vec<SlLoopIdx>; 5],
@@ -352,7 +352,7 @@ fn process_two_side_corner_loops(
     }
 }
 
-/// Java `processTwoSideOpposingLoops`.
+/// `processTwoSideOpposingLoops`.
 fn process_two_side_opposing_loops(
     sl_holder: &SelfLoopHolder,
     sl_loops_by_type: &[Vec<SlLoopIdx>; 5],
@@ -373,7 +373,7 @@ fn process_two_side_opposing_loops(
     }
 }
 
-/// Java `sortedTwoSideLoopPortSides`: the port sides spanned by a two-side
+/// `sortedTwoSideLoopPortSides`: the port sides spanned by a two-side
 /// self loop in a clockwise order.
 pub fn sorted_two_side_loop_port_sides(sl_loop: &SelfHyperLoop) -> [PortSide; 2] {
     let mut sides = [sl_loop.sl_port_sides[0], sl_loop.sl_port_sides[1]];
@@ -394,7 +394,7 @@ const ESW: [PortSide; 3] = [PortSide::EAST, PortSide::SOUTH, PortSide::WEST];
 const SWN: [PortSide; 3] = [PortSide::SOUTH, PortSide::WEST, PortSide::NORTH];
 const WNE: [PortSide; 3] = [PortSide::WEST, PortSide::NORTH, PortSide::EAST];
 
-/// Java `processThreeSideLoops`.
+/// `processThreeSideLoops`.
 fn process_three_side_loops(
     sl_holder: &SelfLoopHolder,
     sl_loops_by_type: &[Vec<SlLoopIdx>; 5],
@@ -417,7 +417,7 @@ fn process_three_side_loops(
     }
 }
 
-/// Java `determineLoopConstellation`.
+/// `determineLoopConstellation`.
 fn determine_loop_constellation(sl_loop: &SelfHyperLoop) -> [PortSide; 3] {
     let port_sides: EnumSet<PortSide> = sl_loop.sl_port_sides.iter().copied().collect();
 
@@ -433,7 +433,7 @@ fn determine_loop_constellation(sl_loop: &SelfHyperLoop) -> [PortSide; 3] {
     }
 }
 
-/// Java `processFourSideLoops`.
+/// `processFourSideLoops`.
 fn process_four_side_loops(
     sl_holder: &SelfLoopHolder,
     sl_loops_by_type: &[Vec<SlLoopIdx>; 5],
@@ -449,7 +449,7 @@ fn process_four_side_loops(
     }
 }
 
-/// Java `addToTargetArea(SelfHyperLoop, ...)`: adds the ports of the given
+/// `addToTargetArea(SelfHyperLoop, ...)`: adds the ports of the given
 /// loop on the given side to one of the target areas.
 fn add_loop_to_target_area(
     sl_holder: &SelfLoopHolder,
@@ -463,7 +463,7 @@ fn add_loop_to_target_area(
     add_to_target_area(sl_holder, &ports, port_side, area, add_mode, target_areas);
 }
 
-/// Java `addToTargetArea(Collection, ...)`: adds a collection of ports to one
+/// `addToTargetArea(Collection, ...)`: adds a collection of ports to one
 /// of the target areas.
 fn add_to_target_area(
     sl_holder: &SelfLoopHolder,
@@ -493,7 +493,7 @@ fn add_to_target_area(
     }
 }
 
-/// Java private `restorePorts(SelfLoopHolder)`: builds the node's new port
+/// `restorePorts(SelfLoopHolder)` (private): builds the node's new port
 /// list, inserting the target areas in between the regular ports.
 fn do_restore_ports(a: &mut LGraphArena, sl_holder: &SelfLoopHolder, target_areas: &TargetAreas) {
     let l_node = sl_holder.l_node;
@@ -543,7 +543,7 @@ fn do_restore_ports(a: &mut LGraphArena, sl_holder: &SelfLoopHolder, target_area
     add_all(a, sl_holder, area(PortSide::WEST, PortSideArea::End), l_node);
 }
 
-/// Java `addAll`: adds the `LPort`s of all of the [`SelfLoopPort`]s to the
+/// `addAll`: adds the `LPort`s of all of the [`SelfLoopPort`]s to the
 /// given node by calling `LPort.setNode(LNode)`, which automatically adds
 /// them to the node's port list.
 fn add_all(a: &mut LGraphArena, sl_holder: &SelfLoopHolder, sl_ports: &[SlPortIdx], l_node: LNodeId) {
@@ -552,7 +552,7 @@ fn add_all(a: &mut LGraphArena, sl_holder: &SelfLoopHolder, sl_ports: &[SlPortId
     }
 }
 
-/// Java `addAllThat`: adds all ports from the list that satisfy the given
+/// `addAllThat`: adds all ports from the list that satisfy the given
 /// predicate, starting at the given index, until the first port that does not
 /// satisfy the predicate anymore. Returns that port's index.
 fn add_all_that(
@@ -573,7 +573,7 @@ fn add_all_that(
     l_ports.len()
 }
 
-/// Java `isNorthSouthPortWithWestOrWestEastConnections`.
+/// `isNorthSouthPortWithWestOrWestEastConnections`.
 fn is_north_south_port_with_west_or_west_east_connections(a: &LGraphArena, l_port: LPortId) -> bool {
     let connections = north_south_port_connection_sides(a, l_port);
     let east_connections = connections.contains(PortSide::EAST);
@@ -582,13 +582,13 @@ fn is_north_south_port_with_west_or_west_east_connections(a: &LGraphArena, l_por
     west_connections || (west_connections && east_connections)
 }
 
-/// Java `isNorthSouthPortWithEastConnections`.
+/// `isNorthSouthPortWithEastConnections`.
 fn is_north_south_port_with_east_connections(a: &LGraphArena, l_port: LPortId) -> bool {
     let connections = north_south_port_connection_sides(a, l_port);
     connections.contains(PortSide::EAST)
 }
 
-/// Java `northSouthPortConnectionSides`: gathers the sides to which the given
+/// `northSouthPortConnectionSides`: gathers the sides to which the given
 /// north / south port has connections.
 fn north_south_port_connection_sides(a: &LGraphArena, l_port: LPortId) -> EnumSet<PortSide> {
     let mut connection_sides: EnumSet<PortSide> = EnumSet::none();

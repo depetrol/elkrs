@@ -9,15 +9,12 @@ use crate::loops::routing;
 use crate::options_gen as lopts;
 
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
-    // Java `routerForGraph`
+    // `routerForGraph`
     let router_kind = match a.graph(graph).properties.get(&lopts::EDGE_ROUTING) {
         EdgeRouting::POLYLINE => routing::SelfLoopRouterKind::Polyline,
         EdgeRouting::SPLINES => routing::SelfLoopRouterKind::Spline,
         _ => routing::SelfLoopRouterKind::Orthogonal,
     };
-
-    // Java: label manager handling is not ported; it only applies when a
-    // label manager is configured on the graph.
 
     // Process every node that actually has self loops
     let layers = a.graph(graph).layers.clone();

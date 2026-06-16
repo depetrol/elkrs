@@ -66,8 +66,7 @@ fn edge_length(g: &ElkGraph, root: NodeId) -> f64 {
     edge_length
 }
 
-/// Java NPEs when the
-/// target's `POSITION` is unset; here the unset case yields `(0, 0)`.
+/// When the target's `POSITION` is unset the result is `(0, 0)`.
 fn edge_length_position(g: &ElkGraph, root: NodeId) -> f64 {
     let mut edge_length = 0.0;
     let root_shape = &g.node(root).shape;
@@ -79,7 +78,7 @@ fn edge_length_position(g: &ElkGraph, root: NodeId) -> f64 {
 
         let position: KVector = g.node(target).properties.get(&POSITION);
         let root_x = root_shape.x + position.x + root_shape.width / 2.0;
-        // Java uses the full height here (not height / 2), preserved as is.
+        // The full height is used here (not height / 2), preserved as is.
         let root_y = root_shape.y + position.y + root_shape.height;
 
         let vector_x = target_x - root_x;

@@ -21,7 +21,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     algorithms.register(AlgorithmData {
         id: "org.eclipse.elk.topdownpacking",
         name: "ELK Top-down Packing",
-        // TopdownpackingOptions.java registers no supportedFeatures.
+        // no supportedFeatures.
         features: EnumSet::none(),
         create: || Box::new(provider::TopdownpackingLayoutProvider),
     });

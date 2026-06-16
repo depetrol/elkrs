@@ -6,7 +6,7 @@
 use crate::graph::{LGraphArena, LGraphId, LNodeId, NodeType};
 use crate::options_gen as lopts;
 
-/// Recommended value ranges suggested by Nikolov et al. (Java `Range.closed`).
+/// Recommended value ranges suggested by Nikolov et al.
 const UPPERBOUND_ON_WIDTH_RANGE: (i32, i32) = (1, 4);
 const COMPENSATOR_RANGE: (i32, i32) = (1, 2);
 
@@ -62,15 +62,14 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     avg_size /= num_of_nodes as f64;
 
     // Precalculate the successors of all nodes (sets of node ids, indexed by
-    // node id; Java uses HashSet but only queries containment).
+    // node id; only membership is queried).
     let node_successors: Vec<Vec<usize>> = precalc_successors(a, &not_inserted);
 
     // Guarantee ConditionSelect from the paper: order the nodes by descending
-    // maximum out-degree in advance (Java: stable sort with
-    // Collections.reverseOrder(MinOutgoingEdgesComparator)).
+    // maximum out-degree in advance (stable sort by descending out-degree).
     let mut sorted: Vec<LNodeId> = not_inserted.clone();
     sorted.sort_by(|&o1, &o2| {
-        // reverseOrder: compare(o2, o1) of the ascending comparator
+        // reverse order: compare(o2, o1) of the ascending comparator
         let outs1 = out_degree[a.node(o2).id as usize];
         let outs2 = out_degree[a.node(o1).id as usize];
         outs1.cmp(&outs2)
@@ -151,7 +150,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 }
 
 /// Per-node sets of successor
-/// node ids without self-loops (deduplicated like Java's HashSet; only
+/// node ids without self-loops (deduplicated; only
 /// membership is queried, so the order is irrelevant).
 fn precalc_successors(a: &LGraphArena, nodes: &[LNodeId]) -> Vec<Vec<usize>> {
     let mut successors = Vec::with_capacity(nodes.len());
@@ -194,7 +193,7 @@ fn compute_min_width_layering(
     let mut out_deg = 0i32;
 
     // nodes already placed in layers determined before the current layer,
-    // indexed by node id (Java: HashSet alreadyPlacedInOtherLayers)
+    // indexed by node id
     let mut already_placed_in_other_layers = vec![false; norm_size.len()];
 
     let mut current_layer: Vec<LNodeId> = Vec::new();

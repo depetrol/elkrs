@@ -3,8 +3,7 @@
 //! elk-alg-common so it can operate on both `ElkGraph` and the layered
 //! algorithm's `LGraph`.
 //!
-//! Java hands out per-element adapter objects; here a single trait exposes
-//! everything through copyable element ids.
+//! A single trait exposes everything through copyable element ids.
 
 use elk_graph::graph::{EdgeId, ElkGraph, LabelId, NodeId, PortId, ShapeId};
 use elk_graph::math::{KVector, Spacing};
@@ -42,8 +41,8 @@ pub trait AdapterGraph {
     fn node_ports(&self, n: Self::N) -> Vec<Self::P>;
     fn node_incoming_edges(&self, n: Self::N) -> Vec<Self::E>;
     fn node_outgoing_edges(&self, n: Self::N) -> Vec<Self::E>;
-    /// Java `NodeAdapter.sortPortList()`: clockwise order (used by ElkGraph
-    /// adapter; the LGraph adapter sorts by the PortListSorter comparator).
+    /// Clockwise order (used by ElkGraph adapter; the LGraph adapter sorts by
+    /// the PortListSorter comparator).
     fn sort_port_list(&mut self, n: Self::N);
     fn is_compound_node(&self, n: Self::N) -> bool;
     fn node_padding(&self, n: Self::N) -> Spacing;
@@ -63,7 +62,6 @@ pub trait AdapterGraph {
     fn set_port_margin(&mut self, p: Self::P, margin: Spacing);
     fn port_incoming_edges(&self, p: Self::P) -> Vec<Self::E>;
     fn port_outgoing_edges(&self, p: Self::P) -> Vec<Self::E>;
-    /// Java `PortAdapter.hasCompoundConnections`.
     fn port_has_compound_connections(&self, p: Self::P) -> bool;
 
     // ------------------------------------------------------------ label
@@ -84,8 +82,8 @@ pub trait AdapterGraph {
 pub struct ElkGraphAdapter<'g> {
     pub elk: &'g mut ElkGraph,
     pub parent: NodeId,
-    /// Java node adapters can have a *null* parent graph adapter
-    /// (`ElkGraphAdapters.adaptSingleNode` of a node without a parent);
+    /// Node adapters can have a *null* parent graph adapter
+    /// (`adaptSingleNode` of a node without a parent);
     /// graph-level property lookups then fall back to the property defaults
     /// without materializing them on any real element. This scratch map
     /// absorbs those lookups.
@@ -149,7 +147,7 @@ impl<'g> AdapterGraph for ElkGraphAdapter<'g> {
         self.elk.node(n).ports.clone()
     }
     fn node_incoming_edges(&self, n: NodeId) -> Vec<EdgeId> {
-        // Java: ElkGraphUtil.allIncomingEdges (node + its ports)
+        // node + its ports
         let mut edges = self.elk.node(n).incoming_edges.clone();
         for &port in &self.elk.node(n).ports {
             edges.extend(self.elk.port(port).incoming_edges.iter().copied());
@@ -308,8 +306,8 @@ fn default_port_comparator(elk: &ElkGraph, p1: PortId, p2: PortId) -> std::cmp::
     }
 }
 
-/// Edge incident to a node or its ports (Java `ElkGraphAdapters` builds these
-/// lists for node adapters); free function shared by users of the adapter.
+/// Edge incident to a node or its ports; free function shared by users of the
+/// adapter.
 pub fn all_incident_shapes(_elk: &ElkGraph, _shape: ShapeId) -> Vec<ShapeId> {
     unimplemented!("extend when needed")
 }

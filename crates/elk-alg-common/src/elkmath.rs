@@ -184,8 +184,7 @@ const FACT_TABLE: [i64; 21] = [
     2432902008176640000,
 ];
 
-/// Panics (Java `IllegalArgumentException`) if
-/// `x < 0` or `x > 20`.
+/// Panics if `x < 0` or `x > 20`.
 pub fn factl(x: i32) -> i64 {
     if x < 0 || x as usize >= FACT_TABLE.len() {
         panic!("The input must be between 0 and {}", FACT_TABLE.len());
@@ -193,8 +192,7 @@ pub fn factl(x: i32) -> i64 {
     FACT_TABLE[x as usize]
 }
 
-/// Panics (Java `IllegalArgumentException`) if
-/// `x < 0`; uses Stirling's approximation for large values.
+/// Panics if `x < 0`; uses Stirling's approximation for large values.
 pub fn factd(x: i32) -> f64 {
     if x < 0 {
         panic!("The input must be positive");
@@ -207,8 +205,7 @@ pub fn factd(x: i32) -> f64 {
     }
 }
 
-/// Panics (Java `IllegalArgumentException`) on
-/// negative input or `k > n`.
+/// Panics on negative input or `k > n`.
 pub fn binomiall(n: i32, k: i32) -> i64 {
     if n < 0 || k < 0 {
         panic!("k and n must be positive");
@@ -225,8 +222,7 @@ pub fn binomiall(n: i32, k: i32) -> i64 {
     }
 }
 
-/// Panics (Java `IllegalArgumentException`) on
-/// negative input or `k > n`.
+/// Panics on negative input or `k > n`.
 pub fn binomiald(n: i32, k: i32) -> f64 {
     if n < 0 || k < 0 {
         panic!("k and n must be positive");
@@ -364,9 +360,7 @@ const CUBIC_Z: [[f64; 4]; 3] = [
     [0.1, 0.3, 0.6, 1.0],
 ];
 
-/// Distance from a cubic spline
-/// curve to the point `needle`. (Faithfully reproduces Java's
-/// `Math.sqrt(pn.distance(needle))` return value.)
+/// Distance from a cubic spline curve to the point `needle`.
 pub fn distance_from_bezier_segment(
     start: KVector,
     c1: KVector,

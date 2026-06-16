@@ -15,7 +15,7 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
         // Using the target angle as our base alignment we want to further
         // rotate the layout such that a line following the target angle runs
         // directly through the middle of the wedge between the first and last
-        // node. (Java casts the targets to ElkNode; a port here would be a
+        // node. (The targets are cast to ElkNode; a port here would be a
         // ClassCastException.)
         let outgoing = &g.node(root).outgoing_edges;
         let as_node = |shape: ShapeId| match shape {

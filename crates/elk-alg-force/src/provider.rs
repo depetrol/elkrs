@@ -17,7 +17,7 @@ impl LayoutProvider for ForceLayoutProvider {
 }
 
 /// `ForceLayoutProvider.layout` as a free function so the stress provider can
-/// reuse it (Java instantiates a `ForceLayoutProvider` there).
+/// reuse it.
 pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), String> {
     // if requested, compute nodes's dimensions, place node labels, ports,
     // port labels, etc.
@@ -34,10 +34,9 @@ pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), 
 
     // set special properties for the layered graph (ForceLayoutProvider.setOptions):
     // create the random number generator based on the random seed option.
-    // ForceOptions.RANDOM_SEED has default 1, so Java's null check never fires.
     let random_seed: i32 = fgraph.properties.get(&options::RANDOM_SEED);
     let mut random = if random_seed == 0 {
-        // Java: new Random() — seeded from the system clock, not reproducible
+        // seeded from the system clock, not reproducible
         let nanos = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos() as i64)
@@ -58,7 +57,7 @@ pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), 
     let mut comps = components::split(&mut arena, fgraph);
 
     // perform the actual layout; all components share the single Random
-    // instance, like Java (it is stored in the copied property maps there)
+    // instance.
     for comp in &mut comps {
         model::layout(force_model.as_mut(), &mut arena, comp, &mut random);
     }

@@ -1,8 +1,7 @@
 //! Layout option metadata service, port of `org.eclipse.elk.core.data`.
 //!
 //! Holds metadata for every known layout option (id, value kind, targets,
-//! legacy ids) and parses string values exactly like Java's
-//! `LayoutOptionData.parseValue`.
+//! legacy ids) and parses string values from their string form.
 
 use std::collections::HashMap;
 
@@ -13,8 +12,7 @@ use crate::util::IndividualSpacings;
 
 pub type ParseFn = fn(&str) -> Option<Box<dyn PropValue>>;
 
-/// How an option value is parsed from its string form
-/// (Java `LayoutOptionData.Type`).
+/// How an option value is parsed from its string form.
 #[derive(Clone, Copy)]
 pub enum OptionKind {
     Str,
@@ -27,7 +25,7 @@ pub enum OptionKind {
     Unparseable,
 }
 
-/// Option targets bitset (Java `LayoutOptionData.Target`).
+/// Option targets bitset.
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub struct Targets(pub u8);
 
@@ -54,7 +52,7 @@ impl std::ops::BitOr for Targets {
     }
 }
 
-/// Metadata for one layout option (Java `LayoutOptionData`).
+/// Metadata for one layout option.
 pub struct OptionData {
     pub id: &'static str,
     pub group: &'static str,
@@ -90,14 +88,14 @@ impl OptionData {
     }
 }
 
-/// Java `Double.valueOf` accepts trailing whitespace and `d`/`f` suffixes.
+/// `Double.valueOf` accepts trailing whitespace and `d`/`f` suffixes.
 fn parse_java_double(s: &str) -> Option<f64> {
     let t = s.trim();
     let t = t.strip_suffix(['d', 'D', 'f', 'F']).unwrap_or(t);
     t.parse::<f64>().ok()
 }
 
-/// Java `enumForString`: name first, then ordinal index.
+/// Resolves an enum from a string: name first, then ordinal index.
 pub fn enum_for_string<T: ElkEnum>(s: &str) -> Option<T> {
     T::from_name(s).or_else(|| {
         s.parse::<usize>().ok().and_then(|i| T::VALUES.get(i).copied())
@@ -143,7 +141,7 @@ pub fn parse_margin(s: &str) -> Option<Box<dyn PropValue>> {
 }
 
 pub fn parse_individual_spacings(_s: &str) -> Option<Box<dyn PropValue>> {
-    // Java cannot parse IndividualSpacings from a string either; the JSON
+    // IndividualSpacings cannot be parsed from a string; the JSON
     // importer handles the "individualSpacings" object specially.
     Some(Box::new(IndividualSpacings::default()))
 }

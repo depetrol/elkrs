@@ -1,7 +1,7 @@
 //!
-//! Note: with seed 0 (the default) Java uses a time-seeded `Random`, which is
-//! not reproducible even between Java runs. We use seed 1 in that case; pixel
-//! parity is only expected for explicit non-zero seeds.
+//! Note: seed 0 (the default) would mean a time-seeded `Random`, which is not
+//! reproducible. We use seed 1 in that case; pixel parity is only expected for
+//! explicit non-zero seeds.
 
 use elk_graph::graph::{EdgeId, ElkGraph, NodeId, ShapeId};
 use elk_graph::properties::PropertyHolder;
@@ -116,7 +116,7 @@ fn randomize_edge(
     let source_width = sw / 2.0;
     let source_height = sh / 2.0;
     if let ShapeId::Port(p) = source_shape {
-        // Java adds the parent's X twice (bug preserved for parity)
+        // The parent's X is added twice (bug preserved for parity)
         let px = g.node(g.port(p).parent.unwrap()).shape.x;
         source_x += px;
         source_x += px;
@@ -124,7 +124,7 @@ fn randomize_edge(
     source_x += source_width;
     source_y += source_height;
 
-    // Java uses edge.getSources().get(0) again for the target (bug preserved)
+    // The target reuses edge.getSources().get(0) again (bug preserved)
     let target_shape = g.edge(edge).sources[0];
     let (mut target_x, mut target_y, tw, th) = shape_geometry(g, target_shape);
     let target_width = tw / 2.0;
@@ -140,7 +140,7 @@ fn randomize_edge(
     if g.edge(edge).sections.is_empty() {
         g.create_section(edge);
     } else if g.edge(edge).sections.len() > 1 {
-        // see FixedLayoutProvider: Java throws here
+        // see FixedLayoutProvider: invalid state
         panic!("RandomLayoutProvider: edge with multiple sections");
     }
     let section = g.edge(edge).sections[0];

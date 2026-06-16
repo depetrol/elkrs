@@ -34,8 +34,8 @@ const NODE_SIZE_WEIGHT_FLEXIBLE: f64 = 1.0;
 /// Epsilon for double equality testing.
 const EPSILON: f64 = 0.00001;
 
-/// Indicates that the node has been visited (Java's comment says "not
-/// visited", but the constant is used as the visited marker).
+/// Indicates that the node has been visited (despite its name, the constant
+/// is used as the visited marker).
 const VISITED: i32 = -1;
 /// Indicates that a node is not a junction.
 const OTHER: i32 = 0;
@@ -71,17 +71,17 @@ impl EdgeRep {
     }
 }
 
-/// All state of one placer run (Java instance fields).
+/// All state of one placer run.
 struct Placer {
     ngraph: NGraph,
     /// indexed by LNode.id
     node_reps: Vec<Option<NodeRep>>,
     /// indexed by LEdge.id
     edge_reps: Vec<Option<EdgeRep>>,
-    /// Java `portMap` (HashMap<LGraphElement, NNode>); only get/put.
+    /// `portMap` (HashMap<LGraphElement, NNode>); only get/put.
     port_map: HashMap<LPortId, NNodeId>,
-    /// LNode origins of NNodes (Java `NNode.origin`), for the
-    /// `instanceof LNode` check in `improveTwoPath`.
+    /// LNode origins of NNodes (`NNode.origin`), for the `instanceof LNode`
+    /// check in `improveTwoPath`.
     nnode_lnode_origin: HashMap<NNodeId, LNodeId>,
     node_count: usize,
     edge_count: usize,
@@ -1088,8 +1088,7 @@ fn mark_crossing_edges(
                         cursor -= 1;
                         last = open_edges[cursor];
                     }
-                    // Java: if (openEdgesIt.hasPrevious()) openEdgesIt.remove();
-                    // removes the element last returned by previous() — but
+                    // remove the element last returned by previous() — but
                     // only if the cursor is not at the very beginning
                     if cursor > 0 {
                         open_edges.remove(cursor);

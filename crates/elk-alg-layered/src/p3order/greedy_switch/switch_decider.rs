@@ -38,7 +38,7 @@ pub struct SwitchDecider {
 impl SwitchDecider {
     /// Creates a SwitchDecider for the given free layer. The
     /// `port_positions` array is the `GreedySwitchHeuristic`'s array, shared
-    /// between the two in-layer counters exactly as in Java.
+    /// between the two in-layer counters.
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         a: &LGraphArena,
@@ -103,7 +103,7 @@ impl SwitchDecider {
 
     /// Whether switching the nodes represented by the indices would reduce
     /// the number of crossings. `free_layer` must be the live free layer
-    /// (Java reads the mutated `LNode[]` in place).
+    /// (the mutated `LNode[]` is read in place).
     pub fn does_switch_reduce_crossings(
         &mut self,
         a: &LGraphArena,
@@ -169,7 +169,7 @@ impl SwitchDecider {
 }
 
 fn have_successor_constraints(a: &LGraphArena, upper_node: LNodeId, lower_node: LNodeId) -> bool {
-    // Java getProperty materializes the default (empty, Cloneable) list.
+    // getProperty materializes the default (empty, Cloneable) list.
     let constraints: Vec<LNodeId> = a
         .node(upper_node)
         .properties
@@ -191,7 +191,7 @@ fn have_layout_unit_constraints(a: &LGraphArena, upper_node: LNodeId, lower_node
 
     let are_in_different_layout_units = upper_layout_unit != lower_layout_unit;
 
-    // FIXME (from Java) the following predicate is problematic, layout units
+    // FIXME the following predicate is problematic, layout units
     // are represented by a regular node, thus 'upperNode' can be
     // 'upperLayoutUnit' and still have more nodes in the layout unit
     let mut nodes_have_layout_units = part_of_multi_node_layout_unit(upper_node, upper_layout_unit)

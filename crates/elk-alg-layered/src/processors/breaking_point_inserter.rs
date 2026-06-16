@@ -49,18 +49,18 @@ fn apply_cuts(a: &mut LGraphArena, graph: LGraphId, cuts: &[i32]) {
     let mut cut = cut_it.next().unwrap();
 
     let mut already_split: HashSet<LEdgeId> = HashSet::new();
-    // 'open' edges, insertion-ordered (Java LinkedHashSet)
+    // 'open' edges, insertion-ordered
     let mut open_edges: Vec<LEdgeId> = Vec::new();
 
-    // We iterate over a snapshot of layer ids while inserting new layers; Java
-    // uses a ListIterator whose `idx` is decoupled from list positions. We
-    // mirror that by walking the original layer list and tracking insertion.
+    // We iterate over a snapshot of layer ids while inserting new layers, with
+    // `idx` decoupled from list positions. We do this by walking the original
+    // layer list and tracking insertion.
     let mut layer_list = a.graph(graph).layers.clone();
     let mut li = 0usize;
     while li < layer_list.len() {
         let layer = layer_list[li];
-        // number of extra layers inserted at this position (skipped by the
-        // Java ListIterator, whose cursor sits past the inserted layers).
+        // number of extra layers inserted at this position (skipped, since the
+        // cursor sits past the inserted layers).
         let mut inserted = 0usize;
 
         // book keeping of 'open' edges
@@ -80,8 +80,8 @@ fn apply_cuts(a: &mut LGraphArena, graph: LGraphId, cuts: &[i32]) {
             // insert two new layers right after the current one
             let bp_layer1 = a.create_layer(graph);
             let bp_layer2 = a.create_layer(graph);
-            // Java ListIterator.add inserts after the current element; both
-            // adds advance the cursor, so they land at li+1 and li+2.
+            // both inserts go after the current element and advance the cursor,
+            // so they land at li+1 and li+2.
             layer_list.insert(li + 1, bp_layer1);
             layer_list.insert(li + 2, bp_layer2);
             a.graph_mut(graph).layers = layer_list.clone();
@@ -179,7 +179,7 @@ fn apply_cuts(a: &mut LGraphArena, graph: LGraphId, cuts: &[i32]) {
 }
 
 // ---------------------------------------------------------------------------
-// improveCuts (Java's `Cut` helper logic).
+// improveCuts (the `Cut` helper logic).
 // ---------------------------------------------------------------------------
 
 #[derive(Clone)]

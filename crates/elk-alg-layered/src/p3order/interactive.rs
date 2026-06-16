@@ -107,7 +107,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `Double.compare`. Distinguishes -0.0/0.0 and orders NaN greatest;
+/// `Double.compare`. Distinguishes -0.0/0.0 and orders NaN greatest;
 /// `f64::total_cmp` matches `Double.compare` exactly.
 fn total_cmp_double(a: f64, b: f64) -> Ordering {
     a.total_cmp(&b)

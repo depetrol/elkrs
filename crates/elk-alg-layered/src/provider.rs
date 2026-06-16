@@ -21,7 +21,7 @@ impl LayoutProvider for LayeredLayoutProvider {
             let mut importer = ElkGraphImporter::new(elk);
             importer.import_graph(layout_node, &mut arena)?
         };
-        // Java LayeredLayoutProvider.layout: doCompoundLayout when the graph
+        // LayeredLayoutProvider.layout: doCompoundLayout when the graph
         // (or any of its children) wants its children included, else doLayout.
         if elk.node(layout_node).properties.get::<HierarchyHandling>(&lopts::HIERARCHY_HANDLING)
             == HierarchyHandling::INCLUDE_CHILDREN

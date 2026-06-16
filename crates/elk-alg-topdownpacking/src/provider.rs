@@ -1,6 +1,5 @@
 //!
-//! Java assembles the pipeline with an `AlgorithmAssembler`; neither phase
-//! requests intermediate processors, so the algorithm is always
+//! Neither phase requests intermediate processors, so the algorithm is always
 //! `[node placer, whitespace eliminator]`.
 
 use elk_core::registry::LayoutProvider;
@@ -169,14 +168,14 @@ fn eliminate_whitespace(g: &mut ElkGraph, layout_graph: NodeId, grid: &Grid) {
     let bottom_border = g.node(last).shape.y + g.node(last).shape.height;
     let graph_height = g.node(layout_graph).shape.height;
     let extra_space = graph_height - (bottom_border + padding.bottom);
-    // Java divides by `col.size() + 1` (the number of rows plus one), not by
-    // the number of expanded nodes; replicated as-is.
+    // Divides by `col.size() + 1` (the number of rows plus one), not by
+    // the number of expanded nodes.
     let extra_space_per_node = extra_space / (col_size + 1) as f64;
     let mut accumulated_shift = 0.0;
     if bottom_border + padding.bottom < graph_height {
         for row in &grid.cells {
             // go through all nodes in row, shift and enlarge them; the shift
-            // keeps accumulating across rows exactly like the Java loop
+            // keeps accumulating across rows
             for cell in row {
                 // `if (node == null) break;`
                 let Some(node) = *cell else { break };

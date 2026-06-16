@@ -300,8 +300,7 @@ impl<'h> PortPropertyHolder<'h> {
 }
 
 /// Creates a dummy node (with
-/// one port) for an external port; see the Java documentation for the
-/// decorations applied. The dummy is NOT added to the graph's node list.
+/// one port) for an external port. The dummy is NOT added to the graph's node list.
 #[allow(clippy::too_many_arguments)]
 pub fn create_external_port_dummy(
     a: &mut LGraphArena,
@@ -556,7 +555,7 @@ pub fn resize_node(
 ) {
     let old_size = a.node(node).size;
 
-    // Java performs these calculations in float!
+    // These calculations are performed in float!
     let width_ratio = (new_size.x / old_size.x) as f32;
     let height_ratio = (new_size.y / old_size.y) as f32;
     let width_diff = (new_size.x - old_size.x) as f32;
@@ -623,7 +622,7 @@ pub fn resize_node(
     a.node_mut(node).size = new_size;
 
     // Set fixed size option for the node: now the size is assumed to stay as
-    // determined here. Java: `SizeConstraint.fixed()` == an EMPTY set, which
+    // determined here. `SizeConstraint.fixed()` == an EMPTY set, which
     // means "fixed size" — the label/node-size processor will not resize it.
     a.node(node)
         .properties

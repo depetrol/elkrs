@@ -16,8 +16,8 @@ pub struct JsonImporter<'r> {
 }
 
 /// Converts a JSON id (string or integer) to its canonical string form.
-/// Java keeps the original type but only ever compares/prints it, so the
-/// string form is equivalent as long as integers print identically.
+/// The original type is only ever compared/printed, so the string form is
+/// equivalent as long as integers print identically.
 fn id_string(v: &Value) -> Option<String> {
     match v {
         Value::String(s) => Some(s.clone()),
@@ -35,7 +35,7 @@ fn require_id(obj: &Map<String, Value>) -> Result<String, String> {
         Value::Number(n) => {
             let d = n.as_f64().unwrap_or(f64::NAN);
             if d % 1.0 == 0.0 {
-                // Java converts to intValue, so "3.0" and "3" are the same id
+                // Converts to the integer value, so "3.0" and "3" are the same id
                 Ok(format!("{}", d as i64))
             } else {
                 Err(format!("Id must be a string or an integer: '{n}'."))
@@ -47,7 +47,7 @@ fn require_id(obj: &Map<String, Value>) -> Result<String, String> {
 
 fn opt_double(obj: &Map<String, Value>, key: &str) -> Option<f64> {
     let v = obj.get(key)?.as_f64()?;
-    // Java's doubleValueValid maps NaN/inf to 0.0
+    // NaN/inf map to 0.0
     if v.is_nan() || v.is_infinite() {
         Some(0.0)
     } else {
@@ -77,7 +77,7 @@ impl<'r> JsonImporter<'r> {
         node: NodeId,
         obj: &Map<String, Value>,
     ) -> Result<(), String> {
-        // Java `register(node, jsonObj)`: the id is mandatory.
+        // Registering the node: the id is mandatory.
         let id = require_id(obj)?;
         g.node_mut(node).identifier = Some(id.clone());
         self.node_ids.insert(id, node);
@@ -124,7 +124,7 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<(), String> {
         let port = g.create_port(parent);
-        // Java `register(port, jsonPort)`: the id is mandatory.
+        // Registering the port: the id is mandatory.
         let id = require_id(obj)?;
         g.port_mut(port).identifier = Some(id.clone());
         self.port_ids.insert(id, port);
@@ -182,8 +182,7 @@ impl<'r> JsonImporter<'r> {
         Ok(())
     }
 
-    /// Walks the node hierarchy a second time creating edges
-    /// (Java `transformEdges`).
+    /// Walks the node hierarchy a second time creating edges.
     fn transform_edges(
         &mut self,
         g: &mut ElkGraph,
@@ -236,7 +235,7 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<EdgeId, String> {
         let edge = g.create_edge(Some(parent));
-        // Java `register(edge, jsonObj)`: the id is mandatory.
+        // Registering the edge: the id is mandatory.
         g.edge_mut(edge).identifier = Some(require_id(obj)?);
         if let Some(sources) = obj.get("sources").and_then(Value::as_array) {
             for s in sources {
@@ -271,7 +270,7 @@ impl<'r> JsonImporter<'r> {
         obj: &Map<String, Value>,
     ) -> Result<EdgeId, String> {
         let edge = g.create_edge(Some(parent));
-        // Java `register(edge, jsonObj)`: the id is mandatory.
+        // Registering the edge: the id is mandatory.
         g.edge_mut(edge).identifier = Some(require_id(obj)?);
         let src_node = obj
             .get("source")
@@ -360,7 +359,7 @@ impl<'r> JsonImporter<'r> {
                     None => continue,
                 };
                 let section = g.create_section(edge);
-                // Java `register(edgeSection, jsonSection)`: the id is mandatory.
+                // Registering the edge section: the id is mandatory.
                 let id = require_id(sobj)?;
                 g.section_mut(section).identifier = Some(id.clone());
                 section_ids.insert(id, section);
@@ -479,7 +478,7 @@ fn id_string_opt(v: &Value) -> Option<String> {
     id_string(v)
 }
 
-/// Java `JsonAdapter.stringVal`: JSON primitives to their string forms.
+/// Converts JSON primitives to their string forms.
 fn json_value_to_string(v: &Value) -> String {
     match v {
         Value::String(s) => s.clone(),
@@ -537,7 +536,7 @@ impl<'r> JsonExporter<'r> {
 
     pub fn export(&mut self, g: &ElkGraph) -> Value {
         // First pass: assign ids to nodes and ports and sections (sections are
-        // assigned during edge emission in Java, but ids only depend on
+        // assigned during edge emission, but ids only depend on
         // identifiers/counters which we replicate in the same order).
         let mut root_json = self.transform_node(g, g.root);
         self.transform_edges(g, g.root, &mut root_json);
@@ -558,8 +557,8 @@ impl<'r> JsonExporter<'r> {
                 id
             }
         };
-        // Java assertUnique appends random digits on collision; collisions
-        // only happen with malformed input. Use a deterministic suffix.
+        // Collisions only happen with malformed input. Use a deterministic
+        // suffix.
         while used.contains_key(&id) {
             id.push('_');
         }
@@ -771,15 +770,15 @@ impl<'r> JsonExporter<'r> {
         if props.is_empty() {
             return;
         }
-        // Java's JsonExporter adds the (possibly empty) layoutOptions object
-        // to the parent whenever the element has any properties at all; the
-        // unknown-option filtering happens only afterwards.
+        // The (possibly empty) layoutOptions object is added to the parent
+        // whenever the element has any properties at all; the unknown-option
+        // filtering happens only afterwards.
         let mut json_props = Map::new();
         for (key, value) in props.entries() {
             if key == SPACING_INDIVIDUAL.id {
                 continue;
             }
-            // Java's JsonExporter.isKnown resolves the property id by suffix.
+            // A property id is resolved as known by suffix.
             if self.omit_unknown_options && self.registry.option_by_suffix(&key).is_none() {
                 continue;
             }
@@ -795,7 +794,7 @@ impl<'r> JsonExporter<'r> {
             }
             let mut json_props = Map::new();
             for (key, value) in individual.properties.entries() {
-                // Java's JsonExporter.isKnown resolves the property id by suffix.
+                // A property id is resolved as known by suffix.
                 if self.omit_unknown_options && self.registry.option_by_suffix(&key).is_none() {
                     continue;
                 }

@@ -39,7 +39,7 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Not a registered layout option in Java either; kept for completeness.
+    /// Not a registered layout option; kept for completeness.
     pub enum OverlapRemovalStrategy {
         EXTENT_RADII,
     }

@@ -1,5 +1,5 @@
 //!
-//! Elements and components live in arenas on the [`DCGraph`]; Java object
+//! Elements and components live in arenas on the [`DCGraph`]; object
 //! identity maps to indices.
 
 use elk_alg_common::elkmath;
@@ -163,8 +163,7 @@ impl DCComponent {
 pub struct DCGraph {
     /// Arena of all elements.
     pub elements: Vec<DCElement>,
-    /// The connected components (insertion order; Java uses a
-    /// `LinkedHashSet`).
+    /// The connected components (insertion order).
     pub components: Vec<DCComponent>,
     /// Width and height of this graph (after compaction).
     pub dimensions: KVector,

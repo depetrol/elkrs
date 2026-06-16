@@ -50,10 +50,9 @@ fn build_incidence_lists(arena: &FArena, graph: &FGraph) -> Vec<Vec<FEdgeId>> {
     incidence
 }
 
-/// The Java original adds an edge to the
+/// This adds an edge to the
 /// component once per traversal in which it is not skipped, which can add the
-/// same edge (and its labels) more than once in cyclic graphs; this is
-/// replicated faithfully.
+/// same edge (and its labels) more than once in cyclic graphs.
 fn dfs(
     arena: &FArena,
     node: FNodeId,
@@ -143,7 +142,7 @@ pub fn recombine(arena: &mut FArena, mut components: Vec<FGraph>) -> FGraph {
         max_row_width = f64::max(max_row_width, size.x);
         total_area += size.x * size.y;
     }
-    // Java: (float) Math.sqrt(totalArea) * aspectRatio — note the float cast
+    // note the float cast
     let aspect_ratio: f64 = result.properties.get(&options::ASPECT_RATIO);
     max_row_width = f64::max(max_row_width, (total_area.sqrt() as f32 as f64) * aspect_ratio);
     let spacing: f64 = result.properties.get(&options::SPACING_NODE_NODE);
@@ -166,7 +165,7 @@ pub fn recombine(arena: &mut FArena, mut components: Vec<FGraph>) -> FGraph {
         highest_box = f64::max(highest_box, size.y);
         xpos += size.x + spacing;
     }
-    let _ = broadest_row; // dead in Java as well
+    let _ = broadest_row; // dead
 
     result
 }

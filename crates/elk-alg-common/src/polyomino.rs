@@ -2,14 +2,13 @@
 //! ProfileFill, the Successor* traversal functions) and
 //! `polyomino.structures` (TwoBitGrid, PlanarGrid, Polyomino, Polyominoes).
 //!
-//! Java's class hierarchy `Polyomino extends PlanarGrid extends TwoBitGrid`
+//! The class hierarchy `Polyomino extends PlanarGrid extends TwoBitGrid`
 //! is flattened into [`Grid`] (TwoBitGrid + the PlanarGrid center logic) and
 //! [`Polyomino`] (a `Grid` plus position and extensions).
 //!
-//! Out-of-bounds semantics replicate Java exactly: reads within the padding
-//! bits of the last word of a row silently return "empty", while reads
-//! outside the allocated arrays throw (here: panic). All coordinates are
-//! `i32` to keep Java's signed arithmetic.
+//! Out-of-bounds semantics: reads within the padding bits of the last word of
+//! a row silently return "empty", while reads outside the allocated arrays
+//! panic. All coordinates are `i32` to keep the signed arithmetic.
 
 use elk_graph::elk_enum;
 
@@ -102,9 +101,9 @@ impl Grid {
         self.y_center
     }
 
-    /// `TwoBitGrid.retrieve`: panics (Java: ArrayIndexOutOfBoundsException)
-    /// when the underlying array access is out of bounds; reads within the
-    /// padding bits of the last word return EMPTY without error.
+    /// `TwoBitGrid.retrieve`: panics when the underlying array access is out
+    /// of bounds; reads within the padding bits of the last word return EMPTY
+    /// without error.
     fn retrieve(&self, x: i32, y: i32) -> u64 {
         let x_word = x >> 5; // RIGHT_SHIFT
         if y < 0 || y >= self.rows.len() as i32 || x_word < 0 {
@@ -409,8 +408,7 @@ impl Polyomino {
         self.extensions.push((dir, offset, width));
     }
 
-    /// Number of distinct extension directions (Java collects them into a
-    /// `Set<Direction>`).
+    /// Number of distinct extension directions.
     fn num_extension_directions(&self) -> usize {
         let mut seen = [false; 4];
         for &(d, _, _) in &self.extensions {
@@ -438,7 +436,7 @@ impl Polyomino {
 use elk_graph::properties::ElkEnum;
 
 /// Access to the generic [`Polyomino`] part of a more specific polyomino
-/// type (mirrors Java's inheritance).
+/// type.
 pub trait AsPolyomino {
     fn poly(&self) -> &Polyomino;
     fn poly_mut(&mut self) -> &mut Polyomino;
@@ -616,7 +614,7 @@ fn successor_spiral(x: i32, y: i32) -> (i32, i32) {
 /// The successor functions, including the quadrant/combination wrappers.
 /// `poly_id` identifies the current polyomino so that
 /// `SuccessorQuadrantsGeneric` can cache its quadrant restrictions per
-/// polyomino (Java caches by object identity).
+/// polyomino.
 pub struct Successor {
     strategy: TraversalStrategy,
     // SuccessorQuadrantsGeneric state
@@ -739,7 +737,7 @@ impl Successor {
 
 /// The subset of `PolyominoOptions` consulted by `packPolyominoes`. Note
 /// that DisCo never copies the user's options onto the `Polyominoes` holder,
-/// so the Java code always sees the defaults; the defaults are replicated by
+/// so the defaults always apply; they are replicated by
 /// `PackingOptions::default()`.
 pub struct PackingOptions {
     pub low_level_sort: LowLevelSortingCriterion,
@@ -759,7 +757,7 @@ impl Default for PackingOptions {
 }
 
 pub fn pack_polyominoes<P: AsPolyomino>(polys: &mut Vec<P>, grid: &mut Grid, options: &PackingOptions) {
-    // 1. Sort polyominoes (Java uses successive stable sorts).
+    // 1. Sort polyominoes (successive stable sorts).
     match options.low_level_sort {
         LowLevelSortingCriterion::BY_SIZE => {
             // MinPerimeterComparator().reversed()

@@ -35,12 +35,12 @@ pub enum CrossMinType {
     Median,
 }
 
-/// State of one `process` run (Java instance fields).
+/// State of one `process` run.
 struct LayerSweep {
     /// Collected information about each graph.
     holders: Vec<GraphInfoHolder>,
     /// We only need to save the orders of graphs whose node order actually
-    /// changed. (Java: HashSet; insertion-ordered here for determinism.)
+    /// changed. (Insertion-ordered here for determinism.)
     graphs_whose_node_order_changed: Vec<usize>,
     random_seed: i64,
 }
@@ -224,8 +224,8 @@ fn compare_different_randomized_layouts(
         .graph(lgraph)
         .properties
         .get(&lopts::CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE);
-    // Java checks CROSSING_COUNTER_NODE_INFLUENCE twice (instead of the port
-    // influence); quirk preserved.
+    // CROSSING_COUNTER_NODE_INFLUENCE is checked twice (instead of the port
+    // influence).
     #[allow(clippy::nonminimal_bool)]
     if node_influence != 0.0 || node_influence != 0.0 {
         let mut best_crossings = f64::MAX;
@@ -269,7 +269,7 @@ fn compare_different_randomized_layouts(
     Ok(())
 }
 
-/// Java `gData.crossMinimizer().setFirstLayerOrder(...)`.
+/// `gData.crossMinimizer().setFirstLayerOrder(...)`.
 fn set_first_layer_order(
     sweep: &mut LayerSweep,
     a: &LGraphArena,
@@ -413,8 +413,8 @@ fn minimize_crossings_node_port_order_with_counter(
 /// processed hierarchically.
 fn count_current_number_of_crossings(sweep: &mut LayerSweep, a: &LGraphArena, gidx: usize) -> i32 {
     let mut total_crossings = 0;
-    // Java uses a deque that only ever holds the current graph; child graphs
-    // are handled by the recursive call (quirk preserved by this recursion).
+    // A deque only ever holds the current graph; child graphs are handled by
+    // the recursive call.
     {
         let holder = &mut sweep.holders[gidx];
         let order = std::mem::take(&mut holder.current_node_order);
@@ -434,7 +434,7 @@ fn count_current_number_of_crossings(sweep: &mut LayerSweep, a: &LGraphArena, gi
 /// The model order
 /// influence terms are guaranteed to be zero here because
 /// `CONSIDER_MODEL_ORDER_STRATEGY != NONE` is rejected early in `process`
-/// (the Java comparators are not ported yet).
+/// (the model-order comparators are not ported yet).
 fn count_current_number_of_crossings_node_port_order(
     sweep: &mut LayerSweep,
     a: &LGraphArena,
@@ -458,7 +458,7 @@ fn count_current_number_of_crossings_node_port_order(
     for child_lgraph in children {
         let child_idx = a.graph(child_lgraph).id as usize;
         if !sweep.holders[child_idx].dont_sweep_into() {
-            // Java calls the *int* counting method for children here.
+            // The *int* counting method is called for children here.
             total_crossings += count_current_number_of_crossings(sweep, a, child_idx) as f64;
         }
     }
@@ -594,7 +594,7 @@ fn sweep_in_hierarchical_node(
     Ok(improved)
 }
 
-/// Java `PortSide.sideOpposedSweepDirection`-equivalent inline logic: a forward
+/// `PortSide.sideOpposedSweepDirection`-equivalent inline logic: a forward
 /// sweep approaches the child's left (WEST) side first.
 fn side_opposed_sweep_direction(is_forward_sweep: bool) -> PortSide {
     if is_forward_sweep {
@@ -621,7 +621,6 @@ fn sort_port_dummies_by_port_positions(
     }
 
     if sorted.len() < layer_close_to_node_edge.len() {
-        // Java throws IllegalStateException here.
         panic!(
             "Expected {} hierarchical ports, but found only {}.",
             layer_close_to_node_edge.len(),

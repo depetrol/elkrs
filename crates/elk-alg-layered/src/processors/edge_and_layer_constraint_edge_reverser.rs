@@ -33,7 +33,7 @@ fn handle_outer_nodes(a: &mut LGraphArena, graph: LGraphId) -> Vec<LNodeId> {
             a.node(node).properties.get(&lopts::LAYERING_LAYER_CONSTRAINT);
         match edge_constraint_for(layer_constraint) {
             Some(edge_constraint) => {
-                // Java always stores OUTGOING_ONLY here (preserved quirk)
+                // Always stores OUTGOING_ONLY here (preserved quirk)
                 a.node(node)
                     .properties
                     .set(&iprops::EDGE_CONSTRAINT, EdgeConstraint::OUTGOING_ONLY);

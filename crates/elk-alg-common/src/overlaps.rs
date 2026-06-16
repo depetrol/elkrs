@@ -18,7 +18,7 @@ pub enum OverlapRemovalDirection {
 struct RectangleNode {
     /// The original rectangle represented by this node (a copy of the input).
     original: ElkRectangle,
-    /// The rectangle after the coordinate transformation. In Java, for UP and
+    /// The rectangle after the coordinate transformation. For UP and
     /// DOWN this aliases the original rectangle; here we keep both and
     /// replicate the aliasing in `export_rectangle`.
     rect: ElkRectangle,
@@ -28,7 +28,7 @@ struct RectangleNode {
 
 /// The default gap is 5 on both axes.
 ///
-/// Usage mirrors Java: create for a direction, configure via `with_gap` /
+/// Usage: create for a direction, configure via `with_gap` /
 /// `with_start_coordinate`, add rectangles (each `add_rectangle` returns a
 /// handle), call `remove_overlaps`, then fetch the moved rectangles back via
 /// `rectangle(handle)`.
@@ -85,7 +85,7 @@ impl RectangleStripOverlapRemover {
         }
     }
 
-    /// In Java, the transformed rectangle aliases
+    /// The transformed rectangle aliases
     /// the original for UP/DOWN, so the strategy's `rect.y` is already stored
     /// in the original's y before the export applies the start coordinate; we
     /// replicate the resulting arithmetic here.
@@ -110,8 +110,8 @@ impl RectangleStripOverlapRemover {
 
     /// Returns the size of the resulting strip.
     pub fn remove_overlaps(&mut self) -> f64 {
-        // Sort the list of rectangles by left border (stable, like Java's
-        // List.sort). We sort indices to keep handles valid.
+        // Sort the list of rectangles by left border (stable).
+        // We sort indices to keep handles valid.
         let mut order: Vec<usize> = (0..self.nodes.len()).collect();
         order.sort_by(|&a, &b| self.nodes[a].rect.x.total_cmp(&self.nodes[b].rect.x));
 
@@ -127,13 +127,13 @@ impl RectangleStripOverlapRemover {
         strip_size
     }
 
-    /// Java uses a `TreeSet` ordered by right
+    /// Uses a `TreeSet` ordered by right
     /// border coordinate; note that a TreeSet drops elements that compare
     /// equal, so a rectangle whose right border coincides exactly with an
     /// already-present rectangle's right border is never added to the set of
     /// scanline-intersecting nodes. We faithfully replicate that quirk.
     fn compute_overlaps(&mut self, order: &[usize]) {
-        // Sorted by right border (ascending, Java Double.compare == total_cmp).
+        // Sorted by right border (ascending, Double.compare == total_cmp).
         let mut intersecting: Vec<usize> = Vec::new();
         let right = |nodes: &Vec<RectangleNode>, i: usize| nodes[i].rect.x + nodes[i].rect.width;
 

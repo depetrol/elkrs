@@ -9,9 +9,9 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     for layer in layers {
         let nodes = a.layer(layer).nodes.clone();
         for node in nodes {
-            // Java removes the port from the node's port list only (via the
-            // iterator); the LPort object and its edges remain but become
-            // unreachable through node traversal.
+            // Remove the port from the node's port list only; the LPort object
+            // and its edges remain but become unreachable through node
+            // traversal.
             let ports = a.node(node).ports.clone();
             let keep: Vec<_> = ports
                 .into_iter()

@@ -36,7 +36,7 @@ pub fn java_math_round(a: f64) -> i64 {
 struct NodePlacer {
     spacing: f64,
     direction: Direction,
-    /// `xTopAdjustment` / `yTopAdjustment` (always 0 in Java).
+    /// `xTopAdjustment` / `yTopAdjustment` (always 0).
     x_top_adjustment: f64,
     y_top_adjustment: f64,
 }
@@ -166,7 +166,7 @@ impl NodePlacer {
                         move_distance -= portion;
                         left_sibling = match arena.node(left_sibling).left_sibling {
                             Some(ls) => ls,
-                            None => break, // Java would NPE; unreachable since the loop above terminated at ancestorNeighbor
+                            None => break, // unreachable since the loop above terminated at ancestorNeighbor
                         };
                     }
                 } else {

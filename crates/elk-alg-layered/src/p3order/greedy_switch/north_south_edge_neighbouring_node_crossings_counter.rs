@@ -16,7 +16,6 @@ use super::super::counting::in_north_south_east_west_order;
 pub struct NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     upper_lower_crossings: i32,
     lower_upper_crossings: i32,
-    /// Java: `Map<LPort, Integer>` (HashMap; only keyed access, never iterated)
     port_positions: HashMap<LPortId, i32>,
 }
 
@@ -195,8 +194,8 @@ fn is_north_of_normal_node(a: &LGraphArena, upper_node: LNodeId) -> bool {
     a.port(origin_port_of(a, upper_node)).side == PortSide::NORTH
 }
 
-/// Java `(LNode) node.getProperty(InternalProperties.ORIGIN)` (reference
-/// comparison; `None` corresponds to Java null).
+/// `(LNode) node.getProperty(InternalProperties.ORIGIN)` (reference
+/// comparison; `None` corresponds to null).
 fn origin_of(a: &LGraphArena, node: LNodeId) -> Option<Origin> {
     a.node(node).properties.try_get(&iprops::ORIGIN)
 }

@@ -17,8 +17,7 @@ use crate::phases::{
 const MIN_EDGE_SPACING: f64 = 2.0;
 
 /// Configures graph properties and returns
-/// the assembled pipeline (stored by the caller; Java attaches it to the
-/// graph via the PROCESSORS property).
+/// the assembled pipeline (stored by the caller).
 pub fn prepare_graph_for_layout(
     a: &mut LGraphArena,
     graph: LGraphId,
@@ -36,7 +35,7 @@ pub fn prepare_graph_for_layout(
     let p5 = a.graph(graph).properties.get(&lopts::EDGE_ROUTING);
 
     // gather the processor configuration: phase contributions first, then
-    // the phase-independent configuration (matching AlgorithmAssembler)
+    // the phase-independent configuration
     let mut config = ProcessorConfiguration::new();
     crate::p1cycles::processor_configuration(p1, a, graph, &mut config)?;
     crate::p2layers::processor_configuration(p2, a, graph, &mut config)?;
@@ -81,7 +80,7 @@ fn configure_graph_properties(a: &mut LGraphArena, graph: LGraphId) -> Result<()
     }
 
     // The random number generator is created by the driver from RANDOM_SEED
-    // (Java stores a Random in the RANDOM property; we keep it in the arena).
+    // (kept in the arena).
 
     if !a
         .graph(graph)
@@ -287,7 +286,7 @@ mod tests {
 
     /// The default pipeline for a simple connected graph (no ports, labels,
     /// self loops, hierarchy; direction RIGHT) — derived by hand from the
-    /// Java configurator and phase configurations.
+    /// configurator and phase configurations.
     #[test]
     fn default_pipeline_for_simple_graph() {
         let mut a = LGraphArena::new();

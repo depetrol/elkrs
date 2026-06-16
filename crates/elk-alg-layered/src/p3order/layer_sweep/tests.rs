@@ -73,8 +73,7 @@ fn build_two_layer_graph(
 
 /// Hand-traced expectation for `JavaRandom::new(1)` (the JavaRandom
 /// implementation is bit-exact vs. java.util.Random; the tape below was
-/// dumped from it and the algorithm was traced by hand against the Java
-/// sources):
+/// dumped from it and the algorithm was traced by hand):
 ///
 /// 1. initialize(): randomSeed = nextLong() = -4964420948893066024.
 /// 2. GraphInfoHolder: ISweepPortDistributor.create -> nextBoolean() = false
@@ -241,7 +240,7 @@ fn build_greedy_switch_graph(
 }
 
 /// Hand-traced expectation for `process_with_type(.., TWO_SIDED)` with
-/// `JavaRandom::new(1)` against the Java sources:
+/// `JavaRandom::new(1)`:
 ///
 /// 1. initialize(): randomSeed = nextLong() = -4964420948893066024.
 /// 2. GraphInfoHolder: ISweepPortDistributor.create -> TWO_SIDED =>

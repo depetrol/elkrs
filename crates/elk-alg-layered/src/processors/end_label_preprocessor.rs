@@ -3,8 +3,8 @@
 //! enlarges node margins accordingly.
 //!
 //! Also contains the Rust model of the nodespacing `LabelCell` as used by the
-//! end label machinery (Java stores `Map<LPort, LabelCell>`; here it is the
-//! value type [`EndLabelCells`], an ordered list of (port, cell) pairs).
+//! end label machinery, modeled as the value type [`EndLabelCells`], an
+//! ordered list of (port, cell) pairs.
 
 use elk_alg_common::nodespacing::cellsystem::{HorizontalLabelAlignment, VerticalLabelAlignment};
 use elk_alg_common::overlaps::{OverlapRemovalDirection, RectangleStripOverlapRemover};
@@ -23,9 +23,9 @@ use crate::options_gen as lopts;
 pub struct LabelCell {
     /// Whether we operate in horizontal or vertical layout mode.
     pub horizontal_layout_mode: bool,
-    /// Horizontal alignment of labels (Java default CENTER).
+    /// Horizontal alignment of labels (default CENTER).
     pub horizontal_alignment: HorizontalLabelAlignment,
-    /// Vertical alignment of labels (Java default CENTER).
+    /// Vertical alignment of labels (default CENTER).
     pub vertical_alignment: VerticalLabelAlignment,
     /// The gap inserted between two consecutive labels.
     pub gap: f64,
@@ -33,12 +33,12 @@ pub struct LabelCell {
     pub labels: Vec<LLabelId>,
     /// Minimum space needed to place the labels.
     pub min_content_area_size: KVector,
-    /// The cell rectangle (Java `getCellRectangle()`).
+    /// The cell rectangle (`getCellRectangle()`).
     pub rect: ElkRectangle,
 }
 
 impl LabelCell {
-    /// Java `new LabelCell(gap, horizontalLayoutMode)`.
+    /// `new LabelCell(gap, horizontalLayoutMode)`.
     pub fn new(gap: f64, horizontal_layout_mode: bool) -> Self {
         LabelCell {
             horizontal_layout_mode,
@@ -51,7 +51,7 @@ impl LabelCell {
         }
     }
 
-    /// Java `LabelCell.addLabel`.
+    /// `LabelCell.addLabel`.
     pub fn add_label(&mut self, label: LLabelId, label_size: KVector) {
         self.labels.push(label);
 
@@ -70,22 +70,22 @@ impl LabelCell {
         }
     }
 
-    /// Java `LabelCell.getMinimumWidth` (padding is always zero here).
+    /// `LabelCell.getMinimumWidth` (padding is always zero here).
     pub fn minimum_width(&self) -> f64 {
         self.min_content_area_size.x
     }
 
-    /// Java `LabelCell.getMinimumHeight` (padding is always zero here).
+    /// `LabelCell.getMinimumHeight` (padding is always zero here).
     pub fn minimum_height(&self) -> f64 {
         self.min_content_area_size.y
     }
 
-    /// Java `LabelCell.hasLabels`.
+    /// `LabelCell.hasLabels`.
     pub fn has_labels(&self) -> bool {
         !self.labels.is_empty()
     }
 
-    /// Java `LabelCell.applyLabelLayout`.
+    /// `LabelCell.applyLabelLayout`.
     pub fn apply_label_layout(&self, a: &mut LGraphArena) {
         if self.horizontal_layout_mode {
             self.apply_horizontal_mode_label_layout(a);
@@ -94,7 +94,7 @@ impl LabelCell {
         }
     }
 
-    /// Java `LabelCell.applyHorizontalModeLabelLayout` (padding zero).
+    /// `LabelCell.applyHorizontalModeLabelLayout` (padding zero).
     fn apply_horizontal_mode_label_layout(&self, a: &mut LGraphArena) {
         let cell_rect = self.rect;
 
@@ -131,7 +131,7 @@ impl LabelCell {
         }
     }
 
-    /// Java `LabelCell.applyVerticalModeLabelLayout` (padding zero).
+    /// `LabelCell.applyVerticalModeLabelLayout` (padding zero).
     fn apply_vertical_mode_label_layout(&self, a: &mut LGraphArena) {
         let cell_rect = self.rect;
 
@@ -169,9 +169,9 @@ impl LabelCell {
     }
 }
 
-/// Value of the `END_LABELS` internal property: Java's
+/// Value of the `END_LABELS` internal property: the
 /// `Map<LPort, LabelCell>` as an ordered list of pairs (port list order; the
-/// map is never iterated in an order-sensitive way in Java).
+/// map is never iterated in an order-sensitive way).
 #[derive(Clone, Debug, PartialEq, Default)]
 pub struct EndLabelCells(pub Vec<(LPortId, LabelCell)>);
 
@@ -258,7 +258,7 @@ fn process_node(
     }
 }
 
-/// Java `createConfiguredLabelCell`: creates a label cell for the given
+/// `createConfiguredLabelCell`: creates a label cell for the given
 /// labels, if any; otherwise returns `None`.
 fn create_configured_label_cell(
     a: &LGraphArena,
@@ -292,7 +292,7 @@ fn create_configured_label_cell(
 /// Special value to indicate that there are no edges incident to a port.
 const NO_INCIDENT_EDGE_THICKNESS: f64 = -1.0;
 
-/// The static `EndLabelPreprocessor.gatherLabels(LPort)` (also used
+/// The `EndLabelPreprocessor.gatherLabels(LPort)` (also used
 /// by `LabelSideSelector`). Returns the end labels to be placed at the given
 /// port (`Some`, possibly empty) or `None` if there are no incident edges.
 pub fn gather_labels(a: &mut LGraphArena, port: LPortId) -> Option<Vec<LLabelId>> {
@@ -328,7 +328,7 @@ pub fn gather_labels(a: &mut LGraphArena, port: LPortId) -> Option<Vec<LLabelId>
     }
 }
 
-/// Java `gatherLabels(LPort, List<LLabel>)`: puts all relevant end labels of
+/// `gatherLabels(LPort, List<LLabel>)`: puts all relevant end labels of
 /// edges connected to the given port into the given list; returns the maximum
 /// edge thickness of any incident edge, or [`NO_INCIDENT_EDGE_THICKNESS`].
 fn gather_labels_into(a: &mut LGraphArena, port: LPortId, target_list: &mut Vec<LLabelId>) -> f64 {
@@ -382,7 +382,7 @@ fn gather_labels_into(a: &mut LGraphArena, port: LPortId, target_list: &mut Vec<
 //////////////////////////////////////////////////////////////////////////////
 // Label Placement
 
-/// Java `placeLabels(LNode, ...)`: places end labels of all of the node's
+/// `placeLabels(LNode, ...)`: places end labels of all of the node's
 /// ports.
 fn place_labels(
     a: &mut LGraphArena,
@@ -442,7 +442,7 @@ fn place_labels(
     }
 }
 
-/// Java `placeLabels(LPort, LabelCell, double)`: places the edge end labels
+/// `placeLabels(LPort, LabelCell, double)`: places the edge end labels
 /// that are to be placed near the given port.
 fn place_labels_for_port(
     a: &LGraphArena,
@@ -533,7 +533,7 @@ fn place_labels_for_port(
     label_cell
 }
 
-/// Java `removeLabelOverlaps`: calls the rectangle overlap removal code to
+/// `removeLabelOverlaps`: calls the rectangle overlap removal code to
 /// remove overlaps between end labels of edges connected to ports on the
 /// given side.
 fn remove_label_overlaps(
@@ -555,8 +555,7 @@ fn remove_label_overlaps(
         edge_label_spacing,
     ));
 
-    // Gather the rectangles. (Java passes the label cells' rectangles by
-    // reference; here we remember handles and copy the results back.)
+    // Gather the rectangles. We remember handles and copy the results back.
     let mut handles: Vec<(usize, usize)> = Vec::new();
     for port in a.node_ports_on_side(node, port_side) {
         let port_id = a.port(port).id as usize;
@@ -577,7 +576,7 @@ fn remove_label_overlaps(
     }
 }
 
-/// Java `calculateOverlapStartCoordinate`.
+/// `calculateOverlapStartCoordinate`.
 fn calculate_overlap_start_coordinate(
     a: &LGraphArena,
     node: LNodeId,
@@ -599,7 +598,7 @@ fn calculate_overlap_start_coordinate(
 //////////////////////////////////////////////////////////////////////////////
 // Node Margins
 
-/// Java `updateNodeMargins`: updates the node's margins to account for its
+/// `updateNodeMargins`: updates the node's margins to account for its
 /// end labels.
 fn update_node_margins(a: &mut LGraphArena, node: LNodeId, label_cells: &[Option<LabelCell>]) {
     let mut node_margin = a.node(node).margin;
@@ -629,7 +628,7 @@ fn update_node_margins(a: &mut LGraphArena, node: LNodeId, label_cells: &[Option
 //////////////////////////////////////////////////////////////////////////////
 // Utility Methods
 
-/// Java `getLabelSide(LabelCell)`: the label side of the cell's first label.
+/// `getLabelSide(LabelCell)`: the label side of the cell's first label.
 fn get_label_side(a: &LGraphArena, label_cell: &LabelCell) -> LabelSide {
     debug_assert!(label_cell.has_labels());
     a.label(label_cell.labels[0])
@@ -637,7 +636,7 @@ fn get_label_side(a: &LGraphArena, label_cell: &LabelCell) -> LabelSide {
         .get(&iprops::LABEL_SIDE)
 }
 
-/// Java `portSideToOverlapRemovalDirection`.
+/// `portSideToOverlapRemovalDirection`.
 fn port_side_to_overlap_removal_direction(port_side: PortSide) -> OverlapRemovalDirection {
     match port_side {
         PortSide::NORTH => OverlapRemovalDirection::Up,

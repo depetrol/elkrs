@@ -18,7 +18,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Java `processComments`: make some extra space for comment boxes that are
+/// `processComments`: make some extra space for comment boxes that are
 /// placed near the given node.
 fn process_comments(a: &mut LGraphArena, node: LNodeId) {
     let top_boxes: Option<Vec<LNodeId>> = a.node(node).properties.try_get(&iprops::TOP_COMMENTS);

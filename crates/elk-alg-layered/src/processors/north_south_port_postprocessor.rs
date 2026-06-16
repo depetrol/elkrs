@@ -85,15 +85,15 @@ fn origin_port(a: &LGraphArena, dummy_port: LPortId) -> Result<LPortId, String> 
     }
 }
 
-/// Java `LPort.getAbsoluteAnchor().x`.
+/// `LPort.getAbsoluteAnchor().x`.
 fn absolute_anchor_x(a: &LGraphArena, port: LPortId) -> f64 {
     let p = a.port(port);
     let n = a.node(p.node.unwrap());
     n.pos.x + p.pos.x + p.anchor.x
 }
 
-/// Adds a junction point at `(x, y)` to the edge (Java materializes the
-/// `JUNCTION_POINTS` default if necessary and appends).
+/// Adds a junction point at `(x, y)` to the edge, materializing the
+/// `JUNCTION_POINTS` default if necessary and appending.
 fn add_junction_point(a: &LGraphArena, edge: crate::graph::LEdgeId, x: f64, y: f64) {
     let mut junction_points: KVectorChain = a.edge(edge).properties.get(&lopts::JUNCTION_POINTS);
     junction_points.add_last(KVector::new(x, y));

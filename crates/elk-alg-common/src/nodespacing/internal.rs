@@ -67,7 +67,7 @@ pub enum NodeLabelLocation {
 use NodeLabelLocation::*;
 
 impl NodeLabelLocation {
-    /// All locations in Java declaration order.
+    /// All locations in declaration order.
     pub const VALUES: [NodeLabelLocation; 22] = [
         OUT_T_L, OUT_T_C, OUT_T_R, OUT_B_L, OUT_B_C, OUT_B_R, OUT_L_T, OUT_L_C, OUT_L_B, OUT_R_T,
         OUT_R_C, OUT_R_B, IN_T_L, IN_T_C, IN_T_R, IN_C_L, IN_C_C, IN_C_R, IN_B_L, IN_B_C, IN_B_R,
@@ -78,8 +78,8 @@ impl NodeLabelLocation {
         NodeLabelLocation::VALUES.iter().position(|&l| l == self).unwrap()
     }
 
-    /// The `NodeLabelPlacement` sets that map to this location (Java's
-    /// `assignedPlacements`). Built on the fly; the sets are tiny.
+    /// The `NodeLabelPlacement` sets that map to this location. Built on the
+    /// fly; the sets are tiny.
     fn assigned_placements(self) -> Vec<EnumSet<NodeLabelPlacement>> {
         use NodeLabelPlacement as P;
         // (outside?, base placements, with-priority variant?)
@@ -228,11 +228,11 @@ impl NodeLabelLocation {
 pub struct PortContext<P> {
     /// The port we calculate stuff for.
     pub port: P,
-    /// The port's side (Java reads it live from the adapter; it is immutable
-    /// during the algorithm, so we cache it here).
+    /// The port's side. It is immutable during the algorithm, so we cache it
+    /// here.
     pub side: PortSide,
-    /// The volatile id assigned by the port context creator (Java
-    /// `PortAdapter.setVolatileId`), used for the sort order.
+    /// The volatile id assigned by the port context creator, used for the
+    /// sort order.
     pub volatile_id: usize,
     /// The port's position, to be modified by the algorithm and possibly
     /// applied later.
@@ -308,14 +308,13 @@ pub fn individual_or_inherited<G: AdapterGraph, T: PropValue + Clone + Default +
             }
         }
     }
-    // Use the common value; Java falls back to the property default if the
-    // node has no graph, which our `get` also does implicitly.
+    // Use the common value; falls back to the property default if the
+    // node has no graph, which `get` does implicitly.
     g.graph_properties().get(property)
 }
 
 /// Data holder passed around the algorithm. The cell
-/// system lives in the `cells` arena; the Java object references become
-/// [`CellId`]s.
+/// system lives in the `cells` arena; cells are referenced by [`CellId`].
 pub struct NodeContext<G: AdapterGraph> {
     /// The node we calculate stuff for.
     pub node: G::N,
@@ -349,16 +348,14 @@ pub struct NodeContext<G: AdapterGraph> {
     pub port_label_spacing_horizontal: f64,
     /// Vertical space between a port and its labels.
     pub port_label_spacing_vertical: f64,
-    /// Margin to leave around the set of ports on each side. (Never absent;
-    /// Java's null checks on this are always true since the property has a
-    /// default.)
+    /// Margin to leave around the set of ports on each side. (Never absent,
+    /// since the property has a default.)
     pub surrounding_port_margins: ElkMargin,
     /// Whether node is being laid out in top-down layout mode.
     pub topdown_layout: bool,
 
-    /// Port contexts, ordered like Java's `TreeMultimap`: grouped by port
-    /// side (NORTH, EAST, SOUTH, WEST), within each side sorted
-    /// left-to-right / top-to-bottom.
+    /// Port contexts, ordered grouped by port side (NORTH, EAST, SOUTH,
+    /// WEST), within each side sorted left-to-right / top-to-bottom.
     pub port_contexts: Vec<PortContext<G::P>>,
 
     /// The arena holding the cell system.
@@ -377,14 +374,13 @@ pub struct NodeContext<G: AdapterGraph> {
     /// by `PortSide` ordinal.
     pub outside_node_label_containers: [Option<CellId>; 5],
     /// Label cells created for node labels, indexed by `NodeLabelLocation`
-    /// ordinal (iteration in ordinal order mirrors Java's `EnumMap`).
+    /// ordinal (iteration is in ordinal order).
     pub node_label_cells: [Option<CellId>; 22],
 }
 
 impl<G: AdapterGraph> NodeContext<G> {
-    /// The `NodeContext` constructor. (The Java constructor takes the
-    /// parent graph but never uses it; spacing lookups go through
-    /// `node.getGraph()`, which corresponds to `g` here.)
+    /// The `NodeContext` constructor. Spacing lookups go through the node's
+    /// graph, which corresponds to `g` here.
     pub fn new(g: &G, node: G::N) -> Self {
         use elk_core::options as opts;
 
@@ -404,7 +400,6 @@ impl<G: AdapterGraph> NodeContext<G> {
         let port_constraints = node_props.get(&opts::PORT_CONSTRAINTS);
         let port_labels_placement = node_props.get(&opts::PORT_LABELS_PLACEMENT);
         if !PortLabelPlacement::is_valid(port_labels_placement) {
-            // Java throws UnsupportedConfigurationException
             panic!("Invalid port label placement: {:?}", port_labels_placement);
         }
 

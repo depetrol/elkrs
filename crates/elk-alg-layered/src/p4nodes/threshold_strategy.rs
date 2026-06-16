@@ -1,9 +1,8 @@
 //! Threshold calculation used by
 //! the BK compactor to favor additional straight edges over compactness.
 //!
-//! Java models this as an abstract class with `NullThresholdStrategy` and
-//! `SimpleThresholdStrategy` subclasses; here both are folded into one struct
-//! distinguished by the `simple` flag.
+//! The `NullThresholdStrategy` and `SimpleThresholdStrategy` variants are
+//! folded into one struct distinguished by the `simple` flag.
 
 use std::collections::{HashSet, VecDeque};
 
@@ -12,10 +11,10 @@ use crate::graph::{LEdgeId, LGraphArena, LNodeId};
 use super::bk_aligned_layout::{BKAlignedLayout, HDirection, VDirection};
 use super::neighborhood_information::{nid, NeighborhoodInformation};
 
-// TODO (from Java) make this an option?!
+// TODO make this an option?!
 const THRESHOLD: f64 = f64::MAX;
 
-/// Represents a unit to be post-processed (Java `Postprocessable`).
+/// Represents a unit to be post-processed (`Postprocessable`).
 struct Postprocessable {
     /// the node whose block can potentially be moved.
     free: LNodeId,
@@ -28,8 +27,7 @@ struct Postprocessable {
 }
 
 pub struct ThresholdStrategy {
-    /// `true` mirrors Java's `SimpleThresholdStrategy`, `false` the
-    /// `NullThresholdStrategy`.
+    /// `true` selects the simple strategy, `false` the null strategy.
     simple: bool,
     /// We keep track of which blocks have been completely finished.
     block_finished: HashSet<LNodeId>,
@@ -95,7 +93,6 @@ impl ThresholdStrategy {
         //  1) it is not guaranteed that adjacent nodes are already placed
         //  2) blocks can consist of a single node implying that the current
         //     node is both the root and the last node
-        // (Java contains identical code for the RIGHT and LEFT cases here.)
         let mut t = old_thresh;
         if is_root {
             t = self.get_bound(a, bal, block_root, true);
@@ -145,7 +142,6 @@ impl ThresholdStrategy {
             // in order to straighten 'e' the block represented by 'pp.free'
             // would have to be moved. However, since that block is already
             // part of a straightened edge, it cannot be moved again
-            // (Java checks this same condition twice, OR'd with itself)
             if bal.su[nid(a, bal.root[nid(a, pp.free)].unwrap())] {
                 continue;
             }
@@ -200,8 +196,7 @@ impl ThresholdStrategy {
             let right = a.edge(edge).target.unwrap();
 
             // We handle the root (first) node of a block and the last node of
-            // a block; they only differ in the port selection. (Java repeats
-            // the identical threshold expression in both branches.)
+            // a block; they only differ in the port selection.
             let (root_port, other_port) = if is_root {
                 if bal.hdir == Some(HDirection::Right) {
                     (right, left)

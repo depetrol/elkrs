@@ -1,9 +1,9 @@
 //!
 //! Extends the common `ScanlineConstraintCalculator` (a plain sweep) with the
-//! special spacing handling between LGraph nodes and edge segments. The Java
-//! subclass enlarges hitboxes by half the relevant spacing (minus a small
-//! epsilon), runs a sweep, then shrinks them back — repeated for several
-//! element classes.
+//! special spacing handling between LGraph nodes and edge segments. It
+//! enlarges hitboxes by half the relevant spacing (minus a small epsilon),
+//! runs a sweep, then shrinks them back — repeated for several element
+//! classes.
 
 use elk_alg_common::compaction::one_dimensional_compactor::{
     ConstraintCalculationAlgorithm, OneDimensionalCompactor,
@@ -36,8 +36,8 @@ pub struct EdgeAwareScanlineConstraintCalculation {
 }
 
 impl EdgeAwareScanlineConstraintCalculation {
-    /// Java constructor reads the two graph properties; here we also snapshot
-    /// the per-element spacing data the sweep relies on.
+    /// Reads the two graph properties and snapshots the per-element spacing
+    /// data the sweep relies on.
     pub fn new(a: &LGraphArena, graph: LGraphId, seg_ignore: Vec<Quadruplet>) -> Self {
         let vertical_edge_edge_spacing = a.graph(graph).properties.get(&lopts::SPACING_EDGE_EDGE);
         let edge_routing = a.graph(graph).properties.get(&lopts::EDGE_ROUTING);
@@ -64,7 +64,7 @@ impl EdgeAwareScanlineConstraintCalculation {
         }
     }
 
-    /// Java `alterHitbox`.
+    /// Alters a CNode's hitbox by `spacing * fac`.
     fn alter_hitbox(&self, c: &mut OneDimensionalCompactor, node: CNodeId, spacing: f64, fac: f64) {
         let delta = spacing * fac;
         match c.cgraph.cnodes[node].origin {
@@ -87,7 +87,7 @@ impl EdgeAwareScanlineConstraintCalculation {
         }
     }
 
-    /// Java `alterGroupedHitboxOrthogonal`.
+    /// Alters the hitboxes of a group's CNodes for the orthogonal sweep.
     fn alter_grouped_hitbox_orthogonal(
         &self,
         c: &mut OneDimensionalCompactor,
@@ -122,7 +122,7 @@ impl EdgeAwareScanlineConstraintCalculation {
         }
     }
 
-    /// Minimum spacing over all CNodes (Java's `minSpacing` stream).
+    /// Minimum spacing over all CNodes (the `minSpacing` stream).
     fn min_spacing(&self, c: &OneDimensionalCompactor) -> f64 {
         let mut min = f64::INFINITY;
         let mut any = false;
@@ -169,14 +169,14 @@ impl EdgeAwareScanlineConstraintCalculation {
         let l_nodes: Vec<CNodeId> = (0..c.cgraph.cnodes.len())
             .filter(|&i| matches!(c.cgraph.cnodes[i].origin, CNodeOrigin::LNode(_)))
             .collect();
-        // node spacing uses edge-edge (see Java comment), individual-or-default
+        // node spacing uses edge-edge, individual-or-default
         let mut node_spacings: Vec<(CNodeId, f64)> = Vec::new();
         for &n in &l_nodes {
             let lnode = match c.cgraph.cnodes[n].origin {
                 CNodeOrigin::LNode(idx) => idx as usize,
                 _ => unreachable!(),
             };
-            // Java uses SPACING_EDGE_EDGE individual-or-default here.
+            // uses SPACING_EDGE_EDGE individual-or-default here.
             let spacing = self.edge_edge_spacing_for(lnode);
             let final_spacing = (spacing / 2.0 - EPSILON).max(0.0);
             self.alter_hitbox(c, n, final_spacing, 1.0);
@@ -202,12 +202,12 @@ impl EdgeAwareScanlineConstraintCalculation {
     }
 
     /// per-LNode individual-or-default SPACING_EDGE_EDGE (used for the node
-    /// class sweep, see the Java comment about edge-node spacing).
+    /// class sweep).
     fn edge_edge_spacing_for(&self, lnode: usize) -> f64 {
         self.edge_edge_node_spacing[lnode]
     }
 
-    /// Java `calculateForSpline`.
+    /// Calculates constraints for spline edge routing.
     fn calculate_for_spline(&self, c: &mut OneDimensionalCompactor) {
         // -------------------- Vertical Segments --------------------
         // Some constraints between subsequent vertical segments of the same

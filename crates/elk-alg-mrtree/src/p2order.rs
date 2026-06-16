@@ -1,6 +1,6 @@
 //! Orders the nodes
-//! of each level. (The alternative `OrderBalance` phase is unreachable in
-//! Java — `TreeLayoutPhases.create()` always instantiates `NodeOrderer` — and
+//! of each level. (The alternative `OrderBalance` phase is unreachable —
+//! `TreeLayoutPhases.create()` always instantiates `NodeOrderer` — and
 //! is not ported.)
 
 use crate::graph::{TArena, TEdgeId, TGraph, TNodeId};
@@ -35,7 +35,7 @@ fn sort_property(arena: &TArena, n: TNodeId, weighting: OrderWeighting) -> i32 {
 }
 
 /// The level list is sorted
-/// in place (Java passes the caller's `children` list, whose sorted state is
+/// in place (the caller's `children` list is passed, whose sorted state is
 /// visible to the caller's subsequent position sort).
 fn order_level_fan_descendants(
     arena: &mut TArena,
@@ -133,7 +133,7 @@ fn order_level_constraint(arena: &mut TArena, current_level: Vec<TNodeId>) {
     let mut sorted_nodes: Vec<Option<TNodeId>> = vec![None; current_level.len()];
 
     // Priority 1: set non duplicate constraints (note: the upper bound is
-    // the *shrinking* inBoundNodes list size, like Java)
+    // the *shrinking* inBoundNodes list size)
     let mut i = 0usize;
     while i < in_bound_nodes.len() {
         let cur_node = in_bound_nodes[i];
@@ -148,7 +148,7 @@ fn order_level_constraint(arena: &mut TArena, current_level: Vec<TNodeId>) {
             i += 1;
         }
     }
-    // Priority 2: set duplicate constraints (Java's `i--` after each
+    // Priority 2: set duplicate constraints (the `i--` after each
     // placement keeps the index at 0 while the list shrinks)
     let i = 0usize;
     while i < in_bound_nodes.len() {

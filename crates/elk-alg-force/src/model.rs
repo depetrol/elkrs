@@ -138,7 +138,7 @@ pub fn avoid_same_position(
             let v_edge = arena.bendpoint(bv).edge;
             let mut v_vector = arena.edge_target_point(v_edge);
             v_vector.sub(arena.edge_source_point(v_edge));
-            // Java compares the two freshly allocated KVector objects by
+            // The two freshly allocated KVector objects are compared by
             // reference (`uVector == vVector`), which is always false.
             let length = 2.0;
             let orthogonal_v = KVector::new(
@@ -368,8 +368,8 @@ mod tests {
     ///   v=n1,u=n0: disp = (n1-n0) * (100/|n1-n0|)
     ///   final n0 = (100.38598953240691, 15.448767007180436)
     ///   final n1 = (-98.50880346838089, -13.96317127227701)
-    /// (values verified with an independent IEEE-754 simulation of the Java
-    /// code; no transcendental functions are involved since d == 0).
+    /// (values verified with an independent IEEE-754 simulation;
+    /// no transcendental functions are involved since d == 0).
     #[test]
     fn eades_first_iteration_exact() {
         let (mut arena, mut graph) = two_node_graph();

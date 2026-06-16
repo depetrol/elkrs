@@ -31,8 +31,7 @@ pub fn create_port_contexts<G: AdapterGraph>(
         volatile_id += 1;
     }
 
-    // Java inserts contexts into a TreeMultimap; sorting afterwards yields
-    // the same iteration order.
+    // Sort the contexts into their iteration order.
     node_context.sort_port_contexts();
 }
 

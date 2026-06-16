@@ -35,7 +35,7 @@ fn process_node(a: &mut LGraphArena, l_node: LNodeId, sl_holder: &SelfLoopHolder
     }
 }
 
-/// Java `restoreEdge`.
+/// `restoreEdge`.
 fn restore_edge(
     a: &mut LGraphArena,
     l_node: LNodeId,

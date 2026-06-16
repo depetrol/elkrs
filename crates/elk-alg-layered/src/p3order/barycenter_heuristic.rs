@@ -1,9 +1,3 @@
-//!
-//! In Java the heuristic holds references to the constraint resolver's
-//! barycenter state array and the port distributor's port rank array; here
-//! the functions borrow them from the `ForsterConstraintResolver` /
-//! `PortDistributor` passed in.
-
 use std::cmp::Ordering;
 
 use elk_core::javacompat::JavaRandom;
@@ -154,7 +148,7 @@ pub fn minimize_crossings_list(
                     let b1 = states[l1][i1].barycenter;
                     let b2 = states[l2][i2].barycenter;
                     match (b1, b2) {
-                        (Some(v1), Some(v2)) => v1.total_cmp(&v2), // Double.compareTo
+                        (Some(v1), Some(v2)) => v1.total_cmp(&v2),
                         (Some(_), None) => Ordering::Less,
                         (None, Some(_)) => Ordering::Greater,
                         (None, None) => Ordering::Equal,
@@ -257,7 +251,7 @@ fn fill_in_unknown_barycenters(
         for &node in nodes {
             let (l, n) = state_indices(a, node);
             if resolver.barycenter_states[l][n].barycenter.is_none() {
-                // float promoted to double before the multiplication in Java
+                // float promoted to double before the multiplication
                 let value = random.next_float() as f64 * max_bary - 1.0;
                 let state = &mut resolver.barycenter_states[l][n];
                 state.barycenter = Some(value);
@@ -289,8 +283,7 @@ fn calculate_barycenters(
 }
 
 /// The recursive `calculateBarycenter`. Handles in-layer edges; may
-/// give incorrect results if the in-layer edges form a cycle (just like the
-/// Java original).
+/// give incorrect results if the in-layer edges form a cycle.
 fn calculate_barycenter(
     a: &LGraphArena,
     node: LNodeId,
@@ -375,7 +368,7 @@ fn calculate_barycenter(
 
     if resolver.barycenter_states[l][n].degree > 0 {
         // add a small random perturbation in order to increase diversity of solutions
-        // (computed in float, then promoted to double — exactly as in Java)
+        // (computed in float, then promoted to double)
         let perturbation = random.next_float() * RANDOM_AMOUNT - RANDOM_AMOUNT / 2.0;
         let state = &mut resolver.barycenter_states[l][n];
         state.summed_weight += perturbation as f64;

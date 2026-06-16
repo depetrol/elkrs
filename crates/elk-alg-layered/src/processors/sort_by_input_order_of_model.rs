@@ -62,7 +62,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
                     port_model_order,
                 );
                 let mut ports: Vec<LPortId> = a.node(node).ports.clone();
-                // Java uses Collections.sort (TimSort).
                 tim_sort(&mut ports, |&p1, &p2| comparator.compare(p1, p2));
                 a.node_mut(node).ports = ports;
             }

@@ -1,7 +1,6 @@
 //! Typed property system mirroring `org.eclipse.elk.graph.properties`.
 //!
-//! Java stores `IProperty<T> -> Object` in a `HashMap` per element and casts
-//! on access. Here a [`PropertyMap`] stores `String -> Box<dyn PropValue>`
+//! A [`PropertyMap`] stores `String -> Box<dyn PropValue>`
 //! and a [`Property<T>`] is a typed handle (id + default) used for access.
 
 use std::any::Any;
@@ -10,7 +9,7 @@ use std::marker::PhantomData;
 
 use indexmap::IndexMap;
 
-/// Java `toString()` equivalent used when serializing property values.
+/// Serializes property values to their string representation.
 pub trait JavaString {
     fn java_string(&self) -> String;
 }
@@ -87,14 +86,14 @@ impl JavaString for crate::math::Spacing {
 }
 impl<T: JavaString> JavaString for Vec<T> {
     fn java_string(&self) -> String {
-        // Java List.toString: "[a, b, c]"
+        // List format: "[a, b, c]"
         let items: Vec<String> = self.iter().map(JavaString::java_string).collect();
         format!("[{}]", items.join(", "))
     }
 }
 
-/// Whether Java's `getProperty` materializes (clones and stores) the default
-/// for this type. Mirrors `instanceof Cloneable` in `MapPropertyHolder`.
+/// Whether a property read materializes (clones and stores) the default
+/// for this type.
 pub trait JavaCloneable {
     const CLONEABLE: bool;
 }
@@ -126,7 +125,7 @@ impl<T: JavaCloneable> JavaCloneable for Vec<T> {
 
 // ----------------------------------------------------------------- ElkEnum
 
-/// Implemented by `elk_enum!`-generated enums; mirrors Java `Enum`.
+/// Implemented by `elk_enum!`-generated enums.
 pub trait ElkEnum: Copy + Eq + fmt::Debug + 'static {
     const VALUES: &'static [Self];
     fn name(&self) -> &'static str;
@@ -134,7 +133,7 @@ pub trait ElkEnum: Copy + Eq + fmt::Debug + 'static {
     fn ordinal(&self) -> usize;
 }
 
-/// Defines a Rust enum mirroring a Java enum: `name()`/`valueOf` semantics,
+/// Defines a Rust enum with `name()`/`valueOf` semantics,
 /// `Display` printing the variant name, and `JavaString` for serialization.
 #[macro_export]
 macro_rules! elk_enum {
@@ -161,7 +160,7 @@ macro_rules! elk_enum {
             }
         }
 
-        // Fallback only: property lookups use the option's Java default;
+        // Fallback only: property lookups use the option's default;
         // this is required to satisfy `PropertyMap::get`'s bound.
         impl Default for $Name {
             fn default() -> Self {
@@ -181,7 +180,7 @@ macro_rules! elk_enum {
     };
 }
 
-/// Java `EnumSet`, a bitset over an [`ElkEnum`].
+/// A bitset over an [`ElkEnum`].
 pub struct EnumSet<T: ElkEnum> {
     bits: u64,
     _pd: PhantomData<T>,
@@ -232,7 +231,7 @@ impl<T: ElkEnum> EnumSet<T> {
         self.bits.count_ones() as usize
     }
 
-    /// Iterates in ordinal order, like Java's `EnumSet`.
+    /// Iterates in ordinal order.
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
         T::VALUES.iter().copied().filter(|v| self.contains(*v))
     }
@@ -330,9 +329,8 @@ impl<T: 'static> Property<T> {
 /// Per-element property storage, port of `MapPropertyHolder`.
 ///
 /// Uses an `IndexMap` (insertion order) so that serialization output is
-/// deterministic; Java uses `HashMap` and never relies on its order for
-/// layout decisions. The map is `RefCell`-backed because Java's
-/// `getProperty` has write-through semantics: reading an unset property
+/// deterministic. The map is `RefCell`-backed because reading has
+/// write-through semantics: reading an unset property
 /// whose default is `Cloneable` stores the cloned default in the map.
 #[derive(Default, Debug)]
 pub struct PropertyMap {
@@ -359,15 +357,14 @@ impl PropertyMap {
         Self::default()
     }
 
-    /// Java `getProperty`: stored value, else the property default (cloned
-    /// and stored if the type is "Cloneable" in Java), else `T::default()`
-    /// (where Java would return null).
+    /// Stored value, else the property default (cloned
+    /// and stored if the type is "Cloneable"), else `T::default()`.
     pub fn get<T: PropValue + Clone + Default + JavaCloneable>(&self, p: &Property<T>) -> T {
         self.get_opt(p).unwrap_or_default()
     }
 
-    /// Java `getProperty` for call sites that handle null: stored value or
-    /// property default; `None` where Java returns null.
+    /// For call sites that handle absence: stored value or
+    /// property default; `None` when neither is present.
     pub fn get_opt<T: PropValue + Clone + JavaCloneable>(&self, p: &Property<T>) -> Option<T> {
         if let Some(v) = self.try_get(p) {
             return Some(v);
@@ -382,8 +379,8 @@ impl PropertyMap {
     }
 
     /// The stored value only (no default, no materialization); clone of the
-    /// stored value. Used for Java's `hasProperty() ? getProperty() : null`
-    /// patterns and for read-modify-write of in-place mutations.
+    /// stored value. Used for "value if present, else none" patterns
+    /// and for read-modify-write of in-place mutations.
     pub fn try_get<T: PropValue + Clone>(&self, p: &Property<T>) -> Option<T> {
         self.map
             .borrow()
@@ -397,7 +394,7 @@ impl PropertyMap {
         self
     }
 
-    /// Java `setProperty(p, null)`.
+    /// Removes the property's stored value.
     pub fn unset<T>(&self, p: &Property<T>) -> &Self {
         self.map.borrow_mut().shift_remove(p.id);
         self
@@ -420,7 +417,7 @@ impl PropertyMap {
         self.map.borrow_mut().insert(id.to_string(), value);
     }
 
-    /// Java `copyProperties`: other's entries overwrite ours.
+    /// Other's entries overwrite ours.
     pub fn copy_from(&self, other: &PropertyMap) {
         let other_map = other.map.borrow();
         let mut own = self.map.borrow_mut();
@@ -495,7 +492,7 @@ mod tests {
         let m = PropertyMap::new();
         let v: KVector = m.get(&OFFSET);
         assert_eq!(v, KVector::default());
-        // KVector is "Cloneable" in Java, so reading stores... only when a
+        // KVector is "Cloneable", so reading stores... only when a
         // default exists; OFFSET has none, so nothing is stored.
         assert!(!m.has(&OFFSET));
 

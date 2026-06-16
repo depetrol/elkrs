@@ -47,7 +47,7 @@ pub fn split(arena: &mut TArena, graph: TGraph) -> Vec<TGraph> {
     vec![graph]
 }
 
-/// Like Java, every edge ends up in the
+/// Every edge ends up in the
 /// component's edge list **twice** (once per endpoint visit); downstream code
 /// dedupes with `distinct()` where it matters.
 fn dfs(
@@ -132,7 +132,7 @@ pub fn pack(arena: &mut TArena, mut components: Vec<TGraph>) -> TGraph {
         max_row_width = f64::max(max_row_width, size.x);
         total_area += size.x * size.y;
     }
-    // Java: (float) Math.sqrt(totalArea) * aspectRatio — note the float cast
+    // note the float cast
     let aspect_ratio: f64 = result.properties.get(&options::ASPECT_RATIO);
     max_row_width = f64::max(max_row_width, (total_area.sqrt() as f32 as f64) * aspect_ratio);
     let spacing: f64 = result.properties.get(&options::SPACING_NODE_NODE);
@@ -155,11 +155,9 @@ pub fn pack(arena: &mut TArena, mut components: Vec<TGraph>) -> TGraph {
         highest_box = f64::max(highest_box, size.y);
         xpos += size.x + spacing;
     }
-    let _ = broadest_row; // dead in Java as well
+    let _ = broadest_row; // dead
 
-    // Property merge across components. The Java original keeps the first
-    // component's value when a later component's value is *reference-equal*
-    // to the option default (boxed-cache quirk); since the merged values are
+    // Property merge across components. Since the merged values are
     // all copies of the same input-graph properties, plain overwrite is
     // observably equivalent here and the merged map is never copied back to
     // the output graph anyway.
@@ -187,7 +185,7 @@ fn apply_padding_and_normalize_positions(arena: &mut TArena, g: &mut TGraph) {
     g.bb_upleft = KVector::new(0.0, 0.0);
     let offsetx = padding.left - g.graph_xmin;
     let offsety = padding.top - g.graph_ymin;
-    // Java moves the graph into a throwaway destination graph here.
+    // The graph is moved into a throwaway destination graph here.
     move_graph(arena, None, g, offsetx, offsety);
 }
 
@@ -208,7 +206,6 @@ fn move_graph(
         }
     }
 
-    // Java: sourceGraph.getEdges().stream().distinct()
     let mut seen: Vec<TEdgeId> = Vec::new();
     for &edge in &source_graph.edges {
         if seen.contains(&edge) {

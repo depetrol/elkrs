@@ -13,8 +13,8 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 
     let layers = a.graph(graph).layers.clone();
     for layer in layers {
-        // (the Java code skips empty layers but the loop handles them anyway)
-        // Java uses a signed index that can decrement to -1 then re-increment.
+        // empty layers are handled by the loop anyway.
+        // a signed index is used that can decrement to -1 then re-increment.
         let mut node_index: i64 = 0;
         let mut last_node: Option<LNodeId> = None;
         let mut last_node_type: Option<NodeType> = None;
@@ -178,7 +178,7 @@ fn dfs(a: &mut LGraphArena, p: LPortId, index: i32) {
     }
 }
 
-/// Java `LPort.getConnectedPorts`: source ports of incoming edges followed by
+/// `LPort.getConnectedPorts`: source ports of incoming edges followed by
 /// target ports of outgoing edges.
 fn port_connected_ports(a: &LGraphArena, port: LPortId) -> Vec<LPortId> {
     let p = a.port(port);

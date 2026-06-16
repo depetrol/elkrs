@@ -12,7 +12,7 @@ use crate::options_gen::EdgeLabelSideSelection;
 use crate::processors::end_label_preprocessor;
 use crate::processors::label_dummy_inserter::is_inline_edge_label;
 
-/// Java `LabelSide.opposite()` (UNKNOWN maps to itself).
+/// `LabelSide.opposite()` (UNKNOWN maps to itself).
 fn opposite(side: LabelSide) -> LabelSide {
     match side {
         LabelSide::ABOVE => LabelSide::BELOW,
@@ -43,7 +43,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 //////////////////////////////////////////////////////////////////////////////
 // Simple Placement Strategies
 
-/// Java `sameSide`: configures all labels to be placed on the given side.
+/// `sameSide`: configures all labels to be placed on the given side.
 fn same_side(a: &mut LGraphArena, graph: LGraphId, label_side: LabelSide) {
     let layers = a.graph(graph).layers.clone();
     for layer in layers {
@@ -60,7 +60,7 @@ fn same_side(a: &mut LGraphArena, graph: LGraphId, label_side: LabelSide) {
     }
 }
 
-/// Java `basedOnDirection`: configures all labels to be placed according to
+/// `basedOnDirection`: configures all labels to be placed according to
 /// their edge's direction.
 fn based_on_direction(a: &mut LGraphArena, graph: LGraphId, side_for_rightward_edges: LabelSide) {
     let layers = a.graph(graph).layers.clone();
@@ -91,7 +91,7 @@ fn based_on_direction(a: &mut LGraphArena, graph: LGraphId, side_for_rightward_e
 //////////////////////////////////////////////////////////////////////////////
 // Smart Placement Strategy
 
-/// Java `smart`: chooses label sides depending on certain patterns.
+/// `smart`: chooses label sides depending on certain patterns.
 fn smart(a: &mut LGraphArena, graph: LGraphId, default_side: LabelSide) {
     // We will collect consecutive runs of certain dummy nodes while we iterate
     let mut dummy_node_queue: Vec<LNodeId> = Vec::new();
@@ -149,7 +149,7 @@ fn smart(a: &mut LGraphArena, graph: LGraphId, default_side: LabelSide) {
     }
 }
 
-/// Java `smartForConsecutiveDummyNodeRun`: assigns label sides to all label
+/// `smartForConsecutiveDummyNodeRun`: assigns label sides to all label
 /// dummies in the given queue and empties the queue afterwards.
 fn smart_for_consecutive_dummy_node_run(
     a: &mut LGraphArena,
@@ -194,7 +194,7 @@ fn smart_for_consecutive_dummy_node_run(
     dummy_nodes.clear();
 }
 
-/// Java `applyForDummyNodeRunWithSimpleLoops`.
+/// `applyForDummyNodeRunWithSimpleLoops`.
 fn apply_for_dummy_node_run_with_simple_loops(
     a: &mut LGraphArena,
     dummy_nodes: &[LNodeId],
@@ -232,7 +232,7 @@ fn apply_for_dummy_node_run_with_simple_loops(
     apply_label_sides_to_label_dummy_run(a, &mut label_dummy_run, default_side);
 }
 
-/// Java `getLongEdgeEndNode`: the long edge source or target node of the
+/// `getLongEdgeEndNode`: the long edge source or target node of the
 /// given dummy. May be, but shouldn't be, `None`.
 fn get_long_edge_end_node(a: &LGraphArena, label_dummy: LNodeId, source: bool) -> Option<LNodeId> {
     let end_port = if source {
@@ -244,7 +244,7 @@ fn get_long_edge_end_node(a: &LGraphArena, label_dummy: LNodeId, source: bool) -
     end_port.and_then(|port| a.port(port).node)
 }
 
-/// Java `applyLabelSidesToLabelDummyRun`: applies label sides to the given
+/// `applyLabelSidesToLabelDummyRun`: applies label sides to the given
 /// list of consecutive dummy nodes and empties that list afterwards.
 fn apply_label_sides_to_label_dummy_run(
     a: &mut LGraphArena,
@@ -266,7 +266,7 @@ fn apply_label_sides_to_label_dummy_run(
     }
 }
 
-/// Java `smartForRegularNode`: assigns label sides to all end labels incident
+/// `smartForRegularNode`: assigns label sides to all end labels incident
 /// to this node, depending on how many ports there are on any given side.
 fn smart_for_regular_node(a: &mut LGraphArena, node: LNodeId, default_side: LabelSide) {
     // Iterate over the node's list of ports on each side. Remember the ones that have
@@ -309,7 +309,7 @@ fn smart_for_regular_node(a: &mut LGraphArena, node: LNodeId, default_side: Labe
     }
 }
 
-/// Java `smartForRegularNodePortEndLabels`.
+/// `smartForRegularNodePortEndLabels`.
 fn smart_for_regular_node_port_end_labels(
     a: &mut LGraphArena,
     end_label_queue: &[Vec<LLabelId>],
@@ -337,7 +337,7 @@ fn smart_for_regular_node_port_end_labels(
 //////////////////////////////////////////////////////////////////////////////
 // Helper Methods
 
-/// Java `applyLabelSide(LNode, LabelSide)`: applies the given label side to
+/// `applyLabelSide(LNode, LabelSide)`: applies the given label side to
 /// the given label dummy node, moving its ports if necessary.
 fn apply_label_side_to_node(a: &mut LGraphArena, label_dummy: LNodeId, side: LabelSide) {
     // This method only does things to label dummy nodes
@@ -382,7 +382,7 @@ fn apply_label_side_to_node(a: &mut LGraphArena, label_dummy: LNodeId, side: Lab
     }
 }
 
-/// Java `applyLabelSide(LEdge, LabelSide)`: applies the given label side to
+/// `applyLabelSide(LEdge, LabelSide)`: applies the given label side to
 /// all labels of the given edge.
 fn apply_label_side_to_edge(a: &mut LGraphArena, edge: LEdgeId, side: LabelSide) {
     for label in a.edge(edge).labels.clone() {
@@ -390,19 +390,19 @@ fn apply_label_side_to_edge(a: &mut LGraphArena, edge: LEdgeId, side: LabelSide)
     }
 }
 
-/// Java `applyLabelSide(List<LLabel>, LabelSide)`.
+/// `applyLabelSide(List<LLabel>, LabelSide)`.
 fn apply_label_side_to_labels(a: &mut LGraphArena, labels: &[LLabelId], side: LabelSide) {
     for &label in labels {
         a.label(label).properties.set(&iprops::LABEL_SIDE, side);
     }
 }
 
-/// Java `doesEdgePointRight(LEdge)`.
+/// `doesEdgePointRight(LEdge)`.
 fn does_edge_point_right(a: &LGraphArena, edge: LEdgeId) -> bool {
     !a.edge(edge).properties.get::<bool>(&iprops::REVERSED)
 }
 
-/// Java `doesEdgePointRight(LNode)`: checks if the given label dummy node is
+/// `doesEdgePointRight(LNode)`: checks if the given label dummy node is
 /// part of an edge segment that will point right in the final drawing.
 fn does_label_dummy_point_right(a: &LGraphArena, label_dummy: LNodeId) -> bool {
     debug_assert!(a.node(label_dummy).node_type == NodeType::LABEL);

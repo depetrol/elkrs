@@ -63,8 +63,8 @@ impl GraphStats {
         gs.widths = layers.iter().map(|&l| gs.determine_layer_width(a, l)).collect();
         gs.heights = layers.iter().map(|&l| gs.determine_layer_height(a, l)).collect();
 
-        // determineWidth(Math::max) and (a+b) use a stream reduce; both iterate
-        // all layers (longest_path >= 1 guaranteed at call sites that use them).
+        // max and sum reductions over all layers (longest_path >= 1 guaranteed
+        // at call sites that use them).
         gs.max_width = gs.widths.iter().copied().fold(f64::NEG_INFINITY, f64::max);
         gs.sum_width = gs.widths.iter().copied().sum();
         gs.max_height = gs.heights.iter().copied().fold(f64::NEG_INFINITY, f64::max);
@@ -131,10 +131,8 @@ impl GraphStats {
 
         if a.graph(graph).properties.has(&lopts::WRAPPING_VALIDIFY_FORBIDDEN_INDICES) {
             // user-specified forbidden indices: everything else stays at the
-            // Java default — note Java leaves non-forbidden entries at the
-            // boolean default `false` except it never sets them true here.
-            // (Mirrors the Java code: it only sets forbidden ones to false on
-            // an all-false array, so the array stays all-false.)
+            // boolean default `false`. Only forbidden entries are set to false
+            // on an all-false array, so the array stays all-false.
             let forbidden: Vec<i32> =
                 a.graph(graph).properties.get(&lopts::WRAPPING_VALIDIFY_FORBIDDEN_INDICES);
             for f in forbidden {
@@ -278,7 +276,7 @@ impl CutIndexCalculator for MsdCutIndexHeuristic {
     }
 }
 
-/// Returns the configured cut-index calculator (Java switch in the wrappers).
+/// Returns the configured cut-index calculator.
 pub fn cut_index_calculator(a: &LGraphArena, graph: LGraphId) -> Box<dyn CutIndexCalculator> {
     match a.graph(graph).properties.get::<CuttingStrategy>(&lopts::WRAPPING_CUTTING_STRATEGY) {
         CuttingStrategy::MANUAL => Box::new(ManualCutIndexCalculator),
@@ -287,7 +285,7 @@ pub fn cut_index_calculator(a: &LGraphArena, graph: LGraphId) -> Box<dyn CutInde
     }
 }
 
-/// Java `Math.round(double)` returns `floor(x + 0.5)` as a long.
+/// `Math.round(double)` returns `floor(x + 0.5)` as a long.
 pub fn java_round(x: f64) -> i64 {
     (x + 0.5).floor() as i64
 }
@@ -384,7 +382,7 @@ pub fn insert_dummies(
     let mut created_edges = Vec::new();
 
     for i in src_index..=tgt_index {
-        // create dummy node (Java new LNode(graph) does not add to layerless)
+        // create dummy node (not added to the layerless list)
         let dummy_node = a.create_node(graph);
         a.node_mut(dummy_node).node_type = NodeType::LONG_EDGE;
         a.node(dummy_node).properties.set(&iprops::ORIGIN, Origin::LEdge(edge));

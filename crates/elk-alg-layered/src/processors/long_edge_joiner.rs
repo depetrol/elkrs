@@ -17,7 +17,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
         for node in nodes {
             if a.node(node).node_type == NodeType::LONG_EDGE {
                 join_at(a, node, add_unnecessary_bendpoints);
-                // remove from layer (Java: nodeIterator.remove())
+                // remove from layer
                 a.layer_mut(layer).nodes.retain(|&n| n != node);
                 a.node_mut(node).layer = None;
             }
@@ -75,8 +75,8 @@ pub fn join_at(a: &mut LGraphArena, long_edge_dummy: LNodeId, add_unnecessary_be
         let dropped_labels = a.edge(dropped_edge).labels.clone();
         a.edge_mut(surviving_edge).labels.extend(dropped_labels);
 
-        // junction points: Java getProperty materializes the default (empty
-        // chain) on both edges, then appends in place
+        // junction points: materialize the default (empty chain) on both
+        // edges, then append in place
         let mut surviving_jps = a
             .edge(surviving_edge)
             .properties

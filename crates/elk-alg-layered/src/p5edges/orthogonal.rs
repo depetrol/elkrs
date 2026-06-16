@@ -16,8 +16,8 @@ use crate::options_gen as lopts;
 use super::direction::RoutingDirection;
 use super::orthogonal_routing_generator::OrthogonalRoutingGenerator;
 
-/// Java `OrthogonalEdgeRouter.process`. The random number generator stands in
-/// for Java's `InternalProperties.RANDOM` graph property (used by the
+/// `OrthogonalEdgeRouter.process`. The random number generator stands in
+/// for the `InternalProperties.RANDOM` graph property (used by the
 /// hyperedge cycle detector).
 pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) -> Result<(), String> {
     // Retrieve some generic values
@@ -31,7 +31,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
     // Prepare for iteration!
     let mut routing_generator =
         OrthogonalRoutingGenerator::new(RoutingDirection::WestToEast, edge_edge_spacing, "phase5");
-    // Java accumulates the x position in a float!
+    // the x position is accumulated in a float!
     let mut xpos: f32 = 0.0;
     let layers = a.graph(graph).layers.clone();
     let mut layer_iter = layers.iter();
@@ -124,7 +124,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
     Ok(())
 }
 
-/// Java `PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT`.
+/// `PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT`.
 fn is_external_west_or_east_port(a: &LGraphArena, node: LNodeId) -> bool {
     let ext_port_side: PortSide = a.node(node).properties.get(&iprops::EXT_PORT_SIDE);
     a.node(node).node_type == NodeType::EXTERNAL_PORT
@@ -272,7 +272,7 @@ mod tests {
         (g, [e1, e2, e3], [na, nb, nc, nd])
     }
 
-    /// Hand-traced against the Java implementation (ELK 0.11.0) with default
+    /// Hand-traced (ELK 0.11.0) with default
     /// spacings (nodeNodeBetweenLayers=20, edgeEdgeBetweenLayers=10,
     /// edgeNodeBetweenLayers=10):
     ///

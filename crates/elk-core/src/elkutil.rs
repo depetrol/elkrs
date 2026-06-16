@@ -253,10 +253,10 @@ pub fn translate_edge(g: &mut ElkGraph, edge: EdgeId, xoffset: f64, yoffset: f64
         s.x += xoffset;
         s.y += yoffset;
     }
-    // Java `edge.getProperty(JUNCTION_POINTS)` materializes the empty
-    // Cloneable default into the edge, so even edges without junction points
-    // gain an (empty) chain that the exporter then emits as "()". Use `get`
-    // (materializing), not `try_get`, to match.
+    // Reading JUNCTION_POINTS materializes the empty Cloneable default into
+    // the edge, so even edges without junction points gain an (empty) chain
+    // that the exporter then emits as "()". Use `get` (materializing), not
+    // `try_get`.
     let mut jps = g.edge(edge).properties.get(&JUNCTION_POINTS);
     jps.offset_xy(xoffset, yoffset);
     g.edge(edge).properties.set(&JUNCTION_POINTS, jps);
@@ -522,7 +522,7 @@ pub fn compute_inside_part_values(
     }
 }
 
-/// Java `Math.signum` (returns 0.0 for ±0.0, NaN for NaN).
+/// `Math.signum` (returns 0.0 for ±0.0, NaN for NaN).
 fn java_signum(v: f64) -> f64 {
     if v == 0.0 || v.is_nan() {
         v

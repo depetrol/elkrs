@@ -69,8 +69,8 @@ fn setup_north_or_south_port_label_cell<G: AdapterGraph>(
         _ => {}
     }
 
-    // (Java checks surroundingPortMargins != null; the property has a default,
-    // so it never is null.)
+    // (The surrounding port margins are never absent, since the property has
+    // a default.)
     padding.left = surrounding.left;
     padding.right = surrounding.right;
 }

@@ -25,7 +25,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     algorithms.register(AlgorithmData {
         id: "org.eclipse.elk.mrtree",
         name: "ELK Mr. Tree",
-        // MrTreeOptions.java: supportedFeatures(EnumSet.of(GraphFeature.DISCONNECTED))
+        // supportedFeatures: EnumSet.of(GraphFeature.DISCONNECTED)
         features: EnumSet::of(&[GraphFeature::DISCONNECTED]),
         create: || Box::new(provider::TreeLayoutProvider),
     });

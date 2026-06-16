@@ -86,8 +86,8 @@ impl ComponentsProcessor {
         Ok(result)
     }
 
-    /// The recursive `dfs`; same traversal order (per node: ports in
-    /// order, per port predecessors then successors).
+    /// The recursive `dfs`; traversal order is per node: ports in
+    /// order, per port predecessors then successors.
     fn dfs(
         a: &mut LGraphArena,
         node: LNodeId,
@@ -126,11 +126,10 @@ impl ComponentsProcessor {
     }
 
     /// Dispatch on whether the graph has
-    /// external ports. Java caches the chosen placer in `split`; we re-derive
-    /// the same decision from the target graph's properties (when there are
-    /// external ports and the model-order strategy is `NONE`, the
-    /// `ComponentGroupGraphPlacer` is used; the model-order strategies are
-    /// rejected earlier in `split`).
+    /// external ports. The placer decision is derived from the target graph's
+    /// properties (when there are external ports and the model-order strategy
+    /// is `NONE`, the `ComponentGroupGraphPlacer` is used; the model-order
+    /// strategies are rejected earlier in `split`).
     pub fn combine(
         a: &mut LGraphArena,
         components: &mut Vec<LGraphId>,
@@ -184,7 +183,6 @@ impl ComponentsProcessor {
             max_row_width = f64::max(max_row_width, size.x);
             total_area += size.x * size.y;
         }
-        // Java: (float) Math.sqrt(totalArea) * aspectRatio
         let aspect_ratio: f64 = a.graph(target).properties.get(&lopts::ASPECT_RATIO);
         max_row_width = f64::max(max_row_width, (total_area.sqrt() as f32) as f64 * aspect_ratio);
         let component_spacing: f64 = a
@@ -670,9 +668,8 @@ fn maxd(values: &[f64]) -> f64 {
 }
 
 /// A group of connected components, keyed by the set
-/// of external-port sides each connects to (Java `Multimap<Set<PortSide>,
-/// LGraph>`, an `ArrayListMultimap` that preserves insertion order). Keyed here
-/// by the `EnumSet` bit pattern via an `IndexMap` to keep insertion order.
+/// of external-port sides each connects to. Keyed here by the `EnumSet` bit
+/// pattern via an `IndexMap` to keep insertion order.
 struct ComponentGroup {
     /// Insertion-ordered map: ext-port-side set -> components with that set.
     components: IndexMap<u64, Vec<LGraphId>>,

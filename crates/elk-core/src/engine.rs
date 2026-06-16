@@ -221,8 +221,8 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
     }
 }
 
-/// Java `ElkEdge.isSelfloop`: all sources and targets are the same node or
-/// ports of the same node.
+/// True when all sources and targets are the same node or ports of the same
+/// node.
 pub fn is_self_loop(g: &ElkGraph, edge: EdgeId) -> bool {
     let e = g.edge(edge);
     let mut nodes = e

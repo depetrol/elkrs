@@ -1,7 +1,6 @@
 //!
-//! Java assembles the processor pipeline with an `AlgorithmAssembler`; the
-//! resulting order is fixed (processors in a slot are sorted by their
-//! `IntermediateProcessorStrategy` ordinal):
+//! The processor pipeline order is fixed (processors in a slot are sorted by
+//! their `IntermediateProcessorStrategy` ordinal):
 //!
 //! 1. `NodeSizeReorderer` (if `orderBySize`)
 //! 2. `InteractiveNodeReorderer` (if `interactive`)
@@ -224,7 +223,6 @@ fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
 fn node_size_reorderer(g: &mut ElkGraph, graph: NodeId) {
     let mut children = g.node(graph).children.clone();
     children.sort_by(|&node0, &node1| {
-        // Java: Double.compare(node1.getHeight(), node0.getHeight())
         g.node(node1)
             .shape
             .height
@@ -246,9 +244,6 @@ fn interactive_node_reorderer(g: &mut ElkGraph, graph: NodeId) {
             rectangles.remove(pos);
         }
     }
-    // Java: Collections.sort with a comparator that returns -1 for equal
-    // desired positions (inconsistent); replicated via TimSort's small-array
-    // path (countRunAndMakeAscending + binarySort).
     java_binary_sort(&mut fixed_nodes, &mut |&a, &b| {
         let position_a: i32 = g.node(a).properties.get(&options::DESIRED_POSITION);
         let position_b: i32 = g.node(b).properties.get(&options::DESIRED_POSITION);
@@ -301,7 +296,7 @@ fn min_size_post_processor(g: &mut ElkGraph, graph: NodeId) {
         .set(&options::TARGET_WIDTH, f64::max(target_width, min_width));
 }
 
-/// Java `Arrays.sort(T[], Comparator)` (TimSort) for arrays shorter than
+/// `Arrays.sort(T[], Comparator)` (TimSort) for arrays shorter than
 /// `MIN_MERGE` (32): `countRunAndMakeAscending` followed by `binarySort`.
 /// `InteractiveNodeReorderer`'s comparator is inconsistent (returns -1 for
 /// equal keys), so the exact procedure matters. For 32+ elements TimSort

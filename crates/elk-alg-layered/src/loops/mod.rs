@@ -2,10 +2,9 @@
 //! model (`SelfLoopHolder`, `SelfHyperLoop`, `SelfLoopEdge`, `SelfLoopPort`,
 //! `SelfHyperLoopLabels`, `SelfLoopType`).
 //!
-//! Java uses an object graph rooted in a `SelfLoopHolder` stored on the node
-//! via `InternalProperties.SELF_LOOP_HOLDER`. Here the holder owns flat
-//! vectors of ports, edges and hyper loops which reference each other through
-//! indices; the holder itself lives in `LNode::self_loop_holder`.
+//! The holder owns flat vectors of ports, edges and hyper loops which
+//! reference each other through indices; the holder itself lives in
+//! `LNode::self_loop_holder`.
 
 pub mod ordering;
 pub mod routing;
@@ -48,7 +47,7 @@ pub enum SelfLoopType {
 }
 
 impl SelfLoopType {
-    /// Java `SelfLoopType.fromPortSides`.
+    /// `SelfLoopType.fromPortSides`.
     pub fn from_port_sides(port_sides: &EnumSet<PortSide>) -> Option<SelfLoopType> {
         assert!(!port_sides.contains(PortSide::UNDEFINED));
         match port_sides.len() {
@@ -92,7 +91,7 @@ pub struct SelfLoopPort {
 }
 
 impl SelfLoopPort {
-    /// Java `getSLNetFlow`: incoming self loop edges minus outgoing ones.
+    /// `getSLNetFlow`: incoming self loop edges minus outgoing ones.
     pub fn sl_net_flow(&self) -> i32 {
         self.incoming_sl_edges.len() as i32 - self.outgoing_sl_edges.len() as i32
     }
@@ -115,7 +114,7 @@ pub struct SelfLoopEdge {
 }
 
 impl SelfLoopEdge {
-    /// Java `isInline`: whether any of the edge's labels is an inline label.
+    /// `isInline`: whether any of the edge's labels is an inline label.
     pub fn is_inline(&self, a: &LGraphArena) -> bool {
         a.edge(self.l_edge)
             .labels
@@ -155,7 +154,7 @@ pub struct SelfHyperLoopLabels {
     layout_direction: Direction,
     /// Space to leave between adjacent labels.
     label_label_spacing: f64,
-    /// The side the label is placed on (Java `null` -> `UNDEFINED`).
+    /// The side the label is placed on (`null` -> `UNDEFINED`).
     pub side: PortSide,
     /// The label's alignment.
     pub alignment: Option<Alignment>,
@@ -164,7 +163,7 @@ pub struct SelfHyperLoopLabels {
 }
 
 impl SelfHyperLoopLabels {
-    /// Java constructor: initializes properties from the graph.
+    /// Constructor: initializes properties from the graph.
     fn new(a: &LGraphArena, l_node: LNodeId) -> Self {
         let graph = a.node_graph(l_node);
         SelfHyperLoopLabels {
@@ -180,7 +179,7 @@ impl SelfHyperLoopLabels {
         }
     }
 
-    /// Java `addLLabels`.
+    /// `addLLabels`.
     fn add_l_labels(&mut self, a: &LGraphArena, new_l_labels: &[LLabelId]) {
         for &new_l_label in new_l_labels {
             self.l_labels.push(new_l_label);
@@ -188,7 +187,7 @@ impl SelfHyperLoopLabels {
         }
     }
 
-    /// Java `updateSize`.
+    /// `updateSize`.
     fn update_size(&mut self, a: &LGraphArena, new_l_label: LLabelId) {
         let new_l_label_size = a.label(new_l_label).size;
 
@@ -213,7 +212,7 @@ impl SelfHyperLoopLabels {
         }
     }
 
-    /// Java `applyPlacement`: applies the bounding box placement to the
+    /// `applyPlacement`: applies the bounding box placement to the
     /// individual labels.
     pub fn apply_placement(&self, a: &mut LGraphArena, offset: KVector) {
         if self.layout_direction.is_horizontal() {
@@ -281,8 +280,8 @@ impl SelfHyperLoopLabels {
 pub struct SelfHyperLoop {
     /// List of ports that belong to this hyper loop.
     pub sl_ports: Vec<SlPortIdx>,
-    /// Set of edges that belong to this instance. Java uses a `HashSet`;
-    /// we keep deterministic insertion order (all uses are order-insensitive).
+    /// Set of edges that belong to this instance. We keep deterministic
+    /// insertion order (all uses are order-insensitive).
     pub sl_edges: Vec<SlEdgeIdx>,
     /// This hyper loop's labels.
     pub sl_labels: Option<SelfHyperLoopLabels>,
@@ -291,8 +290,8 @@ pub struct SelfHyperLoop {
     /// List of ports per port side, indexed by `PortSide` ordinal. `None`
     /// until `compute_ports_per_side` was called.
     pub sl_ports_by_side: Option<[Vec<SlPortIdx>; PORT_SIDE_COUNT]>,
-    /// The multimap's key set. Java iterates a `HashMap` key set whose order
-    /// is unspecified; we use first-insertion order (port list order).
+    /// The multimap's key set. The key set order is unspecified; we use
+    /// first-insertion order (port list order).
     pub sl_port_sides: Vec<PortSide>,
     /// The hyper loop trunk's leftmost port. Computed after initialization.
     pub leftmost_port: Option<SlPortIdx>,
@@ -320,17 +319,17 @@ impl SelfHyperLoop {
         }
     }
 
-    /// Java `getSLPortsBySide(PortSide)`.
+    /// `getSLPortsBySide(PortSide)`.
     pub fn sl_ports_on_side(&self, side: PortSide) -> &[SlPortIdx] {
         &self.sl_ports_by_side.as_ref().unwrap()[side as usize]
     }
 
-    /// Java `hasSLPortsOnSide`.
+    /// `hasSLPortsOnSide`.
     pub fn has_sl_ports_on_side(&self, side: PortSide) -> bool {
         !self.sl_ports_on_side(side).is_empty()
     }
 
-    /// Java `getRoutingSlot`.
+    /// `getRoutingSlot`.
     pub fn routing_slot(&self, side: PortSide) -> i32 {
         self.routing_slot[side as usize]
     }
@@ -352,11 +351,11 @@ pub struct SelfLoopHolder {
     pub l_node: LNodeId,
     /// List of the node's [`SelfHyperLoop`]s.
     pub sl_hyper_loops: Vec<SelfHyperLoop>,
-    /// The node's [`SelfLoopPort`]s. Java uses a `LinkedHashMap<LPort, _>`
-    /// for stable iteration order; the vector's order is that insertion order
-    /// (lookups go through [`SelfLoopHolder::sl_port_idx`]).
+    /// The node's [`SelfLoopPort`]s. The vector's order is insertion order
+    /// for stable iteration (lookups go through
+    /// [`SelfLoopHolder::sl_port_idx`]).
     pub sl_ports: Vec<SelfLoopPort>,
-    /// The node's [`SelfLoopEdge`]s (owned storage; Java objects).
+    /// The node's [`SelfLoopEdge`]s (owned storage).
     pub sl_edges: Vec<SelfLoopEdge>,
     /// Whether at least one self loop port is currently hidden from its node.
     pub are_ports_hidden: bool,
@@ -365,7 +364,7 @@ pub struct SelfLoopHolder {
 }
 
 impl SelfLoopHolder {
-    /// Java `needsSelfLoopProcessing`: checks if the given node is a regular
+    /// `needsSelfLoopProcessing`: checks if the given node is a regular
     /// node and has at least one self loop.
     pub fn needs_self_loop_processing(a: &LGraphArena, l_node: LNodeId) -> bool {
         if a.node(l_node).node_type != NodeType::NORMAL {
@@ -374,7 +373,7 @@ impl SelfLoopHolder {
         a.node_outgoing_edges(l_node).iter().any(|&e| a.edge_is_self_loop(e))
     }
 
-    /// Java `install` (minus storing the property; the caller attaches the
+    /// `install` (minus storing the property; the caller attaches the
     /// returned holder to `LNode::self_loop_holder`).
     pub fn create(a: &mut LGraphArena, l_node: LNodeId) -> SelfLoopHolder {
         debug_assert!(Self::needs_self_loop_processing(a, l_node));
@@ -391,7 +390,7 @@ impl SelfLoopHolder {
         holder
     }
 
-    /// Java `initialize`: populates the data model.
+    /// `initialize`: populates the data model.
     fn initialize(&mut self, a: &mut LGraphArena) {
         // Create self loop edges and ports for every self loop
         for l_edge in a.node_outgoing_edges(self.l_node) {
@@ -399,7 +398,7 @@ impl SelfLoopHolder {
                 let sl_source = self.self_loop_port_for(a, a.edge(l_edge).source.unwrap());
                 let sl_target = self.self_loop_port_for(a, a.edge(l_edge).target.unwrap());
 
-                // Java SelfLoopEdge constructor: adds itself to the ports'
+                // SelfLoopEdge constructor: adds itself to the ports'
                 // edge lists
                 let sl_edge = self.sl_edges.len();
                 self.sl_edges.push(SelfLoopEdge {
@@ -426,14 +425,14 @@ impl SelfLoopHolder {
         }
     }
 
-    /// Java `selfLoopPortFor`: returns the [`SelfLoopPort`] representation of
+    /// `selfLoopPortFor`: returns the [`SelfLoopPort`] representation of
     /// the given port, creating one if none exists yet.
     fn self_loop_port_for(&mut self, a: &LGraphArena, l_port: LPortId) -> SlPortIdx {
         if let Some(idx) = self.sl_port_idx(l_port) {
             return idx;
         }
 
-        // Java SelfLoopPort constructor: check if the port is only incident
+        // SelfLoopPort constructor: check if the port is only incident
         // to self loops
         let had_only_self_loops =
             a.port_connected_edges(l_port).iter().all(|&e| a.edge_is_self_loop(e));
@@ -448,13 +447,13 @@ impl SelfLoopHolder {
         self.sl_ports.len() - 1
     }
 
-    /// Java `getSLPortMap().get(lPort)`: looks up the [`SelfLoopPort`]
+    /// `getSLPortMap().get(lPort)`: looks up the [`SelfLoopPort`]
     /// created for the given port, if any.
     pub fn sl_port_idx(&self, l_port: LPortId) -> Option<SlPortIdx> {
         self.sl_ports.iter().position(|p| p.l_port == l_port)
     }
 
-    /// Java `initializeHyperLoop`: collects all self loops reachable from the
+    /// `initializeHyperLoop`: collects all self loops reachable from the
     /// given port and merges them into a hyper loop.
     fn initialize_hyper_loop(&mut self, a: &mut LGraphArena, sl_port: SlPortIdx) {
         let sl_loop = self.sl_hyper_loops.len();
@@ -489,7 +488,7 @@ impl SelfLoopHolder {
         }
     }
 
-    /// Java `SelfHyperLoop.addSelfLoopEdge`: adds the given edge to the loop
+    /// `SelfHyperLoop.addSelfLoopEdge`: adds the given edge to the loop
     /// and sets everything up accordingly, unless the edge was already part
     /// of the loop.
     fn add_self_loop_edge(&mut self, a: &LGraphArena, sl_loop: SlLoopIdx, sl_edge: SlEdgeIdx) {
@@ -521,7 +520,7 @@ impl SelfLoopHolder {
         }
     }
 
-    /// Java `SelfHyperLoop.computePortsPerSide`: fills the ports-by-side
+    /// `SelfHyperLoop.computePortsPerSide`: fills the ports-by-side
     /// multimap and determines the self loop's type.
     pub fn compute_ports_per_side(&mut self, a: &LGraphArena, sl_loop: SlLoopIdx) {
         debug_assert!(self.sl_hyper_loops[sl_loop].sl_ports_by_side.is_none());
@@ -549,7 +548,7 @@ impl SelfLoopHolder {
         sl.self_loop_type = SelfLoopType::from_port_sides(&key_set);
     }
 
-    /// Java `SelfHyperLoop.setRoutingSlot`: sets which routing slot the loop
+    /// `SelfHyperLoop.setRoutingSlot`: sets which routing slot the loop
     /// should occupy on the given port side; also updates the number of
     /// routing slots kept by the holder.
     pub fn set_routing_slot(&mut self, sl_loop: SlLoopIdx, port_side: PortSide, slot: i32) {

@@ -79,7 +79,7 @@ fn process_impl(
         sinks: &mut VecDeque<LNodeId>,
     ) {
         for &port in &a.node(node).ports {
-            // connected edges: incoming first, then outgoing (Java CombineIter)
+            // connected edges: incoming first, then outgoing
             let connected: Vec<(crate::graph::LEdgeId, bool)> = a
                 .port(port)
                 .incoming_edges

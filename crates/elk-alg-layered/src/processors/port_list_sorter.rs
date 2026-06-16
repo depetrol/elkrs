@@ -41,7 +41,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 }
 
 fn stable_sort_by<F: FnMut(&LPortId, &LPortId) -> Ordering>(ports: &mut [LPortId], cmp: F) {
-    ports.sort_by(cmp); // Rust sort_by is stable, like Collections.sort
+    ports.sort_by(cmp); // Rust sort_by is stable
 }
 
 fn cmp_port_side(a: &LGraphArena, p1: LPortId, p2: LPortId) -> Ordering {
@@ -141,7 +141,7 @@ fn find_port_side_range(a: &LGraphArena, ports: &[LPortId], side: PortSide) -> (
     let mut high_idx = low_idx;
     while high_idx < ports.len() - 1 && current_side.ordinal() < hb {
         high_idx += 1;
-        // Java bug preserved: reads lowIdx, not highIdx
+        // Bug preserved: reads low_idx, not high_idx
         current_side = a.port(ports[low_idx]).side;
     }
     (low_idx, high_idx)

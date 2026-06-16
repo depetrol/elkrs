@@ -2,8 +2,7 @@
 
 use std::fmt;
 
-/// A simple 2D vector, port of `KVector`. All operations mutate `self` and
-/// return `&mut Self` in Java; in Rust we provide both mutating methods and
+/// A simple 2D vector, port of `KVector`. We provide both mutating methods and
 /// value-returning helpers where that reads better.
 #[derive(Clone, Copy, Default, PartialEq)]
 pub struct KVector {
@@ -221,9 +220,9 @@ impl fmt::Debug for KVector {
     }
 }
 
-/// Format an f64 the way Java's `Double.toString` does for the common cases
-/// (integral values get a trailing `.0`). Full Java semantics (shortest
-/// roundtrip representation) match Rust's `{}` for non-integral values.
+/// Format an f64 per the `Double.toString` spec for the common cases
+/// (integral values get a trailing `.0`). The full spec (shortest
+/// roundtrip representation) is produced by Rust's `{}` for non-integral values.
 pub fn fmt_java_double(v: f64) -> String {
     if v.is_finite() && v == v.trunc() && v.abs() < 1e7 {
         format!("{:.1}", v)
@@ -477,7 +476,7 @@ impl Spacing {
         self.top + self.bottom
     }
 
-    /// Java `Spacing.parse`: expects a list of `key=value` pairs
+    /// Expects a list of `key=value` pairs
     /// (unknown keys are ignored; an empty string yields all zeros).
     pub fn parse(string: &str) -> Result<Spacing, String> {
         let is_delim = |c: char, delims: &str| delims.contains(c);
@@ -510,7 +509,7 @@ impl Spacing {
                     "left" => s.left = value,
                     "bottom" => s.bottom = value,
                     "right" => s.right = value,
-                    _ => {} // Java silently ignores unknown keys
+                    _ => {} // silently ignore unknown keys
                 }
             }
         }
@@ -669,7 +668,7 @@ mod tests {
     fn spacing_parse_forms() {
         let s = Spacing::parse("[top=1.0,left=2.0,bottom=3.0,right=4.0]").unwrap();
         assert_eq!(s, Spacing::new(1.0, 4.0, 3.0, 2.0));
-        // Java rejects bare numbers (not key=value pairs)
+        // bare numbers (not key=value pairs) are rejected
         assert!(Spacing::parse("5").is_err());
         // unknown keys are silently ignored; empty input yields all zeros
         assert_eq!(Spacing::parse("[foo=7]").unwrap(), Spacing::default());

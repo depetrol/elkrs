@@ -74,7 +74,7 @@ pub struct StressMajorization {
     epsilon: f64,
     /// Maximum number of iterations (overrides the epsilon).
     iteration_limit: i32,
-    /// Edges connected to each node (Java `LinkedListMultimap`), by `FNode.id`.
+    /// Edges connected to each node, by `FNode.id`.
     connected_edges: Vec<Vec<FEdgeId>>,
 }
 
@@ -106,7 +106,7 @@ impl StressMajorization {
             self.apsp[sid] = dist;
         }
 
-        // init weight matrix (the diagonal becomes 1/0 = +inf, as in Java;
+        // init weight matrix (the diagonal becomes 1/0 = +inf;
         // it is never read)
         self.w = vec![vec![0.0; n]; n];
         for i in 0..n {
@@ -274,8 +274,8 @@ fn get_other(arena: &FArena, edge: FEdgeId, one: FNodeId) -> FNodeId {
 }
 
 /// `java.util.PriorityQueue` with the comparator
-/// `(n1, n2) -> Double.compare(dist[n1.id], dist[n2.id])`, replicating Java's
-/// exact sift/removeAt semantics (the comparator reads the live `dist` array,
+/// `(n1, n2) -> Double.compare(dist[n1.id], dist[n2.id])`, with exact
+/// sift/removeAt semantics (the comparator reads the live `dist` array,
 /// so it is passed into every operation). Entries are `(node, id)` pairs.
 #[derive(Default)]
 struct JavaPriorityQueue {

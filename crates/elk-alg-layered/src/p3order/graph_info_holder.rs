@@ -1,9 +1,9 @@
 //! Collects data needed for cross minimization
 //! and port distribution for one graph of the hierarchy.
 //!
-//! The Java `IInitializable.init(...)` traversal is flattened into the
+//! The `IInitializable.init(...)` traversal is flattened into the
 //! constructor below; the per-level hooks of all participating objects are
-//! invoked in exactly the same order as Java's initializable list
+//! invoked in exactly the same order as the initializable list
 //! `[this, crossingsCounter, layerSweepTypeDecider, portDistributor,
 //! (constraintResolver,) crossMinimizer]` (the constraint resolver only
 //! participates for the barycenter heuristic).
@@ -26,7 +26,7 @@ use super::sweep_copy::SweepCopy;
 /// The `ICrossingMinimizationHeuristic` field (`crossMinimizer`).
 pub enum CrossMinimizer {
     /// `BarycenterHeuristic` (which owns the `ForsterConstraintResolver`
-    /// in this port; in Java the resolver is a separate initializable).
+    /// in this port).
     /// `model_order` is `Some` for `ModelOrderBarycenterHeuristic`
     /// (considerModelOrder.strategy != NONE or force-node-model-order).
     Barycenter {
@@ -45,7 +45,7 @@ pub struct GraphInfoHolder {
     pub current_node_order: Vec<Vec<LNodeId>>,
     pub currently_best_node_and_port_order: Option<SweepCopy>,
     pub best_node_and_port_order: Option<SweepCopy>,
-    /// Port position array (Java `portPositions()`, used by greedy switch).
+    /// Port position array (`portPositions()`, used by greedy switch).
     pub port_positions: Vec<i32>,
 
     /// Processing type information.
@@ -95,14 +95,14 @@ impl GraphInfoHolder {
 
         // Init all objects needing initialization by graph traversal.
         let mut crossings_counter = AllCrossingsCounter::new(num_layers);
-        // (the Java RANDOM graph property is the `random` parameter here)
+        // (the RANDOM graph property is the `random` parameter here)
         let mut port_distributor = SweepPortDistributor::create(cross_min_type, random, num_layers);
         let mut decider = LayerSweepTypeDecider::new(num_layers);
 
         let mut cross_minimizer = match cross_min_type {
             CrossMinType::Barycenter => {
-                // Java GraphInfoHolder (0.11.0): use ModelOrderBarycenterHeuristic
-                // ONLY when CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER is set.
+                // Use ModelOrderBarycenterHeuristic ONLY when
+                // CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER is set.
                 // For considerModelOrder.strategy != NONE the *plain*
                 // BarycenterHeuristic is used; the model order is preserved by
                 // SortByInputModelProcessor + FIRST_TRY_WITH_INITIAL_ORDER.
@@ -207,7 +207,7 @@ impl GraphInfoHolder {
             decider.use_bottom_up(a, graph, parent, cross_min_deterministic, &current_node_order);
 
         // Make the graph data the greedy switch heuristic needs available
-        // (Java's GreedySwitchHeuristic holds a reference to this holder).
+        // (GreedySwitchHeuristic holds a reference to this holder).
         if let CrossMinimizer::GreedySwitch(heuristic) = &mut cross_minimizer {
             heuristic.has_parent = has_parent;
             heuristic.dont_sweep_into = use_bottom_up;
@@ -232,22 +232,22 @@ impl GraphInfoHolder {
         })
     }
 
-    /// Java `dontSweepInto()`.
+    /// `dontSweepInto()`.
     pub fn dont_sweep_into(&self) -> bool {
         self.use_bottom_up
     }
 
-    /// Java `crossMinDeterministic()`.
+    /// `crossMinDeterministic()`.
     pub fn cross_min_deterministic(&self) -> bool {
         cross_min_deterministic(self.cross_min_type)
     }
 
-    /// Java `crossMinAlwaysImproves()`.
+    /// `crossMinAlwaysImproves()`.
     pub fn cross_min_always_improves(&self) -> bool {
         cross_min_always_improves(self.cross_min_type)
     }
 
-    /// Java `getBestSweep()`.
+    /// `getBestSweep()`.
     pub fn get_best_sweep(&self) -> Option<&SweepCopy> {
         if self.cross_min_deterministic() {
             self.currently_best_node_and_port_order.as_ref()
