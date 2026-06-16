@@ -10,8 +10,8 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // Collect partition IDs in use, mapping each to the nodes carrying it
     // (in layerless declaration order). Java uses a Guava HashMultimap whose
     // per-key value iteration order is hash-based; we use insertion order
-    // (see GOLDEN_NOTES — possible divergence with several nodes per
-    // partition).
+    // (see README.md divergence 2 — possible divergence with several nodes
+    // per partition).
     let layerless = a.graph(graph).layerless_nodes.clone();
     let mut partition_ids: Vec<i32> = Vec::new();
     let mut buckets: Vec<Vec<LNodeId>> = Vec::new();
