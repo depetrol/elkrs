@@ -19,7 +19,7 @@ fn layout(n: usize) -> Vec<Value> {
         "layoutOptions": {"org.eclipse.elk.algorithm": "org.eclipse.elk.topdownpacking"},
         "children": children
     });
-    let o = elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed");
+    let o = elkrs::create_elk().layout_json(&g.to_string()).expect("layout failed");
     // an empty graph is exported without a "children" key
     o["children"].as_array().cloned().unwrap_or_default()
 }

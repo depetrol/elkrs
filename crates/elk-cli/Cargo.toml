@@ -1,11 +1,18 @@
 [package]
-name = "elk-cli"
+name = "elkrs"
+description = "Native-Rust, byte-exact reimplementation of the Eclipse Layout Kernel (ELK) graph layout algorithms, with a CLI"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [lib]
-name = "elk_cli"
+name = "elkrs"
 path = "src/lib.rs"
 
 [[bin]]
@@ -13,14 +20,14 @@ name = "elkrs"
 path = "src/main.rs"
 
 [dependencies]
-elk-alg-force = { path = "../elk-alg-force" }
-elk-alg-layered = { path = "../elk-alg-layered" }
-elk-alg-mrtree = { path = "../elk-alg-mrtree" }
-elk-alg-radial = { path = "../elk-alg-radial" }
-elk-alg-disco = { path = "../elk-alg-disco" }
-elk-alg-rectpacking = { path = "../elk-alg-rectpacking" }
-elk-alg-spore = { path = "../elk-alg-spore" }
-elk-alg-topdownpacking = { path = "../elk-alg-topdownpacking" }
-elk-core = { path = "../elk-core" }
-elk-graph = { path = "../elk-graph" }
+elk-alg-force = { path = "../elk-alg-force", version = "0.1.0" }
+elk-alg-layered = { path = "../elk-alg-layered", version = "0.1.0" }
+elk-alg-mrtree = { path = "../elk-alg-mrtree", version = "0.1.0" }
+elk-alg-radial = { path = "../elk-alg-radial", version = "0.1.0" }
+elk-alg-disco = { path = "../elk-alg-disco", version = "0.1.0" }
+elk-alg-rectpacking = { path = "../elk-alg-rectpacking", version = "0.1.0" }
+elk-alg-spore = { path = "../elk-alg-spore", version = "0.1.0" }
+elk-alg-topdownpacking = { path = "../elk-alg-topdownpacking", version = "0.1.0" }
+elk-core = { path = "../elk-core", version = "0.1.0" }
+elk-graph = { path = "../elk-graph", version = "0.1.0" }
 serde_json.workspace = true

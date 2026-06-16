@@ -16,7 +16,7 @@ fn main() {
         std::fs::read_to_string(&args[1]).expect("read input file")
     };
 
-    let elk = elk_cli::create_elk();
+    let elk = elkrs::create_elk();
     match elk.layout_json(&input) {
         Ok(json) => println!("{}", serde_json::to_string_pretty(&json).unwrap()),
         Err(e) => {

@@ -8,7 +8,7 @@ use serde_json::{json, Value};
 const EPS: f64 = 1e-5;
 
 fn layout(g: Value) -> Value {
-    elk_cli::create_elk().layout_json(&g.to_string()).expect("layout must not fail")
+    elkrs::create_elk().layout_json(&g.to_string()).expect("layout must not fail")
 }
 
 /// `Issue562Test`: a node with two ports and a self edge, with inside-self-loops

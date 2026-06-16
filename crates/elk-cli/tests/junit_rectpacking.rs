@@ -18,7 +18,7 @@ fn layout(padding: &str) -> Value {
             {"id":"n3","width":30,"height":30}, {"id":"n4","width":30,"height":30}
         ]
     });
-    elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed")
+    elkrs::create_elk().layout_json(&g.to_string()).expect("layout failed")
 }
 
 fn pos(out: &Value, id: &str) -> (f64, f64) {
@@ -98,7 +98,7 @@ fn compact(target_width: f64, spacing: f64, dims: &[(u32, f64, f64)]) -> Value {
         },
         "children": children
     });
-    elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed")
+    elkrs::create_elk().layout_json(&g.to_string()).expect("layout failed")
 }
 
 /// Assert parent size and the given (id,x,y) node positions.

@@ -85,23 +85,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "elk-cli"
-version = "0.1.0"
-dependencies = [
- "elk-alg-disco",
- "elk-alg-force",
- "elk-alg-layered",
- "elk-alg-mrtree",
- "elk-alg-radial",
- "elk-alg-rectpacking",
- "elk-alg-spore",
- "elk-alg-topdownpacking",
- "elk-core",
- "elk-graph",
- "serde_json",
-]
-
-[[package]]
 name = "elk-core"
 version = "0.1.0"
 dependencies = [
@@ -115,6 +98,23 @@ name = "elk-graph"
 version = "0.1.0"
 dependencies = [
  "indexmap",
+]
+
+[[package]]
+name = "elkrs"
+version = "0.1.0"
+dependencies = [
+ "elk-alg-disco",
+ "elk-alg-force",
+ "elk-alg-layered",
+ "elk-alg-mrtree",
+ "elk-alg-radial",
+ "elk-alg-rectpacking",
+ "elk-alg-spore",
+ "elk-alg-topdownpacking",
+ "elk-core",
+ "elk-graph",
+ "serde_json",
 ]
 
 [[package]]

@@ -3,8 +3,13 @@ name = "elk-alg-force"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+description = "ELK force and stress graph layout algorithms — part of elkrs"
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
 
 [dependencies]
-elk-alg-common = { path = "../elk-alg-common" }
-elk-core = { path = "../elk-core" }
-elk-graph = { path = "../elk-graph" }
+elk-alg-common = { path = "../elk-alg-common", version = "0.1.0" }
+elk-core = { path = "../elk-core", version = "0.1.0" }
+elk-graph = { path = "../elk-graph", version = "0.1.0" }

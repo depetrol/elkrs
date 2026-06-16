@@ -60,7 +60,7 @@ fn has_overlaps(out: &Value) -> bool {
 }
 
 fn layout(run_scanline: bool) -> Value {
-    elk_cli::create_elk()
+    elkrs::create_elk()
         .layout_json(&base_graph(run_scanline).to_string())
         .expect("layout failed")
 }

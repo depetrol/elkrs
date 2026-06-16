@@ -16,7 +16,7 @@ fn simple_graph() -> Value {
         ],
         "edges": [{"id": "e1", "sources": ["node1"], "targets": ["node2"]}]
     });
-    elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed")
+    elkrs::create_elk().layout_json(&g.to_string()).expect("layout failed")
 }
 
 /// All section points in document order: startPoint, bendPoints..., endPoint.

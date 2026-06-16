@@ -5,7 +5,13 @@ members = ["crates/elk-graph", "crates/elk-core", "crates/elk-cli", "crates/elk-
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-license = "EPL-2.0"
+license = "Apache-2.0"
+authors = ["depetrol <depetrol03@gmail.com>"]
+repository = "https://github.com/depetrol/elkrs"
+homepage = "https://github.com/depetrol/elkrs"
+readme = "README.md"
+keywords = ["graph", "layout", "elk", "diagram", "layered"]
+categories = ["algorithms", "mathematics", "visualization"]
 
 [workspace.dependencies]
 indexmap = "2"

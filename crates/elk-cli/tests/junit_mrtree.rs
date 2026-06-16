@@ -13,7 +13,7 @@ const PARAMS: [(f64, f64, f64, f64, f64, f64, f64); 3] = [
 ];
 
 fn layout(g: Value) -> Value {
-    elk_cli::create_elk().layout_json(&g.to_string()).expect("layout failed")
+    elkrs::create_elk().layout_json(&g.to_string()).expect("layout failed")
 }
 
 fn close(a: f64, b: f64) {

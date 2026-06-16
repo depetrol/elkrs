@@ -5,7 +5,7 @@
 use serde_json::{json, Value};
 
 fn layout(input: Value) -> Value {
-    let elk = elk_cli::create_elk();
+    let elk = elkrs::create_elk();
     elk.layout_json(&input.to_string()).expect("layout failed")
 }
 
