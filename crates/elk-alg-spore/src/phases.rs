@@ -15,7 +15,6 @@ fn kv_bits(v: KVector) -> (u64, u64) {
     (v.x.to_bits(), v.y.to_bits())
 }
 
-/// Port of `DelaunayTriangulationPhase.process`.
 pub fn delaunay_triangulation_phase(graph: &mut Graph) {
     let vertices: Vec<KVector> = graph.vertices.iter().map(|v| v.original_vertex).collect();
 
@@ -30,8 +29,6 @@ pub fn delaunay_triangulation_phase(graph: &mut Graph) {
     }
 }
 
-/// Port of `MinSTPhase.process` / `MaxSTPhase.process`; `cost` is the cost
-/// function from the importer.
 pub fn spanning_tree_phase(graph: &mut Graph, cost: impl Fn(&Graph, &TEdge) -> f64) {
     let gr: &Graph = graph;
     let t_tree = match gr.tree_construction_strategy {
@@ -77,7 +74,7 @@ fn convert_add(
     }
 }
 
-/// Port of `GrowTreePhase.process`: the GTree algorithm of Nachmanson et al.
+/// The GTree algorithm of Nachmanson et al.
 pub fn grow_tree_phase(graph: &mut Graph) {
     let tree = graph.tree.take().expect("tree");
     let mut overlaps_existed = false;
@@ -119,7 +116,6 @@ fn grow_at(
     }
 }
 
-/// Port of `ShrinkTreeCompactionPhase.process`.
 pub fn shrink_tree_compaction_phase(graph: &mut Graph) {
     let tree = graph.tree.take().expect("tree");
     depth_first_compact(&tree, &mut graph.vertices, graph.orthogonal_compaction);

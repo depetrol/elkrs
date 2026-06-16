@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.force.model`: `AbstractForceModel`,
-//! `EadesModel` and `FruchtermanReingoldModel`.
 
 use elk_core::javacompat::JavaRandom;
 use elk_graph::math::KVector;
@@ -15,10 +13,8 @@ pub trait ForceModel {
     /// The subclass part of `initialize` (the shared part lives in [`layout`]).
     fn initialize(&mut self, arena: &FArena, graph: &FGraph);
 
-    /// Port of `moreIterations`.
     fn more_iterations(&self, count: i32) -> bool;
 
-    /// Port of `calcDisplacement` (never returns null in either model).
     fn calc_displacement(
         &mut self,
         arena: &mut FArena,
@@ -32,10 +28,6 @@ pub trait ForceModel {
     fn iteration_done(&mut self);
 }
 
-/// Port of `AbstractForceModel.layout` (including the shared part of
-/// `initialize`). The `Random` is owned by the caller because Java stores a
-/// single `Random` instance in the graph's property map which all split
-/// components share by reference.
 pub fn layout(
     model: &mut dyn ForceModel,
     arena: &mut FArena,
@@ -105,8 +97,6 @@ pub fn layout(
     }
 }
 
-/// Port of `AbstractForceModel.iterationDone` (base implementation plus the
-/// subclass hook).
 fn iteration_done(model: &mut dyn ForceModel, arena: &mut FArena, graph: &FGraph) {
     for &edge in &graph.edges {
         // adjust label positions
@@ -121,7 +111,6 @@ fn iteration_done(model: &mut dyn ForceModel, arena: &mut FArena, graph: &FGraph
     model.iteration_done();
 }
 
-/// Port of `AbstractForceModel.avoidSamePosition`.
 pub fn avoid_same_position(
     arena: &mut FArena,
     random: &mut JavaRandom,
@@ -166,7 +155,6 @@ pub fn avoid_same_position(
 
 // ------------------------------------------------------------------ Eades
 
-/// Port of `EadesModel`.
 pub struct EadesModel {
     /// the maximal number of iterations after which the model stops.
     max_iterations: i32,
@@ -234,7 +222,6 @@ impl ForceModel for EadesModel {
     fn iteration_done(&mut self) {}
 }
 
-/// Port of `EadesModel.repulsive`.
 fn eades_repulsive(d: f64, r: f64) -> f64 {
     if d > 0.0 {
         r / (d * d)
@@ -243,7 +230,6 @@ fn eades_repulsive(d: f64, r: f64) -> f64 {
     }
 }
 
-/// Port of `EadesModel.attractive`.
 pub fn eades_attractive(d: f64, s: f64) -> f64 {
     if d > 0.0 {
         (d / s).ln()
@@ -254,7 +240,6 @@ pub fn eades_attractive(d: f64, s: f64) -> f64 {
 
 // ---------------------------------------------------- Fruchterman-Reingold
 
-/// Port of `FruchtermanReingoldModel`.
 pub struct FruchtermanReingoldModel {
     temperature: f64,
     threshold: f64,
@@ -334,7 +319,6 @@ impl ForceModel for FruchtermanReingoldModel {
     }
 }
 
-/// Port of `FruchtermanReingoldModel.repulsive`.
 fn fr_repulsive(d: f64, k: f64) -> f64 {
     if d > 0.0 {
         k * k / d
@@ -343,7 +327,6 @@ fn fr_repulsive(d: f64, k: f64) -> f64 {
     }
 }
 
-/// Port of `FruchtermanReingoldModel.attractive`.
 pub fn fr_attractive(d: f64, k: f64) -> f64 {
     d * d / k
 }

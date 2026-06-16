@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.intermediate.compaction`
-//! (`AbstractRadiusExtensionCompaction`, `GeneralCompactor`,
-//! `RadialCompaction`, `AnnulusWedgeCompaction`).
 
 use indexmap::IndexMap;
 
@@ -10,7 +7,7 @@ use crate::options::{self, CompactionStrategy};
 use crate::sorting::RadialSorter;
 use crate::util;
 
-/// Port of `AbstractRadiusExtensionCompaction`: basic logic for extending or
+/// Basic logic for extending or
 /// compacting radii, like overlap calculation.
 pub struct RadiusExtension {
     /// The step size with which the contraction takes place. Default is one.
@@ -22,7 +19,7 @@ pub struct RadiusExtension {
 }
 
 impl RadiusExtension {
-    /// Port of `contractLayer`: contracts/extends a list of nodes from the
+    /// Contracts/extends a list of nodes from the
     /// same radius by moving them along their incoming edge.
     pub fn contract_layer(&self, g: &mut ElkGraph, layer_nodes: &[NodeId], is_contracting: bool) {
         for &node in layer_nodes {
@@ -59,7 +56,7 @@ impl RadiusExtension {
         }
     }
 
-    /// Port of `moveNode`: move the node by the given distance in the
+    /// Move the node by the given distance in the
     /// direction from the root node to this node.
     pub fn move_node(&self, g: &mut ElkGraph, node: NodeId, distance: f64) {
         let root_shape = &g.node(self.root).shape;
@@ -80,7 +77,7 @@ impl RadiusExtension {
         shape.y += unit_y * distance;
     }
 
-    /// Port of `overlap`: calculates if two nodes overlap with each other.
+    /// Calculates if two nodes overlap with each other.
     pub fn overlap(&self, g: &ElkGraph, node1: NodeId, node2: NodeId) -> bool {
         let s1 = &g.node(node1).shape;
         let s2 = &g.node(node2).shape;
@@ -109,7 +106,7 @@ impl RadiusExtension {
         }
     }
 
-    /// Port of `overlapLayer`: calculate if the nodes of one radius are
+    /// Calculate if the nodes of one radius are
     /// overlapping each other.
     pub fn overlap_layer(&self, g: &ElkGraph, nodes: &[NodeId]) -> bool {
         if nodes.len() < 2 {
@@ -127,7 +124,6 @@ impl RadiusExtension {
     }
 }
 
-/// Port of `GeneralCompactor.process`.
 pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     match g.node(graph).properties.get(&options::COMPACTOR) {
         CompactionStrategy::RADIAL_COMPACTION => RadialCompaction::new(g, graph, root).compact(g),
@@ -151,7 +147,7 @@ fn extension_from_options(g: &ElkGraph, graph: NodeId, root: NodeId) -> RadiusEx
     }
 }
 
-/// Port of `RadialCompaction`: compacts each radius one after another by edge
+/// Compacts each radius one after another by edge
 /// shortening.
 struct RadialCompaction {
     ext: RadiusExtension,
@@ -169,7 +165,6 @@ impl RadialCompaction {
         }
     }
 
-    /// Port of `compact`.
     fn compact(&mut self, g: &mut ElkGraph) {
         let mut first_level_nodes = util::get_successors(g, self.ext.root);
         if let Some(sorter) = &mut self.sorter {
@@ -178,7 +173,7 @@ impl RadialCompaction {
         self.contract(g, first_level_nodes);
     }
 
-    /// Port of `contract`: contract each radius beginning at the inner radius
+    /// Contract each radius beginning at the inner radius
     /// until an overlap occurs; the last contraction is undone.
     fn contract(&mut self, g: &mut ElkGraph, nodes: Vec<NodeId>) {
         if nodes.is_empty() {
@@ -203,7 +198,6 @@ impl RadialCompaction {
         self.contract(g, next_level_nodes);
     }
 
-    /// Port of `calculateRadius` (uses the top-left corners, as Java does).
     fn calculate_radius(&self, g: &ElkGraph, node: NodeId) -> f64 {
         let shape = &g.node(node).shape;
         let root_shape = &g.node(self.ext.root).shape;
@@ -212,7 +206,6 @@ impl RadialCompaction {
         (vector_x * vector_x + vector_y * vector_y).sqrt()
     }
 
-    /// Port of `overlapping`.
     fn overlapping(&self, g: &ElkGraph, nodes: &[NodeId]) -> bool {
         if self.ext.overlap_layer(g, nodes) {
             return true;
@@ -230,7 +223,7 @@ impl RadialCompaction {
     }
 }
 
-/// Port of `AnnulusWedgeCompaction`: compacts each wedge one after another.
+/// Compacts each wedge one after another.
 struct AnnulusWedgeCompaction {
     ext: RadiusExtension,
     sorter: Option<Box<dyn RadialSorter>>,
@@ -250,7 +243,6 @@ impl AnnulusWedgeCompaction {
         }
     }
 
-    /// Port of `compact`.
     fn compact(&mut self, g: &mut ElkGraph) {
         let root = self.ext.root;
         // Calculate the first level nodes
@@ -282,7 +274,7 @@ impl AnnulusWedgeCompaction {
         }
     }
 
-    /// Port of `contractWedge`: contract each wedge by shortening the
+    /// Contract each wedge by shortening the
     /// incoming edge as long as no overlap occurs.
     fn contract_wedge(
         &mut self,
@@ -333,7 +325,6 @@ impl AnnulusWedgeCompaction {
         }
     }
 
-    /// Port of `overlapping`.
     fn overlapping(
         &mut self,
         g: &ElkGraph,
@@ -375,7 +366,7 @@ impl AnnulusWedgeCompaction {
         false
     }
 
-    /// Port of `contourOverlap`: check if a node overlaps with a neighboring
+    /// Check if a node overlaps with a neighboring
     /// wedge contour.
     fn contour_overlap(
         &self,
@@ -394,7 +385,7 @@ impl AnnulusWedgeCompaction {
             .unwrap_or(false)
     }
 
-    /// Port of `constructContour`: calculate the left and right contour of
+    /// Calculate the left and right contour of
     /// each node from the first layer.
     fn construct_contour(&mut self, g: &ElkGraph, nodes: &[NodeId]) {
         for &node in nodes {

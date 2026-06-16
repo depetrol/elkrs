@@ -1,4 +1,4 @@
-//! Port of `SingleEdgeGraphWrapper`: splits path-like graphs into multiple
+//! Splits path-like graphs into multiple
 //! rows to improve the aspect ratio (wrappingStrategy = SINGLE_EDGE).
 
 use crate::graph::{LGraphArena, LGraphId};
@@ -36,7 +36,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `SingleEdgeGraphWrapper.performCuts`.
 fn perform_cuts(a: &mut LGraphArena, graph: LGraphId, gs: &ws::GraphStats, cuts: &[i32]) {
     if cuts.is_empty() {
         return;

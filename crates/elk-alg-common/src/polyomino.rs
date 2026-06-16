@@ -14,7 +14,6 @@
 use elk_graph::elk_enum;
 
 elk_enum! {
-    /// Port of `polyomino.structures.Direction`.
     pub enum Direction {
         NORTH,
         EAST,
@@ -30,7 +29,6 @@ impl Direction {
 }
 
 elk_enum! {
-    /// Port of `compaction.options.HighLevelSortingCriterion`.
     pub enum HighLevelSortingCriterion {
         NUM_OF_EXTERNAL_SIDES_THAN_NUM_OF_EXTENSIONS_LAST,
         CORNER_CASES_THAN_SINGLE_SIDE_LAST,
@@ -38,7 +36,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `compaction.options.LowLevelSortingCriterion`.
     pub enum LowLevelSortingCriterion {
         BY_SIZE,
         BY_SIZE_AND_SHAPE,
@@ -46,7 +43,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `compaction.options.TraversalStrategy`.
     pub enum TraversalStrategy {
         SPIRAL,
         LINE_BY_LINE,
@@ -64,7 +60,6 @@ const EMPTY: u64 = 0x00;
 const BLOCKED: u64 = 0x01;
 const WEAKLY_BLOCKED: u64 = 0x02;
 
-/// Port of `TwoBitGrid` + `PlanarGrid`.
 #[derive(Clone)]
 pub struct Grid {
     /// `long[height][ceil(width/32)]`, two bits per cell.
@@ -365,7 +360,6 @@ impl Grid {
         false
     }
 
-    /// Port of `TwoBitGrid.toString` (used for the disco debug property).
     pub fn java_to_string(&self) -> String {
         let mut output = String::from(" ");
         let inc_mod_ten = |num: i32| if num > 8 { 0 } else { num + 1 };
@@ -396,7 +390,7 @@ impl Grid {
     }
 }
 
-/// Port of `polyomino.structures.Polyomino`: a grid plus its position on the
+/// A grid plus its position on the
 /// packing grid and its extensions `(direction, offset, width)`.
 #[derive(Clone)]
 pub struct Polyomino {
@@ -461,7 +455,6 @@ impl AsPolyomino for Polyomino {
 
 // -------------------------------------------------------------- ProfileFill
 
-/// Port of `ProfileFill.fillPolyomino`.
 pub fn fill_polyomino(poly: &mut Polyomino) {
     let width = poly.grid.width();
     let height = poly.grid.height();
@@ -514,7 +507,7 @@ pub fn fill_polyomino(poly: &mut Polyomino) {
 
 // -------------------------------------------------------------- Polyominoes
 
-/// Port of the `Polyominoes` constructor: optionally fills the polyominoes
+/// The `Polyominoes` constructor: optionally fills the polyominoes
 /// and creates the packing grid.
 pub fn create_packing_grid<P: AsPolyomino>(polys: &mut [P], aspect_ratio: f64, fill: bool) -> Grid {
     let mut grid_width: i32 = 0;
@@ -548,7 +541,6 @@ pub fn create_packing_grid<P: AsPolyomino>(polys: &mut [P], aspect_ratio: f64, f
 
 // ------------------------------------------------------ Successor functions
 
-/// Port of `SuccessorLineByLine`.
 fn successor_line_by_line(x: i32, y: i32) -> (i32, i32) {
     if x >= 0 {
         if x == y {
@@ -567,7 +559,6 @@ fn successor_line_by_line(x: i32, y: i32) -> (i32, i32) {
     (x + 1, y)
 }
 
-/// Port of `SuccessorManhattan`.
 fn successor_manhattan(x: i32, y: i32) -> (i32, i32) {
     let mut new_x = x;
     let mut new_y = y;
@@ -592,7 +583,6 @@ fn successor_manhattan(x: i32, y: i32) -> (i32, i32) {
     (new_x, new_y)
 }
 
-/// Port of `SuccessorJitter`.
 fn successor_jitter(x: i32, y: i32) -> (i32, i32) {
     let cost = x.abs().max(y.abs());
     if x <= 0 && x == y {
@@ -609,7 +599,6 @@ fn successor_jitter(x: i32, y: i32) -> (i32, i32) {
     }
 }
 
-/// Port of `SuccessorMaxNormWindingInMathPosSense`.
 fn successor_spiral(x: i32, y: i32) -> (i32, i32) {
     let cost = x.abs().max(y.abs());
     if x < cost && y == -cost {
@@ -683,7 +672,6 @@ impl Successor {
         }
     }
 
-    /// Port of `SuccessorQuadrantsGeneric.apply` (recursion unrolled).
     fn quadrants(
         &mut self,
         coords: (i32, i32),
@@ -770,7 +758,6 @@ impl Default for PackingOptions {
     }
 }
 
-/// Port of `PolyominoCompactor.packPolyominoes`.
 pub fn pack_polyominoes<P: AsPolyomino>(polys: &mut Vec<P>, grid: &mut Grid, options: &PackingOptions) {
     // 1. Sort polyominoes (Java uses successive stable sorts).
     match options.low_level_sort {

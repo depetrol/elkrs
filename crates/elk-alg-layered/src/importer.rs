@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.graph.transform.ElkGraphImporter`.
 //!
 //! Currently supports flat graphs (`SEPARATE_CHILDREN`); hierarchical import
 //! (`INCLUDE_CHILDREN`) and external-port handling are ported on demand and
@@ -43,7 +42,6 @@ impl<'g> ElkGraphImporter<'g> {
         ElkGraphImporter { elk, maps: ImportMaps::default() }
     }
 
-    /// Port of `importGraph`.
     pub fn import_graph(
         &mut self,
         elkgraph: NodeId,
@@ -98,7 +96,6 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(top_level_graph)
     }
 
-    /// Port of `ensureDefinedPortSide`.
     fn ensure_defined_port_side(&mut self, a: &LGraphArena, lgraph: LGraphId, elkport: PortId) {
         let layout_direction: Direction = a.graph(lgraph).properties.get(&lopts::DIRECTION);
         let mut port_side: PortSide = self.elk.port(elkport).properties.get(&copts::PORT_SIDE);
@@ -122,7 +119,6 @@ impl<'g> ElkGraphImporter<'g> {
         self.elk.port_mut(elkport).properties.set(&copts::PORT_SIDE, port_side);
     }
 
-    /// Port of `shouldCalculateMinimumGraphSize`.
     fn should_calculate_minimum_graph_size(&self, elkgraph: NodeId) -> bool {
         !self
             .elk
@@ -132,7 +128,6 @@ impl<'g> ElkGraphImporter<'g> {
             .is_empty()
     }
 
-    /// Port of `calculateMinimumGraphSize`.
     fn calculate_minimum_graph_size(
         &mut self,
         elkgraph: NodeId,
@@ -185,7 +180,6 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(())
     }
 
-    /// Port of `importFlatGraph`.
     fn import_flat_graph(
         &mut self,
         elkgraph: NodeId,
@@ -279,7 +273,7 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(())
     }
 
-    /// Port of `importHierarchicalGraph`: imports the graph hierarchy rooted
+    /// Imports the graph hierarchy rooted
     /// at the given graph.
     fn import_hierarchical_graph(
         &mut self,
@@ -482,7 +476,7 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(())
     }
 
-    /// Port of `hasInsideSelfLoops`: checks if the given node has any inside
+    /// Checks if the given node has any inside
     /// self loops.
     fn has_inside_self_loops(&self, elknode: NodeId) -> bool {
         if self.elk.node(elknode).properties.get(&copts::INSIDE_SELF_LOOPS_ACTIVATE) {
@@ -503,7 +497,6 @@ impl<'g> ElkGraphImporter<'g> {
         false
     }
 
-    /// Port of `findCoordinateSystemOrigin`.
     fn find_coordinate_system_origin(
         &self,
         elkedge: EdgeId,
@@ -542,7 +535,6 @@ impl<'g> ElkGraphImporter<'g> {
         None
     }
 
-    /// Port of `needsModelOrder`.
     fn needs_model_order(&self, child: NodeId) -> bool {
         match self.elk.node(child).parent {
             None => false,
@@ -557,7 +549,6 @@ impl<'g> ElkGraphImporter<'g> {
         }
     }
 
-    /// Port of `needsModelOrderBasedOnParent`.
     fn needs_model_order_based_on_parent(&self, elkgraph: NodeId) -> bool {
         let props = &self.elk.node(elkgraph).properties;
         let cbs: CycleBreakingStrategy = props.get(&lopts::CYCLE_BREAKING_STRATEGY);
@@ -593,7 +584,6 @@ impl<'g> ElkGraphImporter<'g> {
         model_order_cycle_breaking || model_order_layering || model_order_crossing_minimization
     }
 
-    /// Port of `createLGraph`.
     fn create_lgraph(&mut self, elkgraph: NodeId, a: &mut LGraphArena) -> Result<LGraphId, String> {
         let lgraph = a.create_graph();
 
@@ -630,7 +620,7 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(lgraph)
     }
 
-    /// Port of the `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`
+    /// The `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`
     /// call in `createLGraph`:
     /// `computeInsideNodeLabelPadding(elkgraph.getParent() == null ? null :
     /// ElkGraphAdapters.adapt(elkgraph.getParent()),
@@ -651,7 +641,6 @@ impl<'g> ElkGraphImporter<'g> {
         ))
     }
 
-    /// Port of `checkExternalPorts`.
     fn check_external_ports(
         &self,
         elkgraph: NodeId,
@@ -732,7 +721,7 @@ impl<'g> ElkGraphImporter<'g> {
         }
     }
 
-    /// Port of `transformExternalPort`: transforms the given external port
+    /// Transforms the given external port
     /// into a dummy node.
     fn transform_external_port(
         &mut self,
@@ -894,7 +883,7 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(())
     }
 
-    /// Port of `isConnectedToExternalNodes`: checks whether the given
+    /// Checks whether the given
     /// (external) port has connections to the outside (that is, to
     /// non-descendants).
     fn is_connected_to_external_nodes(&self, elkport: PortId) -> bool {
@@ -917,7 +906,6 @@ impl<'g> ElkGraphImporter<'g> {
         false
     }
 
-    /// Port of `calculateNetFlow`.
     fn calculate_net_flow(&self, elkport: PortId) -> i32 {
         let elkgraph = self.elk.port(elkport).parent.unwrap();
         let inside_self_loops_enabled = self
@@ -969,7 +957,6 @@ impl<'g> ElkGraphImporter<'g> {
         output_port_vote - input_port_vote
     }
 
-    /// Port of `transformNode`.
     fn transform_node(
         &mut self,
         elknode: NodeId,
@@ -1071,7 +1058,6 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(lnode)
     }
 
-    /// Port of `transformPort`.
     #[allow(clippy::too_many_arguments)]
     fn transform_port(
         &mut self,
@@ -1162,7 +1148,6 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(lport)
     }
 
-    /// Port of `transformEdge`.
     fn transform_edge(
         &mut self,
         elkedge: EdgeId,
@@ -1334,7 +1319,6 @@ impl<'g> ElkGraphImporter<'g> {
         Ok(ledge)
     }
 
-    /// Port of `transformLabel`.
     fn transform_label(&mut self, elklabel: elk_graph::graph::LabelId, a: &mut LGraphArena) -> crate::graph::LLabelId {
         let text = self.elk.label(elklabel).text.clone();
         let llabel = a.create_label(&text);
@@ -1369,7 +1353,7 @@ fn port_label_placement_is_fixed(placement: EnumSet<copts::PortLabelPlacement>) 
         && !placement.contains(copts::PortLabelPlacement::OUTSIDE)
 }
 
-/// Port of `LayeredSpacings.withBaseValue(base).apply(holder)`: applies a
+/// Applies a
 /// spacing configuration derived from a base value. Values are only set for
 /// options that are not already present on the holder (no overwrite).
 pub fn apply_spacings_with_base_value(props: &elk_graph::properties::PropertyMap, base: f64) {
@@ -1443,7 +1427,6 @@ pub fn is_elk_hyperedge(elk: &ElkGraph, edge: EdgeId) -> bool {
     e.sources.len() + e.targets.len() > 2
 }
 
-/// Port of `checkEdgeValidity`.
 fn check_edge_validity(elk: &ElkGraph, edge: EdgeId) -> Result<(), String> {
     if elk.edge(edge).sources.is_empty() {
         Err("Edges must have a source.".to_string())
@@ -1456,7 +1439,6 @@ fn check_edge_validity(elk: &ElkGraph, edge: EdgeId) -> Result<(), String> {
     }
 }
 
-/// Port of `ElkUtil.toAbsolute` (point relative to `parent` -> absolute).
 pub fn to_absolute(elk: &ElkGraph, point: &mut KVector, parent: Option<NodeId>) {
     let mut current = parent;
     while let Some(node) = current {
@@ -1466,7 +1448,6 @@ pub fn to_absolute(elk: &ElkGraph, point: &mut KVector, parent: Option<NodeId>) 
     }
 }
 
-/// Port of `ElkUtil.toRelative` (absolute point -> relative to `parent`).
 pub fn to_relative(elk: &ElkGraph, point: &mut KVector, parent: Option<NodeId>) {
     let mut current = parent;
     while let Some(node) = current {

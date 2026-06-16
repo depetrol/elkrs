@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.force.ForceLayoutProvider`.
 
 use elk_core::javacompat::JavaRandom;
 use elk_core::registry::LayoutProvider;
@@ -8,7 +7,6 @@ use crate::model::{self, EadesModel, ForceModel, FruchtermanReingoldModel};
 use crate::options::{self, ForceModelStrategy};
 use crate::{components, importer};
 
-/// Port of `ForceLayoutProvider`.
 #[derive(Default)]
 pub struct ForceLayoutProvider;
 
@@ -74,9 +72,6 @@ pub(crate) fn force_layout(g: &mut ElkGraph, layout_node: NodeId) -> Result<(), 
     Ok(())
 }
 
-/// Port of `org.eclipse.elk.alg.common.NodeMicroLayout.execute()`:
-/// sortPortLists, calculateLabelAndNodeSizes, calculateNodeMargins on the
-/// graph adapter.
 pub(crate) fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
     let mut adapter = elk_core::adapters::ElkGraphAdapter::new(g, layout_node);
     elk_alg_common::nodespacing::sort_port_lists(&mut adapter);

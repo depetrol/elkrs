@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.options.Spacings`: spacing lookups
+//! Spacing lookups
 //! between node-type pairs, with individual overrides.
 
 use elk_graph::properties::{JavaCloneable, PropValue, Property};
@@ -121,7 +121,6 @@ fn tables() -> &'static Tables {
     })
 }
 
-/// Port of `Spacings.getIndividualOrDefault`.
 pub fn get_individual_or_default<T: PropValue + Clone + JavaCloneable>(
     a: &LGraphArena,
     node: LNodeId,
@@ -159,17 +158,14 @@ fn local_spacing(
     f64::max(s1, s2)
 }
 
-/// Port of `Spacings.getHorizontalSpacing(LNode, LNode)`.
 pub fn horizontal_spacing(a: &LGraphArena, n1: LNodeId, n2: LNodeId) -> f64 {
     local_spacing(a, n1, n2, &tables().horizontal)
 }
 
-/// Port of `Spacings.getVerticalSpacing(LNode, LNode)`.
 pub fn vertical_spacing(a: &LGraphArena, n1: LNodeId, n2: LNodeId) -> f64 {
     local_spacing(a, n1, n2, &tables().vertical)
 }
 
-/// Port of `Spacings.getHorizontalSpacing(NodeType, NodeType)`.
 pub fn horizontal_spacing_by_type(
     a: &LGraphArena,
     graph: LGraphId,
@@ -181,7 +177,6 @@ pub fn horizontal_spacing_by_type(
     a.graph(graph).properties.get(prop)
 }
 
-/// Port of `Spacings.getVerticalSpacing(NodeType, NodeType)`.
 pub fn vertical_spacing_by_type(
     a: &LGraphArena,
     graph: LGraphId,

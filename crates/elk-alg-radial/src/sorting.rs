@@ -1,19 +1,15 @@
-//! Port of `org.eclipse.elk.alg.radial.sorting` (`IRadialSorter`, `IDSorter`,
-//! `PolarCoordinateSorter`).
 
 use elk_graph::graph::{ElkGraph, NodeId};
 
 use crate::options::{SortingStrategy, ORDER_ID};
 use crate::util;
 
-/// Port of `IRadialSorter`.
 pub trait RadialSorter {
     fn initialize(&mut self, g: &ElkGraph, root: NodeId);
     fn sort(&mut self, g: &ElkGraph, nodes: &mut Vec<NodeId>);
 }
 
 impl SortingStrategy {
-    /// Port of `SortingStrategy.create`; `NONE` maps to Java's `null`.
     pub fn create(self) -> Option<Box<dyn RadialSorter>> {
         match self {
             SortingStrategy::NONE => None,
@@ -32,7 +28,6 @@ fn id_sort(g: &ElkGraph, nodes: &mut [NodeId]) {
     });
 }
 
-/// Port of `IDSorter`.
 pub struct IdSorter;
 
 impl RadialSorter for IdSorter {
@@ -45,7 +40,6 @@ impl RadialSorter for IdSorter {
     }
 }
 
-/// Port of `PolarCoordinateSorter`.
 #[derive(Default)]
 pub struct PolarCoordinateSorter {
     /// Java's lazily created `idSorter` field.
@@ -60,7 +54,7 @@ const DEGREE_270: f64 = 1.5 * std::f64::consts::PI;
 const DEGREE_315: f64 = 1.75 * std::f64::consts::PI;
 
 impl PolarCoordinateSorter {
-    /// Port of `setIDForNodes`: assigns `ORDER_ID` over the whole tree.
+    /// Assigns `ORDER_ID` over the whole tree.
     fn set_id_for_nodes(&self, g: &ElkGraph, nodes: &[NodeId], id_offset: i32) -> i32 {
         let mut id = id_offset;
         let mut next_layer_id = 0;

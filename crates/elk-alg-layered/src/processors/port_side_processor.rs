@@ -1,4 +1,3 @@
-//! Port of `PortSideProcessor`.
 
 use elk_core::options::{PortConstraints, PortSide};
 
@@ -40,7 +39,6 @@ fn process_node(a: &mut LGraphArena, node: LNodeId) {
     }
 }
 
-/// Port of `PortSideProcessor.setPortSide`.
 pub fn set_port_side(a: &mut LGraphArena, port: LPortId) {
     if let Some(port_dummy) = a.port(port).properties.try_get(&iprops::PORT_DUMMY) {
         let side = a.node(port_dummy).properties.get(&iprops::EXT_PORT_SIDE);

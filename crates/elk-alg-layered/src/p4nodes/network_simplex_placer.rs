@@ -1,4 +1,3 @@
-//! Port of `NetworkSimplexPlacer` (`org.eclipse.elk.alg.layered.p4nodes`).
 //!
 //! Node placement strategy of Gansner et al.: the problem is converted into
 //! an auxiliary graph which is layered using the network simplex algorithm
@@ -43,7 +42,6 @@ const OTHER: i32 = 0;
 /// A junction has in-degree > 1, out-degree > 1, or exactly one incident edge.
 const JUNCTION: i32 = 2;
 
-/// Port of `NetworkSimplexPlacer.NodeRep`.
 #[derive(Clone, Copy)]
 struct NodeRep {
     origin: LNodeId,
@@ -55,7 +53,6 @@ struct NodeRep {
     tail: NNodeId,
 }
 
-/// Port of `NetworkSimplexPlacer.EdgeRep`.
 #[derive(Clone, Copy)]
 struct EdgeRep {
     left: NEdgeId,
@@ -63,12 +60,10 @@ struct EdgeRep {
 }
 
 impl EdgeRep {
-    /// Port of `EdgeRep.isStraight()`.
     fn is_straight(&self, ng: &NGraph) -> bool {
         self.not_straight_by(ng) == 0
     }
 
-    /// Port of `EdgeRep.notStraightBy()`.
     fn not_straight_by(&self, ng: &NGraph) -> i32 {
         let left = ng.edge(self.left);
         let right = ng.edge(self.right);
@@ -104,12 +99,10 @@ fn java_round(x: f64) -> f64 {
     (x + 0.5).floor()
 }
 
-/// Port of `com.google.common.math.DoubleMath.fuzzyEquals`.
 fn fuzzy_equals(a: f64, b: f64, tolerance: f64) -> bool {
     (a - b).abs() <= tolerance || a == b
 }
 
-/// Port of `NodeFlexibility.getNodeFlexibility(LNode)`.
 pub fn get_node_flexibility(a: &LGraphArena, node: LNodeId) -> NodeFlexibility {
     if a.node(node)
         .properties
@@ -126,24 +119,20 @@ pub fn get_node_flexibility(a: &LGraphArena, node: LNodeId) -> NodeFlexibility {
     }
 }
 
-/// Port of `NodeFlexibility.isFlexibleSize()`.
 fn is_flexible_size(nf: NodeFlexibility) -> bool {
     nf == NodeFlexibility::NODE_SIZE
 }
 
-/// Port of `NodeFlexibility.isFlexibleSizeWhereSpacePermits()`.
 fn is_flexible_size_where_space_permits(nf: NodeFlexibility) -> bool {
     nf == NodeFlexibility::NODE_SIZE_WHERE_SPACE_PERMITS || nf == NodeFlexibility::NODE_SIZE
 }
 
-/// Port of `NodeFlexibility.isFlexiblePorts()`.
 fn is_flexible_ports(nf: NodeFlexibility) -> bool {
     nf == NodeFlexibility::PORT_POSITION
         || nf == NodeFlexibility::NODE_SIZE_WHERE_SPACE_PERMITS
         || nf == NodeFlexibility::NODE_SIZE
 }
 
-/// Port of `NetworkSimplexPlacer.isFlexibleNode(LNode)`.
 pub fn is_flexible_node(a: &LGraphArena, node: LNodeId) -> bool {
     // dummies are not flexible!
     if a.node(node).node_type != NodeType::NORMAL {
@@ -199,7 +188,6 @@ pub fn is_flexible_node(a: &LGraphArena, node: LNodeId) -> bool {
     true
 }
 
-/// Port of `NetworkSimplexPlacer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let mut p = Placer {
         ngraph: NGraph::new(),
@@ -279,7 +267,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 //                                         Preparation
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `prepare()`.
 fn prepare(a: &mut LGraphArena, graph: LGraphId, p: &mut Placer) {
     // "integerify" port anchor and port positions
     // ... while we're at it, we assign ids to the nodes and edges
@@ -328,7 +315,6 @@ fn prepare(a: &mut LGraphArena, graph: LGraphId, p: &mut Placer) {
 //                                      Auxiliary Graph
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `buildInitialAuxiliaryGraph()`.
 fn build_initial_auxiliary_graph(a: &mut LGraphArena, graph: LGraphId, p: &mut Placer) {
     for &layer in &a.graph(graph).layers.clone() {
         transform_layer(a, layer, p);
@@ -336,7 +322,6 @@ fn build_initial_auxiliary_graph(a: &mut LGraphArena, graph: LGraphId, p: &mut P
     transform_edges(a, graph, p);
 }
 
-/// Port of `transformLayer(Layer)`.
 fn transform_layer(a: &mut LGraphArena, layer: crate::graph::LayerId, p: &mut Placer) {
     let mut last_rep: Option<NodeRep> = None;
     for lnode in a.layer(layer).nodes.clone() {
@@ -367,7 +352,6 @@ fn transform_layer(a: &mut LGraphArena, layer: crate::graph::LayerId, p: &mut Pl
     }
 }
 
-/// Port of `transformFixedPosNode(LNode)`.
 fn transform_fixed_pos_node(a: &LGraphArena, lnode: LNodeId, p: &mut Placer) -> NodeRep {
     let single_node = p.ngraph.add_node();
     p.nnode_lnode_origin.insert(single_node, lnode);
@@ -383,7 +367,6 @@ fn transform_fixed_pos_node(a: &LGraphArena, lnode: LNodeId, p: &mut Placer) -> 
     NodeRep { origin: lnode, is_flexible: false, head: single_node, tail: single_node }
 }
 
-/// Port of `transformFixedOrderNode(LNode)`.
 fn transform_fixed_order_node(a: &LGraphArena, lnode: LNodeId, p: &mut Placer) -> NodeRep {
     // corner creation
     let top_left = p.ngraph.add_node();
@@ -422,7 +405,6 @@ fn transform_fixed_order_node(a: &LGraphArena, lnode: LNodeId, p: &mut Placer) -
     corners
 }
 
-/// Port of `transformPorts(Iterable<LPort>, NodeRep)`.
 fn transform_ports(a: &LGraphArena, ports: &[LPortId], corners: &NodeRep, p: &mut Placer) {
     if ports.is_empty() {
         // nothing to do ... the top and bottom border of the node are
@@ -470,7 +452,6 @@ fn transform_ports(a: &LGraphArena, ports: &[LPortId], corners: &NodeRep, p: &mu
     );
 }
 
-/// Port of `transformEdges()`.
 fn transform_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     for &layer in &a.graph(graph).layers {
         for &node in &a.layer(layer).nodes {
@@ -483,7 +464,6 @@ fn transform_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     }
 }
 
-/// Port of `transformEdge(LEdge)`.
 fn transform_edge(a: &LGraphArena, ledge: LEdgeId, p: &mut Placer) {
     // a dummy node
     let dummy = p.ngraph.add_node();
@@ -522,7 +502,7 @@ fn transform_edge(a: &LGraphArena, ledge: LEdgeId, p: &mut Placer) {
     p.edge_reps[a.edge(ledge).id as usize] = Some(EdgeRep { left, right });
 }
 
-/// Port of `insertInLayerEdgeAuxiliaryEdges()`: keep edges connected to
+/// Keep edges connected to
 /// inverted ports short.
 fn insert_in_layer_edge_auxiliary_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     for &layer in &a.graph(graph).layers {
@@ -570,7 +550,7 @@ fn insert_in_layer_edge_auxiliary_edges(a: &LGraphArena, graph: LGraphId, p: &mu
     }
 }
 
-/// Port of `insertNorthSouthAuxiliaryEdges()`: keep north and south port
+/// Keep north and south port
 /// edges short.
 fn insert_north_south_auxiliary_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     for &layer in &a.graph(graph).layers {
@@ -605,7 +585,6 @@ fn insert_north_south_auxiliary_edges(a: &LGraphArena, graph: LGraphId, p: &mut 
     }
 }
 
-/// Port of `insertFlexibleWhereSpaceAuxiliaryEdges()`.
 fn insert_flexible_where_space_auxiliary_edges(a: &LGraphArena, p: &mut Placer) {
     let min_layer = p
         .ngraph
@@ -655,7 +634,6 @@ fn insert_flexible_where_space_auxiliary_edges(a: &LGraphArena, p: &mut Placer) 
 //                                       Apply Layout
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `applyPositions()`.
 fn apply_positions(a: &mut LGraphArena, graph: LGraphId, p: &mut Placer) {
     for &layer in &a.graph(graph).layers.clone() {
         for lnode in a.layer(layer).nodes.clone() {
@@ -701,7 +679,6 @@ fn apply_positions(a: &mut LGraphArena, graph: LGraphId, p: &mut Placer) {
     }
 }
 
-/// Port of `adjustLabelPosition(LNode, LLabel, double)`.
 fn adjust_label_position(
     a: &mut LGraphArena,
     node: LNodeId,
@@ -722,7 +699,6 @@ fn adjust_label_position(
 //                                        Convenience
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `getEdgeWeight(LEdge)`.
 fn get_edge_weight(a: &LGraphArena, edge: LEdgeId) -> f64 {
     let priority = i32::max(
         1,
@@ -735,7 +711,6 @@ fn get_edge_weight(a: &LGraphArena, edge: LEdgeId) -> f64 {
     priority as f64 * edge_type_weight
 }
 
-/// Port of `getEdgeWeight(NodeType, NodeType)`.
 fn get_edge_weight_by_types(node_type1: NodeType, node_type2: NodeType) -> f64 {
     if node_type1 == NodeType::NORMAL && node_type2 == NodeType::NORMAL {
         1.0 * EDGE_WEIGHT_BASE
@@ -746,7 +721,7 @@ fn get_edge_weight_by_types(node_type1: NodeType, node_type2: NodeType) -> f64 {
     }
 }
 
-/// Port of `isHandledEdge(LEdge)`: neither a self loop nor an in-layer edge.
+/// Neither a self loop nor an in-layer edge.
 fn is_handled_edge(a: &LGraphArena, edge: LEdgeId) -> bool {
     !a.edge_is_self_loop(edge) && !a.edge_is_in_layer(edge)
 }
@@ -755,7 +730,6 @@ fn is_handled_edge(a: &LGraphArena, edge: LEdgeId) -> bool {
 //                                      Edge Straightening
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `Path.containsLongEdgeDummy()`.
 fn path_contains_long_edge_dummy(a: &LGraphArena, path: &[LEdgeId]) -> bool {
     if path.is_empty() {
         return false;
@@ -767,8 +741,6 @@ fn path_contains_long_edge_dummy(a: &LGraphArena, path: &[LEdgeId]) -> bool {
         .any(|&e| a.node(a.edge_target_node(e)).node_type == NodeType::LONG_EDGE)
 }
 
-/// Port of `Path.containsFlexibleNode(Predicate)` for
-/// `nf.isFlexibleSizeWhereSpacePermits()`.
 fn path_contains_flexible_node(a: &LGraphArena, path: &[LEdgeId]) -> bool {
     if path.is_empty() {
         return false;
@@ -782,7 +754,6 @@ fn path_contains_flexible_node(a: &LGraphArena, path: &[LEdgeId]) -> bool {
     })
 }
 
-/// Port of `Path.orderTwoPath()`.
 fn order_two_path(a: &LGraphArena, path: &mut Vec<LEdgeId>) {
     assert!(path.len() == 2, "Order only allowed for two paths.");
     let first = path[0];
@@ -794,12 +765,10 @@ fn order_two_path(a: &LGraphArena, path: &mut Vec<LEdgeId>) {
     }
 }
 
-/// Port of `Path.isTwoPathCenterNodeFlexible()`.
 fn is_two_path_center_node_flexible(a: &LGraphArena, path: &[LEdgeId]) -> bool {
     is_flexible_node(a, a.edge_target_node(path[0]))
 }
 
-/// Port of `preferStraightEdges()`.
 fn prefer_straight_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     // the nodes were counted and indexed during #prepare
     p.node_state = vec![0; p.node_count];
@@ -864,7 +833,6 @@ fn prefer_straight_edges(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     }
 }
 
-/// Port of `postProcessTwoPaths()`.
 fn post_process_two_paths(a: &LGraphArena, p: &mut Placer) {
     let mut q: VecDeque<Vec<LEdgeId>> = p.two_paths.iter().cloned().collect();
 
@@ -881,7 +849,6 @@ fn post_process_two_paths(a: &LGraphArena, p: &mut Placer) {
     }
 }
 
-/// Port of `improveTwoPath(Path, boolean)`.
 fn improve_two_path(a: &LGraphArena, path: &[LEdgeId], probe: bool, p: &mut Placer) -> bool {
     let left_edge = p.edge_reps[a.edge(path[0]).id as usize].unwrap();
     let right_edge = p.edge_reps[a.edge(path[1]).id as usize].unwrap();
@@ -977,7 +944,6 @@ fn improve_two_path(a: &LGraphArena, path: &[LEdgeId], probe: bool, p: &mut Plac
     false
 }
 
-/// Port of `length(NEdge)`.
 fn length(ng: &NGraph, edge: NEdgeId) -> i32 {
     let e = ng.edge(edge);
     (ng.node(e.source).layer - ng.node(e.target).layer).abs() - e.delta
@@ -987,7 +953,6 @@ fn length(ng: &NGraph, edge: NEdgeId) -> i32 {
 //                                      Path identification
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `identifyPaths()`.
 fn identify_paths(a: &LGraphArena, graph: LGraphId, p: &mut Placer) -> Vec<Vec<LEdgeId>> {
     let mut paths: Vec<Vec<LEdgeId>> = Vec::new();
     for &layer in &a.graph(graph).layers {
@@ -1010,7 +975,6 @@ fn identify_paths(a: &LGraphArena, graph: LGraphId, p: &mut Placer) -> Vec<Vec<L
     paths
 }
 
-/// Port of `follow(LEdge, LNode, Path)`.
 fn follow(a: &LGraphArena, edge: LEdgeId, current: LNodeId, path: &mut Vec<LEdgeId>, p: &mut Placer) {
     // LEdge.getOther(LNode)
     let other = if a.edge_source_node(edge) == current {
@@ -1040,7 +1004,6 @@ fn follow(a: &LGraphArena, edge: LEdgeId, current: LNodeId, path: &mut Vec<LEdge
     }
 }
 
-/// Port of `getNodeState(LNode)`.
 fn get_node_state(a: &LGraphArena, node: LNodeId) -> i32 {
     let mut inco = 0i64;
     let mut ouco = 0i64;
@@ -1071,7 +1034,6 @@ fn get_node_state(a: &LGraphArena, node: LNodeId) -> i32 {
 //                                      Mark Crossings
 // ------------------------------------------------------------------------------------------------
 
-/// Port of `markEdgeCrossings()`.
 fn mark_edge_crossings(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     p.crossing = vec![false; p.edge_count];
     let layers = &a.graph(graph).layers;
@@ -1080,7 +1042,6 @@ fn mark_edge_crossings(a: &LGraphArena, graph: LGraphId, p: &mut Placer) {
     }
 }
 
-/// Port of `markCrossingEdges(Layer, Layer)`.
 fn mark_crossing_edges(
     a: &LGraphArena,
     left: crate::graph::LayerId,

@@ -7,7 +7,6 @@ use elk_graph::elk_enum;
 use elk_graph::properties::Property;
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.radial.options.SortingStrategy`.
     pub enum SortingStrategy {
         NONE,
         POLAR_COORDINATE,
@@ -16,7 +15,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.radial.options.AnnulusWedgeCriteria`.
     pub enum AnnulusWedgeCriteria {
         LEAF_NUMBER,
         NODE_SIZE,
@@ -24,7 +22,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.radial.options.CompactionStrategy`.
     pub enum CompactionStrategy {
         NONE,
         RADIAL_COMPACTION,
@@ -33,7 +30,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.radial.options.RadialTranslationStrategy`.
     pub enum RadialTranslationStrategy {
         NONE,
         EDGE_LENGTH,
@@ -43,7 +39,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.radial.options.OverlapRemovalStrategy`.
     /// Not a registered layout option in Java either; kept for completeness.
     pub enum OverlapRemovalStrategy {
         EXTENT_RADII,

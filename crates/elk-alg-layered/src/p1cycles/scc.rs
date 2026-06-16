@@ -1,6 +1,3 @@
-//! Port of `graph.Tarjan` + `p1cycles.SCCModelOrderCycleBreaker` and its
-//! subclasses `SCConnectivity` (SCC_CONNECTIVITY) and `SCCNodeTypeCycleBreaker`
-//! (SCC_NODE_TYPE).
 
 use std::collections::HashSet;
 
@@ -195,7 +192,6 @@ fn find_nodes(
     }
 }
 
-/// Port of `graph.Tarjan`.
 struct Tarjan {
     index: i32,
     stack: Vec<LNodeId>,

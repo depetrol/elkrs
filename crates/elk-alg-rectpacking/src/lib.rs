@@ -27,7 +27,7 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     });
 }
 
-/// Port of `InteractiveRectPackingGraphVisitor.setInteractiveOptions`: sets
+/// Sets
 /// `interactive` on a root node configured for the rectpacking algorithm.
 pub fn set_interactive_options(g: &mut ElkGraph, root: NodeId) {
     let algorithm: Option<String> = g

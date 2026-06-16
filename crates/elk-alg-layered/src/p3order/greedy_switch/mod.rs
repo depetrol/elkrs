@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.intermediate.greedyswitch`: the
+//! The
 //! greedy switch crossing minimization heuristic and its crossing counters.
 
 pub mod between_layer_edge_two_node_crossings_counter;

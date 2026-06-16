@@ -1,4 +1,3 @@
-//! Port of `RecursiveGraphLayoutEngine` and `LayoutAlgorithmResolver`.
 
 use elk_graph::graph::{EdgeId, ElkGraph, NodeId};
 use elk_graph::properties::PropertyHolder;
@@ -18,7 +17,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         RecursiveGraphLayoutEngine { registry }
     }
 
-    /// Port of `layout(ElkNode, IElkProgressMonitor)`.
     pub fn layout(&self, g: &mut ElkGraph) -> Result<(), String> {
         // TODO DeprecatedLayoutOptionReplacer (only affects deprecated inputs)
         if !g.node(g.root).properties.has(&RESOLVED_ALGORITHM_TYPED) {
@@ -29,7 +27,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         Ok(())
     }
 
-    /// Port of `LayoutAlgorithmResolver` applied via `ElkUtil.applyVisitors`.
     fn resolve_algorithms(&self, g: &mut ElkGraph) -> Result<(), String> {
         let mut nodes = vec![g.root];
         nodes.extend(g.descendants(g.root));
@@ -70,8 +67,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         Ok(())
     }
 
-    /// Port of `layoutRecursively`; returns inside self loops routed inside
-    /// `layout_node` (coordinates relative to the node's top-left corner).
     fn layout_recursively(&self, g: &mut ElkGraph, layout_node: NodeId) -> Result<Vec<EdgeId>, String> {
         if g.node(layout_node).properties.get(&NO_LAYOUT) {
             return Ok(Vec::new());
@@ -173,7 +168,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         }
     }
 
-    /// Port of `evaluateHierarchyHandlingInheritance`.
     fn evaluate_hierarchy_handling_inheritance(&self, g: &mut ElkGraph, layout_node: NodeId) {
         if g.node(layout_node).properties.get(&HIERARCHY_HANDLING) == HierarchyHandling::INHERIT {
             match g.node(layout_node).parent {
@@ -192,7 +186,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         }
     }
 
-    /// Port of `gatherInsideSelfLoops`.
     fn gather_inside_self_loops(&self, g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
         if g.node(node).properties.get(&INSIDE_SELF_LOOPS_ACTIVATE) {
             let mut result = Vec::new();
@@ -212,7 +205,6 @@ impl<'r> RecursiveGraphLayoutEngine<'r> {
         }
     }
 
-    /// Port of `postProcessInsideSelfLoops`.
     fn post_process_inside_self_loops(&self, g: &mut ElkGraph, self_loops: &[EdgeId]) {
         for &self_loop in self_loops {
             let source = g.edge(self_loop).sources[0];

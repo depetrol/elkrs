@@ -1,4 +1,4 @@
-//! Port of `HierarchicalPortDummySizeProcessor`: sets the width of hierarchical
+//! Sets the width of hierarchical
 //! port dummies and the layer alignment of north/south port dummies to CENTER.
 
 use elk_core::options::{Alignment, PortSide};

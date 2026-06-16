@@ -1,4 +1,4 @@
-//! Port of `LongEdgeJoiner`: removes LONG_EDGE dummies, joining the edge
+//! Removes LONG_EDGE dummies, joining the edge
 //! fragments back together.
 
 use elk_core::options::PortSide;
@@ -26,7 +26,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of the static `LongEdgeJoiner.joinAt` (also used by other processors).
+/// The static `LongEdgeJoiner.joinAt` (also used by other processors).
 pub fn join_at(a: &mut LGraphArena, long_edge_dummy: LNodeId, add_unnecessary_bendpoints: bool) {
     let west_port = a
         .node_ports_on_side(long_edge_dummy, PortSide::WEST)

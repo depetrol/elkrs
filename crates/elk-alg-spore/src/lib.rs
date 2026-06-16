@@ -49,7 +49,6 @@ fn check_underlying_layout_algorithm(g: &ElkGraph, layout_node: NodeId) -> Resul
     Ok(())
 }
 
-/// Port of `ShrinkTreeLayoutProvider` (+ `ShrinkTree`).
 #[derive(Default)]
 pub struct ShrinkTreeLayoutProvider;
 
@@ -74,7 +73,6 @@ impl LayoutProvider for ShrinkTreeLayoutProvider {
     }
 }
 
-/// Port of `OverlapRemovalLayoutProvider`.
 #[derive(Default)]
 pub struct OverlapRemovalLayoutProvider;
 

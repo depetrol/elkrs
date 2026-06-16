@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.intermediate.compaction`: the LGraph
+//! The LGraph
 //! side of horizontal post-compaction. Transforms an already-routed [`LGraph`]
 //! into a constraint graph ([`elk_alg_common::compaction::CGraph`]), runs the
 //! one-dimensional compactor, and transfers the compacted positions back.

@@ -339,7 +339,6 @@ impl ElkGraph {
         }
     }
 
-    /// Port of `ElkGraphUtil.findBestEdgeContainment`.
     pub fn find_best_edge_containment(&self, edge: EdgeId) -> Option<NodeId> {
         let e = self.edge(edge);
         let incident: Vec<NodeId> = e
@@ -379,8 +378,6 @@ impl ElkGraph {
         Some(common)
     }
 
-    /// Port of `ElkGraphUtil.findLowestCommonAncestor` (both chains include
-    /// the nodes themselves).
     pub fn find_lowest_common_ancestor(&self, a: NodeId, b: NodeId) -> Option<NodeId> {
         let chain = |start: NodeId| {
             let mut v = Vec::new();

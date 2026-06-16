@@ -64,7 +64,6 @@ pub struct OptionData {
 }
 
 impl OptionData {
-    /// Port of `LayoutOptionData.parseValue`.
     pub fn parse_value(&self, value: &str) -> Option<Box<dyn PropValue>> {
         if value == "null" {
             return None;
@@ -149,8 +148,6 @@ pub fn parse_individual_spacings(_s: &str) -> Option<Box<dyn PropValue>> {
     Some(Box::new(IndividualSpacings::default()))
 }
 
-/// Port of `LayoutMetaDataService` (options part; algorithms register in
-/// [`crate::registry`]).
 #[derive(Default)]
 pub struct LayoutMetaDataRegistry {
     options: Vec<OptionData>,
@@ -171,7 +168,7 @@ impl LayoutMetaDataRegistry {
         self.by_id.get(id).map(|&i| &self.options[i])
     }
 
-    /// Port of `getOptionDataBySuffix`: exact id first, then unique
+    /// Exact id first, then unique
     /// dot-boundary suffix of an id, then unique suffix of a legacy id.
     pub fn option_by_suffix(&self, suffix: &str) -> Option<&OptionData> {
         if suffix.is_empty() {

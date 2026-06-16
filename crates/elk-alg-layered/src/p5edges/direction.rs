@@ -1,8 +1,3 @@
-//! Port of `p5edges/orthogonal/direction/`: `RoutingDirection`,
-//! `BaseRoutingDirectionStrategy` and its three concrete subclasses
-//! (`WestToEastRoutingStrategy`, `NorthToSouthRoutingStrategy`,
-//! `SouthToNorthRoutingStrategy`). Rust folds the subclasses into one struct
-//! dispatching on the direction.
 
 use elk_core::options::PortSide;
 use elk_graph::math::KVector;
@@ -13,7 +8,7 @@ use crate::options_gen as lopts;
 use super::hyper_edge_segment::{SegmentId, SegmentStore};
 use super::orthogonal_routing_generator::TOLERANCE;
 
-/// Port of `RoutingDirection`: enumeration of available routing directions.
+/// Enumeration of available routing directions.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum RoutingDirection {
     /// west to east routing direction.
@@ -24,7 +19,6 @@ pub enum RoutingDirection {
     SouthToNorth,
 }
 
-/// Port of `BaseRoutingDirectionStrategy` and its subclasses.
 pub struct BaseRoutingDirectionStrategy {
     direction: RoutingDirection,
     /// set of already created junction points, to avoid multiple points at

@@ -1,5 +1,3 @@
-//! Port of `intermediate.SortByInputModelProcessor`
-//! (SORT_BY_INPUT_ORDER_OF_MODEL).
 //!
 //! Sorts each layer's nodes and ports by their `MODEL_ORDER`, using the
 //! `ModelOrderNodeComparator` / `ModelOrderPortComparator`.
@@ -96,8 +94,6 @@ fn set_layer_nodes(a: &mut LGraphArena, layer: crate::graph::LayerId, nodes: Vec
     a.layer_mut(layer).nodes = nodes;
 }
 
-/// Port of `SortByInputModelProcessor.insertionSort` (the bespoke insertion
-/// sort that mutates the comparator's transitive state).
 fn insertion_sort_nodes(layer: &mut Vec<LNodeId>, comparator: &mut ModelOrderNodeComparator) {
     for i in 1..layer.len() {
         let temp = layer[i];
@@ -110,7 +106,6 @@ fn insertion_sort_nodes(layer: &mut Vec<LNodeId>, comparator: &mut ModelOrderNod
     }
 }
 
-/// Port of `longEdgeTargetNodePreprocessing`.
 fn long_edge_target_node_preprocessing(a: &mut LGraphArena, node: LNodeId) -> TargetNodeModelOrder {
     if let Some(existing) = a.node(node).properties.try_get(&iprops::TARGET_NODE_MODEL_ORDER) {
         return existing;
@@ -145,7 +140,7 @@ fn long_edge_target_node_preprocessing(a: &mut LGraphArena, node: LNodeId) -> Ta
     result
 }
 
-/// Port of `getTargetNode`: the target node of a port considering long edges.
+/// The target node of a port considering long edges.
 fn get_target_node(a: &LGraphArena, port: LPortId) -> Option<LNodeId> {
     let mut edge = a.port(port).outgoing_edges[0];
     let mut node;

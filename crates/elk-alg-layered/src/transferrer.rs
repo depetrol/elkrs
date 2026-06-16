@@ -1,4 +1,4 @@
-//! Port of `ElkGraphLayoutTransferrer`: applies the computed LGraph layout
+//! Applies the computed LGraph layout
 //! back to the original ElkGraph.
 
 use elk_core::options::{EdgeRouting, PortConstraints, SizeConstraint, SizeOptions};
@@ -14,7 +14,6 @@ use crate::internal_properties::Origin;
 use crate::options_gen as lopts;
 use crate::options_gen::GraphProperties;
 
-/// Port of `applyLayout`.
 pub fn apply_layout(
     a: &mut LGraphArena,
     elk: &mut ElkGraph,
@@ -130,7 +129,6 @@ fn lnode_is_descendant(a: &LGraphArena, child: LNodeId, parent: LNodeId) -> bool
     }
 }
 
-/// Port of `applyNodeLayout`.
 fn apply_node_layout(
     a: &mut LGraphArena,
     elk: &mut ElkGraph,
@@ -254,7 +252,6 @@ fn node_flexibility_is_flexible_size_where_space_permits(a: &LGraphArena, lnode:
     )
 }
 
-/// Port of `applyEdgeLayout`.
 fn apply_edge_layout(
     a: &mut LGraphArena,
     elk: &mut ElkGraph,
@@ -362,7 +359,6 @@ fn port_absolute_anchor(a: &LGraphArena, port: crate::graph::LPortId) -> KVector
     )
 }
 
-/// Port of `calculateHierarchicalOffset`.
 fn calculate_hierarchical_offset(a: &LGraphArena, ledge: LEdgeId) -> KVector {
     if let Some(target_coordinate_system) = a
         .edge(ledge)
@@ -387,7 +383,6 @@ fn calculate_hierarchical_offset(a: &LGraphArena, ledge: LEdgeId) -> KVector {
     KVector::default()
 }
 
-/// Port of `applyParentNodeLayout`.
 fn apply_parent_node_layout(
     a: &mut LGraphArena,
     elk: &mut ElkGraph,

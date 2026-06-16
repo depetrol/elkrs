@@ -1,4 +1,3 @@
-//! Port of `MinWidthLayerer` (`org.eclipse.elk.alg.layered.p2layers`).
 //!
 //! Heuristic for the NP-hard minimum-width layering problem with
 //! consideration of dummy nodes (Nikolov, Tarassov, Branke 2005), extended to
@@ -11,7 +10,6 @@ use crate::options_gen as lopts;
 const UPPERBOUND_ON_WIDTH_RANGE: (i32, i32) = (1, 4);
 const COMPENSATOR_RANGE: (i32, i32) = (1, 2);
 
-/// Port of `MinWidthLayerer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let not_inserted: Vec<LNodeId> = a.graph(graph).layerless_nodes.clone();
 
@@ -152,7 +150,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `precalcSuccessors(Collection<LNode>)`: per-node sets of successor
+/// Per-node sets of successor
 /// node ids without self-loops (deduplicated like Java's HashSet; only
 /// membership is queried, so the order is irrelevant).
 fn precalc_successors(a: &LGraphArena, nodes: &[LNodeId]) -> Vec<Vec<usize>> {
@@ -172,7 +170,6 @@ fn precalc_successors(a: &LGraphArena, nodes: &[LNodeId]) -> Vec<Vec<usize>> {
     successors
 }
 
-/// Port of `computeMinWidthLayering(int, int, Iterable<LNode>, List<Set<LNode>>)`.
 #[allow(clippy::too_many_arguments)]
 fn compute_min_width_layering(
     a: &LGraphArena,
@@ -272,7 +269,7 @@ fn compute_min_width_layering(
     (max_width, layers)
 }
 
-/// Port of `selectNode(Set<LNode>, List<Set<LNode>>, Set<LNode>)`: the first
+/// The first
 /// node in `nodes` whose successors are all contained in `targets`.
 fn select_node(
     a: &LGraphArena,
@@ -289,7 +286,6 @@ fn select_node(
     None
 }
 
-/// Port of `countEdgesExceptSelfLoops(Iterable<LEdge>)`.
 fn count_edges_except_self_loops(a: &LGraphArena, edges: &[crate::graph::LEdgeId]) -> i32 {
     let mut i = 0;
     for &edge in edges {
@@ -300,7 +296,7 @@ fn count_edges_except_self_loops(a: &LGraphArena, edges: &[crate::graph::LEdgeId
     i
 }
 
-/// Port of `SelfLoopPredicate`: source node == target node.
+/// Source node == target node.
 fn is_self_loop(a: &LGraphArena, edge: crate::graph::LEdgeId) -> bool {
     a.edge_source_node(edge) == a.edge_target_node(edge)
 }

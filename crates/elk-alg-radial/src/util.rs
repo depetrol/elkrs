@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.RadialUtil` plus the Guava
-//! `DoubleMath` fuzzy-compare helpers it relies on.
 
 use std::cmp::Ordering;
 
@@ -52,7 +50,6 @@ pub fn all_incoming_edges(g: &ElkGraph, node: NodeId) -> Vec<EdgeId> {
     edges
 }
 
-/// Port of `RadialUtil.getSuccessors`.
 pub fn get_successors(g: &ElkGraph, node: NodeId) -> Vec<NodeId> {
     let mut successors = Vec::new();
     let children = &g.node(node).children;
@@ -68,7 +65,7 @@ pub fn get_successors(g: &ElkGraph, node: NodeId) -> Vec<NodeId> {
     successors
 }
 
-/// Port of `RadialUtil.findRoot`: first child of the graph without incoming
+/// First child of the graph without incoming
 /// edges.
 pub fn find_root(g: &ElkGraph, graph: NodeId) -> Option<NodeId> {
     g.node(graph)
@@ -78,7 +75,6 @@ pub fn find_root(g: &ElkGraph, graph: NodeId) -> Option<NodeId> {
         .find(|&child| all_incoming_edges(g, child).is_empty())
 }
 
-/// Port of `RadialUtil.findRootOfNode`.
 pub fn find_root_of_node(g: &ElkGraph, node: NodeId) -> NodeId {
     match get_tree_parent(g, node) {
         Some(parent) => find_root_of_node(g, parent),
@@ -86,7 +82,6 @@ pub fn find_root_of_node(g: &ElkGraph, node: NodeId) -> NodeId {
     }
 }
 
-/// Port of `RadialUtil.getNumberOfLeaves`.
 pub fn get_number_of_leaves(g: &ElkGraph, node: NodeId) -> i32 {
     let successors = get_successors(g, node);
     if successors.is_empty() {
@@ -96,7 +91,7 @@ pub fn get_number_of_leaves(g: &ElkGraph, node: NodeId) -> i32 {
     }
 }
 
-/// Port of `RadialUtil.createPolarComparator`: compares two nodes by their
+/// Compares two nodes by their
 /// polar angle derived from the `CoreOptions.POSITION` property.
 ///
 /// Java NPEs when `POSITION` is unset; here the unset case yields `(0, 0)`.
@@ -122,7 +117,6 @@ pub fn polar_compare(
     fuzzy_compare(arc_of(node1), arc_of(node2), EPSILON)
 }
 
-/// Port of `RadialUtil.findLargestNodeInGraph` (largest diameter).
 pub fn find_largest_node_in_graph(g: &ElkGraph, graph: NodeId) -> f64 {
     let mut largest_child_size: f64 = 0.0;
     for &child in &g.node(graph).children {
@@ -134,7 +128,6 @@ pub fn find_largest_node_in_graph(g: &ElkGraph, graph: NodeId) -> f64 {
     largest_child_size
 }
 
-/// Port of `RadialUtil.getNextLevelNodes`.
 pub fn get_next_level_nodes(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
     let mut successors = Vec::new();
     for &node in nodes {
@@ -143,7 +136,7 @@ pub fn get_next_level_nodes(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
     successors
 }
 
-/// Port of `RadialUtil.getNextLevelNodeSet`. Java returns a `HashSet` whose
+/// Java returns a `HashSet` whose
 /// iteration order is undefined (identity hashes); here insertion order of
 /// the deduplicated successors is used instead, which is deterministic.
 pub fn get_next_level_node_set(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
@@ -158,15 +151,12 @@ pub fn get_next_level_node_set(g: &ElkGraph, nodes: &[NodeId]) -> Vec<NodeId> {
     successors
 }
 
-/// Port of `RadialUtil.centerNodesOnRadi`.
 pub fn center_nodes_on_radi(g: &mut ElkGraph, node: NodeId, x_pos: f64, y_pos: f64) {
     let shape = &mut g.node_mut(node).shape;
     shape.x = x_pos - shape.width / 2.0;
     shape.y = y_pos - shape.height / 2.0;
 }
 
-/// Port of `RadialUtil.shiftClosestEdgeToRadi` (unused in ELK as well; kept
-/// for completeness of the port).
 #[allow(dead_code)]
 pub fn shift_closest_edge_to_radi(g: &mut ElkGraph, node: NodeId, x_pos: f64, y_pos: f64) {
     let shape = &mut g.node_mut(node).shape;
@@ -183,7 +173,7 @@ pub fn shift_closest_edge_to_radi(g: &mut ElkGraph, node: NodeId, x_pos: f64, y_
     }
 }
 
-/// Port of `RadialUtil.getTreeParent`: source of the first incoming edge.
+/// Source of the first incoming edge.
 pub fn get_tree_parent(g: &ElkGraph, node: NodeId) -> Option<NodeId> {
     all_incoming_edges(g, node)
         .first()

@@ -1,11 +1,10 @@
-//! Port of `internal.algorithm.PortContextCreator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{PortLabelPlacement, PortSide};
 
 use crate::nodespacing::internal::{NodeContext, PortContext};
 
-/// Port of `PortContextCreator.createPortContexts`: creates port context
+/// Creates port context
 /// objects and assigns volatile IDs to all ports. Also, unless port labels
 /// are fixed, the labels are added to the port context label cells.
 pub fn create_port_contexts<G: AdapterGraph>(
@@ -37,7 +36,6 @@ pub fn create_port_contexts<G: AdapterGraph>(
     node_context.sort_port_contexts();
 }
 
-/// Port of `PortContextCreator.createPortContext`.
 fn create_port_context<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,

@@ -1,4 +1,4 @@
-//! Port of `p4nodes/bk/BKAligner.java`: block building and inner shifting.
+//! Block building and inner shifting.
 
 use std::collections::HashSet;
 
@@ -8,7 +8,7 @@ use super::bk::{get_blocks, get_edge};
 use super::bk_aligned_layout::{BKAlignedLayout, HDirection, VDirection};
 use super::neighborhood_information::{nid, NeighborhoodInformation};
 
-/// Port of `BKAligner.verticalAlignment`: the graph is traversed in the given
+/// The graph is traversed in the given
 /// directions and nodes are grouped into blocks. Type 1 conflicts (the
 /// `marked_edges`) are resolved, so that the dummy nodes of a long edge share
 /// the same block if possible.
@@ -102,7 +102,7 @@ pub fn vertical_alignment(
     }
 }
 
-/// Port of `BKAligner.insideBlockShift`: moves the nodes inside a block,
+/// Moves the nodes inside a block,
 /// ensuring that all edges inside a block can be drawn as straight lines.
 /// Also determines the required size of each block.
 pub fn inside_block_shift(a: &LGraphArena, graph: LGraphId, bal: &mut BKAlignedLayout) {

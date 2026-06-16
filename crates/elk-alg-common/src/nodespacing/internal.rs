@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.common.nodespacing.internal`: the data
+//! The data
 //! holders (`NodeContext`, `PortContext`) and `NodeLabelLocation`.
 
 use elk_core::adapters::AdapterGraph;
@@ -13,7 +13,7 @@ use super::cellsystem::{
     CellId, CellSystem, ContainerArea, HorizontalLabelAlignment, Strip, VerticalLabelAlignment,
 };
 
-/// Port of `NodeLabelLocation`: enumeration over all possible label
+/// Enumeration over all possible label
 /// placements and associated things.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[allow(non_camel_case_types)]
@@ -149,7 +149,6 @@ impl NodeLabelLocation {
         }
     }
 
-    /// Port of `NodeLabelLocation.fromNodeLabelPlacement`.
     pub fn from_node_label_placement(
         label_placement: EnumSet<NodeLabelPlacement>,
     ) -> NodeLabelLocation {
@@ -161,7 +160,6 @@ impl NodeLabelLocation {
         UNDEFINED
     }
 
-    /// Port of `getHorizontalAlignment` (None only for UNDEFINED).
     pub fn horizontal_alignment(self) -> HorizontalLabelAlignment {
         use HorizontalLabelAlignment as H;
         match self {
@@ -172,7 +170,6 @@ impl NodeLabelLocation {
         }
     }
 
-    /// Port of `getVerticalAlignment`.
     pub fn vertical_alignment(self) -> VerticalLabelAlignment {
         use VerticalLabelAlignment as V;
         match self {
@@ -183,7 +180,6 @@ impl NodeLabelLocation {
         }
     }
 
-    /// Port of `getContainerRow`.
     pub fn container_row(self) -> ContainerArea {
         match self {
             OUT_T_L | OUT_T_C | OUT_T_R | OUT_L_T | OUT_R_T | IN_T_L | IN_T_C | IN_T_R => {
@@ -197,7 +193,6 @@ impl NodeLabelLocation {
         }
     }
 
-    /// Port of `getContainerColumn`.
     pub fn container_column(self) -> ContainerArea {
         match self {
             OUT_T_L | OUT_B_L | OUT_L_T | OUT_L_C | OUT_L_B | IN_T_L | IN_C_L | IN_B_L => {
@@ -211,7 +206,6 @@ impl NodeLabelLocation {
         }
     }
 
-    /// Port of `isInsideLocation`.
     pub fn is_inside_location(self) -> bool {
         matches!(
             self,
@@ -219,7 +213,6 @@ impl NodeLabelLocation {
         )
     }
 
-    /// Port of `getOutsideSide`.
     pub fn outside_side(self) -> PortSide {
         match self {
             OUT_T_L | OUT_T_C | OUT_T_R => PortSide::NORTH,
@@ -231,7 +224,7 @@ impl NodeLabelLocation {
     }
 }
 
-/// Port of `PortContext`: data holder for a single port.
+/// Data holder for a single port.
 pub struct PortContext<P> {
     /// The port we calculate stuff for.
     pub port: P,
@@ -253,7 +246,7 @@ pub struct PortContext<P> {
 }
 
 impl<P: Copy> PortContext<P> {
-    /// Port of the `PortContext` constructor (minus the label cell, which the
+    /// The `PortContext` constructor (minus the label cell, which the
     /// port context creator sets up).
     pub fn new<G: AdapterGraph<P = P>>(
         g: &G,
@@ -300,9 +293,6 @@ impl<P: Copy> PortContext<P> {
     }
 }
 
-/// Port of `IndividualSpacings.getIndividualOrInherited(NodeAdapter, IProperty)`:
-/// first checks the node's individual spacing overrides, then the parent
-/// graph's property value (which falls back to the property default).
 pub fn individual_or_inherited<G: AdapterGraph, T: PropValue + Clone + Default + JavaCloneable>(
     g: &G,
     node: G::N,
@@ -323,7 +313,7 @@ pub fn individual_or_inherited<G: AdapterGraph, T: PropValue + Clone + Default +
     g.graph_properties().get(property)
 }
 
-/// Port of `NodeContext`: data holder passed around the algorithm. The cell
+/// Data holder passed around the algorithm. The cell
 /// system lives in the `cells` arena; the Java object references become
 /// [`CellId`]s.
 pub struct NodeContext<G: AdapterGraph> {
@@ -392,7 +382,7 @@ pub struct NodeContext<G: AdapterGraph> {
 }
 
 impl<G: AdapterGraph> NodeContext<G> {
-    /// Port of the `NodeContext` constructor. (The Java constructor takes the
+    /// The `NodeContext` constructor. (The Java constructor takes the
     /// parent graph but never uses it; spacing lookups go through
     /// `node.getGraph()`, which corresponds to `g` here.)
     pub fn new(g: &G, node: G::N) -> Self {
@@ -475,7 +465,6 @@ impl<G: AdapterGraph> NodeContext<G> {
         }
     }
 
-    /// Port of `NodeContext.applyNodeSize`.
     pub fn apply_node_size(&self, g: &mut G) {
         g.set_node_size(self.node, self.node_size);
     }
@@ -507,7 +496,6 @@ impl<G: AdapterGraph> NodeContext<G> {
             .expect("outside node label containers not created")
     }
 
-    /// Port of `NodeContext.getPortAlignment`.
     pub fn get_port_alignment(&self, g: &G, port_side: PortSide) -> PortAlignment {
         use elk_core::options as opts;
         let node_props = g.node_properties(self.node);
@@ -544,8 +532,6 @@ impl<G: AdapterGraph> NodeContext<G> {
         }
     }
 
-    /// Port of `NodeContext.comparePortSides` + `comparePortContexts`,
-    /// applied to sort the port context list like Java's `TreeMultimap`.
     pub fn sort_port_contexts(&mut self) {
         self.port_contexts.sort_by(|a, b| {
             // Compare port sides by ordinal

@@ -1,4 +1,3 @@
-//! Port of `InteractiveExternalPortPositioner`.
 //!
 //! Interactive layout relies on previously specified positions to determine a
 //! layout of the graph. For dummy nodes such as external port dummies no

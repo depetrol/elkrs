@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.intermediate.rotation`
-//! (`GeneralRotator` + `AngleRotation`).
 
 use elk_graph::graph::{ElkGraph, NodeId, ShapeId};
 use elk_graph::math::KVector;
@@ -7,7 +5,6 @@ use elk_graph::math::KVector;
 use crate::options;
 use crate::util;
 
-/// Port of `GeneralRotator.process` / `AngleRotation.rotate`.
 pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     let mut target_angle: f64 = g.node(graph).properties.get(&options::ROTATION_TARGET_ANGLE);
 

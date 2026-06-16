@@ -1,4 +1,3 @@
-//! Port of `OneDimensionalCompactor`.
 
 use elk_core::options::Direction;
 

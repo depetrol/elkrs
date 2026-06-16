@@ -1,4 +1,3 @@
-//! Port of `ConstraintsPostprocessor`.
 //!
 //! Adds to each LNode the layerID and positionID that has been computed by ELK
 //! Layered.

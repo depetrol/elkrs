@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.intermediate.overlaps.RadiusExtensionOverlapRemoval`.
 
 use elk_graph::graph::{ElkGraph, NodeId};
 
@@ -7,7 +6,6 @@ use crate::options;
 use crate::sorting::RadialSorter;
 use crate::util;
 
-/// Port of `RadiusExtensionOverlapRemoval.process` / `removeOverlaps`.
 pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     let props = &g.node(graph).properties;
     let mut sorter = props.get(&options::SORTER).create();
@@ -20,7 +18,7 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     extend(g, &ext, &mut sorter, successors);
 }
 
-/// Port of `extend`: extend the radii until the nodes are non-overlapping.
+/// Extend the radii until the nodes are non-overlapping.
 ///
 /// Java iterates a `HashSet` for the next level (undefined order); here the
 /// deterministic insertion order from `get_next_level_node_set` is used.

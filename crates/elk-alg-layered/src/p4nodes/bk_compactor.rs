@@ -1,5 +1,3 @@
-//! Port of `p4nodes/bk/BKCompactor.java` (including the trivial
-//! `ICompactor.java` interface, folded in): block and class placement.
 
 use std::collections::VecDeque;
 
@@ -323,7 +321,7 @@ impl BKCompactor {
         self.thresh_strategy.finish_block(root);
     }
 
-    /// Port of `BKCompactor.placeClasses`. Propagates shifts through the
+    /// Propagates shifts through the
     /// class graph in a longest path layering fashion.
     ///
     /// Java iterates a `HashMap`'s values to seed the queue, which has no
@@ -396,7 +394,6 @@ impl BKCompactor {
         idx
     }
 
-    /// Port of `ClassNode.addEdge`.
     fn add_class_edge(&mut self, source: usize, target: usize, separation: f64) {
         self.class_nodes[target].indegree += 1;
         self.class_nodes[source].outgoing.push(ClassEdge { separation, target });

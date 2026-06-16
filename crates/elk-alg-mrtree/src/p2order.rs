@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.p2order.NodeOrderer`: orders the nodes
+//! Orders the nodes
 //! of each level. (The alternative `OrderBalance` phase is unreachable in
 //! Java — `TreeLayoutPhases.create()` always instantiates `NodeOrderer` — and
 //! is not ported.)
@@ -7,7 +7,6 @@ use crate::graph::{TArena, TEdgeId, TGraph, TNodeId};
 use crate::options;
 use crate::options::OrderWeighting;
 
-/// Port of `NodeOrderer.process`.
 pub fn process(arena: &mut TArena, graph: &TGraph) {
     // find the root node, assuming that: 1. there is a root, 2. only one
     let root = graph
@@ -35,7 +34,7 @@ fn sort_property(arena: &TArena, n: TNodeId, weighting: OrderWeighting) -> i32 {
     }
 }
 
-/// Port of `NodeOrderer.orderLevelFanDescendants`. The level list is sorted
+/// The level list is sorted
 /// in place (Java passes the caller's `children` list, whose sorted state is
 /// visible to the caller's subsequent position sort).
 fn order_level_fan_descendants(
@@ -110,7 +109,6 @@ fn order_level_fan_descendants(
     }
 }
 
-/// Port of `NodeOrderer.orderLevelConstraint`.
 fn order_level_constraint(arena: &mut TArena, current_level: Vec<TNodeId>) {
     let constraint =
         |arena: &TArena, n: TNodeId| -> i32 { arena.node(n).properties.get(&options::POSITION_CONSTRAINT) };

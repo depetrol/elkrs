@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.NodeLabelCellCreator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{self, PortSide, SizeOptions};
@@ -6,7 +5,7 @@ use elk_core::options::{self, PortSide, SizeOptions};
 use crate::nodespacing::cellsystem::{CellId, ContainerArea, Strip};
 use crate::nodespacing::internal::{NodeContext, NodeLabelLocation};
 
-/// Port of `NodeLabelCellCreator.createNodeLabelCells`: iterates over all of
+/// Iterates over all of
 /// the node's labels and creates all required cell containers and label cells.
 pub fn create_node_label_cells<G: AdapterGraph>(
     g: &G,
@@ -23,7 +22,6 @@ pub fn create_node_label_cells<G: AdapterGraph>(
     }
 }
 
-/// Port of `NodeLabelCellCreator.handleNodeLabel`.
 fn handle_node_label<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -54,7 +52,6 @@ fn handle_node_label<G: AdapterGraph>(
     node_context.cells.label_add_label(cell, label, g.label_size(label));
 }
 
-/// Port of `NodeLabelCellCreator.createNodeLabelCellContainers`.
 fn create_node_label_cell_containers<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     only_inside: bool,
@@ -102,7 +99,6 @@ fn create_node_label_cell_containers<G: AdapterGraph>(
     }
 }
 
-/// Port of `NodeLabelCellCreator.retrieveNodeLabelCell`.
 fn retrieve_node_label_cell<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     node_label_location: NodeLabelLocation,

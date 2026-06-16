@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.PortPlacementCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{self, PortAlignment, PortConstraints, PortSide, SizeOptions};
@@ -11,7 +10,6 @@ use crate::nodespacing::internal::NodeContext;
 pub static PORT_RATIO_OR_POSITION: Property<f64> =
     Property::with_default("portRatioOrPosition", || 0.0);
 
-/// Port of `PortPlacementCalculator.placeHorizontalPorts`.
 pub fn place_horizontal_ports<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     // How we are going to place the ports depends on their constraints
     match node_context.port_constraints {
@@ -30,7 +28,6 @@ pub fn place_horizontal_ports<G: AdapterGraph>(g: &G, node_context: &mut NodeCon
     }
 }
 
-/// Port of `placeHorizontalFixedPosPorts`.
 fn place_horizontal_fixed_pos_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -44,7 +41,6 @@ fn place_horizontal_fixed_pos_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `placeHorizontalFixedRatioPorts`.
 fn place_horizontal_fixed_ratio_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -62,7 +58,6 @@ fn place_horizontal_fixed_ratio_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `placeHorizontalFreePorts`.
 fn place_horizontal_free_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -177,7 +172,6 @@ fn place_horizontal_free_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `calculateHorizontalPortYCoordinate`.
 fn calculate_horizontal_port_y_coordinate<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,
@@ -204,7 +198,6 @@ fn calculate_horizontal_port_y_coordinate<G: AdapterGraph>(
     }
 }
 
-/// Port of `PortPlacementCalculator.placeVerticalPorts`.
 pub fn place_vertical_ports<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     // How we are going to place the ports depends on their constraints
     match node_context.port_constraints {
@@ -223,7 +216,6 @@ pub fn place_vertical_ports<G: AdapterGraph>(g: &G, node_context: &mut NodeConte
     }
 }
 
-/// Port of `placeVerticalFixedPosPorts`.
 fn place_vertical_fixed_pos_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -239,7 +231,6 @@ fn place_vertical_fixed_pos_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `placeVerticalFixedRatioPorts`.
 fn place_vertical_fixed_ratio_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -257,7 +248,6 @@ fn place_vertical_fixed_ratio_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `placeVerticalFreePorts`.
 fn place_vertical_free_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -370,7 +360,6 @@ fn place_vertical_free_ports<G: AdapterGraph>(
     }
 }
 
-/// Port of `calculateVerticalPortXCoordinate`.
 fn calculate_vertical_port_x_coordinate<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,
@@ -398,7 +387,7 @@ fn calculate_vertical_port_x_coordinate<G: AdapterGraph>(
     }
 }
 
-/// Port of `modifiedPortPlacementSize`: if we switch from distributed or
+/// If we switch from distributed or
 /// justified alignment back to centered alignment, this may require us to
 /// modify the required port placement size calculated in a previous phase.
 fn modified_port_placement_size<G: AdapterGraph>(

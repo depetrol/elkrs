@@ -1,4 +1,3 @@
-//! Port of `FixedLayoutProvider`.
 
 use elk_graph::graph::{EdgeId, ElkGraph, NodeId};
 use elk_graph::math::KVector;

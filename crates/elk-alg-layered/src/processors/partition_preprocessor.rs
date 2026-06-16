@@ -1,4 +1,4 @@
-//! Port of `PartitionPreprocessor`. Reverses edges that connect
+//! Reverses edges that connect
 //! higher-index to lower-index partitions.
 
 use std::collections::HashSet;

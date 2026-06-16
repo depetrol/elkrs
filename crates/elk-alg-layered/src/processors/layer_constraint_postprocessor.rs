@@ -1,4 +1,4 @@
-//! Port of `LayerConstraintPostprocessor`: moves FIRST/LAST nodes to
+//! Moves FIRST/LAST nodes to
 //! dedicated layers and restores hidden FIRST_SEPARATE/LAST_SEPARATE nodes.
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId, LayerId, NodeType};

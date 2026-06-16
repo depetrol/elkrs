@@ -1,4 +1,4 @@
-//! Port of `LayerSweepTypeDecider`: decides whether to sweep into a graph
+//! Decides whether to sweep into a graph
 //! (hierarchical handling) or process it bottom-up.
 
 use elk_core::options::{PortConstraints, PortSide};
@@ -8,7 +8,7 @@ use crate::internal_properties as iprops;
 use crate::internal_properties::Origin;
 use crate::options_gen as lopts;
 
-/// Port of the nested `NodeInfo`: collects number of paths to nodes with
+/// The nested `NodeInfo`: collects number of paths to nodes with
 /// random or hierarchical influence.
 #[derive(Clone, Copy, Default, Debug)]
 struct NodeInfo {
@@ -47,7 +47,7 @@ impl LayerSweepTypeDecider {
         self.node_info[l][n] = NodeInfo::default();
     }
 
-    /// Port of `useBottomUp`: decide whether to use bottom up or
+    /// Decide whether to use bottom up or
     /// cross-hierarchical sweep method.
     pub fn use_bottom_up(
         &mut self,

@@ -1,4 +1,3 @@
-//! Port of `p2layers.BreadthFirstModelOrderLayerer` (LAYERING_STRATEGY = BF_MODEL_ORDER).
 
 use elk_core::javacompat::tim_sort;
 

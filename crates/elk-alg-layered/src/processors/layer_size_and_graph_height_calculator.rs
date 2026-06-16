@@ -1,4 +1,3 @@
-//! Port of `LayerSizeAndGraphHeightCalculator`.
 
 use crate::graph::{LGraphArena, LGraphId, NodeType};
 use crate::options_gen as lopts;

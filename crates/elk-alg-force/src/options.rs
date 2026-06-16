@@ -9,7 +9,6 @@ use elk_graph::math::{ElkPadding, KVector, Spacing};
 use elk_graph::properties::Property;
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.force.options.ForceModelStrategy`.
     pub enum ForceModelStrategy {
         EADES,
         FRUCHTERMAN_REINGOLD,
@@ -17,7 +16,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.force.stress.StressMajorization.Dimension`.
     pub enum Dimension {
         XY,
         X,

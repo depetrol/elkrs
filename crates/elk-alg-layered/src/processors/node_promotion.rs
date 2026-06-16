@@ -1,4 +1,3 @@
-//! Port of `NodePromotion` (`org.eclipse.elk.alg.layered.intermediate`).
 //!
 //! Node promotion heuristic of Nikolov and Tarassov with a few more options
 //! for handling and stopping the promotion earlier. The goal is a layering
@@ -11,7 +10,7 @@ use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
 use crate::options_gen::NodePromotionStrategy;
 
-/// Port of `BiLinkedHashMultiMap<Integer, LNode>`: order-preserving
+/// Order-preserving
 /// key -> list-of-values map with a reverse value -> key map.
 #[derive(Default)]
 struct BiLayerMap {
@@ -110,7 +109,6 @@ struct NodePromotion {
     bi_layer_map: BiLayerMap,
 }
 
-/// Port of `NodePromotion.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let strategy: NodePromotionStrategy = a
         .graph(graph)
@@ -221,7 +219,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 }
 
 impl NodePromotion {
-    /// Port of `precalculateAndSetInformation()`.
     fn precalculate_and_set_information(&mut self, a: &mut LGraphArena, graph: LGraphId) {
         // Calculate approximative addition of space for a node.
         self.node_size_affix = a.graph(graph).properties.get(&lopts::SPACING_NODE_NODE);
@@ -298,7 +295,6 @@ impl NodePromotion {
         }
     }
 
-    /// Port of `precalculateAndSetInformationModelOrder()`.
     fn precalculate_and_set_information_model_order(
         &mut self,
         a: &mut LGraphArena,
@@ -343,7 +339,6 @@ impl NodePromotion {
         }
     }
 
-    /// Port of `modelOrderNodePromotion(boolean)`.
     fn model_order_node_promotion(&mut self, a: &LGraphArena, left_to_right: bool) {
         loop {
             let mut something_changed = false;
@@ -506,7 +501,7 @@ impl NodePromotion {
         }
     }
 
-    /// Port of `promoteNodeByModelOrder(LNode, boolean)`: promotes a node and
+    /// Promotes a node and
     /// returns the connected nodes that now have to be promoted as well
     /// (insertion-ordered set).
     fn promote_node_by_model_order(
@@ -546,7 +541,6 @@ impl NodePromotion {
         nodes_to_promote
     }
 
-    /// Port of `promotionMagic(Function<Pair<Integer, Integer>, Boolean>)`.
     /// `funky(reduced_dummies, iteration_counter)` decides whether to go on.
     ///
     /// Note one subtle Java quirk that must be replicated exactly: the
@@ -624,7 +618,7 @@ impl NodePromotion {
         }
     }
 
-    /// Port of `promoteNode(LNode)`: returns (estimated difference of dummy
+    /// Returns (estimated difference of dummy
     /// nodes, whether the maximal accepted width has NOT been exceeded).
     fn promote_node(&mut self, a: &LGraphArena, node: LNodeId) -> (i32, bool) {
         let mut max_width_not_exceeded = true;
@@ -683,7 +677,6 @@ impl NodePromotion {
         (dummydiff, max_width_not_exceeded)
     }
 
-    /// Port of `setNewLayering(LGraph)`.
     fn set_new_layering(&mut self, a: &mut LGraphArena, graph: LGraphId) {
         // Create maxHeight + 1 layers with reversed IDs.
         let mut lay_list: Vec<LayerId> = Vec::new();
@@ -706,7 +699,6 @@ impl NodePromotion {
         a.graph_mut(graph).layers.extend(lay_list);
     }
 
-    /// Port of `setNewLayeringModelOrder(LGraph)`.
     fn set_new_layering_model_order(&mut self, a: &mut LGraphArena, graph: LGraphId) {
         a.graph_mut(graph).layers.clear();
         // Get the layer indices, sorted.

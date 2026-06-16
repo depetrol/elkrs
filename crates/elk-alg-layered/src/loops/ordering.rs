@@ -1,5 +1,3 @@
-//! Port of `intermediate.loops.ordering`: `PortSideAssigner` and
-//! `PortRestorer`.
 
 use elk_core::options::PortSide;
 use elk_graph::properties::EnumSet;
@@ -14,7 +12,7 @@ use super::{SelfHyperLoop, SelfLoopHolder, SelfLoopType, SlLoopIdx, SlPortIdx, P
 // ---------------------------------------------------------------------------
 // PortSideAssigner
 
-/// Port of `PortSideAssigner.Target`: the way ports are distributed when
+/// The way ports are distributed when
 /// self loops are assigned to all sides.
 #[derive(Clone, Copy)]
 struct Target {
@@ -40,7 +38,7 @@ const ASSIGNMENT_TARGETS: [Target; 8] = [
     Target { first_side: PortSide::EAST, second_side: PortSide::SOUTH },
 ];
 
-/// Port of `PortSideAssigner.assignPortSides`: assigns port sides to all
+/// Assigns port sides to all
 /// hidden ports subject to the self loop distribution strategy.
 pub fn assign_port_sides(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     match a
@@ -157,7 +155,7 @@ fn assign_to_target(
 // ---------------------------------------------------------------------------
 // PortRestorer
 
-/// Port of `PortRestorer.PortSideArea`: the three different areas of a port
+/// The three different areas of a port
 /// side, in clockwise order.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum PortSideArea {
@@ -177,7 +175,7 @@ enum AddMode {
 /// ports, indexed by `PortSide` ordinal and area.
 type TargetAreas = [[Vec<SlPortIdx>; 3]; PORT_SIDE_COUNT];
 
-/// Port of `PortRestorer.restorePorts`: restores all previously hidden ports
+/// Restores all previously hidden ports
 /// at proper locations and resets all hiding-related state.
 pub fn restore_ports(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     let mut target_areas: TargetAreas = Default::default();

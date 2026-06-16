@@ -1,4 +1,3 @@
-//! Port of `p5edges/orthogonal/HyperEdgeCycleDetector.java`.
 //!
 //! Finds a set of dependencies to remove or reverse to break cycles in the
 //! conflict graph of hyperedge segments (greedy feedback arc set heuristic by

@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.mrtree.TreeLayoutProvider` and
-//! `org.eclipse.elk.alg.mrtree.MrTree`.
 //!
 //! `MrTree` assembles its processor pipeline with `AlgorithmAssembler`. All
 //! four phases are fixed (`TreeLayoutPhases` is its own factory), so the
@@ -12,7 +10,6 @@ use elk_graph::graph::{ElkGraph, NodeId};
 use crate::graph::{TArena, TGraph};
 use crate::{components, importer, intermediate, options, p1treeify, p2order, p3place, p4route};
 
-/// Port of `TreeLayoutProvider`.
 #[derive(Default)]
 pub struct TreeLayoutProvider;
 
@@ -51,7 +48,7 @@ impl LayoutProvider for TreeLayoutProvider {
     }
 }
 
-/// Port of `MrTree.doLayout`: runs the assembled algorithm on one component.
+/// Runs the assembled algorithm on one component.
 ///
 /// `AlgorithmAssembler.build` produces, per slot, the union of the processors
 /// requested by the phases' `LayoutProcessorConfiguration`s, sorted by their
@@ -93,8 +90,6 @@ fn do_layout(arena: &mut TArena, graph: &mut TGraph) {
     p4route::process(arena, graph);
 }
 
-/// Port of `org.eclipse.elk.alg.common.NodeMicroLayout.execute()` (same as
-/// the force provider's copy).
 fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
     let mut adapter = elk_core::adapters::ElkGraphAdapter::new(g, layout_node);
     elk_alg_common::nodespacing::sort_port_lists(&mut adapter);

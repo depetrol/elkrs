@@ -1,4 +1,4 @@
-//! Port of `HighDegreeNodeLayeringProcessor`: moves small trees connected to
+//! Moves small trees connected to
 //! high-degree nodes into newly introduced layers next to the high-degree
 //! node's layer, reducing drawing height. Runs after phase 2.
 

@@ -1,4 +1,3 @@
-//! Port of `p3order.ModelOrderBarycenterHeuristic`.
 //!
 //! Extends `BarycenterHeuristic`, overriding only the sort comparator and the
 //! single-layer `minimizeCrossings`. All barycenter computation, randomization
@@ -39,7 +38,7 @@ impl ModelOrderBarycenterState {
         self.smaller_than = HashMap::new();
     }
 
-    /// Port of the `barycenterStateComparator` lambda. `states[l][i]` is the
+    /// The `barycenterStateComparator` lambda. `states[l][i]` is the
     /// barycenter state array (indexed by layer.id and node.id).
     pub fn compare(
         &mut self,

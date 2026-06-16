@@ -1,4 +1,4 @@
-//! Port of `p4nodes/bk/NeighborhoodInformation.java`: precalculated
+//! Precalculated
 //! neighborhood information for the BK node placer.
 
 use crate::graph::{LEdgeId, LGraphArena, LGraphId, LNodeId, LayerId};
@@ -34,8 +34,6 @@ pub struct NeighborhoodInformation {
 }
 
 impl NeighborhoodInformation {
-    /// Port of `NeighborhoodInformation.buildFor` (assigns scratch ids to all
-    /// layers and nodes of the graph).
     pub fn build_for(a: &mut LGraphArena, graph: LGraphId) -> Self {
         let layers = a.graph(graph).layers.clone();
 

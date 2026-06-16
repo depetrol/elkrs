@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.mrtree.p4route`: `EdgeRouter` and
-//! `MultiLevelEdgeNodeNodeGap`. (The private `cyrusBeck` method in Java is
-//! dead code and is not ported.)
 
 use indexmap::IndexMap;
 
@@ -17,9 +14,6 @@ const STEEP_END_EDGE_THERESHOLD_DISTANCE: f64 = 50.0;
 const STEEP_END_EDGE_RATIO: f64 = 5.3;
 const STEEP_END_EDGE_SAMPLE_HEIGHT: f64 = 40.0;
 
-/// Port of `java.util.stream.DoubleStream.average()` — sum is computed with
-/// Kahan-style compensated summation (`Collectors.sumWithCompensation` /
-/// `computeFinalSum`).
 fn java_stream_average(values: impl Iterator<Item = f64>) -> f64 {
     let mut sum = 0.0f64;
     let mut compensation = 0.0f64;
@@ -38,7 +32,6 @@ fn java_stream_average(values: impl Iterator<Item = f64>) -> f64 {
     final_sum / count as f64
 }
 
-/// Port of `EdgeRouter.process`.
 pub fn process(arena: &mut TArena, graph: &TGraph) {
     let mode: EdgeRoutingMode = graph.properties.get(&options::EDGE_ROUTING_MODE);
     if mode == EdgeRoutingMode::MIDDLE_TO_MIDDLE {
@@ -57,7 +50,6 @@ pub fn process(arena: &mut TArena, graph: &TGraph) {
     }
 }
 
-/// Port of `EdgeRouter.middleToMiddleEdgeRoute`.
 fn middle_to_middle_edge_route(arena: &mut TArena, tedge: TEdgeId) {
     let (source, target) = {
         let e = arena.edge(tedge);
@@ -94,7 +86,6 @@ fn middle_to_middle_edge_route(arena: &mut TArena, tedge: TEdgeId) {
     chain.0[last_idx] = last;
 }
 
-/// Port of `EdgeRouter.avoidOverlap`.
 fn avoid_overlap(arena: &mut TArena, graph: &TGraph) {
     let _root = tree_util::get_root(arena, graph);
     let node_bendpoint_padding: f64 = graph.properties.get(&options::SPACING_EDGE_NODE);
@@ -110,7 +101,7 @@ fn avoid_overlap(arena: &mut TArena, graph: &TGraph) {
 
 // --------------------------------------------- MultiLevelEdgeNodeNodeGap
 
-/// Port of `MultiLevelEdgeNodeNodeGap`. The Java class registers the bend
+/// The Java class registers the bend
 /// point `KVector` objects by reference; this port stores `(edge, index)`
 /// of the first of the two bend points instead (the index stays valid since
 /// later additions only append to the chain).
@@ -145,7 +136,6 @@ impl MultiLevelEdgeNodeNodeGap {
         gap
     }
 
-    /// Port of `addBendPoints`.
     fn add_bend_points(&mut self, arena: &mut TArena, new_bends: (TEdgeId, usize)) {
         self.bend_points.push(new_bends);
 
@@ -166,7 +156,6 @@ impl MultiLevelEdgeNodeNodeGap {
         self.update_bend_points(arena);
     }
 
-    /// Port of `updateBendPoints`.
     fn update_bend_points(&mut self, arena: &mut TArena) {
         let count = self.bend_points.len();
         let d = self.d;
@@ -259,7 +248,6 @@ impl MultiLevelEdgeNodeNodeGap {
 
 // ------------------------------------------------------------ special edges
 
-/// Port of `EdgeRouter.avoidOverlapSpecialEdges`.
 fn avoid_overlap_special_edges(
     arena: &mut TArena,
     graph: &TGraph,
@@ -471,7 +459,6 @@ fn avoid_overlap_special_edges(
     }
 }
 
-/// Port of `EdgeRouter.avoidOverlapHandleCycleInducingEdges`.
 #[allow(clippy::too_many_arguments)]
 fn avoid_overlap_handle_cycle_inducing_edges(
     arena: &mut TArena,
@@ -593,7 +580,6 @@ fn avoid_overlap_handle_cycle_inducing_edges(
 
 // ------------------------------------------------------------- start points
 
-/// Port of `EdgeRouter.avoidOverlapSetStartPoints`.
 fn avoid_overlap_set_start_points(
     arena: &mut TArena,
     graph: &TGraph,
@@ -668,7 +654,6 @@ fn avoid_overlap_set_start_points(
 
 // --------------------------------------------------------------- end points
 
-/// Port of `EdgeRouter.avoidOverlapSetEndPoints`.
 fn avoid_overlap_set_end_points(
     arena: &mut TArena,
     graph: &TGraph,

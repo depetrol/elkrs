@@ -1,5 +1,3 @@
-//! Port of `GraphConfigurator` and the relevant parts of
-//! `AlgorithmAssembler`: assembles the processing pipeline for a graph.
 
 use elk_core::options::{Direction, EdgeRouting, HierarchyHandling, PortConstraints};
 use elk_graph::properties::EnumSet;
@@ -18,7 +16,7 @@ use crate::phases::{
 
 const MIN_EDGE_SPACING: f64 = 2.0;
 
-/// Port of `prepareGraphForLayout`: configures graph properties and returns
+/// Configures graph properties and returns
 /// the assembled pipeline (stored by the caller; Java attaches it to the
 /// graph via the PROCESSORS property).
 pub fn prepare_graph_for_layout(
@@ -68,7 +66,6 @@ pub fn prepare_graph_for_layout(
     Ok(pipeline)
 }
 
-/// Port of `configureGraphProperties`.
 fn configure_graph_properties(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let edge_spacing: f64 = a.graph(graph).properties.get(&lopts::SPACING_EDGE_EDGE);
     if edge_spacing < MIN_EDGE_SPACING {
@@ -125,7 +122,6 @@ fn copy_port_constraints_node(a: &mut LGraphArena, node: LNodeId) {
     }
 }
 
-/// Port of `getPhaseIndependentLayoutProcessorConfiguration`.
 fn phase_independent_configuration(
     a: &LGraphArena,
     graph: LGraphId,
@@ -253,7 +249,6 @@ fn phase_independent_configuration(
     Ok(configuration)
 }
 
-/// Port of `activateGreedySwitchFor`.
 pub fn activate_greedy_switch_for(a: &LGraphArena, graph: LGraphId) -> bool {
     let props = &a.graph(graph).properties;
     if is_hierarchical_layout(a, graph) {

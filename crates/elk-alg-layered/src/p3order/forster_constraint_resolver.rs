@@ -1,4 +1,3 @@
-//! Port of `ForsterConstraintResolver`.
 //!
 //! Java keeps a persistent 2D array of single-node `ConstraintGroup`s plus
 //! temporary merged groups; since all per-group state is reset at the start
@@ -28,7 +27,7 @@ pub struct ForsterConstraintResolver {
     pub barycenter_states: Vec<Vec<BarycenterState>>,
 }
 
-/// Port of the inner class `ConstraintGroup` (local arena representation;
+/// The inner class `ConstraintGroup` (local arena representation;
 /// groups reference each other by arena index).
 struct ConstraintGroup {
     /// The sum of the node weights.
@@ -67,7 +66,7 @@ impl ConstraintGroup {
 }
 
 impl ForsterConstraintResolver {
-    /// Port of the constructor; the `init_at_*` traversal hooks are driven
+    /// The constructor; the `init_at_*` traversal hooks are driven
     /// by `GraphInfoHolder`.
     pub fn new(a: &LGraphArena, current_node_order: &[Vec<LNodeId>]) -> Self {
         let mut constraints_between_non_dummies = false;
@@ -105,7 +104,7 @@ impl ForsterConstraintResolver {
 
     // -------------------------------------------------- constraint processing
 
-    /// Port of `processConstraints(List<LNode>)`: finds and handles violated
+    /// Finds and handles violated
     /// in-layer successor constraints.
     pub fn process_constraints(&mut self, a: &LGraphArena, nodes: &mut Vec<LNodeId>) {
         // If there are successor constraints between regular (or normal)
@@ -155,7 +154,6 @@ impl ForsterConstraintResolver {
         }
     }
 
-    /// Port of `buildConstraintsGraph`.
     fn build_constraints_graph(
         &mut self,
         a: &LGraphArena,
@@ -219,7 +217,7 @@ impl ForsterConstraintResolver {
         }
     }
 
-    /// Port of `findViolatedConstraint`. Returns the two groups in the order
+    /// Returns the two groups in the order
     /// they should appear in.
     fn find_violated_constraint(
         &self,
@@ -287,7 +285,6 @@ impl ForsterConstraintResolver {
         None
     }
 
-    /// Port of `handleViolatedConstraint`.
     fn handle_violated_constraint(
         &mut self,
         a: &LGraphArena,
@@ -344,7 +341,7 @@ impl ForsterConstraintResolver {
         }
     }
 
-    /// Port of the merge constructor `ConstraintGroup(ConstraintGroup,
+    /// The merge constructor `ConstraintGroup(ConstraintGroup,
     /// ConstraintGroup)`.
     fn merge_groups(
         &mut self,

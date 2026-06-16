@@ -1,4 +1,3 @@
-//! Port of `LongestPathCompaction`.
 
 use std::collections::VecDeque;
 

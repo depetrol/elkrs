@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.graph`: the layered algorithm's
+//! The layered algorithm's
 //! internal graph model (LGraph, LNode, LPort, LEdge, LLabel, Layer).
 //!
 //! Java uses an object graph with bidirectional references; here all
@@ -31,7 +31,6 @@ id_type!(LLabelId);
 id_type!(LayerId);
 
 elk_graph::elk_enum! {
-    /// Port of `LNode.NodeType`.
     pub enum NodeType {
         NORMAL,
         LONG_EDGE,
@@ -46,7 +45,6 @@ elk_graph::elk_enum! {
 
 pub use elk_core::options::PortSide as Side;
 
-/// Port of `LGraph` (one hierarchy level).
 #[derive(Default, Debug)]
 pub struct LGraph {
     /// scratch id (Java `LGraphElement.id`)
@@ -60,7 +58,6 @@ pub struct LGraph {
     pub properties: PropertyMap,
 }
 
-/// Port of `Layer`.
 #[derive(Default, Debug)]
 pub struct Layer {
     pub id: i32,
@@ -70,7 +67,6 @@ pub struct Layer {
     pub properties: PropertyMap,
 }
 
-/// Port of `LNode`.
 #[derive(Debug)]
 pub struct LNode {
     pub id: i32,
@@ -85,7 +81,7 @@ pub struct LNode {
     pub pos: KVector,
     pub size: KVector,
     pub properties: PropertyMap,
-    /// Port of the `InternalProperties.SELF_LOOP_HOLDER` property: Java
+    /// The `InternalProperties.SELF_LOOP_HOLDER` property: Java
     /// stores a mutable `SelfLoopHolder` object on the node; here it is a
     /// dedicated field so mutations stay by-reference like in Java.
     pub self_loop_holder: Option<Box<crate::loops::SelfLoopHolder>>,
@@ -116,7 +112,6 @@ impl Default for LNode {
     }
 }
 
-/// Port of `LPort`.
 #[derive(Debug)]
 pub struct LPort {
     pub id: i32,
@@ -154,7 +149,6 @@ impl Default for LPort {
     }
 }
 
-/// Port of `LEdge`.
 #[derive(Default, Debug)]
 pub struct LEdge {
     pub id: i32,
@@ -165,7 +159,6 @@ pub struct LEdge {
     pub properties: PropertyMap,
 }
 
-/// Port of `LLabel`.
 #[derive(Default, Debug)]
 pub struct LLabel {
     pub id: i32,
@@ -271,7 +264,6 @@ impl LGraphArena {
 
     // ------------------------------------------------- structural mutators
 
-    /// Port of `LPort.setNode`.
     pub fn port_set_node(&mut self, port: LPortId, node: Option<LNodeId>) {
         if let Some(old) = self.port(port).node {
             self.node_mut(old).ports.retain(|&p| p != port);
@@ -282,7 +274,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LPort.setSide` (adjusts the anchor unless explicitly set).
     pub fn port_set_side(&mut self, port: LPortId, side: PortSide) {
         let p = self.port_mut(port);
         p.side = side;
@@ -309,7 +300,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LEdge.setSource`.
     pub fn edge_set_source(&mut self, edge: LEdgeId, source: Option<LPortId>) {
         if let Some(old) = self.edge(edge).source {
             self.port_mut(old).outgoing_edges.retain(|&e| e != edge);
@@ -320,7 +310,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LEdge.setTarget`.
     pub fn edge_set_target(&mut self, edge: LEdgeId, target: Option<LPortId>) {
         if let Some(old) = self.edge(edge).target {
             self.port_mut(old).incoming_edges.retain(|&e| e != edge);
@@ -331,7 +320,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LEdge.setTargetAndInsertAtIndex`.
     pub fn edge_set_target_at_index(&mut self, edge: LEdgeId, target: Option<LPortId>, index: usize) {
         if let Some(old) = self.edge(edge).target {
             self.port_mut(old).incoming_edges.retain(|&e| e != edge);
@@ -342,7 +330,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LNode.setLayer` (append at end).
     pub fn node_set_layer(&mut self, node: LNodeId, layer: Option<LayerId>) {
         if let Some(old) = self.node(node).layer {
             self.layer_mut(old).nodes.retain(|&n| n != node);
@@ -353,7 +340,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LNode.setLayer(index, layer)`.
     pub fn node_set_layer_at(&mut self, node: LNodeId, layer: Option<LayerId>, index: usize) {
         if let Some(old) = self.node(node).layer {
             self.layer_mut(old).nodes.retain(|&n| n != node);
@@ -406,7 +392,6 @@ impl LGraphArena {
         result
     }
 
-    /// Port of `LPort.getConnectedEdges` (incoming, then outgoing).
     pub fn port_connected_edges(&self, port: LPortId) -> Vec<LEdgeId> {
         let p = self.port(port);
         let mut result = p.incoming_edges.clone();
@@ -414,13 +399,11 @@ impl LGraphArena {
         result
     }
 
-    /// Port of `LPort.getDegree`.
     pub fn port_degree(&self, port: LPortId) -> usize {
         let p = self.port(port);
         p.incoming_edges.len() + p.outgoing_edges.len()
     }
 
-    /// Port of `LPort.getNetFlow` (incoming minus outgoing).
     pub fn port_net_flow(&self, port: LPortId) -> i32 {
         let p = self.port(port);
         p.incoming_edges.len() as i32 - p.outgoing_edges.len() as i32
@@ -456,7 +439,6 @@ impl LGraphArena {
             .collect()
     }
 
-    /// Port of `LNode.getIndex` (position in the containing layer).
     pub fn node_index_in_layer(&self, node: LNodeId) -> i32 {
         match self.node(node).layer {
             None => -1,
@@ -470,7 +452,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LNode.getPortSideView` (requires sorted port list).
     pub fn node_port_side_view(&self, node: LNodeId, side: PortSide) -> Vec<LPortId> {
         let n = self.node(node);
         if n.port_sides_cached {
@@ -485,7 +466,6 @@ impl LGraphArena {
         n.ports[start..end].to_vec()
     }
 
-    /// Port of `LNode.cachePortSides`.
     pub fn node_cache_port_sides(&mut self, node: LNodeId) {
         let indices = Self::find_port_indices(self, node);
         let n = self.node_mut(node);
@@ -525,7 +505,6 @@ impl LGraphArena {
         result
     }
 
-    /// Port of `LEdge.isSelfLoop`.
     pub fn edge_is_self_loop(&self, edge: LEdgeId) -> bool {
         let e = self.edge(edge);
         match (e.source, e.target) {
@@ -537,7 +516,6 @@ impl LGraphArena {
         }
     }
 
-    /// Port of `LEdge.isInLayerEdge`.
     pub fn edge_is_in_layer(&self, edge: LEdgeId) -> bool {
         if self.edge_is_self_loop(edge) {
             return false;
@@ -558,7 +536,6 @@ impl LGraphArena {
         self.port(self.edge(edge).target.unwrap()).node.unwrap()
     }
 
-    /// Port of `LGraph.getActualSize`.
     pub fn graph_actual_size(&self, graph: LGraphId) -> KVector {
         let g = self.graph(graph);
         KVector::new(
@@ -578,7 +555,6 @@ impl LGraphArena {
         result
     }
 
-    /// Port of `LNode.borderToContentAreaCoordinates`.
     pub fn node_border_to_content_area_coordinates(
         &mut self,
         node: LNodeId,

@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.options.InternalProperties` (the
-//! subset needed so far; extended as more processors are ported).
 //!
 //! Element references are stored as arena ids. Properties whose Java type is
 //! a mutable shared object require read-modify-write at the call sites.
@@ -183,7 +181,7 @@ pub struct BPInfoId(pub usize);
 
 internal_value!(BPInfoId);
 
-/// Port of `BreakingPointInserter.BPInfo`: information attached to a single
+/// Information attached to a single
 /// breaking point. Java stores one mutable `BPInfo` object referenced from
 /// both the start and end dummy nodes; here the objects live in a per-graph
 /// [`BPInfoStore`] (held as a graph property) and nodes reference them by

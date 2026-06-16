@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.force.ComponentsProcessor`: splits a force
+//! Splits a force
 //! graph into connected components and packs them back together after layout.
 
 use elk_graph::math::KVector;
@@ -6,7 +6,6 @@ use elk_graph::math::KVector;
 use crate::graph::{FArena, FEdgeId, FGraph, FNodeId};
 use crate::options;
 
-/// Port of `ComponentsProcessor.split`.
 pub fn split(arena: &mut FArena, graph: FGraph) -> Vec<FGraph> {
     let separate: bool = graph.properties.get(&options::SEPARATE_CONNECTED_COMPONENTS);
     if separate {
@@ -40,7 +39,6 @@ pub fn split(arena: &mut FArena, graph: FGraph) -> Vec<FGraph> {
     vec![graph]
 }
 
-/// Port of `ComponentsProcessor.buildIncidenceLists`.
 fn build_incidence_lists(arena: &FArena, graph: &FGraph) -> Vec<Vec<FEdgeId>> {
     let n = graph.nodes.len();
     let mut incidence: Vec<Vec<FEdgeId>> = vec![Vec::new(); n];
@@ -52,7 +50,7 @@ fn build_incidence_lists(arena: &FArena, graph: &FGraph) -> Vec<Vec<FEdgeId>> {
     incidence
 }
 
-/// Port of `ComponentsProcessor.dfs`. The Java original adds an edge to the
+/// The Java original adds an edge to the
 /// component once per traversal in which it is not skipped, which can add the
 /// same edge (and its labels) more than once in cyclic graphs; this is
 /// replicated faithfully.
@@ -89,7 +87,6 @@ fn dfs(
     }
 }
 
-/// Port of `ComponentsProcessor.recombine`.
 pub fn recombine(arena: &mut FArena, mut components: Vec<FGraph>) -> FGraph {
     if components.len() == 1 {
         return components.pop().unwrap();
@@ -183,7 +180,6 @@ fn bb_size(graph: &FGraph) -> KVector {
     size
 }
 
-/// Port of `ComponentsProcessor.moveGraph`.
 fn move_graph(
     arena: &mut FArena,
     dest_graph: &mut FGraph,

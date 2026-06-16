@@ -1,4 +1,3 @@
-//! Port of `LabelAndNodeSizeProcessor`.
 
 use elk_core::options::{PortLabelPlacement, PortSide};
 use elk_graph::properties::EnumSet;

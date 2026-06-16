@@ -1,4 +1,3 @@
-//! Port of `InnermostNodeMarginCalculator`.
 
 use crate::graph::{LGraphArena, LGraphId};
 use crate::lgraph_adapters::LGraphAdapter;

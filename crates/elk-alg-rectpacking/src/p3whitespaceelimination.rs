@@ -1,13 +1,9 @@
-//! Port of `org.eclipse.elk.alg.rectpacking.p3whitespaceelimination`:
-//! `RectangleExpansion`, `EqualWhitespaceEliminator`, and
-//! `ToAspectratioNodeExpander`.
 
 use elk_graph::graph::{ElkGraph, NodeId};
 
 use crate::options;
 use crate::util::{PackArena, RowId};
 
-/// Port of `RectangleExpansion.expand`.
 fn expand(
     arena: &mut PackArena,
     g: &mut ElkGraph,
@@ -24,8 +20,6 @@ fn expand(
     }
 }
 
-/// Port of `EqualWhitespaceEliminator.process`. `rows` stands in for the Java
-/// `InternalProperties.ROWS` graph property (`None` == property absent).
 pub fn equal_whitespace_eliminator(
     arena: &mut PackArena,
     g: &mut ElkGraph,
@@ -46,7 +40,6 @@ pub fn equal_whitespace_eliminator(
     }
 }
 
-/// Port of `ToAspectratioNodeExpander.process`.
 pub fn to_aspectratio_node_expander(
     arena: &mut PackArena,
     g: &mut ElkGraph,

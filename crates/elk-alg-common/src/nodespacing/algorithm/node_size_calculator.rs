@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.NodeSizeCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{self, PortConstraints, PortSide, SizeConstraint, SizeOptions};
@@ -6,7 +5,7 @@ use elk_core::options::{self, PortConstraints, PortSide, SizeConstraint, SizeOpt
 use crate::nodespacing::algorithm::node_label_and_size_utilities as utilities;
 use crate::nodespacing::internal::NodeContext;
 
-/// Port of `NodeSizeCalculator.setNodeWidth`: sets the node's width according
+/// Sets the node's width according
 /// to the active node size constraints. Also sets that width on the cell
 /// system and tells it to compute a horizontal layout.
 pub fn set_node_width<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
@@ -71,7 +70,6 @@ pub fn set_node_width<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>)
     node_context.cells.layout_children_horizontally(node_context.node_container);
 }
 
-/// Port of `NodeSizeCalculator.setNodeHeight`.
 pub fn set_node_height<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     let height;
 

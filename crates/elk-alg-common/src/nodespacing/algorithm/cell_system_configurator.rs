@@ -1,11 +1,9 @@
-//! Port of `internal.algorithm.CellSystemConfigurator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{PortConstraints, PortSide, SizeConstraint, SizeOptions};
 
 use crate::nodespacing::internal::{NodeContext, NodeLabelLocation};
 
-/// Port of `CellSystemConfigurator.configureCellSystemSizeContributions`.
 pub fn configure_cell_system_size_contributions<G: AdapterGraph>(node_context: &mut NodeContext<G>) {
     // If the node has a fixed size, we don't need to change anything because
     // the cell system won't be used to calculate the node's size
@@ -124,7 +122,6 @@ pub fn configure_cell_system_size_contributions<G: AdapterGraph>(node_context: &
     }
 }
 
-/// Port of `CellSystemConfigurator.updateVerticalInsidePortLabelCellPadding`.
 pub fn update_vertical_inside_port_label_cell_padding<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
 ) {

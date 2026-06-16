@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.intermediate`: the intermediate layout
+//! The intermediate layout
 //! processors (RootProcessor, FanProcessor, LevelProcessor,
 //! NeighborsProcessor, LevelHeightProcessor, DirectionProcessor,
 //! NodePositionProcessor, CompactionProcessor, LevelCoordinatesProcessor,
@@ -16,7 +16,7 @@ use crate::tree_util;
 
 // ------------------------------------------------------------- RootProcessor
 
-/// Port of `RootProcessor.process`: connects all roots of a given graph to a
+/// Connects all roots of a given graph to a
 /// super root which then is the new root of the graph.
 pub fn root_processor(arena: &mut TArena, graph: &mut TGraph) {
     let mut roots: Vec<TNodeId> = Vec::new();
@@ -53,7 +53,6 @@ pub fn root_processor(arena: &mut TArena, graph: &mut TGraph) {
 
 // -------------------------------------------------------------- FanProcessor
 
-/// Port of `FanProcessor.formatRight`.
 fn format_right(value: i32, len: i32) -> String {
     let mut s = value.to_string();
     while (s.len() as i32) < len {
@@ -62,7 +61,7 @@ fn format_right(value: i32, len: i32) -> String {
     s
 }
 
-/// Port of `FanProcessor.process`: computes the maximal fan out and the
+/// Computes the maximal fan out and the
 /// number of descendants for each node.
 pub fn fan_processor(arena: &mut TArena, graph: &TGraph) {
     let mut glo_fan_map: IndexMap<String, i32> = IndexMap::new();
@@ -87,7 +86,6 @@ pub fn fan_processor(arena: &mut TArena, graph: &TGraph) {
     }
 }
 
-/// Port of `FanProcessor.calculateFan`.
 fn calculate_fan(
     arena: &mut TArena,
     current_level: Vec<TNodeId>,
@@ -159,7 +157,7 @@ fn calculate_fan(
 
 // ------------------------------------------------------------ LevelProcessor
 
-/// Port of `LevelProcessor.process`: computes the treeLevel property for each
+/// Computes the treeLevel property for each
 /// node. The level map is keyed by the Java `id` field, so a SUPER_ROOT
 /// (which shares id 0 with a real node) overwrites/receives that node's
 /// level, exactly like the original.
@@ -177,7 +175,6 @@ pub fn level_processor(arena: &mut TArena, graph: &TGraph) {
     }
 }
 
-/// Port of `LevelProcessor.setLevel`.
 fn set_level(
     arena: &TArena,
     current_level: &[TNodeId],
@@ -198,7 +195,7 @@ fn set_level(
 
 // -------------------------------------------------------- NeighborsProcessor
 
-/// Port of `NeighborsProcessor.process`: determines the neighbors and
+/// Determines the neighbors and
 /// siblings for all nodes in the graph.
 pub fn neighbors_processor(arena: &mut TArena, graph: &TGraph) {
     // find the root of the component
@@ -210,7 +207,6 @@ pub fn neighbors_processor(arena: &mut TArena, graph: &TGraph) {
     }
 }
 
-/// Port of `NeighborsProcessor.setNeighbors`.
 fn set_neighbors(arena: &mut TArena, current_level: Vec<TNodeId>) {
     if current_level.is_empty() {
         return;
@@ -237,7 +233,7 @@ fn set_neighbors(arena: &mut TArena, current_level: Vec<TNodeId>) {
 
 // ------------------------------------------------------ LevelHeightProcessor
 
-/// Port of `LevelHeightProcessor.process`: sets each level's height to the
+/// Sets each level's height to the
 /// height of the tallest node of the level.
 pub fn level_height_processor(arena: &mut TArena, graph: &TGraph) {
     let root = graph.nodes.iter().copied().find(|&n| arena.node(n).root);
@@ -277,7 +273,7 @@ fn set_level_heights(arena: &mut TArena, current_level: Vec<TNodeId>, layout_dir
 
 // -------------------------------------------------------- DirectionProcessor
 
-/// Port of `DirectionProcessor.process`: swaps the integer coordinates
+/// Swaps the integer coordinates
 /// according to the layout direction.
 pub fn direction_processor(arena: &mut TArena, graph: &TGraph) {
     let d: Direction = graph.properties.get(&options::DIRECTION);
@@ -310,7 +306,7 @@ pub fn direction_processor(arena: &mut TArena, graph: &TGraph) {
 
 // ----------------------------------------------------- NodePositionProcessor
 
-/// Port of `NodePositionProcessor.process`: sets the final coordinates for
+/// Sets the final coordinates for
 /// each node from XCOOR/YCOOR, then shifts every node to its top-left corner.
 pub fn node_position_processor(arena: &mut TArena, graph: &TGraph) {
     // find the root of the component
@@ -350,7 +346,7 @@ pub fn node_position_processor(arena: &mut TArena, graph: &TGraph) {
 
 // ------------------------------------------------- LevelCoordinatesProcessor
 
-/// Port of `LevelCoordinatesProcessor.process`: computes the start and end
+/// Computes the start and end
 /// coordinates for each level's nodes.
 pub fn level_coordinates_processor(arena: &mut TArena, graph: &TGraph) {
     let mut levels: Vec<(f64, f64)> = Vec::new();
@@ -391,7 +387,7 @@ pub fn level_coordinates_processor(arena: &mut TArena, graph: &TGraph) {
 
 // ------------------------------------------------------ GraphBoundsProcessor
 
-/// Port of `GraphBoundsProcessor.process`: sets the graph's x/y max/min.
+/// Sets the graph's x/y max/min.
 pub fn graph_bounds_processor(arena: &TArena, graph: &mut TGraph) {
     graph.graph_xmin = graph
         .nodes
@@ -417,7 +413,7 @@ pub fn graph_bounds_processor(arena: &TArena, graph: &mut TGraph) {
 
 // ---------------------------------------------------------------- Untreeifyer
 
-/// Port of `Untreeifyer.process`: reinserts the edges that were removed
+/// Reinserts the edges that were removed
 /// during treeification.
 pub fn untreeifyer(arena: &mut TArena, graph: &TGraph) {
     for &tedge in &graph.removable_edges {
@@ -484,7 +480,7 @@ impl NodeTreeSet {
         self.items.len() - self.tail_start(key)
     }
 
-    /// Port of `CompactionProcessor.getRightElement`: the second element of
+    /// The second element of
     /// `tailSet(key)`.
     fn right_element(&self, key: f64) -> TNodeId {
         let i = self.tail_start(key);
@@ -492,7 +488,7 @@ impl NodeTreeSet {
     }
 }
 
-/// Port of `CompactionProcessor.process`: one dimensional compaction.
+/// One dimensional compaction.
 pub fn compaction_processor(arena: &mut TArena, graph: &mut TGraph) {
     if !graph.properties.get(&options::COMPACTION) {
         return; // leave if option is not set
@@ -653,7 +649,6 @@ pub fn compaction_processor(arena: &mut TArena, graph: &mut TGraph) {
     }
 }
 
-/// Port of `CompactionProcessor.setUpLevels`.
 fn set_up_levels(arena: &TArena, graph: &TGraph, dir: Direction) -> Vec<(f64, f64)> {
     let mut levels: Vec<(f64, f64)> = Vec::new();
 
@@ -686,7 +681,6 @@ fn set_up_levels(arena: &TArena, graph: &TGraph, dir: Direction) -> Vec<(f64, f6
     levels
 }
 
-/// Port of `CompactionProcessor.computeNodeConstraints` (scanline).
 fn compute_node_constraints(arena: &mut TArena, graph: &TGraph, node_node_spacing: f64) {
     let d: Direction = graph.properties.get(&options::DIRECTION);
     let right = if d.is_horizontal() { Direction::DOWN } else { Direction::RIGHT };
@@ -756,7 +750,6 @@ fn compute_node_constraints(arena: &mut TArena, graph: &TGraph, node_node_spacin
     }
 }
 
-/// Port of `CompactionProcessor.getLowestDependentNode`.
 fn get_lowest_dependent_node(arena: &TArena, n: TNodeId, d: Direction) -> Option<TNodeId> {
     let cons = &arena.node(n).compact_constraints;
     if cons.is_empty() {

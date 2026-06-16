@@ -1,4 +1,3 @@
-//! Port of `RandomLayoutProvider`.
 //!
 //! Note: with seed 0 (the default) Java uses a time-seeded `Random`, which is
 //! not reproducible even between Java runs. We use seed 1 in that case; pixel

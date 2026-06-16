@@ -1,4 +1,4 @@
-//! Port of `p4nodes/bk/BKAlignedLayout.java`: all information about a layout
+//! All information about a layout
 //! in one of the four direction combinations.
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId, LPortId};

@@ -1,4 +1,4 @@
-//! Port of `BreakingPointInserter`: calculates cut points and inserts
+//! Calculates cut points and inserts
 //! BREAKING_POINT dummies into the layering (wrappingStrategy = MULTI_EDGE).
 
 use elk_core::options::{PortConstraints, PortSide};
@@ -41,7 +41,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `BreakingPointInserter.applyCuts`.
 fn apply_cuts(a: &mut LGraphArena, graph: LGraphId, cuts: &[i32]) {
     let mut store = BPInfoStore::default();
 
@@ -237,7 +236,6 @@ impl Cuts {
     }
 }
 
-/// Port of `BreakingPointInserter.improveCuts`.
 fn improve_cuts(a: &LGraphArena, graph: LGraphId, cuts: &[i32]) -> Vec<i32> {
     let mut improved_cuts: Vec<i32> = Vec::new();
 
@@ -321,7 +319,6 @@ fn improve_cuts(a: &LGraphArena, graph: LGraphId, cuts: &[i32]) -> Vec<i32> {
     improved_cuts
 }
 
-/// Port of `BreakingPointInserter.computeEdgeSpans`.
 fn compute_edge_spans(a: &LGraphArena, graph: LGraphId) -> Vec<i32> {
     let layers = a.graph(graph).layers.clone();
     let mut spans = vec![0i32; layers.len() + 1];

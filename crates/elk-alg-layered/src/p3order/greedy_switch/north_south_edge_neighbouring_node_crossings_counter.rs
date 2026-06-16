@@ -1,4 +1,3 @@
-//! Port of `NorthSouthEdgeNeighbouringNodeCrossingsCounter`.
 //!
 //! Counts the crossings caused by the order of north south port dummies when
 //! their respective normal node in the same layer has a fixed port order.

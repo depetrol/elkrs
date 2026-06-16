@@ -1,7 +1,3 @@
-//! Port of `org.eclipse.elk.alg.topdownpacking`: `TopdownpackingLayoutProvider`
-//! with its two phases `LeftRightTopDownNodePlacer` (P1_NODE_ARRANGEMENT) and
-//! `BottomRowEqualWhitespaceEliminator` (P2_WHITESPACE_ELIMINATION), plus the
-//! grid state of `GridElkNode`.
 //!
 //! Java assembles the pipeline with an `AlgorithmAssembler`; neither phase
 //! requests intermediate processors, so the algorithm is always
@@ -13,7 +9,7 @@ use elk_graph::math::ElkPadding;
 
 use crate::options::{self, NodeArrangementStrategy, WhitespaceEliminationStrategy};
 
-/// Port of the grid state of `GridElkNode`. `setGridSize` pre-fills every row
+/// The grid state of `GridElkNode`. `setGridSize` pre-fills every row
 /// with `cols` nulls and `put(col, row, node)` *inserts* at the column index,
 /// so each row list is the placed nodes followed by the original nulls (its
 /// length grows beyond `cols`).
@@ -22,7 +18,6 @@ struct Grid {
     cols: i32,
 }
 
-/// Port of `TopdownpackingLayoutProvider`.
 pub struct TopdownpackingLayoutProvider;
 
 impl LayoutProvider for TopdownpackingLayoutProvider {
@@ -44,9 +39,6 @@ impl LayoutProvider for TopdownpackingLayoutProvider {
     }
 }
 
-/// Port of `LeftRightTopDownNodePlacer.process` (including the inlined
-/// `getPredictedSize`, whose only caller outside the engine's unsupported
-/// topdown layout mode is this phase).
 fn place_nodes(g: &mut ElkGraph, layout_graph: NodeId) -> Grid {
     let padding: ElkPadding = g.node(layout_graph).properties.get(&options::PADDING);
     let node_node_spacing: f64 = g
@@ -132,7 +124,6 @@ fn place_nodes(g: &mut ElkGraph, layout_graph: NodeId) -> Grid {
     grid
 }
 
-/// Port of `BottomRowEqualWhitespaceEliminator.process`.
 fn eliminate_whitespace(g: &mut ElkGraph, layout_graph: NodeId, grid: &Grid) {
     if g.node(layout_graph).shape.width == 0.0 || grid.cols == 0 {
         // Parent node has no width, skipping phase

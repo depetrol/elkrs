@@ -1,4 +1,4 @@
-//! Port of the reachable subset of `p5edges/splines/NubSpline.java`: the
+//! The reachable subset of `p5edges/splines/NubSpline.java`: the
 //! clamped uniform constructor, conversion to bezier form, and extraction of
 //! the bezier control points. The derivation / inversion / extremum machinery
 //! is only used by `NubsSelfLoop`, which is itself unreachable in ELK 0.11.0
@@ -56,7 +56,6 @@ impl PolarCP {
     }
 }
 
-/// Port of `NubSpline` (clamped uniform splines only).
 pub struct NubSpline {
     knot_vector: Vec<f64>,
     control_points: Vec<PolarCP>,

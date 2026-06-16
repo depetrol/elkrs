@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.force.graph`: the force algorithm's internal
+//! The force algorithm's internal
 //! graph model (FGraph, FNode, FEdge, FLabel, FBendpoint, FParticle).
 //!
 //! Java uses an object graph; here all elements live in arenas inside
@@ -41,7 +41,6 @@ pub enum FParticleId {
     Bend(FBendpointId),
 }
 
-/// Port of `FNode` (an `FParticle`).
 #[derive(Default, Debug)]
 pub struct FNode {
     pub properties: PropertyMap,
@@ -55,7 +54,6 @@ pub struct FNode {
     pub origin: Option<NodeId>,
 }
 
-/// Port of `FEdge`.
 #[derive(Debug)]
 pub struct FEdge {
     pub properties: PropertyMap,
@@ -67,7 +65,6 @@ pub struct FEdge {
     pub origin: Option<EdgeId>,
 }
 
-/// Port of `FLabel` (an `FParticle`).
 #[derive(Debug)]
 pub struct FLabel {
     pub properties: PropertyMap,
@@ -80,7 +77,6 @@ pub struct FLabel {
     pub origin: Option<LabelId>,
 }
 
-/// Port of `FBendpoint` (an `FParticle`).
 #[derive(Debug)]
 pub struct FBendpoint {
     pub properties: PropertyMap,
@@ -144,7 +140,7 @@ impl FArena {
         id
     }
 
-    /// Port of `new FLabel(fedge, text)`: also adds the label to the edge.
+    /// Also adds the label to the edge.
     pub fn create_label(&mut self, edge: FEdgeId, text: String) -> FLabelId {
         let id = FLabelId(self.labels.len() as u32);
         self.labels.push(FLabel {
@@ -160,7 +156,7 @@ impl FArena {
         id
     }
 
-    /// Port of `new FBendpoint(edge)`: also adds the bend point to the edge.
+    /// Also adds the bend point to the edge.
     pub fn create_bendpoint(&mut self, edge: FEdgeId) -> FBendpointId {
         let id = FBendpointId(self.bendpoints.len() as u32);
         self.bendpoints.push(FBendpoint {
@@ -200,7 +196,6 @@ impl FArena {
         }
     }
 
-    /// Port of `FParticle.getRadius()`.
     pub fn radius(&self, p: FParticleId) -> f64 {
         self.size(p).length() / 2.0
     }
@@ -231,7 +226,6 @@ impl FArena {
 
     // ------------------------------------------------------- edge geometry
 
-    /// Port of `FEdge.getSourcePoint()`.
     pub fn edge_source_point(&self, e: FEdgeId) -> KVector {
         let edge = self.edge(e);
         let source = self.node(edge.source);
@@ -243,7 +237,6 @@ impl FArena {
         v
     }
 
-    /// Port of `FEdge.getTargetPoint()`.
     pub fn edge_target_point(&self, e: FEdgeId) -> KVector {
         let edge = self.edge(e);
         let source = self.node(edge.source);
@@ -255,7 +248,6 @@ impl FArena {
         v
     }
 
-    /// Port of `FEdge.distributeBendpoints()`.
     pub fn distribute_bendpoints(&mut self, e: FEdgeId) {
         let count = self.edge(e).bendpoints.len();
         if count > 0 {
@@ -275,7 +267,6 @@ impl FArena {
         }
     }
 
-    /// Port of `FLabel.refreshPosition()`.
     pub fn refresh_label_position(&mut self, l: FLabelId) {
         let label = self.label(l);
         let place_inline = label.properties.get(&options::EDGE_LABELS_INLINE);
@@ -321,7 +312,7 @@ impl FArena {
     }
 }
 
-/// Port of `FGraph`: element id lists into a shared [`FArena`].
+/// Element id lists into a shared [`FArena`].
 #[derive(Default, Debug)]
 pub struct FGraph {
     pub properties: PropertyMap,
@@ -336,7 +327,7 @@ pub struct FGraph {
 }
 
 impl FGraph {
-    /// Port of `FGraph.getParticles()`: nodes, then labels, then bend points.
+    /// Nodes, then labels, then bend points.
     pub fn particles(&self) -> Vec<FParticleId> {
         let mut result = Vec::with_capacity(
             self.nodes.len() + self.labels.len() + self.bendpoints.len(),
@@ -347,7 +338,6 @@ impl FGraph {
         result
     }
 
-    /// Port of `FGraph.calcAdjacency()`.
     pub fn calc_adjacency(&mut self, arena: &FArena) {
         let n = self.nodes.len();
         self.adjacency = vec![vec![0; n]; n];
@@ -360,7 +350,6 @@ impl FGraph {
         }
     }
 
-    /// Port of `FGraph.getConnection(particle1, particle2)`.
     pub fn connection(&self, arena: &FArena, p1: FParticleId, p2: FParticleId) -> i32 {
         match (p1, p2) {
             (FParticleId::Node(n1), FParticleId::Node(n2)) => {
@@ -382,7 +371,6 @@ impl FGraph {
     }
 }
 
-/// Port of `ElkMath.clipVector`.
 pub fn clip_vector(v: &mut KVector, width: f64, height: f64) {
     let wh = width / 2.0;
     let hh = height / 2.0;
@@ -399,7 +387,6 @@ pub fn clip_vector(v: &mut KVector, width: f64, height: f64) {
     v.scale(f64::min(xscale, yscale));
 }
 
-/// Port of `KVector.wiggle(random, amount)`.
 pub fn wiggle(v: &mut KVector, random: &mut JavaRandom, amount: f64) {
     v.x += random.next_double() * amount - amount / 2.0;
     v.y += random.next_double() * amount - amount / 2.0;

@@ -1,4 +1,4 @@
-//! Port of `PartitionPostprocessor`. Removes the ports (and thereby the
+//! Removes the ports (and thereby the
 //! constraint edges) added by the `PartitionMidprocessor`.
 
 use crate::graph::{LGraphArena, LGraphId};

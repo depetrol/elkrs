@@ -1,4 +1,4 @@
-//! Port of `SwitchDecider`: decides whether two neighboring nodes should be
+//! Decides whether two neighboring nodes should be
 //! switched. There are two variants:
 //!
 //! - OneSided: checks if a switch would reduce crossings on the given side

@@ -1,4 +1,3 @@
-//! Port of `GreedySwitchHeuristic`.
 //!
 //! Implements the greedy switch heuristic: for two neighboring nodes, check
 //! to see if by exchanging their positions ("switching" them) the number of
@@ -45,7 +44,6 @@ impl GreedySwitchHeuristic {
         }
     }
 
-    /// Port of `minimizeCrossings`. `is_first_sweep` is unused in Java, too.
     pub fn minimize_crossings(
         &mut self,
         a: &LGraphArena,
@@ -68,7 +66,6 @@ impl GreedySwitchHeuristic {
         Ok(improved)
     }
 
-    /// Port of `setFirstLayerOrder`.
     pub fn set_first_layer_order(
         &mut self,
         a: &LGraphArena,
@@ -80,8 +77,6 @@ impl GreedySwitchHeuristic {
         Ok(self.sweep_downward_in_layer(a, order, &mut decider, start_index))
     }
 
-    /// Port of `setUp` + `getNewSwitchDecider` (the decider is recreated for
-    /// each free layer).
     fn set_up(
         &mut self,
         a: &LGraphArena,

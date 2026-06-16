@@ -1,4 +1,3 @@
-//! Port of `LayerSweepCrossingMinimizer`.
 //!
 //! Minimizes crossings by sweeping through the graph, holding the order of
 //! nodes in one layer fixed and switching the nodes in the other layer.
@@ -24,7 +23,6 @@ use super::barycenter_heuristic;
 use super::graph_info_holder::{CrossMinimizer, GraphInfoHolder};
 use super::sweep_copy::SweepCopy;
 
-/// Port of `LayerSweepCrossingMinimizer.CrossMinType`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CrossMinType {
     /// Use BarycenterHeuristic.
@@ -105,7 +103,7 @@ pub fn process_with_type(
     Ok(())
 }
 
-/// Port of `initialize`: traverses inclusion breadth-first and initializes
+/// Traverses inclusion breadth-first and initializes
 /// each graph. Returns the sweep state and the `graphsToSweepOn` list
 /// (indices into `holders`).
 fn initialize(
@@ -410,7 +408,7 @@ fn minimize_crossings_node_port_order_with_counter(
     Ok(old_number_of_crossings)
 }
 
-/// Port of `countCurrentNumberOfCrossings`: we only need to count crossings
+/// We only need to count crossings
 /// below the current graph and also only if they are marked as to be
 /// processed hierarchically.
 fn count_current_number_of_crossings(sweep: &mut LayerSweep, a: &LGraphArena, gidx: usize) -> i32 {
@@ -433,7 +431,7 @@ fn count_current_number_of_crossings(sweep: &mut LayerSweep, a: &LGraphArena, gi
     total_crossings
 }
 
-/// Port of `countCurrentNumberOfCrossingsNodePortOrder`. The model order
+/// The model order
 /// influence terms are guaranteed to be zero here because
 /// `CONSIDER_MODEL_ORDER_STRATEGY != NONE` is rejected early in `process`
 /// (the Java comparators are not ported yet).
@@ -467,7 +465,6 @@ fn count_current_number_of_crossings_node_port_order(
     total_crossings
 }
 
-/// Port of `sweepReducingCrossings`.
 fn sweep_reducing_crossings(
     sweep: &mut LayerSweep,
     a: &mut LGraphArena,
@@ -538,7 +535,6 @@ fn sweep_reducing_crossings(
     Ok(improved)
 }
 
-/// Port of `sweepInHierarchicalNodes`.
 fn sweep_in_hierarchical_nodes(
     sweep: &mut LayerSweep,
     a: &mut LGraphArena,
@@ -566,7 +562,6 @@ fn sweep_in_hierarchical_nodes(
     Ok(improved)
 }
 
-/// Port of `sweepInHierarchicalNode`.
 fn sweep_in_hierarchical_node(
     sweep: &mut LayerSweep,
     a: &mut LGraphArena,
@@ -609,7 +604,6 @@ fn side_opposed_sweep_direction(is_forward_sweep: bool) -> PortSide {
     }
 }
 
-/// Port of `sortPortDummiesByPortPositions`.
 fn sort_port_dummies_by_port_positions(
     a: &LGraphArena,
     parent_node: LNodeId,
@@ -637,7 +631,6 @@ fn sort_port_dummies_by_port_positions(
     sorted
 }
 
-/// Port of `sortPortsByDummyPositionsInLastLayer`.
 fn sort_ports_by_dummy_positions_in_last_layer(
     a: &mut LGraphArena,
     node_order: &[Vec<LNodeId>],

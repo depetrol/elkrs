@@ -1,4 +1,4 @@
-//! Port of `GraphInfoHolder`: collects data needed for cross minimization
+//! Collects data needed for cross minimization
 //! and port distribution for one graph of the hierarchy.
 //!
 //! The Java `IInitializable.init(...)` traversal is flattened into the
@@ -23,7 +23,7 @@ use super::layer_sweep_type_decider::LayerSweepTypeDecider;
 use super::port_distributor::SweepPortDistributor;
 use super::sweep_copy::SweepCopy;
 
-/// Port of the `ICrossingMinimizationHeuristic` field (`crossMinimizer`).
+/// The `ICrossingMinimizationHeuristic` field (`crossMinimizer`).
 pub enum CrossMinimizer {
     /// `BarycenterHeuristic` (which owns the `ForsterConstraintResolver`
     /// in this port; in Java the resolver is a separate initializable).

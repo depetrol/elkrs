@@ -25,7 +25,7 @@ pub fn fuzzy_compare(a: f64, b: f64, tolerance: f64) -> i32 {
     }
 }
 
-/// Port of `ElkMath.intersects2`: intersection point of segments `p + t*r`
+/// Intersection point of segments `p + t*r`
 /// and `q + u*s` (0 <= t,u <= 1), or `None`.
 pub fn intersects2(p: KVector, r: KVector, q: KVector, s: KVector) -> Option<KVector> {
     let mut pq = q;
@@ -70,7 +70,6 @@ fn equals_fuzzily_default(a: KVector, b: KVector) -> bool {
     a.equals_fuzzily(b, 0.05)
 }
 
-/// Port of `ElkMath.traceRays`.
 fn trace_rays(a1: KVector, a2: KVector, b1: KVector, b2: KVector, v: KVector) -> f64 {
     let mut result = f64::INFINITY;
     let mut endpoint_hit = false;
@@ -109,7 +108,7 @@ fn trace_rays(a1: KVector, a2: KVector, b1: KVector, b2: KVector, v: KVector) ->
     result
 }
 
-/// Port of `ElkMath.distance(a1, a2, b1, b2, v)`: direction-dependent
+/// Direction-dependent
 /// distance between two line segments.
 pub fn distance_segments(a1: KVector, a2: KVector, b1: KVector, b2: KVector, v: KVector) -> f64 {
     let mut neg_v = v;
@@ -120,7 +119,6 @@ pub fn distance_segments(a1: KVector, a2: KVector, b1: KVector, b2: KVector, v: 
     )
 }
 
-/// Port of `ElkMath.shortestDistance(ElkRectangle, ElkRectangle)`.
 pub fn shortest_distance(r1: &ElkRectangle, r2: &ElkRectangle) -> f64 {
     let right_dist = r2.x - (r1.x + r1.width);
     let left_dist = r1.x - (r2.x + r2.width);
@@ -142,7 +140,6 @@ pub fn shortest_distance(r1: &ElkRectangle, r2: &ElkRectangle) -> f64 {
     -(vert_dist * vert_dist + horz_dist * horz_dist).sqrt()
 }
 
-/// Port of `ElkMath.clipVector`.
 pub fn clip_vector(v: &mut KVector, width: f64, height: f64) {
     let wh = width / 2.0;
     let hh = height / 2.0;
@@ -187,7 +184,7 @@ const FACT_TABLE: [i64; 21] = [
     2432902008176640000,
 ];
 
-/// Port of `ElkMath.factl`. Panics (Java `IllegalArgumentException`) if
+/// Panics (Java `IllegalArgumentException`) if
 /// `x < 0` or `x > 20`.
 pub fn factl(x: i32) -> i64 {
     if x < 0 || x as usize >= FACT_TABLE.len() {
@@ -196,7 +193,7 @@ pub fn factl(x: i32) -> i64 {
     FACT_TABLE[x as usize]
 }
 
-/// Port of `ElkMath.factd`. Panics (Java `IllegalArgumentException`) if
+/// Panics (Java `IllegalArgumentException`) if
 /// `x < 0`; uses Stirling's approximation for large values.
 pub fn factd(x: i32) -> f64 {
     if x < 0 {
@@ -210,7 +207,7 @@ pub fn factd(x: i32) -> f64 {
     }
 }
 
-/// Port of `ElkMath.binomiall`. Panics (Java `IllegalArgumentException`) on
+/// Panics (Java `IllegalArgumentException`) on
 /// negative input or `k > n`.
 pub fn binomiall(n: i32, k: i32) -> i64 {
     if n < 0 || k < 0 {
@@ -228,7 +225,7 @@ pub fn binomiall(n: i32, k: i32) -> i64 {
     }
 }
 
-/// Port of `ElkMath.binomiald`. Panics (Java `IllegalArgumentException`) on
+/// Panics (Java `IllegalArgumentException`) on
 /// negative input or `k > n`.
 pub fn binomiald(n: i32, k: i32) -> f64 {
     if n < 0 || k < 0 {
@@ -244,7 +241,6 @@ pub fn binomiald(n: i32, k: i32) -> f64 {
     }
 }
 
-/// Port of `ElkMath.powd`: `a` raised to the integer power `b`.
 pub fn powd(a: f64, b: i32) -> f64 {
     let mut result = 1.0f64;
     let mut base = a;
@@ -265,7 +261,6 @@ pub fn powd(a: f64, b: i32) -> f64 {
     }
 }
 
-/// Port of `ElkMath.powf`: `a` raised to the integer power `b` (float math).
 pub fn powf(a: f32, b: i32) -> f32 {
     let mut result = 1.0f32;
     let mut base = a;
@@ -289,7 +284,6 @@ pub fn powf(a: f32, b: i32) -> f32 {
 // ------------------------------------------------------------------------
 // Bezier curves (ports of the `ElkMath` Bezier helpers).
 
-/// Port of `ElkMath.getPointOnBezierSegment`.
 pub fn get_point_on_bezier_segment(t: f64, control_points: &[KVector]) -> KVector {
     let n = control_points.len() as i32 - 1;
     let mut px = 0.0;
@@ -303,7 +297,7 @@ pub fn get_point_on_bezier_segment(t: f64, control_points: &[KVector]) -> KVecto
     KVector::new(px, py)
 }
 
-/// Port of `ElkMath.approximateBezierSegment(int, KVector...)`: points on the
+/// Points on the
 /// curve including the target point but not the source point.
 pub fn approximate_bezier_segment(result_size: i32, control_points: &[KVector]) -> Vec<KVector> {
     if result_size <= 0 {
@@ -319,13 +313,13 @@ pub fn approximate_bezier_segment(result_size: i32, control_points: &[KVector]) 
     result
 }
 
-/// Port of `ElkMath.approximateBezierSegment(KVector...)`: the number of
+/// The number of
 /// approximation points equals the number of control points plus one.
 pub fn approximate_bezier_segment_auto(control_points: &[KVector]) -> Vec<KVector> {
     approximate_bezier_segment(control_points.len() as i32 + 1, control_points)
 }
 
-/// Port of `ElkMath.approximateBezierSpline`: interprets the control points
+/// Interprets the control points
 /// as a series of cubic Bezier curves.
 pub fn approximate_bezier_spline(control_points: &KVectorChain) -> KVectorChain {
     let ctrl_pt_count = control_points.len();
@@ -370,7 +364,7 @@ const CUBIC_Z: [[f64; 4]; 3] = [
     [0.1, 0.3, 0.6, 1.0],
 ];
 
-/// Port of `ElkMath.distanceFromBezierSegment`: distance from a cubic spline
+/// Distance from a cubic spline
 /// curve to the point `needle`. (Faithfully reproduces Java's
 /// `Math.sqrt(pn.distance(needle))` return value.)
 pub fn distance_from_bezier_segment(
@@ -412,7 +406,6 @@ pub fn distance_from_bezier_segment(
     pn.distance(needle).sqrt()
 }
 
-/// Port of `ElkMath.convertToBezierForm`.
 fn convert_to_bezier_form(v: &[KVector; DEGREE + 1], pa: KVector) -> [KVector; W_DEGREE + 1] {
     let mut c = [KVector::default(); DEGREE + 1]; // v(i) - pa
     let mut d = [KVector::default(); DEGREE]; // v(i+1) - v(i)
@@ -457,7 +450,7 @@ const MAXDEPTH: i32 = 64;
 /// Flatness (`ElkMath.EPSILON`): `1.0 * Math.pow(2, -MAXDEPTH - 1)`.
 const FIND_ROOTS_EPSILON: f64 = 1.0 / ((1u128 << (MAXDEPTH + 1)) as f64);
 
-/// Port of `ElkMath.findRoots`: all roots of a 5th-degree equation in
+/// All roots of a 5th-degree equation in
 /// Bernstein-Bezier form within [0, 1]. Returns the number of roots found.
 fn find_roots(w: &[KVector; W_DEGREE + 1], degree: usize, t: &mut [f64], depth: i32) -> usize {
     match crossing_count(w, degree) {
@@ -492,7 +485,6 @@ fn find_roots(w: &[KVector; W_DEGREE + 1], degree: usize, t: &mut [f64], depth: 
     left_count + right_count
 }
 
-/// Port of `ElkMath.controlPolygonFlatEnough`.
 fn control_polygon_flat_enough(v: &[KVector; W_DEGREE + 1], degree: usize) -> bool {
     // Derive the implicit equation for line connecting first and last
     // control points
@@ -558,7 +550,6 @@ fn control_polygon_flat_enough(v: &[KVector; W_DEGREE + 1], degree: usize) -> bo
     error < FIND_ROOTS_EPSILON
 }
 
-/// Port of `ElkMath.computeXIntercept`.
 fn compute_x_intercept(v: &[KVector; W_DEGREE + 1], degree: usize) -> f64 {
     let xnm = v[degree].x - v[0].x;
     let ynm = v[degree].y - v[0].y;
@@ -570,7 +561,6 @@ fn compute_x_intercept(v: &[KVector; W_DEGREE + 1], degree: usize) -> f64 {
     (xnm * ymk - ynm * xmk) * det_inv
 }
 
-/// Port of `ElkMath.crossingCount`.
 fn crossing_count(v: &[KVector; W_DEGREE + 1], degree: usize) -> usize {
     let mut n_crossings = 0;
     let mut old_sign = if v[0].y < 0.0 { -1 } else { 1 };
@@ -584,7 +574,7 @@ fn crossing_count(v: &[KVector; W_DEGREE + 1], degree: usize) -> usize {
     n_crossings
 }
 
-/// Port of `ElkMath.bezier`: computes a point on the curve and optionally the
+/// Computes a point on the curve and optionally the
 /// left/right control polygons of the subdivision at `t`.
 fn bezier(
     c: &[KVector],
@@ -624,52 +614,42 @@ fn bezier(
 // ------------------------------------------------------------------------
 // Min / max / average families (ports of the `ElkMath` varargs helpers).
 
-/// Port of `ElkMath.maxi`.
 pub fn maxi(values: &[i32]) -> i32 {
     values.iter().copied().fold(i32::MIN, i32::max)
 }
 
-/// Port of `ElkMath.mini`.
 pub fn mini(values: &[i32]) -> i32 {
     values.iter().copied().fold(i32::MAX, i32::min)
 }
 
-/// Port of `ElkMath.averagel`.
 pub fn averagel(values: &[i64]) -> i64 {
     values.iter().sum::<i64>() / values.len() as i64
 }
 
-/// Port of `ElkMath.maxf`.
 pub fn maxf(values: &[f32]) -> f32 {
     values.iter().copied().fold(-f32::MAX, |m, v| if v > m { v } else { m })
 }
 
-/// Port of `ElkMath.minf`.
 pub fn minf(values: &[f32]) -> f32 {
     values.iter().copied().fold(f32::MAX, |m, v| if v < m { v } else { m })
 }
 
-/// Port of `ElkMath.averagef`.
 pub fn averagef(values: &[f32]) -> f32 {
     values.iter().sum::<f32>() / values.len() as f32
 }
 
-/// Port of `ElkMath.maxd`.
 pub fn maxd(values: &[f64]) -> f64 {
     values.iter().copied().fold(-f64::MAX, |m, v| if v > m { v } else { m })
 }
 
-/// Port of `ElkMath.mind`.
 pub fn mind(values: &[f64]) -> f64 {
     values.iter().copied().fold(f64::MAX, |m, v| if v < m { v } else { m })
 }
 
-/// Port of `ElkMath.averaged`.
 pub fn averaged(values: &[f64]) -> f64 {
     values.iter().sum::<f64>() / values.len() as f64
 }
 
-/// Port of `ElkMath.contains(ElkRectangle, KVector)` (strict interior).
 pub fn rect_contains_point(rect: &ElkRectangle, p: KVector) -> bool {
     let min_x = rect.x;
     let max_x = rect.x + rect.width;
@@ -678,12 +658,10 @@ pub fn rect_contains_point(rect: &ElkRectangle, p: KVector) -> bool {
     (p.x > min_x && p.x < max_x) && (p.y > min_y && p.y < max_y)
 }
 
-/// Port of `ElkMath.contains(ElkRectangle, KVector, KVector)`.
 pub fn rect_contains_line(rect: &ElkRectangle, p1: KVector, p2: KVector) -> bool {
     rect_contains_point(rect, p1) && rect_contains_point(rect, p2)
 }
 
-/// Port of `ElkMath.contains(ElkRectangle, KVectorChain)` (closed path).
 pub fn rect_contains_path(rect: &ElkRectangle, path: &KVectorChain) -> bool {
     if path.len() < 2 {
         return false;
@@ -703,8 +681,6 @@ pub fn rect_contains_path(rect: &ElkRectangle, path: &KVectorChain) -> bool {
     true
 }
 
-/// Port of `ElkMath.intersects(KVector, KVector, KVector, KVector)`
-/// (fuzzy segment intersection; touching is not intersecting).
 pub fn segments_intersect(l11: KVector, l12: KVector, l21: KVector, l22: KVector) -> bool {
     let mut v0 = l12;
     v0.sub(l11);
@@ -728,7 +704,6 @@ pub fn segments_intersect(l11: KVector, l12: KVector, l21: KVector, l22: KVector
         && fuzzy_compare(t, 1.0, DOUBLE_EQ_EPSILON) < 0
 }
 
-/// Port of `ElkMath.intersects(ElkRectangle, KVector, KVector)`.
 fn rect_intersects_line(rect: &ElkRectangle, p1: KVector, p2: KVector) -> bool {
     if rect_contains_line(rect, p1, p2) {
         return false;
@@ -739,7 +714,6 @@ fn rect_intersects_line(rect: &ElkRectangle, p1: KVector, p2: KVector) -> bool {
         || segments_intersect(rect.bottom_left(), rect.position(), p1, p2)
 }
 
-/// Port of `ElkMath.intersects(ElkRectangle, KVectorChain)` (closed path).
 pub fn rect_intersects_path(rect: &ElkRectangle, path: &KVectorChain) -> bool {
     if path.len() < 2 {
         return false;

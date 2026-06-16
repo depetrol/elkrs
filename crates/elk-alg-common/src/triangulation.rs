@@ -19,7 +19,7 @@ pub fn kv_eq(a: KVector, b: KVector) -> bool {
     a.x == b.x && a.y == b.y
 }
 
-/// Port of `TEdge`: an undirected edge between two vertices.
+/// An undirected edge between two vertices.
 #[derive(Clone, Copy, Debug)]
 pub struct TEdge {
     pub u: KVector,
@@ -42,7 +42,6 @@ impl JHashEq for TEdge {
     }
 }
 
-/// Port of `TTriangle`.
 #[derive(Clone, Copy)]
 pub struct TTriangle {
     pub a: KVector,
@@ -111,7 +110,6 @@ impl JHashEq for TTriangle {
     }
 }
 
-/// Port of `BowyerWatsonTriangulation.triangulate`.
 pub fn bowyer_watson_triangulate(vertices: &[KVector]) -> JavaHashSet<TEdge> {
     // bounding box
     let mut topleft = KVector::new(f64::INFINITY, f64::INFINITY);
@@ -200,7 +198,6 @@ fn kv_bits(v: KVector) -> (u64, u64) {
     (v.x.to_bits(), v.y.to_bits())
 }
 
-/// Port of `NaiveMinST.createSpanningTree`.
 pub fn naive_min_st(
     t_edges: &JavaHashSet<TEdge>,
     root: KVector,

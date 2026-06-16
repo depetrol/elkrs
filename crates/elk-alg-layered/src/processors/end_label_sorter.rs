@@ -1,4 +1,4 @@
-//! Port of `EndLabelSorter`: sorts end labels according to the order of
+//! Sorts end labels according to the order of
 //! nodes their respective edges come from or head to.
 
 use elk_core::options::EdgeLabelPlacement;

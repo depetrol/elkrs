@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.rectpacking.p1widthapproximation`:
-//! `AreaApproximation`, `Calculations`, the best-candidate filters, and the
-//! `GreedyWidthApproximator` / `TargetWidthWidthApproximator` phases.
 
 use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::math::ElkPadding;
@@ -10,17 +7,14 @@ use crate::util::{self, DrawingData, DrawingDataDescriptor};
 
 // --------------------------------------------------------------- Calculations
 
-/// Port of `Calculations.getWidthLPRorLPB`.
 fn get_width_lpr_or_lpb(drawing_width: f64, x: f64, width: f64) -> f64 {
     f64::max(drawing_width, x + width)
 }
 
-/// Port of `Calculations.getHeightLPRorLPB`.
 fn get_height_lpr_or_lpb(drawing_height: f64, y: f64, height: f64) -> f64 {
     f64::max(drawing_height, y + height)
 }
 
-/// Port of `Calculations.calculateYforLPR`.
 fn calculate_y_for_lpr(
     g: &ElkGraph,
     x: f64,
@@ -55,7 +49,6 @@ fn calculate_y_for_lpr(
     }
 }
 
-/// Port of `Calculations.calculateXforLPB`.
 fn calculate_x_for_lpb(
     g: &ElkGraph,
     y: f64,
@@ -89,7 +82,6 @@ fn calculate_x_for_lpb(
     }
 }
 
-/// Port of `Calculations.calculateAreaLPR`.
 fn calculate_area_lpr(g: &ElkGraph, last_placed: NodeId, to_place: NodeId, lpr_opt: &DrawingData) -> f64 {
     let lp = &g.node(last_placed).shape;
     let tp = &g.node(to_place).shape;
@@ -103,7 +95,6 @@ fn calculate_area_lpr(g: &ElkGraph, last_placed: NodeId, to_place: NodeId, lpr_o
     width_lpr * height_lpr
 }
 
-/// Port of `Calculations.calculateAreaLPB`.
 fn calculate_area_lpb(g: &ElkGraph, last_placed: NodeId, to_place: NodeId, lpb_opt: &DrawingData) -> f64 {
     let lp = &g.node(last_placed).shape;
     let tp = &g.node(to_place).shape;
@@ -117,13 +108,11 @@ fn calculate_area_lpb(g: &ElkGraph, last_placed: NodeId, to_place: NodeId, lpb_o
     width_lpb * height_lpb
 }
 
-/// Port of `Calculations.verticalOrderConstraint`.
 fn vertical_order_constraint(g: &ElkGraph, placed_rect: NodeId, x: f64, node_node_spacing: f64) -> bool {
     let p = &g.node(placed_rect).shape;
     x < p.x + p.width + node_node_spacing
 }
 
-/// Port of `Calculations.horizontalOrderConstraint`.
 fn horizontal_order_constraint(
     g: &ElkGraph,
     placed_rect: NodeId,
@@ -136,7 +125,6 @@ fn horizontal_order_constraint(
 
 // --------------------------------------------------------- BestCandidateFilter
 
-/// Port of `AreaFilter.filterList`.
 fn area_filter(candidates: Vec<DrawingData>, _aspect_ratio: f64, padding: &ElkPadding) -> Vec<DrawingData> {
     let mut min_area = f64::INFINITY;
     for opt in &candidates {
@@ -155,7 +143,6 @@ fn area_filter(candidates: Vec<DrawingData>, _aspect_ratio: f64, padding: &ElkPa
         .collect()
 }
 
-/// Port of `AspectRatioFilter.filterList`.
 fn aspect_ratio_filter(candidates: Vec<DrawingData>, aspect_ratio: f64, padding: &ElkPadding) -> Vec<DrawingData> {
     let deviation = |opt: &DrawingData| {
         (((opt.drawing_width() + padding.horizontal()) / (opt.drawing_height() + padding.vertical()))
@@ -172,7 +159,6 @@ fn aspect_ratio_filter(candidates: Vec<DrawingData>, aspect_ratio: f64, padding:
         .collect()
 }
 
-/// Port of `ScaleMeasureFilter.filterList`.
 fn scale_measure_filter(candidates: Vec<DrawingData>, _aspect_ratio: f64, padding: &ElkPadding) -> Vec<DrawingData> {
     let scale = |opt: &DrawingData| {
         util::compute_scale_measure(
@@ -195,7 +181,6 @@ type Filter = fn(Vec<DrawingData>, f64, &ElkPadding) -> Vec<DrawingData>;
 
 // ------------------------------------------------------------ AreaApproximation
 
-/// Port of `AreaApproximation`.
 pub struct AreaApproximation {
     aspect_ratio: f64,
     goal: OptimizationGoal,
@@ -207,7 +192,6 @@ impl AreaApproximation {
         AreaApproximation { aspect_ratio, goal, lp_shift }
     }
 
-    /// Port of `AreaApproximation.approxBoundingBox`.
     pub fn approx_bounding_box(
         &self,
         g: &mut ElkGraph,
@@ -284,7 +268,6 @@ impl AreaApproximation {
         current_values
     }
 
-    /// Port of `AreaApproximation.findBestCandidate`.
     #[allow(clippy::too_many_arguments)]
     fn find_best_candidate(
         &self,
@@ -333,7 +316,6 @@ impl AreaApproximation {
         None
     }
 
-    /// Port of `AreaApproximation.checkSpecialCases`.
     fn check_special_cases(
         &self,
         g: &ElkGraph,
@@ -403,7 +385,6 @@ impl AreaApproximation {
         }
     }
 
-    /// Port of `AreaApproximation.calcValuesForOpt`.
     #[allow(clippy::too_many_arguments)]
     fn calc_values_for_opt(
         &self,
@@ -472,7 +453,6 @@ impl AreaApproximation {
 
 // ------------------------------------------------------------------- phases
 
-/// Port of `GreedyWidthApproximator.process`.
 pub fn greedy_width_approximator(g: &mut ElkGraph, graph: NodeId) {
     // The desired aspect ratio.
     let aspect_ratio: f64 = g.node(graph).properties.get(&options::ASPECT_RATIO);
@@ -503,7 +483,6 @@ pub fn greedy_width_approximator(g: &mut ElkGraph, graph: NodeId) {
         .set(&options::TARGET_WIDTH, drawing.drawing_width());
 }
 
-/// Port of `TargetWidthWidthApproximator.process`.
 pub fn target_width_width_approximator(g: &mut ElkGraph, graph: NodeId) -> Result<(), String> {
     if g.node(graph).properties.has(&options::WIDTH_APPROXIMATION_TARGET_WIDTH) {
         let target: f64 = g

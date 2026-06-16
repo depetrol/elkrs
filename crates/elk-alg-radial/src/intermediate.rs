@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.intermediate`
-//! (`CalculateGraphSize` and `EdgeAngleCalculator`).
 
 use elk_graph::graph::{ElkGraph, NodeId, ShapeId};
 use elk_graph::math::{ElkMargin, ElkPadding, KVector};
@@ -11,7 +9,7 @@ use crate::options::{
 /// Java `Double.MIN_VALUE` (smallest positive double, not the most negative).
 const JAVA_DOUBLE_MIN_VALUE: f64 = 4.9406564584124654e-324;
 
-/// Port of `CalculateGraphSize.process`: calculate the size of the graph and
+/// Calculate the size of the graph and
 /// shift nodes into positive coordinates if necessary.
 pub fn calculate_graph_size(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     // calculate the offset from border spacing and node distribution
@@ -96,7 +94,7 @@ pub fn calculate_graph_size(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     props.set(&CHILD_AREA_HEIGHT, height - padding.vertical());
 }
 
-/// Port of `EdgeAngleCalculator.process`: store the angle of each edge
+/// Store the angle of each edge
 /// leaving the root on the connected target so subsequent (top-down) child
 /// layouts can align to it.
 pub fn edge_angle_calculator(g: &mut ElkGraph, _graph: NodeId, root: NodeId) {

@@ -1,7 +1,3 @@
-//! Port of `org.eclipse.elk.alg.mrtree.TreeUtil` (the methods reachable from
-//! the layout pipeline; `depth`, `rootDistance`, `getSubtree`,
-//! `getNodeSize*InDirection` and `turnLeft`/`turnRight` are dead code in the
-//! shipped algorithm and are not ported).
 
 use elk_core::options_gen::Direction;
 use elk_graph::math::KVector;
@@ -9,7 +5,6 @@ use elk_graph::math::KVector;
 use crate::graph::{integer_ref_neq, TArena, TEdgeId, TGraph, TNodeId};
 use crate::options;
 
-/// Port of `TreeUtil.getRoot` (panics like Java's `Optional.get` if absent).
 pub fn get_root(arena: &TArena, graph: &TGraph) -> TNodeId {
     *graph
         .nodes
@@ -18,7 +13,7 @@ pub fn get_root(arena: &TArena, graph: &TGraph) -> TNodeId {
         .expect("TreeUtil.getRoot: no root in graph")
 }
 
-/// Port of `TreeUtil.getChildren`: outgoing edge targets, `distinct()`.
+/// Outgoing edge targets, `distinct()`.
 pub fn get_children(arena: &TArena, n: TNodeId) -> Vec<TNodeId> {
     let mut re: Vec<TNodeId> = Vec::new();
     for &out in &arena.node(n).outgoing {
@@ -30,7 +25,7 @@ pub fn get_children(arena: &TArena, n: TNodeId) -> Vec<TNodeId> {
     re
 }
 
-/// Port of `TreeUtil.getAllIncomingEdges`: all graph edges into `n` (matched
+/// All graph edges into `n` (matched
 /// by the Java `id` field), excluding same-level edges (with Java's boxed
 /// `Integer !=` semantics) and edges whose `toString` duplicates a previous
 /// match; sorted by source x position.
@@ -54,7 +49,7 @@ pub fn get_all_incoming_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec
     re
 }
 
-/// Port of `TreeUtil.getAllOutgoingEdges`: all graph edges out of `n`
+/// All graph edges out of `n`
 /// (matched by the Java `id` field, excluding the SUPER_ROOT by label),
 /// excluding same-level edges and `toString` duplicates; sorted by target x.
 pub fn get_all_outgoing_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec<TEdgeId> {
@@ -78,7 +73,6 @@ pub fn get_all_outgoing_edges(arena: &TArena, n: TNodeId, graph: &TGraph) -> Vec
     re
 }
 
-/// Port of `TreeUtil.getFirstPoint`.
 pub fn get_first_point(arena: &TArena, e: TEdgeId) -> KVector {
     let edge = arena.edge(e);
     if edge.bend_points.is_empty() {
@@ -88,7 +82,6 @@ pub fn get_first_point(arena: &TArena, e: TEdgeId) -> KVector {
     }
 }
 
-/// Port of `TreeUtil.getLastPoint`.
 pub fn get_last_point(arena: &TArena, e: TEdgeId) -> KVector {
     let edge = arena.edge(e);
     if edge.bend_points.is_empty() {
@@ -98,12 +91,10 @@ pub fn get_last_point(arena: &TArena, e: TEdgeId) -> KVector {
     }
 }
 
-/// Port of `TreeUtil.getDirection`.
 pub fn get_direction(graph: &TGraph) -> Direction {
     graph.properties.get(&options::DIRECTION)
 }
 
-/// Port of `TreeUtil.getDirectionVector`.
 pub fn get_direction_vector(d: Direction) -> KVector {
     match d {
         Direction::UP => KVector::new(0.0, -1.0),
@@ -113,7 +104,6 @@ pub fn get_direction_vector(d: Direction) -> KVector {
     }
 }
 
-/// Port of `TreeUtil.toNodeBorder` (identical to `ElkGraphImporter`'s copy).
 pub fn to_node_border(center: &mut KVector, next: KVector, size: KVector) {
     let wh = size.x / 2.0;
     let hh = size.y / 2.0;
@@ -132,7 +122,6 @@ pub fn to_node_border(center: &mut KVector, next: KVector, size: KVector) {
     center.y += scale * (next.y - center.y);
 }
 
-/// Port of `TreeUtil.isCycleInducing`.
 pub fn is_cycle_inducing(arena: &TArena, e: TEdgeId, graph: &TGraph) -> bool {
     let edge = arena.edge(e);
     let delta = KVector::new(
@@ -142,12 +131,10 @@ pub fn is_cycle_inducing(arena: &TArena, e: TEdgeId, graph: &TGraph) -> bool {
     get_direction_vector(get_direction(graph)).dot_product(delta) <= 0.0
 }
 
-/// Port of `TreeUtil.getUniqueLong`.
 pub fn get_unique_long(a: i32, b: i32) -> i64 {
     ((a as i64) << 32) | (b as i64 & 0xFFFF_FFFF)
 }
 
-/// Port of `TreeUtil.getLowestParent`.
 pub fn get_lowest_parent(arena: &TArena, n: TNodeId, graph: &TGraph) -> Option<TNodeId> {
     let dir_vec = get_direction_vector(get_direction(graph));
     if arena.node(n).incoming.is_empty() {
@@ -171,12 +158,10 @@ pub fn get_lowest_parent(arena: &TArena, n: TNodeId, graph: &TGraph) -> Option<T
     parents.iter().copied().find(|&x| key(x) == lowest_parent_pos)
 }
 
-/// Port of `TreeUtil.getLeftMost(currentlevel)` — deepest level variant.
 pub fn get_left_most(arena: &TArena, currentlevel: &[TNodeId]) -> Option<TNodeId> {
     get_left_most_depth(arena, currentlevel, -1)
 }
 
-/// Port of `TreeUtil.getLeftMost(currentlevel, depth)`.
 pub fn get_left_most_depth(
     arena: &TArena,
     currentlevel: &[TNodeId],

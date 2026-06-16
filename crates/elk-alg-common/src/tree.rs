@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.common.Tree`, arena-based so that subtree
-//! identity (Java reference equality) maps to node indices.
 
 /// One tree node in a [`Forest`].
 pub struct TreeNode<T> {

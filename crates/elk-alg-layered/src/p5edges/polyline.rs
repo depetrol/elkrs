@@ -1,5 +1,3 @@
-//! Port of `p5edges/PolylineEdgeRouter.java` (the `process` method; the
-//! processor configuration lives in `p5edges/mod.rs`).
 //!
 //! Edge router module that draws edges with non-orthogonal line segments.
 

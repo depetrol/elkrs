@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.spore.ElkGraphImporter`.
 
 use std::collections::HashMap;
 
@@ -29,7 +28,6 @@ pub struct ElkGraphImporter {
 }
 
 impl ElkGraphImporter {
-    /// Port of `importGraph`.
     pub fn import_graph(g: &mut ElkGraph, input_graph: NodeId) -> Result<(Self, Graph), String> {
         // calculate margins
         {
@@ -194,7 +192,6 @@ impl ElkGraphImporter {
         }
     }
 
-    /// Port of `updateGraph`.
     pub fn update_graph(&mut self, graph: &mut Graph) {
         let mut updated_node_map = HashMap::new();
         // reset graph
@@ -210,7 +207,6 @@ impl ElkGraphImporter {
         self.node_map = updated_node_map;
     }
 
-    /// Port of `applyPositions`.
     pub fn apply_positions(&self, g: &mut ElkGraph, graph: &Graph) {
         // set new node positions
         let mut min_x = f64::INFINITY;

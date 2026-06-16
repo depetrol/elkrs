@@ -1,11 +1,9 @@
-//! Port of `LongestPathSourceLayerer` (`org.eclipse.elk.alg.layered.p2layers`).
 //!
 //! Works the same as `LongestPathLayerer` but builds a trivial layering
 //! beginning with the sources and not the sinks.
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId};
 
-/// Port of `LongestPathSourceLayerer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let nodes: Vec<LNodeId> = a.graph(graph).layerless_nodes.clone();
 
@@ -28,7 +26,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `visit(LNode)`: if not already visited, find the longest path to a
+/// If not already visited, find the longest path to a
 /// source. Returns the height of the given node in the layered graph.
 fn visit(a: &mut LGraphArena, graph: LGraphId, node_heights: &mut [i32], node: LNodeId) -> i32 {
     let height = node_heights[a.node(node).id as usize];
@@ -53,7 +51,7 @@ fn visit(a: &mut LGraphArena, graph: LGraphId, node_heights: &mut [i32], node: L
     }
 }
 
-/// Port of `putNode(LNode, int)`: puts the given node into the layered graph,
+/// Puts the given node into the layered graph,
 /// adding new layers at the end as necessary.
 fn put_node(
     a: &mut LGraphArena,

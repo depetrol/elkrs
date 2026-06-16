@@ -1,4 +1,4 @@
-//! Port of `GraphTransformer`: a layout processor that is able to perform
+//! A layout processor that is able to perform
 //! transformations on the coordinates of a graph. Used as both the
 //! DIRECTION_PREPROCESSOR (`Mode::ToInternalLtr`) and the
 //! DIRECTION_POSTPROCESSOR (`Mode::ToInputDirection`).
@@ -14,7 +14,7 @@ use crate::options_gen::{
     DirectionCongruency, EdgeLabelSideSelection, InLayerConstraint, LayerConstraint,
 };
 
-/// Port of `GraphTransformer.Mode`: definition of transformation modes.
+/// Definition of transformation modes.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Mode {
     /// the input graph's direction to internal direction (left-to-right).
@@ -24,7 +24,6 @@ pub enum Mode {
 }
 
 impl EdgeLabelSideSelection {
-    /// Port of `EdgeLabelSideSelection.transpose()`.
     fn transpose(self) -> EdgeLabelSideSelection {
         match self {
             EdgeLabelSideSelection::ALWAYS_UP => EdgeLabelSideSelection::ALWAYS_DOWN,
@@ -37,7 +36,6 @@ impl EdgeLabelSideSelection {
     }
 }
 
-/// Port of `GraphTransformer.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId, mode: Mode) -> Result<(), String> {
     // We need to add all layerless nodes as well as all nodes in layers since this processor
     // is run twice -- once before layering, and once afterwards
@@ -143,7 +141,6 @@ fn transpose_all(a: &mut LGraphArena, graph: LGraphId, nodes: &[LNodeId]) {
 ///////////////////////////////////////////////////////////////////////////////
 // Mirror Horizontally
 
-/// Port of `mirrorX(List<LNode>, LGraph)`.
 fn mirror_x_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
     /* Assuming that no nodes extend into negative x coordinates, mirroring a node means that the
      * space left to its left border equals the space right to its right border when mirrored. In
@@ -264,12 +261,12 @@ fn mirror_x_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
     }
 }
 
-/// Port of `mirrorX(Spacing)`: mirrors the given spacing in X direction.
+/// Mirrors the given spacing in X direction.
 fn mirror_spacing_x(spacing: &mut Spacing) {
     std::mem::swap(&mut spacing.left, &mut spacing.right);
 }
 
-/// Port of `mirrorNodeLabelPlacementX`: horizontally mirrors the node label
+/// Horizontally mirrors the node label
 /// placement options, if any are set. (`shape` is a node or label.)
 fn mirror_node_label_placement_x(props: &PropertyMap) {
     if !props.has(&lopts::NODE_LABELS_PLACEMENT) {
@@ -288,7 +285,7 @@ fn mirror_node_label_placement_x(props: &PropertyMap) {
     props.set(&lopts::NODE_LABELS_PLACEMENT, placement);
 }
 
-/// Port of `getMirroredPortSideX`: the port side that is horizontally
+/// The port side that is horizontally
 /// mirrored from the given side.
 fn mirrored_port_side_x(side: PortSide) -> PortSide {
     match side {
@@ -298,7 +295,7 @@ fn mirrored_port_side_x(side: PortSide) -> PortSide {
     }
 }
 
-/// Port of `mirrorLayerConstraintX`: horizontally mirrors the layer
+/// Horizontally mirrors the layer
 /// constraint set on a node (only meant for external port dummy nodes).
 fn mirror_layer_constraint_x(props: &PropertyMap) {
     match props.get(&lopts::LAYERING_LAYER_CONSTRAINT) {
@@ -321,7 +318,6 @@ fn mirror_layer_constraint_x(props: &PropertyMap) {
 ///////////////////////////////////////////////////////////////////////////////
 // Mirror Vertically
 
-/// Port of `mirrorY(List<LNode>, LGraph)`.
 fn mirror_y_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
     // See mirror_x_nodes for an explanation of how the offset is calculated
     let (graph_size_y, graph_offset_y) = {
@@ -432,12 +428,12 @@ fn mirror_y_nodes(a: &mut LGraphArena, nodes: &[LNodeId], graph: LGraphId) {
     }
 }
 
-/// Port of `mirrorY(Spacing)`: mirrors the given spacing in Y direction.
+/// Mirrors the given spacing in Y direction.
 fn mirror_spacing_y(spacing: &mut Spacing) {
     std::mem::swap(&mut spacing.top, &mut spacing.bottom);
 }
 
-/// Port of `mirrorNodeLabelPlacementY`: vertically mirrors the node label
+/// Vertically mirrors the node label
 /// placement options, if any are set.
 fn mirror_node_label_placement_y(props: &PropertyMap) {
     if !props.has(&lopts::NODE_LABELS_PLACEMENT) {
@@ -456,7 +452,7 @@ fn mirror_node_label_placement_y(props: &PropertyMap) {
     props.set(&lopts::NODE_LABELS_PLACEMENT, placement);
 }
 
-/// Port of `getMirroredPortSideY`: the port side that is vertically mirrored
+/// The port side that is vertically mirrored
 /// from the given side.
 fn mirrored_port_side_y(side: PortSide) -> PortSide {
     match side {
@@ -466,7 +462,7 @@ fn mirrored_port_side_y(side: PortSide) -> PortSide {
     }
 }
 
-/// Port of `mirrorInLayerConstraintY`: vertically mirrors the in-layer
+/// Vertically mirrors the in-layer
 /// constraint set on a node (only meant for external port dummy nodes).
 fn mirror_in_layer_constraint_y(props: &PropertyMap) {
     match props.get(&iprops::IN_LAYER_CONSTRAINT) {
@@ -483,7 +479,6 @@ fn mirror_in_layer_constraint_y(props: &PropertyMap) {
 ///////////////////////////////////////////////////////////////////////////////
 // Transpose
 
-/// Port of `transpose(List<LNode>)`.
 fn transpose_nodes(a: &mut LGraphArena, nodes: &[LNodeId]) {
     // Transpose nodes
     for &node in nodes {
@@ -565,12 +560,10 @@ fn transpose_nodes(a: &mut LGraphArena, nodes: &[LNodeId]) {
     }
 }
 
-/// Port of `transpose(KVector)`.
 fn transpose_vec(v: &mut KVector) {
     std::mem::swap(&mut v.x, &mut v.y);
 }
 
-/// Port of `transpose(Spacing)`.
 fn transpose_spacing(spacing: &mut Spacing) {
     let old = *spacing;
     spacing.top = old.left;
@@ -579,7 +572,7 @@ fn transpose_spacing(spacing: &mut Spacing) {
     spacing.right = old.bottom;
 }
 
-/// Port of `transposeNodeLabelPlacement`: transposes the node label placement
+/// Transposes the node label placement
 /// options, if any are set.
 fn transpose_node_label_placement(props: &PropertyMap) {
     if !props.has(&lopts::NODE_LABELS_PLACEMENT) {
@@ -628,7 +621,7 @@ fn transpose_node_label_placement(props: &PropertyMap) {
     props.set(&lopts::NODE_LABELS_PLACEMENT, new_placement);
 }
 
-/// Port of `transposePortSide(PortSide)`: the transposed side of the given
+/// The transposed side of the given
 /// port side.
 fn transposed_port_side(side: PortSide) -> PortSide {
     match side {
@@ -640,7 +633,7 @@ fn transposed_port_side(side: PortSide) -> PortSide {
     }
 }
 
-/// Port of `transposeEdgeLabelPlacement`: transposes the placement of edge
+/// Transposes the placement of edge
 /// labels in the graph.
 fn transpose_edge_label_placement(a: &mut LGraphArena, graph: LGraphId) {
     // Java checks getProperty() != null; the option has a non-null default,
@@ -652,7 +645,7 @@ fn transpose_edge_label_placement(a: &mut LGraphArena, graph: LGraphId) {
         .set(&lopts::EDGE_LABELS_SIDE_SELECTION, old_side.transpose());
 }
 
-/// Port of `transposeLayerConstraint`: transposes the layer constraint and
+/// Transposes the layer constraint and
 /// in-layer constraint set on a node. Only meant for external port dummy
 /// nodes and only supports the cases that can occur with them.
 fn transpose_layer_constraint(props: &PropertyMap) {
@@ -674,7 +667,7 @@ fn transpose_layer_constraint(props: &PropertyMap) {
     }
 }
 
-/// Port of `transposeProperties`: checks a node's properties for ones that
+/// Checks a node's properties for ones that
 /// need to be transposed (NODE_SIZE_MINIMUM, ALIGNMENT, POSITION).
 fn transpose_properties(props: &PropertyMap) {
     // Transpose MIN_HEIGHT and MIN_WIDTH
@@ -706,7 +699,7 @@ fn transpose_properties(props: &PropertyMap) {
     }
 }
 
-/// Port of `reverseIndex`: reverses the port index.
+/// Reverses the port index.
 fn reverse_index(a: &LGraphArena, port: LPortId) {
     if let Some(index) = a.port(port).properties.try_get(&lopts::PORT_INDEX) {
         a.port(port).properties.set(&lopts::PORT_INDEX, -index);

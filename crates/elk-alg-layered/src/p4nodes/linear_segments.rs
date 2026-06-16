@@ -1,4 +1,3 @@
-//! Port of `LinearSegmentsNodePlacer` (`org.eclipse.elk.alg.layered.p4nodes`).
 //!
 //! Node placement that aligns long edges using linear segments (Sander 1996).
 
@@ -23,7 +22,7 @@ const FINAL_ITERS: i32 = 3;
 /// Factor for threshold within which node overlapping is detected.
 const OVERLAP_DETECT: f64 = 0.0001;
 
-/// Port of `LinearSegmentsNodePlacer.LinearSegment`. Segments are stored in a
+/// Segments are stored in a
 /// `Vec` and referenced by index; after `sort_linear_segments` the index in
 /// the vector equals the segment's rank (= `id` = `LNode.id`).
 struct LinearSegment {
@@ -58,7 +57,7 @@ impl LinearSegment {
     }
 }
 
-/// Port of `LinearSegment.region()`: resolves the reference chain, returning
+/// Resolves the reference chain, returning
 /// the index of the top-level region segment.
 fn region(segments: &[LinearSegment], idx: usize) -> usize {
     let mut seg = idx;
@@ -68,7 +67,6 @@ fn region(segments: &[LinearSegment], idx: usize) -> usize {
     seg
 }
 
-/// Port of `LinearSegmentsNodePlacer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // sort the linear segments of the layered graph
     let mut linear_segments = sort_linear_segments(a, graph);
@@ -88,7 +86,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
 // /////////////////////////////////////////////////////////////////////////////
 // Linear Segments Creation
 
-/// Port of `sortLinearSegments(LGraph, IElkProgressMonitor)`: returns the
+/// Returns the
 /// linear segments in rank order (`segment.id == index == LNode.id`).
 fn sort_linear_segments(a: &mut LGraphArena, graph: LGraphId) -> Vec<LinearSegment> {
     // set the identifier and input / output priority for all nodes
@@ -186,7 +184,7 @@ fn sort_linear_segments(a: &mut LGraphArena, graph: LGraphId) -> Vec<LinearSegme
     ordered.into_iter().map(|s| s.unwrap()).collect()
 }
 
-/// Port of `createDependencyGraphEdges(...)`: fills the dependency graph with
+/// Fills the dependency graph with
 /// dependencies, splitting segments that would introduce cycles.
 fn create_dependency_graph_edges(
     a: &mut LGraphArena,
@@ -294,7 +292,7 @@ fn create_dependency_graph_edges(
     }
 }
 
-/// Port of `LinearSegment.split(LNode, int)`: splits the segment before the
+/// Splits the segment before the
 /// given node, moving all nodes from it onward into a new segment with the
 /// given id (appended to `segment_list`; its index is returned).
 fn split_segment(
@@ -320,7 +318,7 @@ fn split_segment(
     segment_list.len() - 1
 }
 
-/// Port of `fillSegment(LNode, LinearSegment)`: puts a node into the given
+/// Puts a node into the given
 /// linear segment and checks for following parts of a long edge.
 fn fill_segment(a: &mut LGraphArena, node: LNodeId, segment: &mut LinearSegment) -> bool {
     let node_type = a.node(node).node_type;
@@ -364,7 +362,6 @@ fn fill_segment(a: &mut LGraphArena, node: LNodeId, segment: &mut LinearSegment)
 // /////////////////////////////////////////////////////////////////////////////
 // Unbalanced Placement
 
-/// Port of `createUnbalancedPlacement(LGraph)`.
 fn create_unbalanced_placement(
     a: &mut LGraphArena,
     graph: LGraphId,
@@ -432,7 +429,6 @@ enum Mode {
     Rubber,
 }
 
-/// Port of `balancePlacement(LGraph)`.
 fn balance_placement(a: &mut LGraphArena, graph: LGraphId, linear_segments: &mut [LinearSegment]) {
     let deflection_dampening: f64 = a
         .graph(graph)
@@ -514,7 +510,6 @@ fn balance_placement(a: &mut LGraphArena, graph: LGraphId, linear_segments: &mut
     }
 }
 
-/// Port of `calcDeflection(LinearSegment, boolean, boolean, double)`.
 fn calc_deflection(
     a: &LGraphArena,
     linear_segments: &mut [LinearSegment],
@@ -605,7 +600,6 @@ fn calc_deflection(
     }
 }
 
-/// Port of `mergeRegions(LGraph)`.
 fn merge_regions(
     a: &LGraphArena,
     graph: LGraphId,
@@ -665,7 +659,6 @@ fn merge_regions(
 // /////////////////////////////////////////////////////////////////////////////
 // Post Processing for Correction
 
-/// Port of `postProcess(LGraph)`.
 fn post_process(a: &mut LGraphArena, _graph: LGraphId, linear_segments: &[LinearSegment]) {
     // process each linear segment independently
     for segment in linear_segments {

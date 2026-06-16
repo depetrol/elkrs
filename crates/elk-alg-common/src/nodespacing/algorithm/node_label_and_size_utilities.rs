@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.NodeLabelAndSizeUtilities`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::elkutil;
@@ -8,7 +7,6 @@ use elk_graph::properties::EnumSet;
 
 use crate::nodespacing::internal::NodeContext;
 
-/// Port of `NodeLabelAndSizeUtilities.setupMinimumClientAreaSize`.
 pub fn setup_minimum_client_area_size<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     if let Some(min_size) = get_minimum_client_area_size(g, node_context) {
         let container = node_context
@@ -18,7 +16,6 @@ pub fn setup_minimum_client_area_size<G: AdapterGraph>(g: &G, node_context: &mut
     }
 }
 
-/// Port of `NodeLabelAndSizeUtilities.setupNodePaddingForPortsWithOffset`.
 pub fn setup_node_padding_for_ports_with_offset<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -106,7 +103,6 @@ pub fn setup_node_padding_for_ports_with_offset<G: AdapterGraph>(
     }
 }
 
-/// Port of `NodeLabelAndSizeUtilities.offsetSouthernPortsByNodeSize`.
 pub fn offset_southern_ports_by_node_size<G: AdapterGraph>(node_context: &mut NodeContext<G>) {
     let node_height = node_context.node_size.y;
 
@@ -115,7 +111,6 @@ pub fn offset_southern_ports_by_node_size<G: AdapterGraph>(node_context: &mut No
     }
 }
 
-/// Port of `NodeLabelAndSizeUtilities.setNodePadding`.
 pub fn set_node_padding<G: AdapterGraph>(g: &mut G, node_context: &NodeContext<G>) {
     if !node_context.size_options.contains(SizeOptions::COMPUTE_PADDING) {
         return;
@@ -140,7 +135,6 @@ pub fn set_node_padding<G: AdapterGraph>(g: &mut G, node_context: &NodeContext<G
     g.set_node_padding(node_context.node, node_padding);
 }
 
-/// Port of `NodeLabelAndSizeUtilities.applyStuff`.
 pub fn apply_stuff<G: AdapterGraph>(g: &mut G, node_context: &NodeContext<G>) {
     node_context.apply_node_size(g);
     for port_context in &node_context.port_contexts {
@@ -148,7 +142,6 @@ pub fn apply_stuff<G: AdapterGraph>(g: &mut G, node_context: &NodeContext<G>) {
     }
 }
 
-/// Port of `NodeLabelAndSizeUtilities.getMinimumClientAreaSize`.
 pub fn get_minimum_client_area_size<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,
@@ -164,7 +157,6 @@ pub fn get_minimum_client_area_size<G: AdapterGraph>(
     }
 }
 
-/// Port of `NodeLabelAndSizeUtilities.getMinimumNodeSize`.
 pub fn get_minimum_node_size<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,
@@ -180,7 +172,6 @@ pub fn get_minimum_node_size<G: AdapterGraph>(
     None
 }
 
-/// Port of `NodeLabelAndSizeUtilities.getMinimumNodeOrClientAreaSize`.
 pub fn get_minimum_node_or_client_area_size<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,
@@ -205,7 +196,7 @@ pub fn get_minimum_node_or_client_area_size<G: AdapterGraph>(
     min_size
 }
 
-/// Port of `NodeLabelAndSizeUtilities.areSizeConstraintsFixed`: size
+/// Size
 /// constraints that are empty or only contain `PORT_LABELS` should not cause
 /// a node to resize.
 pub fn are_size_constraints_fixed<G: AdapterGraph>(node_context: &NodeContext<G>) -> bool {
@@ -214,7 +205,6 @@ pub fn are_size_constraints_fixed<G: AdapterGraph>(node_context: &NodeContext<G>
         || node_context.size_constraints == effectively_fixed
 }
 
-/// Port of `NodeLabelAndSizeUtilities.isFirstOutsidePortLabelPlacedDifferently`.
 pub fn is_first_outside_port_label_placed_differently<G: AdapterGraph>(
     node_context: &NodeContext<G>,
     port_side: PortSide,

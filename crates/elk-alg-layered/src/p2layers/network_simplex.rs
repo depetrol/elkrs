@@ -1,4 +1,3 @@
-//! Port of `NetworkSimplexLayerer` (`org.eclipse.elk.alg.layered.p2layers`).
 //!
 //! Determines an optimal layering of all nodes in the graph concerning a
 //! minimal length of all edges using the network simplex algorithm (Gansner
@@ -15,7 +14,6 @@ use crate::options_gen as lopts;
 /// Factor by which the maximal number of iterations is multiplied.
 const ITER_LIMIT_FACTOR: i32 = 4;
 
-/// Port of `NetworkSimplexLayerer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let thoroughness: i32 = a
         .graph(graph)
@@ -72,7 +70,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `connectedComponents(List<LNode>)`: determines all connected
+/// Determines all connected
 /// components of the graph. The component with the most nodes is kept at the
 /// front of the list (Java adds it via `addFirst`).
 fn connected_components(a: &mut LGraphArena, the_nodes: &[LNodeId]) -> VecDeque<Vec<LNodeId>> {
@@ -103,7 +101,7 @@ fn connected_components(a: &mut LGraphArena, the_nodes: &[LNodeId]) -> VecDeque<
     components
 }
 
-/// Port of `connectedComponentsDFS(LNode)`: adds all nodes connected to
+/// Adds all nodes connected to
 /// `node` to `component_nodes`.
 fn connected_components_dfs(
     a: &LGraphArena,
@@ -127,7 +125,7 @@ fn connected_components_dfs(
     }
 }
 
-/// Port of `initialize(List<LNode>)`: builds the `NGraph` for one connected
+/// Builds the `NGraph` for one connected
 /// component. Each `NNode`'s `origin` holds the raw id of its `LNodeId`.
 fn initialize(a: &LGraphArena, the_nodes: &[LNodeId]) -> NGraph {
     let mut node_map: HashMap<LNodeId, NNodeId> = HashMap::new();
@@ -161,7 +159,7 @@ fn initialize(a: &LGraphArena, the_nodes: &[LNodeId]) -> NGraph {
     graph
 }
 
-/// Port of `getOpposite(LPort, LEdge)`: the port connected to the opposite
+/// The port connected to the opposite
 /// side of the edge from the viewpoint of the input port.
 fn get_opposite(a: &LGraphArena, port: LPortId, edge: LEdgeId) -> LPortId {
     let e = a.edge(edge);

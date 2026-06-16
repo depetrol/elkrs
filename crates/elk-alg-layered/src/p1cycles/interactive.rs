@@ -1,4 +1,3 @@
-//! Port of `InteractiveCycleBreaker`.
 //!
 //! A cycle breaker that responds to user interaction by respecting the
 //! direction of edges as given in the original drawing.
@@ -10,7 +9,7 @@ use crate::lgraph_util::edge_reverse;
 use crate::options_gen as lopts;
 use crate::options_gen::InteractiveReferencePoint;
 
-/// Port of `LNode.getInteractiveReferencePoint`. Returns the node's anchor
+/// Returns the node's anchor
 /// point position, depending on the graph's `INTERACTIVE_REFERENCE_POINT`
 /// property (CENTER vs TOP_LEFT).
 pub fn interactive_reference_point(a: &LGraphArena, node: LNodeId) -> KVector {

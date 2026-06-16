@@ -1,4 +1,4 @@
-//! Port of `SweepCopy`: stores node and port order for a sweep, and writes
+//! Stores node and port order for a sweep, and writes
 //! a saved order back into the graph.
 
 use std::cmp::Ordering;
@@ -41,7 +41,6 @@ impl SweepCopy {
         &self.node_order
     }
 
-    /// Port of `transferNodeAndPortOrdersToGraph`.
     pub fn transfer_node_and_port_orders_to_graph(
         &self,
         a: &mut LGraphArena,
@@ -109,7 +108,7 @@ impl SweepCopy {
     }
 }
 
-/// Port of `assertCorrectPortSides`: corrects the `PortSide` of the dummy's
+/// Corrects the `PortSide` of the dummy's
 /// origin. Returns the `LNode` ('origin') whose port `dummy` represents.
 fn assert_correct_port_sides(a: &mut LGraphArena, dummy: LNodeId) -> LNodeId {
     debug_assert_eq!(a.node(dummy).node_type, NodeType::NORTH_SOUTH_PORT);

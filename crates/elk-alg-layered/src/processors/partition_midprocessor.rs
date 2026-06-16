@@ -1,4 +1,4 @@
-//! Port of `PartitionMidprocessor`. Adds constraint edges between
+//! Adds constraint edges between
 //! consecutive partitions so layering adheres to the partitions.
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId};

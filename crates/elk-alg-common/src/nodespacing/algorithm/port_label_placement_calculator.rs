@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.PortLabelPlacementCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{self, PortConstraints, PortLabelPlacement, PortSide, SizeConstraint};
@@ -9,21 +8,20 @@ use crate::nodespacing::cellsystem::{HorizontalLabelAlignment, VerticalLabelAlig
 use crate::nodespacing::internal::NodeContext;
 use crate::overlaps::{OverlapRemovalDirection, RectangleStripOverlapRemover};
 
-/// Port of `placeHorizontalPortLabels`: places port labels for northern and
+/// Places port labels for northern and
 /// southern ports.
 pub fn place_horizontal_port_labels<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     place_port_labels(g, node_context, PortSide::NORTH);
     place_port_labels(g, node_context, PortSide::SOUTH);
 }
 
-/// Port of `placeVerticalPortLabels`: places port labels for eastern and
+/// Places port labels for eastern and
 /// western ports.
 pub fn place_vertical_port_labels<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>) {
     place_port_labels(g, node_context, PortSide::EAST);
     place_port_labels(g, node_context, PortSide::WEST);
 }
 
-/// Port of `placePortLabels`.
 fn place_port_labels<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>, port_side: PortSide) {
     // If port labels were not taken into account when calculating the node
     // size or if port placement was set to fixed positions, we don't have an
@@ -62,7 +60,6 @@ fn has_port_labels<G: AdapterGraph>(node_context: &NodeContext<G>, index: usize)
     }
 }
 
-/// Port of `simpleInsidePortLabelPlacement`.
 fn simple_inside_port_label_placement<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -191,7 +188,6 @@ fn simple_inside_port_label_placement<G: AdapterGraph>(
     }
 }
 
-/// Port of `portLabelBorderOffsetForPortSide`.
 fn port_label_border_offset_for_port_side<G: AdapterGraph>(
     node_context: &NodeContext<G>,
     port_side: PortSide,
@@ -206,7 +202,6 @@ fn port_label_border_offset_for_port_side<G: AdapterGraph>(
     }
 }
 
-/// Port of `constrainedInsidePortLabelPlacement`.
 fn constrained_inside_port_label_placement<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -351,7 +346,7 @@ fn constrained_inside_port_label_placement<G: AdapterGraph>(
     }
 }
 
-/// Port of `centerPortLabel`: centers the given label under its port, but
+/// Centers the given label under its port, but
 /// makes an effort to keep it from hanging over the given minimum and maximum
 /// coordinates. The label position is absolute, not relative to the port.
 fn center_port_label(
@@ -377,7 +372,6 @@ fn center_port_label(
     }
 }
 
-/// Port of `simpleOutsidePortLabelPlacement`.
 fn simple_outside_port_label_placement<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -493,7 +487,6 @@ fn simple_outside_port_label_placement<G: AdapterGraph>(
     }
 }
 
-/// Port of `constrainedOutsidePortLabelPlacement`.
 fn constrained_outside_port_label_placement<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,

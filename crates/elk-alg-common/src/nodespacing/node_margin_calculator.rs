@@ -1,10 +1,9 @@
-//! Port of `org.eclipse.elk.alg.common.nodespacing.NodeMarginCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{self, EdgeLabelPlacement, PortLabelPlacement, PortSide};
 use elk_graph::math::{ElkRectangle, KVector};
 
-/// Port of `NodeMarginCalculator`: sets the node margins. Node margins are
+/// Sets the node margins. Node margins are
 /// influenced by both port positions and sizes and label positions and sizes.
 ///
 /// Preconditions: ports have fixed port positions, labels have fixed
@@ -24,7 +23,7 @@ impl Default for NodeMarginCalculator {
 }
 
 impl NodeMarginCalculator {
-    /// Port of the constructor (the graph adapter is passed to the individual
+    /// The constructor (the graph adapter is passed to the individual
     /// methods instead of being stored).
     pub fn new() -> Self {
         NodeMarginCalculator {
@@ -35,31 +34,27 @@ impl NodeMarginCalculator {
         }
     }
 
-    /// Port of `excludeLabels`.
     pub fn exclude_labels(mut self) -> Self {
         self.include_labels = false;
         self
     }
 
-    /// Port of `excludePorts`.
     pub fn exclude_ports(mut self) -> Self {
         self.include_ports = false;
         self
     }
 
-    /// Port of `excludePortLabels`.
     pub fn exclude_port_labels(mut self) -> Self {
         self.include_port_labels = false;
         self
     }
 
-    /// Port of `excludeEdgeHeadTailLabels`.
     pub fn exclude_edge_head_tail_labels(mut self) -> Self {
         self.include_edge_head_tail_labels = false;
         self
     }
 
-    /// Port of `process`: calculates and assigns margins to all nodes.
+    /// Calculates and assigns margins to all nodes.
     pub fn process<G: AdapterGraph>(&self, g: &mut G) {
         let spacing = g.graph_properties().get(&options::SPACING_LABEL_NODE);
 
@@ -69,14 +64,13 @@ impl NodeMarginCalculator {
         }
     }
 
-    /// Port of `processNode(NodeAdapter)`: calculates and assigns margins to
+    /// Calculates and assigns margins to
     /// the given node.
     pub fn process_node<G: AdapterGraph>(&self, g: &mut G, node: G::N) {
         let spacing = g.graph_properties().get(&options::SPACING_LABEL_NODE);
         self.process_node_with_spacing(g, node, spacing);
     }
 
-    /// Port of `processNode(NodeAdapter, double)`.
     fn process_node_with_spacing<G: AdapterGraph>(&self, g: &mut G, node: G::N, label_spacing: f64) {
         // This will be our bounding box. We'll start with one that's the same
         // size as our node, and at the same position.
@@ -193,7 +187,6 @@ impl NodeMarginCalculator {
         g.set_node_margin(node, margin);
     }
 
-    /// Port of `processEdgeHeadTailLabels`.
     #[allow(clippy::too_many_arguments)]
     fn process_edge_head_tail_labels<G: AdapterGraph>(
         &self,
@@ -251,7 +244,7 @@ impl NodeMarginCalculator {
         }
     }
 
-    /// Port of `computeLabelBox`: computes the given edge label's bounding
+    /// Computes the given edge label's bounding
     /// box. The position of the box is just a rough estimate.
     #[allow(clippy::too_many_arguments)]
     fn compute_label_box<G: AdapterGraph>(

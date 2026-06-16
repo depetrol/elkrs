@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.force.ElkGraphImporter`.
 
 use std::collections::HashMap;
 
@@ -10,7 +9,6 @@ use elk_graph::math::KVector;
 use crate::graph::{FArena, FGraph};
 use crate::options;
 
-/// Port of `ElkGraphImporter.importGraph`.
 pub fn import_graph(g: &ElkGraph, kgraph: NodeId) -> Result<(FArena, FGraph), String> {
     let mut arena = FArena::default();
     let mut fgraph = FGraph::default();
@@ -27,7 +25,6 @@ pub fn import_graph(g: &ElkGraph, kgraph: NodeId) -> Result<(FArena, FGraph), St
     Ok((arena, fgraph))
 }
 
-/// Port of `ElkGraphImporter.transformNodes`.
 fn transform_nodes(
     g: &ElkGraph,
     parent_node: NodeId,
@@ -64,7 +61,6 @@ fn transform_nodes(
     }
 }
 
-/// Port of `ElkGraphImporter.transformEdges`.
 fn transform_edges(
     g: &ElkGraph,
     parent_node: NodeId,
@@ -116,7 +112,6 @@ fn transform_edges(
     Ok(())
 }
 
-/// Port of `ElkGraphImporter.applyLayout`.
 pub fn apply_layout(arena: &FArena, fgraph: &FGraph, g: &mut ElkGraph, _layout_node: NodeId) {
     let kgraph = fgraph.origin.expect("force graph without origin");
 

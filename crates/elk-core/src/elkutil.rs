@@ -1,4 +1,4 @@
-//! Port of the parts of `org.eclipse.elk.core.util.ElkUtil` used by the
+//! The parts of `org.eclipse.elk.core.util.ElkUtil` used by the
 //! engine and the basic layout providers.
 
 use elk_graph::graph::{EdgeId, ElkGraph, NodeId, PortId, SectionId};
@@ -10,7 +10,6 @@ use crate::options::*;
 pub const DEFAULT_MIN_WIDTH: f64 = 20.0;
 pub const DEFAULT_MIN_HEIGHT: f64 = 20.0;
 
-/// Port of `ElkUtil.calcPortOffset`.
 pub fn calc_port_offset(g: &ElkGraph, port: PortId, side: PortSide) -> f64 {
     let node = g.port(port).parent.expect("port must have a parent node");
     let p = &g.port(port).shape;
@@ -24,7 +23,6 @@ pub fn calc_port_offset(g: &ElkGraph, port: PortId, side: PortSide) -> f64 {
     }
 }
 
-/// Port of `ElkUtil.calcPortSide`.
 pub fn calc_port_side(g: &ElkGraph, port: PortId, direction: Direction) -> PortSide {
     let node = g.port(port).parent.expect("port must have a parent node");
     let n = &g.node(node).shape;
@@ -72,7 +70,6 @@ fn applicable_direction(g: &ElkGraph, node: NodeId) -> Direction {
     }
 }
 
-/// Port of `ElkUtil.effectiveMinSizeConstraintFor`.
 pub fn effective_min_size_constraint_for(g: &ElkGraph, node: NodeId) -> KVector {
     let size_constraint: EnumSet<SizeConstraint> =
         g.node(node).properties.get(&NODE_SIZE_CONSTRAINTS);
@@ -93,7 +90,6 @@ pub fn effective_min_size_constraint_for(g: &ElkGraph, node: NodeId) -> KVector 
     }
 }
 
-/// Port of `ElkUtil.resizeNode(node)` (size-constraint-driven resize).
 /// Returns `None` when the size constraints are empty.
 pub fn resize_node_constraints(g: &mut ElkGraph, node: NodeId) -> Option<KVector> {
     let size_constraint: EnumSet<SizeConstraint> =
@@ -142,7 +138,6 @@ pub fn resize_node_constraints(g: &mut ElkGraph, node: NodeId) -> Option<KVector
     Some(resize_node(g, node, new_width, new_height, true, true))
 }
 
-/// Port of `ElkUtil.resizeNode(node, newWidth, newHeight, movePorts, moveLabels)`.
 pub fn resize_node(
     g: &mut ElkGraph,
     node: NodeId,
@@ -232,7 +227,7 @@ pub fn resize_node(
     KVector::new(width_ratio, height_ratio)
 }
 
-/// Port of `ElkUtil.translate(ElkNode, double, double)`: translates children
+/// Translates children
 /// and contained edges.
 pub fn translate(g: &mut ElkGraph, parent: NodeId, xoffset: f64, yoffset: f64) {
     let children = g.node(parent).children.clone();
@@ -247,7 +242,6 @@ pub fn translate(g: &mut ElkGraph, parent: NodeId, xoffset: f64, yoffset: f64) {
     }
 }
 
-/// Port of `ElkUtil.translate(ElkEdge, double, double)`.
 pub fn translate_edge(g: &mut ElkGraph, edge: EdgeId, xoffset: f64, yoffset: f64) {
     let sections = g.edge(edge).sections.clone();
     for section in sections {
@@ -268,7 +262,6 @@ pub fn translate_edge(g: &mut ElkGraph, edge: EdgeId, xoffset: f64, yoffset: f64
     g.edge(edge).properties.set(&JUNCTION_POINTS, jps);
 }
 
-/// Port of `ElkUtil.translate(ElkEdgeSection, double, double)`.
 pub fn translate_section(g: &mut ElkGraph, section: SectionId, xoffset: f64, yoffset: f64) {
     let s = g.section_mut(section);
     s.start_x += xoffset;
@@ -281,7 +274,7 @@ pub fn translate_section(g: &mut ElkGraph, section: SectionId, xoffset: f64, yof
     s.end_y += yoffset;
 }
 
-/// Port of `ElkUtil.translate(ElkNode, KVector, KVector)`: content alignment
+/// Content alignment
 /// shift after a node grew.
 pub fn translate_aligned(g: &mut ElkGraph, parent: NodeId, new_size: KVector, old_size: KVector) {
     let content_alignment: EnumSet<ContentAlignment> =
@@ -306,7 +299,6 @@ pub fn translate_aligned(g: &mut ElkGraph, parent: NodeId, new_size: KVector, ol
     translate(g, parent, x_translate, y_translate);
 }
 
-/// Port of `ElkUtil.applyConfiguredNodeScaling`.
 pub fn apply_configured_node_scaling(g: &mut ElkGraph, node: NodeId) {
     let scaling_factor: f64 = g.node(node).properties.get(&SCALE_FACTOR);
     if scaling_factor == 1.0 {
@@ -357,7 +349,6 @@ enum ScaledShape {
     Port(PortId),
 }
 
-/// Port of `ElkUtil.applyVectorChain`.
 pub fn apply_vector_chain(g: &mut ElkGraph, chain: &KVectorChain, section: SectionId) {
     assert!(
         chain.len() >= 2,
@@ -373,12 +364,10 @@ pub fn apply_vector_chain(g: &mut ElkGraph, chain: &KVectorChain, section: Secti
     s.end_y = last.y;
 }
 
-/// Port of `ElkUtil.createVectorChain`.
 pub fn create_vector_chain(g: &ElkGraph, section: SectionId) -> KVectorChain {
     g.section_chain(section)
 }
 
-/// Port of `ElkUtil.determineJunctionPoints(ElkEdge)` (orthogonal routing).
 pub fn determine_junction_points(g: &ElkGraph, edge: EdgeId) -> KVectorChain {
     assert_eq!(
         g.edge(edge).sections.len(),
@@ -475,7 +464,7 @@ fn determine_junction_points_at_port(
     junction_points
 }
 
-/// Port of `ElkUtil.getLabelsBounds(PortAdapter)`: bounding box of the
+/// Bounding box of the
 /// port's labels, in coordinates relative to the port. Returns an empty
 /// rectangle if the port has no labels.
 pub fn get_labels_bounds<G: crate::adapters::AdapterGraph>(
@@ -496,7 +485,7 @@ pub fn get_labels_bounds<G: crate::adapters::AdapterGraph>(
     bounds.unwrap_or_default()
 }
 
-/// Port of `ElkUtil.computeInsidePart(PortAdapter, double)`: the part of the
+/// The part of the
 /// port's (fixed-placement) labels that lies inside the node.
 pub fn compute_inside_part<G: crate::adapters::AdapterGraph>(
     g: &G,
@@ -513,7 +502,6 @@ pub fn compute_inside_part<G: crate::adapters::AdapterGraph>(
     )
 }
 
-/// Port of `ElkUtil.computeInsidePart(KVector, KVector, KVector, double, PortSide)`.
 pub fn compute_inside_part_values(
     label_position: KVector,
     label_size: KVector,

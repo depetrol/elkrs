@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.RadialLayoutProvider`.
 
 use elk_core::registry::LayoutProvider;
 use elk_graph::graph::{ElkGraph, NodeId};
@@ -6,7 +5,7 @@ use elk_graph::graph::{ElkGraph, NodeId};
 use crate::options::{self, CompactionStrategy};
 use crate::{compaction, intermediate, overlaps, p1position, p2routing, rotation, util};
 
-/// Port of `RadialLayoutProvider`. The `AlgorithmAssembler` pipeline is
+/// The `AlgorithmAssembler` pipeline is
 /// inlined: phases P1 (node placement) and P2 (edge routing) with the
 /// intermediate processors in `IntermediateProcessorStrategy` ordinal order.
 #[derive(Default)]
@@ -58,7 +57,6 @@ impl LayoutProvider for RadialLayoutProvider {
     }
 }
 
-/// Port of `org.eclipse.elk.alg.common.NodeMicroLayout.execute()`.
 fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
     let mut adapter = elk_core::adapters::ElkGraphAdapter::new(g, layout_node);
     elk_alg_common::nodespacing::sort_port_lists(&mut adapter);

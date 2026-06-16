@@ -1,4 +1,4 @@
-//! Port of `CommentPostprocessor`: reinserts comment boxes removed by the
+//! Reinserts comment boxes removed by the
 //! `CommentPreprocessor` and places them above or below their corresponding
 //! connected node.
 

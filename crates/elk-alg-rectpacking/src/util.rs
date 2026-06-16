@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.rectpacking.util`: `DrawingData`,
-//! `DrawingDataDescriptor`, `DrawingUtil`, and the row/stack/block model
-//! (`RectRow`, `BlockStack`, `Block`, `BlockRow`).
 //!
 //! Java's model objects reference each other freely (a block knows its parent
 //! row and its stack, rows own block lists, stacks share blocks with rows).
@@ -14,7 +11,6 @@ use elk_graph::math::{ElkRectangle, KVector};
 
 // ------------------------------------------------------ DrawingDataDescriptor
 
-/// Port of `DrawingDataDescriptor`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum DrawingDataDescriptor {
     CandidatePositionLastPlacedRight,
@@ -26,7 +22,6 @@ pub enum DrawingDataDescriptor {
 
 // ----------------------------------------------------------------- DrawingData
 
-/// Port of `DrawingData`.
 #[derive(Clone, Debug)]
 pub struct DrawingData {
     scale_measure: f64,
@@ -116,19 +111,16 @@ impl DrawingData {
 
 // ------------------------------------------------------------------ DrawingUtil
 
-/// Port of `DrawingUtil.computeScaleMeasure`.
 pub fn compute_scale_measure(width: f64, height: f64, dar: f64) -> f64 {
     f64::min(dar / width, 1.0 / height)
 }
 
-/// Port of `DrawingUtil.resetCoordinates`.
 pub fn reset_coordinates(g: &mut ElkGraph, rects: &[NodeId]) {
     for &node in rects {
         g.node_mut(node).shape.set_location(0.0, 0.0);
     }
 }
 
-/// Port of `DrawingUtil.calculateDimensions(List<RectRow>, double)`.
 pub fn calculate_dimensions_rows(arena: &PackArena, rows: &[RowId], node_node_spacing: f64) -> KVector {
     let mut max_width = 0.0f64;
     let mut new_height = 0.0f64;
@@ -139,7 +131,6 @@ pub fn calculate_dimensions_rows(arena: &PackArena, rows: &[RowId], node_node_sp
     KVector::new(max_width, new_height)
 }
 
-/// Port of `DrawingUtil.calculateDimensions(List<ElkNode>)`.
 pub fn calculate_dimensions_rects(g: &ElkGraph, rects: &[NodeId]) -> KVector {
     let mut max_width = 0.0f64;
     let mut max_height = 0.0f64;
@@ -160,8 +151,6 @@ pub struct BlockId(pub usize);
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct StackId(pub usize);
 
-/// Port of `RectRow` (the unused `potentialAdditionalWidthToGetLastBlock`
-/// field and `calculateBlockStacks` method are omitted; nothing calls them).
 #[derive(Debug)]
 pub struct RectRow {
     /// Height of row, given by the highest stack.
@@ -177,7 +166,6 @@ pub struct RectRow {
     pub stacks: Vec<StackId>,
 }
 
-/// Port of `BlockRow`; owned by its [`Block`].
 #[derive(Debug)]
 pub struct BlockRow {
     pub x: f64,
@@ -195,7 +183,6 @@ impl BlockRow {
         BlockRow { x, y, width: 0.0, height: 0.0, node_node_spacing, rects: Vec::new() }
     }
 
-    /// Port of `BlockRow.addRectangle`.
     pub fn add_rectangle(&mut self, g: &mut ElkGraph, rect: NodeId) {
         let spacing = if self.rects.is_empty() { 0.0 } else { self.node_node_spacing };
         let shape = &mut g.node_mut(rect).shape;
@@ -206,7 +193,6 @@ impl BlockRow {
         self.rects.push(rect);
     }
 
-    /// Port of `BlockRow.removeRectangle`.
     pub fn remove_rectangle(&mut self, g: &mut ElkGraph, rect: NodeId, update: bool) {
         if let Some(pos) = self.rects.iter().position(|&r| r == rect) {
             self.rects.remove(pos);
@@ -216,7 +202,6 @@ impl BlockRow {
         }
     }
 
-    /// Port of `BlockRow.updateRow`.
     pub fn update_row(&mut self, g: &mut ElkGraph) {
         let mut width = 0.0f64;
         let mut height = 0.0f64;
@@ -231,7 +216,6 @@ impl BlockRow {
         self.height = height - self.node_node_spacing;
     }
 
-    /// Port of `BlockRow.expand`.
     pub fn expand(&mut self, g: &mut ElkGraph, width_for_row: f64, additional_height_for_row: f64, index: usize) {
         let additional_width_for_rect = (width_for_row - self.width) / self.rects.len() as f64;
         let mut i = 0usize;
@@ -262,7 +246,6 @@ impl BlockRow {
     }
 }
 
-/// Port of `Block`.
 #[derive(Debug)]
 pub struct Block {
     pub smallest_rect_width: f64,
@@ -291,7 +274,6 @@ pub struct Block {
     pub position_fixed: bool,
 }
 
-/// Port of `BlockStack`.
 #[derive(Debug)]
 pub struct BlockStack {
     pub blocks: Vec<BlockId>,
@@ -382,7 +364,6 @@ impl PackArena {
 
     // ------------------------------------------------------------- RectRow
 
-    /// Port of `RectRow.notifyAboutNodeChange`.
     pub fn row_notify_about_node_change(&mut self, row: RowId) {
         let spacing = self.row(row).node_node_spacing;
         let mut total_stack_width = 0.0f64;
@@ -397,7 +378,6 @@ impl PackArena {
         r.height = new_max_height;
     }
 
-    /// Port of `RectRow.expand`.
     pub fn row_expand(&mut self, g: &mut ElkGraph, row: RowId, width: f64, additional_height: f64) {
         let additional_width = width - self.row(row).width;
         let additional_width_per_stack = additional_width / self.row(row).stacks.len() as f64;
@@ -412,17 +392,14 @@ impl PackArena {
         }
     }
 
-    /// Port of `RectRow.getFirstBlock`.
     pub fn row_first_block(&self, row: RowId) -> BlockId {
         self.row(row).children[0]
     }
 
-    /// Port of `RectRow.getLastBlock`.
     pub fn row_last_block(&self, row: RowId) -> BlockId {
         *self.row(row).children.last().expect("row without blocks")
     }
 
-    /// Port of `RectRow.addBlock`.
     pub fn row_add_block(&mut self, row: RowId, block: BlockId) {
         let block_height = self.block(block).height;
         let block_width = self.block(block).width;
@@ -432,7 +409,7 @@ impl PackArena {
         r.children.push(block);
     }
 
-    /// Port of `RectRow.removeBlock`. Like Java's `List.remove(Object)`, the
+    /// Like Java's `List.remove(Object)`, the
     /// width adjustment happens even if the block is not in the list.
     pub fn row_remove_block(&mut self, row: RowId, block: BlockId) {
         let block_width = self.block(block).width;
@@ -452,7 +429,6 @@ impl PackArena {
         self.row_mut(row).height = new_max_height;
     }
 
-    /// Port of `RectRow.setY`.
     pub fn row_set_y(&mut self, g: &mut ElkGraph, row: RowId, y: f64) {
         let y_change = y - self.row(row).y;
         let stacks = self.row(row).stacks.clone();
@@ -463,14 +439,12 @@ impl PackArena {
         self.row_mut(row).y = y;
     }
 
-    /// Port of `RectRow.resetStacks`.
     pub fn row_reset_stacks(&mut self, row: RowId) {
         self.row_mut(row).stacks = Vec::new();
     }
 
     // --------------------------------------------------------------- Block
 
-    /// Port of `Block.addChild`.
     pub fn block_add_child(&mut self, g: &mut ElkGraph, block: BlockId, rect: NodeId) {
         if self.block(block).rows.is_empty() {
             let (x, y, spacing) = {
@@ -488,7 +462,6 @@ impl PackArena {
         self.block_adjust_size_add(g, block, rect);
     }
 
-    /// Port of `Block.addChildInNewRow`.
     pub fn block_add_child_in_new_row(&mut self, g: &mut ElkGraph, block: BlockId, rect: NodeId) {
         self.block_mut(block).children.push(rect);
         let (x, new_y, spacing) = {
@@ -505,7 +478,6 @@ impl PackArena {
         self.block_adjust_size_add(g, block, rect);
     }
 
-    /// Port of `Block.removeChild`.
     pub fn block_remove_child(&mut self, g: &mut ElkGraph, block: BlockId, rect: NodeId) {
         if let Some(pos) = self.block(block).children.iter().position(|&r| r == rect) {
             self.block_mut(block).children.remove(pos);
@@ -526,7 +498,6 @@ impl PackArena {
         self.block_adjust_size_after_remove(g, block);
     }
 
-    /// Port of `Block.setLocation`.
     pub fn block_set_location(&mut self, g: &mut ElkGraph, block: BlockId, x: f64, y: f64) {
         let (x_change, y_change) = {
             let b = self.block(block);
@@ -548,7 +519,6 @@ impl PackArena {
         b.y = y;
     }
 
-    /// Port of `Block.adjustSizeAdd`.
     fn block_adjust_size_add(&mut self, g: &mut ElkGraph, block: BlockId, rect: NodeId) {
         let (rect_width, rect_height) = {
             let s = &g.node(rect).shape;
@@ -583,7 +553,6 @@ impl PackArena {
         self.row_notify_about_node_change(parent_row);
     }
 
-    /// Port of `Block.getWidthForTargetHeight`.
     pub fn block_get_width_for_target_height(&self, g: &ElkGraph, block: BlockId, height: f64) -> f64 {
         let b = self.block(block);
         // Check whether the block would just fit if all rectangles are drawn
@@ -612,7 +581,6 @@ impl PackArena {
         viable_width
     }
 
-    /// Port of `Block.getHeightForTargetWidth`.
     pub fn block_get_height_for_target_width(&self, g: &ElkGraph, block: BlockId, width: f64) -> f64 {
         self.block_simulate_rects_in(g, block, width).height
     }
@@ -701,13 +669,11 @@ impl PackArena {
         ElkRectangle::new(bx, by, current_width, current_height)
     }
 
-    /// Port of `Block.placeRectsIn(width, height, placeRects=false)`.
     fn block_fits_in(&self, g: &ElkGraph, block: BlockId, width: f64, height: f64) -> bool {
         let bounds = self.block_simulate_rects_in(g, block, width);
         bounds.width <= width && bounds.height <= height
     }
 
-    /// Port of `Block.placeRectsIn(width, height)` (public placing variant).
     pub fn block_place_rects_in_bounds(
         &mut self,
         g: &mut ElkGraph,
@@ -719,7 +685,6 @@ impl PackArena {
         bounds.width <= width && bounds.height <= height
     }
 
-    /// Port of `Block.placeRectsIn(width)` (public placing variant).
     pub fn block_place_rects_in(&mut self, g: &mut ElkGraph, block: BlockId, width: f64) -> bool {
         let (old_width, old_height) = {
             let b = self.block(block);
@@ -729,7 +694,6 @@ impl PackArena {
         bounds.width != old_width || bounds.height != old_height
     }
 
-    /// Port of `Block.adjustSizeAfterRemove` (also `Block.resetBlock`).
     pub fn block_adjust_size_after_remove(&mut self, g: &mut ElkGraph, block: BlockId) {
         let parent_row = {
             let b = self.block_mut(block);
@@ -771,7 +735,6 @@ impl PackArena {
         self.row_notify_about_node_change(parent_row);
     }
 
-    /// Port of `Block.expand`.
     pub fn block_expand(
         &mut self,
         g: &mut ElkGraph,
@@ -798,20 +761,17 @@ impl PackArena {
         }
     }
 
-    /// Port of `Block.getLastRowNewX`.
     pub fn block_last_row_new_x(&self, block: BlockId) -> f64 {
         let last = self.block(block).rows.last().expect("block without rows");
         last.x + last.width
     }
 
-    /// Port of `Block.getLastRowY`.
     pub fn block_last_row_y(&self, block: BlockId) -> f64 {
         self.block(block).rows.last().expect("block without rows").y
     }
 
     // ---------------------------------------------------------- BlockStack
 
-    /// Port of `BlockStack.addBlock`.
     pub fn stack_add_block(&mut self, stack: StackId, block: BlockId) {
         self.block_mut(block).stack = Some(stack);
         let (block_width, block_height) = {
@@ -825,7 +785,6 @@ impl PackArena {
         s.blocks.push(block);
     }
 
-    /// Port of `BlockStack.updateDimension`.
     pub fn stack_update_dimension(&mut self, stack: StackId) {
         let mut height = 0.0f64;
         let mut width = 0.0f64;
@@ -840,7 +799,6 @@ impl PackArena {
         s.width = width;
     }
 
-    /// Port of `BlockStack.setLocation`.
     pub fn stack_set_location(&mut self, g: &mut ElkGraph, stack: StackId, x: f64, y: f64) {
         let (x_diff, y_diff) = {
             let s = self.stack(stack);
@@ -856,7 +814,6 @@ impl PackArena {
         s.y = y;
     }
 
-    /// Port of `BlockStack.getWidthForFixedHeight`.
     pub fn stack_get_width_for_fixed_height(&self, g: &ElkGraph, stack: StackId, height: f64) -> f64 {
         let s = self.stack(stack);
         // One element special case.
@@ -886,7 +843,6 @@ impl PackArena {
         viable_width
     }
 
-    /// Port of `BlockStack.placeRectsIn`.
     pub fn stack_place_rects_in(&mut self, g: &mut ElkGraph, stack: StackId, target_width: f64) {
         let (sx, sy, spacing, blocks) = {
             let s = self.stack(stack);
@@ -908,7 +864,6 @@ impl PackArena {
         s.height = current_height;
     }
 
-    /// Port of `BlockStack.expand`.
     pub fn stack_expand(
         &mut self,
         g: &mut ElkGraph,
@@ -932,7 +887,6 @@ impl PackArena {
         }
     }
 
-    /// Port of `BlockStack.getMinimumWidth`.
     fn stack_get_minimum_width(&self, stack: StackId) -> f64 {
         let mut min_width = 0.0f64;
         for &block in &self.stack(stack).blocks {

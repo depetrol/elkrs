@@ -1,4 +1,3 @@
-//! Port of `BoxLayoutProvider`.
 
 use std::cmp::Ordering;
 

@@ -1,4 +1,4 @@
-//! Port of `LongEdgeSplitter`: splits edges spanning more than one layer by
+//! Splits edges spanning more than one layer by
 //! inserting LONG_EDGE dummy nodes.
 
 use elk_core::options::{EdgeLabelPlacement, PortConstraints, PortSide};
@@ -56,7 +56,7 @@ fn create_dummy_node(
     dummy
 }
 
-/// Port of the static `LongEdgeSplitter.splitEdge` (also used by other
+/// The static `LongEdgeSplitter.splitEdge` (also used by other
 /// processors).
 pub fn split_edge(a: &mut LGraphArena, edge: LEdgeId, dummy_node: LNodeId) -> LEdgeId {
     let old_edge_target = a.edge(edge).target;

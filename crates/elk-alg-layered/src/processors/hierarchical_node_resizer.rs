@@ -1,4 +1,4 @@
-//! Port of `HierarchicalNodeResizingProcessor`: resizes a child graph to fit
+//! Resizes a child graph to fit
 //! its parent node. Runs as the last non-hierarchical processor (after phase 5)
 //! in a hierarchical graph.
 
@@ -15,7 +15,6 @@ use crate::lgraph_util;
 use crate::options_gen as lopts;
 use crate::options_gen::GraphProperties;
 
-/// Port of `HierarchicalNodeResizingProcessor.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // Move all nodes out of the layers and clear the layers.
     let layers = a.graph(graph).layers.clone();
@@ -37,7 +36,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `graphLayoutToNode`: transfer the layout of the graph to the
+/// Transfer the layout of the graph to the
 /// associated parent node.
 fn graph_layout_to_node(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     let node = a.graph(lgraph).parent_node.unwrap();
@@ -79,7 +78,6 @@ fn graph_layout_to_node(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), Str
     Ok(())
 }
 
-/// Port of `resizeGraph`.
 fn resize_graph(a: &mut LGraphArena, lgraph: LGraphId) {
     let size_constraint: EnumSet<SizeConstraint> =
         a.graph(lgraph).properties.get(&lopts::NODE_SIZE_CONSTRAINTS);
@@ -106,7 +104,6 @@ fn resize_graph(a: &mut LGraphArena, lgraph: LGraphId) {
     resize_graph_no_really_i_mean_it(a, lgraph, calculated_size, adjusted_size);
 }
 
-/// Port of `resizeGraphNoReallyIMeanIt`.
 fn resize_graph_no_really_i_mean_it(
     a: &mut LGraphArena,
     lgraph: LGraphId,

@@ -1,11 +1,9 @@
-//! Port of `org.eclipse.elk.alg.radial.p2routing.StraightLineEdgeRouter`.
 
 use elk_graph::graph::{ElkGraph, NodeId, ShapeId};
 use elk_graph::math::KVector;
 
 use crate::util;
 
-/// Port of `ElkMath.clipVector`.
 pub fn clip_vector(v: &mut KVector, width: f64, height: f64) {
     let wh = width / 2.0;
     let hh = height / 2.0;
@@ -22,12 +20,11 @@ pub fn clip_vector(v: &mut KVector, width: f64, height: f64) {
     v.scale(f64::min(xscale, yscale));
 }
 
-/// Port of `StraightLineEdgeRouter.process`.
 pub fn process(g: &mut ElkGraph, _graph: NodeId, root: NodeId) {
     route_edges(g, root);
 }
 
-/// Port of `routeEdges`: route edges from node center to node center, then
+/// Route edges from node center to node center, then
 /// clip them to not cross the nodes.
 fn route_edges(g: &mut ElkGraph, node: NodeId) {
     for edge in util::all_outgoing_edges(g, node) {

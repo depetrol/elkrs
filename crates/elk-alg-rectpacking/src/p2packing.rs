@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.rectpacking.p2packing`: `InitialPlacement`,
-//! `Compaction`, `RowFillingAndCompaction`, and the `Compactor`,
-//! `SimplePlacement`, `NoPlacement` phases.
 
 use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::math::ElkPadding;
@@ -10,7 +7,6 @@ use crate::util::{self, BlockId, DrawingData, DrawingDataDescriptor, PackArena, 
 
 // ------------------------------------------------------------ InitialPlacement
 
-/// Port of `InitialPlacement.place`.
 pub fn place(
     arena: &mut PackArena,
     g: &mut ElkGraph,
@@ -75,7 +71,6 @@ fn arena_new_block_at(arena: &mut PackArena, x: f64, y: f64, row: RowId, spacing
     arena.new_block(x, y, row, spacing)
 }
 
-/// Port of `InitialPlacement.placeRectInBlock`.
 pub fn place_rect_in_block(
     arena: &mut PackArena,
     g: &mut ElkGraph,
@@ -111,7 +106,6 @@ pub fn place_rect_in_block(
     false
 }
 
-/// Port of `InitialPlacement.isSimilarHeight`.
 pub fn is_similar_height(
     arena: &PackArena,
     g: &ElkGraph,
@@ -130,7 +124,7 @@ pub fn is_similar_height(
 
 // ----------------------------------------------------------------- Compaction
 
-/// Port of `Compaction.compact`. Returns (somethingWasChanged, compactRowAgain).
+/// Returns (somethingWasChanged, compactRowAgain).
 #[allow(clippy::too_many_arguments)]
 fn compact(
     arena: &mut PackArena,
@@ -333,7 +327,6 @@ fn compact(
     (something_was_changed, compact_row_again)
 }
 
-/// Port of `Compaction.getNextBlock`.
 fn get_next_block(
     arena: &PackArena,
     rows: &[RowId],
@@ -354,7 +347,6 @@ fn get_next_block(
     }
 }
 
-/// Port of `Compaction.useRowHeight`.
 fn use_row_height(arena: &mut PackArena, g: &mut ElkGraph, row: RowId, block: BlockId) -> bool {
     let mut something_was_changed = false;
     let stack = arena.block(block).stack.expect("block without stack");
@@ -370,7 +362,6 @@ fn use_row_height(arena: &mut PackArena, g: &mut ElkGraph, row: RowId, block: Bl
     something_was_changed
 }
 
-/// Port of `Compaction.useRowWidth`.
 fn use_row_width(arena: &mut PackArena, g: &mut ElkGraph, block: BlockId, bounding_width: f64) {
     let width = bounding_width - arena.block(block).x;
     arena.block_place_rects_in(g, block, width);
@@ -378,7 +369,6 @@ fn use_row_width(arena: &mut PackArena, g: &mut ElkGraph, block: BlockId, boundi
     arena.stack_update_dimension(stack);
 }
 
-/// Port of `Compaction.absorbBlocks`.
 fn absorb_blocks(
     arena: &mut PackArena,
     g: &mut ElkGraph,
@@ -413,7 +403,6 @@ fn absorb_blocks(
     something_was_changed
 }
 
-/// Port of `Compaction.placeBelow`.
 #[allow(clippy::too_many_arguments)]
 fn place_below(
     arena: &mut PackArena,
@@ -473,7 +462,6 @@ fn place_below(
     something_was_changed
 }
 
-/// Port of `Compaction.placeBeside`.
 #[allow(clippy::too_many_arguments)]
 fn place_beside(
     arena: &mut PackArena,
@@ -578,7 +566,6 @@ fn place_beside(
 
 // ----------------------------------------------------- RowFillingAndCompaction
 
-/// Port of `RowFillingAndCompaction`.
 pub struct RowFillingAndCompaction {
     aspect_ratio: f64,
     node_node_spacing: f64,
@@ -600,7 +587,6 @@ impl RowFillingAndCompaction {
         }
     }
 
-    /// Port of `RowFillingAndCompaction.start`.
     pub fn start(
         &mut self,
         arena: &mut PackArena,
@@ -741,7 +727,6 @@ impl RowFillingAndCompaction {
         )
     }
 
-    /// Port of `RowFillingAndCompaction.adjustWidthAndHeight`.
     fn adjust_width_and_height(&self, arena: &mut PackArena, row: RowId) {
         let mut max_height = 0.0f64;
         let mut max_width = 0.0f64;
@@ -760,7 +745,7 @@ impl RowFillingAndCompaction {
 
 // ------------------------------------------------------------------ Compactor
 
-/// Port of `Compactor.process`. Returns the rows of the first packing run;
+/// Returns the rows of the first packing run;
 /// they take the place of the Java `InternalProperties.ROWS` graph property.
 pub fn compactor(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<RowId> {
     let aspect_ratio: f64 = g.node(graph).properties.get(&options::ASPECT_RATIO);
@@ -817,7 +802,6 @@ pub fn compactor(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<
     rows
 }
 
-/// Port of `Compactor.copyRowWidthChangeValues`.
 fn copy_row_width_change_values(g: &mut ElkGraph, graph: NodeId, compaction: &RowFillingAndCompaction) {
     let p = &g.node(graph).properties;
     p.set(&options::MIN_ROW_INCREASE, compaction.potential_row_width_increase_min);
@@ -826,7 +810,6 @@ fn copy_row_width_change_values(g: &mut ElkGraph, graph: NodeId, compaction: &Ro
     p.set(&options::MAX_ROW_DECREASE, compaction.potential_row_width_decrease_max);
 }
 
-/// Port of `Compactor.configureSecondIteration`.
 fn configure_second_iteration(g: &mut ElkGraph, layout_graph: NodeId, clone: NodeId, drawing: &DrawingData) {
     let padding: ElkPadding = g.node(layout_graph).properties.get(&options::PADDING);
     let aspect_ratio: f64 = g.node(layout_graph).properties.get(&options::ASPECT_RATIO);
@@ -864,7 +847,6 @@ fn configure_second_iteration(g: &mut ElkGraph, layout_graph: NodeId, clone: Nod
     }
 }
 
-/// Port of `Compactor.clone` (shallow node clone with cloned children).
 fn clone_node(g: &mut ElkGraph, node: NodeId) -> NodeId {
     let clone = g.create_node(None);
     let node_props = g.node(node).properties.clone();
@@ -885,7 +867,6 @@ fn clone_node(g: &mut ElkGraph, node: NodeId) -> NodeId {
     clone
 }
 
-/// Port of `Compactor.copyPosition`.
 fn copy_position(g: &mut ElkGraph, node: NodeId, other: NodeId) {
     let (x, y, w, h) = {
         let s = &g.node(node).shape;
@@ -903,7 +884,7 @@ fn copy_position(g: &mut ElkGraph, node: NodeId, other: NodeId) {
 
 // ------------------------------------------------------------- SimplePlacement
 
-/// Port of `SimplePlacement.process`. Returns the rows (Java `ROWS`).
+/// Returns the rows (Java `ROWS`).
 pub fn simple_placement(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) -> Vec<RowId> {
     let target_width: f64 = g.node(graph).properties.get(&options::TARGET_WIDTH);
     let node_node_spacing: f64 = g.node(graph).properties.get(&options::SPACING_NODE_NODE);
@@ -942,7 +923,6 @@ pub fn simple_placement(arena: &mut PackArena, g: &mut ElkGraph, graph: NodeId) 
 
 // ---------------------------------------------------------------- NoPlacement
 
-/// Port of `NoPlacement.process`.
 pub fn no_placement(g: &mut ElkGraph, graph: NodeId) {
     let padding: ElkPadding = g.node(graph).properties.get(&options::PADDING);
     let rectangles = g.node(graph).children.clone();

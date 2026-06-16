@@ -9,7 +9,6 @@ use elk_graph::math::{ElkRectangle, KVector};
 use crate::graph::{DCDirection, DCGraph};
 use crate::options;
 
-/// Port of `DCPolyomino`.
 pub struct DCPolyomino {
     pub poly: Polyomino,
     /// Index of the represented `DCComponent`.
@@ -30,7 +29,7 @@ impl AsPolyomino for DCPolyomino {
 }
 
 impl DCPolyomino {
-    /// Port of the `DCPolyomino` constructor.
+    /// The `DCPolyomino` constructor.
     pub fn new(graph: &DCGraph, comp: usize, cs_x: f64, cs_y: f64) -> Self {
         let comp_dims = graph.components[comp].dimensions_of_bounding_rectangle(&graph.elements);
 
@@ -57,7 +56,6 @@ impl DCPolyomino {
         dc_poly
     }
 
-    /// Port of `getOffset`.
     pub fn offset(&self, graph: &DCGraph) -> KVector {
         let mut v = graph.components[self.representee]
             .dimensions_of_bounding_rectangle(&graph.elements);
@@ -69,7 +67,6 @@ impl DCPolyomino {
         v
     }
 
-    /// Port of `fillCells`.
     fn fill_cells(&mut self, graph: &DCGraph) {
         let comp = &graph.components[self.representee];
         let comp_corner = comp.min_corner(&graph.elements);
@@ -96,7 +93,6 @@ impl DCPolyomino {
         }
     }
 
-    /// Port of `addExtensionsToPoly`.
     fn add_extensions_to_poly(&mut self, graph: &DCGraph, elem: usize) {
         let comp = &graph.components[self.representee];
         let comp_corner = comp.min_corner(&graph.elements);
@@ -150,7 +146,6 @@ impl DCPolyomino {
     }
 }
 
-/// Port of `computeLowResDimension`.
 fn compute_low_res_dimension(dim: f64, cell_size: f64) -> i32 {
     let cell_fit = dim / cell_size;
     let mut fit_truncated = cell_fit as i32;
@@ -160,7 +155,7 @@ fn compute_low_res_dimension(dim: f64, cell_size: f64) -> i32 {
     fit_truncated
 }
 
-/// Port of `DisCoPolyominoCompactor`. Returns the exact replica of the
+/// Returns the exact replica of the
 /// `List<DCPolyomino>.toString()` debug string Java stores on the graph.
 pub fn compact(graph: &mut DCGraph) -> String {
     // upper bound on the size of a grid cell, from the paper
@@ -205,7 +200,6 @@ pub fn compact(graph: &mut DCGraph) -> String {
     format!("[{}]", strings.join(", "))
 }
 
-/// Port of `computeCellSize`.
 fn compute_cell_size(graph: &DCGraph, upper_bound: f64) -> f64 {
     let mut sum_term = 0.0;
     let mut prod_term = 0.0;
@@ -232,7 +226,6 @@ fn compute_cell_size(graph: &DCGraph, upper_bound: f64) -> f64 {
     numerator / denominator
 }
 
-/// Port of `applyToDCGraph`.
 fn apply_to_dc_graph(
     graph: &mut DCGraph,
     polys: &[DCPolyomino],

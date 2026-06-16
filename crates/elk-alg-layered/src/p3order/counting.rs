@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.p3order.counting`:
-//! `BinaryIndexedTree`, `CrossingsCounter`, `HyperedgeCrossingsCounter`,
-//! `AllCrossingsCounter` and `CrossMinUtil`.
 //!
 //! The Java `IInitializable` pattern is flattened into explicit
 //! `init_at_*` functions that are called by `GraphInfoHolder` in exactly
@@ -20,7 +17,6 @@ use crate::internal_properties::Origin;
 // ---------------------------------------------------------------------------
 // CrossMinUtil
 
-/// Port of `CrossMinUtil.inNorthSouthEastWestOrder`.
 pub fn in_north_south_east_west_order(
     a: &LGraphArena,
     node: LNodeId,
@@ -40,7 +36,7 @@ pub fn in_north_south_east_west_order(
 // ---------------------------------------------------------------------------
 // BinaryIndexedTree
 
-/// Port of `BinaryIndexedTree`: sorted multiset of integers in
+/// Sorted multiset of integers in
 /// `0..max_num` with O(log n) add / rank / removeAll.
 pub struct BinaryIndexedTree {
     binary_sums: Vec<i32>,
@@ -118,7 +114,7 @@ impl BinaryIndexedTree {
 const INDEXING_SIDE: PortSide = PortSide::WEST;
 const STACK_SIDE: PortSide = PortSide::EAST;
 
-/// Port of `CrossingsCounter`. Port positions are tracked in an array
+/// Port positions are tracked in an array
 /// indexed by the `LPort.id` scratch field (Java `portPositions[port.id]`;
 /// the ids are assigned 0..nPorts-1 per graph by the initialization
 /// traversal). The array can be shared between several counters (Java passes
@@ -189,8 +185,6 @@ impl CrossingsCounter {
         self.count_north_south_crossings_on_ports(a, &ports)
     }
 
-    /// Port of `countCrossingsBetweenPortsInBothOrders`; returns
-    /// `(upper_lower_crossings, lower_upper_crossings)`.
     pub fn count_crossings_between_ports_in_both_orders(
         &mut self,
         a: &LGraphArena,
@@ -210,7 +204,6 @@ impl CrossingsCounter {
         (upper_lower_crossings, lower_upper_crossings)
     }
 
-    /// Port of `countInLayerCrossingsBetweenNodesInBothOrders`.
     pub fn count_in_layer_crossings_between_nodes_in_both_orders(
         &mut self,
         a: &LGraphArena,
@@ -230,7 +223,6 @@ impl CrossingsCounter {
         (upper_lower_crossings, lower_upper_crossings)
     }
 
-    /// Port of `initForCountingBetween`.
     pub fn init_for_counting_between(
         &mut self,
         a: &LGraphArena,
@@ -241,7 +233,6 @@ impl CrossingsCounter {
         self.index_tree = Some(BinaryIndexedTree::new(ports.len()));
     }
 
-    /// Port of `initPortPositionsForInLayerCrossings`.
     pub fn init_port_positions_for_in_layer_crossings(
         &mut self,
         a: &LGraphArena,
@@ -680,7 +671,6 @@ impl CrossingsCounter {
 // ---------------------------------------------------------------------------
 // HyperedgeCrossingsCounter
 
-/// Port of `HyperedgeCrossingsCounter.countCrossings`.
 ///
 /// NOTE on fidelity: Java's `Hyperedge.compareTo` and
 /// `HyperedgeCorner.compareTo` fall back to `hashCode()` differences as a
@@ -1005,7 +995,6 @@ pub fn count_hyperedge_crossings(
 // ---------------------------------------------------------------------------
 // AllCrossingsCounter
 
-/// Port of `AllCrossingsCounter`.
 pub struct AllCrossingsCounter {
     crossing_counter: Option<CrossingsCounter>,
     has_hyperedges_east_of_index: Vec<bool>,

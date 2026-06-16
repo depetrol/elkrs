@@ -1,4 +1,3 @@
-//! Port of `LGraphToCGraphTransformer`.
 
 use elk_core::options::{Direction, EdgeRouting, PortSide};
 use elk_graph::math::{ElkRectangle, KVector};

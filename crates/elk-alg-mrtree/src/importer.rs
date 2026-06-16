@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.mrtree.ElkGraphImporter`.
 
 use std::collections::HashMap;
 
@@ -9,7 +8,6 @@ use elk_graph::graph::{ElkGraph, NodeId};
 use crate::graph::{TArena, TGraph, TNodeId};
 use crate::options;
 
-/// Port of `ElkGraphImporter.importGraph`.
 pub fn import_graph(g: &ElkGraph, elkgraph: NodeId) -> (TArena, TGraph) {
     let mut arena = TArena::default();
     let mut tgraph = TGraph::default();
@@ -27,7 +25,6 @@ pub fn import_graph(g: &ElkGraph, elkgraph: NodeId) -> (TArena, TGraph) {
     (arena, tgraph)
 }
 
-/// Port of `ElkGraphImporter.transformNodes`.
 fn transform_nodes(
     g: &ElkGraph,
     parent_node: NodeId,
@@ -63,7 +60,7 @@ fn transform_nodes(
     }
 }
 
-/// Port of `ElkEdge.isSelfloop()`: every source and target connects to the
+/// Every source and target connects to the
 /// same node.
 fn is_selfloop(g: &ElkGraph, edge: elk_graph::graph::EdgeId) -> bool {
     let e = g.edge(edge);
@@ -74,7 +71,6 @@ fn is_selfloop(g: &ElkGraph, edge: elk_graph::graph::EdgeId) -> bool {
     }
 }
 
-/// Port of `ElkGraphImporter.transformEdges`.
 fn transform_edges(
     g: &ElkGraph,
     parent_node: NodeId,
@@ -115,7 +111,6 @@ fn transform_edges(
     }
 }
 
-/// Port of `ElkGraphImporter.applyLayout`.
 pub fn apply_layout(arena: &TArena, tgraph: &TGraph, g: &mut ElkGraph) {
     // get the corresponding kGraph
     let elkgraph = tgraph.origin.expect("t-graph without origin");

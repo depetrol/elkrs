@@ -1,4 +1,3 @@
-//! Port of `EdgeAndLayerConstraintEdgeReverser`.
 
 use elk_core::options::PortSide;
 

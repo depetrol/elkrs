@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.compound`: cross-hierarchy edge
+//! Cross-hierarchy edge
 //! splitting for compound (INCLUDE_CHILDREN) layout.
 //!
 //! `CompoundGraphPreprocessor` splits cross-hierarchy edges into per-level
@@ -17,7 +17,7 @@ use crate::lgraph_util::{self, PortPropertyHolder};
 use crate::options_gen as lopts;
 use crate::options_gen::{GraphProperties, PortType};
 
-/// Port of `CrossHierarchyEdge`: one segment of a cross-hierarchy edge in a
+/// One segment of a cross-hierarchy edge in a
 /// single graph of the hierarchy.
 #[derive(Clone, Debug, PartialEq)]
 pub struct CrossHierarchyEdge {
@@ -59,9 +59,6 @@ impl CrossHierarchyEdge {
     }
 }
 
-/// Port of `InternalProperties.CROSS_HIERARCHY_MAP`
-/// (`Multimap<LEdge, CrossHierarchyEdge>`): for each original edge, its
-/// per-level segments in hierarchy order.
 #[derive(Clone, Default, Debug, PartialEq)]
 pub struct CrossHierarchyMap(pub indexmap::IndexMap<LEdgeId, Vec<CrossHierarchyEdge>>);
 
@@ -97,7 +94,6 @@ struct Preprocessor {
     dummy_node_map: indexmap::IndexMap<LPortId, LNodeId>,
 }
 
-/// Port of `CompoundGraphPreprocessor.process`.
 pub fn preprocess(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     let mut pre = Preprocessor {
         cross_hierarchy_map: CrossHierarchyMap::default(),
@@ -115,7 +111,6 @@ pub fn preprocess(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
 }
 
 impl Preprocessor {
-    /// Port of `setSidesOfPortsToSidesOfDummyNodes`.
     fn set_sides_of_ports_to_sides_of_dummy_nodes(&self, a: &mut LGraphArena) {
         for (&external_port, &dummy_node) in &self.dummy_node_map {
             a.node(dummy_node)
@@ -142,7 +137,6 @@ impl Preprocessor {
         }
     }
 
-    /// Port of `transformHierarchyEdges`.
     fn transform_hierarchy_edges(
         &mut self,
         a: &mut LGraphArena,
@@ -263,7 +257,6 @@ impl Preprocessor {
         exported_external_ports
     }
 
-    /// Port of `moveLabelsAndRemoveOriginalEdges`.
     fn move_labels_and_remove_original_edges(&mut self, a: &mut LGraphArena, graph: LGraphId) {
         let orig_edges: Vec<LEdgeId> = self.cross_hierarchy_map.0.keys().copied().collect();
         for orig_edge in orig_edges {
@@ -315,7 +308,6 @@ impl Preprocessor {
         }
     }
 
-    /// Port of `processInnerHierarchicalEdgeSegments`.
     fn process_inner_hierarchical_edge_segments(
         &mut self,
         a: &mut LGraphArena,
@@ -419,7 +411,6 @@ impl Preprocessor {
         }
     }
 
-    /// Port of `connectChild`.
     fn connect_child(
         &mut self,
         a: &mut LGraphArena,
@@ -442,7 +433,6 @@ impl Preprocessor {
         );
     }
 
-    /// Port of `connectSiblings`.
     fn connect_siblings(
         &mut self,
         a: &mut LGraphArena,
@@ -476,7 +466,6 @@ impl Preprocessor {
         );
     }
 
-    /// Port of `processOuterHierarchicalEdgeSegments`.
     fn process_outer_hierarchical_edge_segments(
         &mut self,
         a: &mut LGraphArena,
@@ -544,7 +533,6 @@ impl Preprocessor {
         }
     }
 
-    /// Port of `processInsideSelfLoops`.
     fn process_inside_self_loops(
         &mut self,
         a: &mut LGraphArena,
@@ -626,7 +614,7 @@ impl Preprocessor {
         d
     }
 
-    /// Port of `introduceHierarchicalEdgeSegment`. The created/reused external
+    /// The created/reused external
     /// port is recorded in `created` and `current` (mirroring Java's identity
     /// comparison of the returned port).
     #[allow(clippy::too_many_arguments)]
@@ -744,7 +732,6 @@ impl Preprocessor {
         }
     }
 
-    /// Port of `createExternalPortDummy` (the compound-package version).
     fn create_external_port_dummy(
         &mut self,
         a: &mut LGraphArena,
@@ -838,7 +825,6 @@ impl Preprocessor {
         dummy_node
     }
 
-    /// Port of `createPortForDummy`.
     fn create_port_for_dummy(
         &self,
         a: &mut LGraphArena,
@@ -864,7 +850,6 @@ impl Preprocessor {
         port
     }
 
-    /// Port of `calculateNetFlow`.
     fn calculate_net_flow(&self, a: &LGraphArena, port: LPortId) -> i32 {
         let node = a.port(port).node.unwrap();
         let inside_self_loops_enabled: bool =
@@ -913,7 +898,6 @@ impl Preprocessor {
     }
 }
 
-/// Port of `createDummyEdge`.
 fn create_dummy_edge(a: &mut LGraphArena, orig_edge: LEdgeId) -> LEdgeId {
     let dummy_edge = a.create_edge();
     let props = a.edge(orig_edge).properties.clone();
@@ -922,7 +906,6 @@ fn create_dummy_edge(a: &mut LGraphArena, orig_edge: LEdgeId) -> LEdgeId {
     dummy_edge
 }
 
-/// Port of `createExternalPortProperties`.
 fn create_external_port_properties(a: &LGraphArena, graph: LGraphId) -> PropertyMap {
     let holder = PropertyMap::new();
     let offset = a.graph(graph).properties.get::<f64>(&lopts::SPACING_EDGE_EDGE) / 2.0;
@@ -936,7 +919,6 @@ fn port_label_placement_is_fixed(placement: EnumSet<PortLabelPlacement>) -> bool
         && !placement.contains(PortLabelPlacement::OUTSIDE)
 }
 
-/// Port of `getShallowestEdgeSegment`.
 fn get_shallowest_edge_segment(edge_segments: &[CrossHierarchyEdge]) -> i64 {
     let mut result = -1;
     let mut index = 0;
@@ -1002,7 +984,6 @@ fn hierarchy_level(a: &LGraphArena, nested: LGraphId, top: LGraphId) -> i32 {
 
 const TOLERANCE: f64 = 0.000_01;
 
-/// Port of `CompoundGraphPostprocessor.process`.
 pub fn postprocess(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     let add_unnecessary_bendpoints: bool =
         a.graph(graph).properties.get(&lopts::UNNECESSARY_BENDPOINTS);
@@ -1130,7 +1111,7 @@ fn port_absolute_anchor(a: &LGraphArena, port: LPortId) -> KVector {
     )
 }
 
-/// Port of `clearJunctionPoints`. Returns the (possibly new, possibly cleared)
+/// Returns the (possibly new, possibly cleared)
 /// junction-point chain to be filled and written back by the caller.
 fn clear_junction_points(
     a: &mut LGraphArena,
@@ -1160,7 +1141,6 @@ fn clear_junction_points(
     junction_points
 }
 
-/// Port of `copyJunctionPoints`.
 fn copy_junction_points(
     a: &LGraphArena,
     source: LEdgeId,
@@ -1177,7 +1157,6 @@ fn copy_junction_points(
     }
 }
 
-/// Port of `copyLabelsBack`.
 fn copy_labels_back(
     a: &mut LGraphArena,
     hierarchy_segment: LEdgeId,

@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.p1treeify.DFSTreeifyer`: removes the
+//! Removes the
 //! edges that destroy the tree property and stores them for reinsertion by
 //! the `Untreeifyer` after node placement.
 
@@ -6,7 +6,6 @@ use crate::graph::{TArena, TEdgeId, TGraph, TNodeId};
 use crate::options;
 use crate::options::TreeifyingOrder;
 
-/// Port of `DFSTreeifyer.process`.
 pub fn process(arena: &mut TArena, graph: &mut TGraph) {
     // init: number the nodes
     let mut id = 0;
@@ -21,7 +20,6 @@ pub fn process(arena: &mut TArena, graph: &mut TGraph) {
     collect_edges(arena, graph, &mut visited, &mut eliminated);
 }
 
-/// Port of `DFSTreeifyer.collectEdges`.
 fn collect_edges(
     arena: &mut TArena,
     graph: &mut TGraph,
@@ -61,7 +59,6 @@ fn collect_edges(
     graph.removable_edges = std::mem::take(eliminated);
 }
 
-/// Port of `DFSTreeifyer.dfs`.
 fn dfs(arena: &TArena, tnode: TNodeId, visited: &mut [u8], eliminated: &mut Vec<TEdgeId>) {
     visited[arena.node(tnode).id as usize] = 1;
 
@@ -81,8 +78,6 @@ fn dfs(arena: &TArena, tnode: TNodeId, visited: &mut [u8], eliminated: &mut Vec<
     }
 }
 
-/// Port of `DFSTreeifyer.bfs` (including its quirk of possibly enqueueing a
-/// node more than once, which then eliminates all of its outgoing edges).
 fn bfs(arena: &TArena, start_node: TNodeId, visited: &mut [u8], eliminated: &mut Vec<TEdgeId>) {
     let mut node_queue: std::collections::VecDeque<TNodeId> = std::collections::VecDeque::new();
     node_queue.push_back(start_node);

@@ -1,4 +1,4 @@
-//! Port of `intermediate/FinalSplineBendpointsCalculator.java`: turns
+//! Turns
 //! tentative spline routes (computed by the `SplineEdgeRouter`) into concrete
 //! bezier control points that become the bend points of the edges.
 

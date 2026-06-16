@@ -1,4 +1,4 @@
-//! Port of `InvertedPortProcessor`: inserts LONG_EDGE dummy nodes for edges
+//! Inserts LONG_EDGE dummy nodes for edges
 //! connected to input ports on the EAST side or output ports on the WEST
 //! side (inverted ports), creating in-layer connections.
 

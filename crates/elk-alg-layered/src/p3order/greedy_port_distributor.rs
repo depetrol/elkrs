@@ -1,4 +1,4 @@
-//! Port of `GreedyPortDistributor`: distributes ports greedily on a single
+//! Distributes ports greedily on a single
 //! node. Used as the sweep port distributor for
 //! `CrossMinType.TWO_SIDED_GREEDY_SWITCH`.
 
@@ -26,7 +26,6 @@ impl GreedyPortDistributor {
         }
     }
 
-    /// Port of `distributePortsWhileSweeping`.
     pub fn distribute_ports_while_sweeping(
         &mut self,
         a: &mut LGraphArena,

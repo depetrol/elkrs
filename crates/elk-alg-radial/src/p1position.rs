@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.p1position` (`EadesRadial` and the
-//! annulus wedge criteria from `p1position.wedge`).
 
 use elk_graph::graph::{ElkGraph, NodeId};
 
@@ -11,8 +9,6 @@ const CIRCLE_DEGREES: i32 = 360;
 const DEGREE_TO_RAD: f64 = std::f64::consts::PI / 180.0;
 
 impl AnnulusWedgeCriteria {
-    /// Port of `AnnulusWedgeCriteria.create` +
-    /// `IAnnulusWedgeCriteria.calculateWedgeSpace`.
     pub fn calculate_wedge_space(self, g: &ElkGraph, node: NodeId) -> f64 {
         match self {
             // AnnulusWedgeByLeafs
@@ -33,7 +29,6 @@ impl AnnulusWedgeCriteria {
     }
 }
 
-/// Port of `EadesRadial`.
 struct EadesRadial {
     radius: f64,
     sorter: Option<Box<dyn RadialSorter>>,
@@ -42,7 +37,6 @@ struct EadesRadial {
     root: NodeId,
 }
 
-/// Port of `EadesRadial.process`.
 pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
     let props = &g.node(graph).properties;
     let mut phase = EadesRadial {
@@ -56,7 +50,7 @@ pub fn process(g: &mut ElkGraph, graph: NodeId, root: NodeId) {
 }
 
 impl EadesRadial {
-    /// Port of `translate`: search for the best layout translation by looking
+    /// Search for the best layout translation by looking
     /// at each degree.
     fn translate(&mut self, g: &mut ElkGraph) {
         let mut optimal_offset = 0.0;
@@ -78,7 +72,7 @@ impl EadesRadial {
         self.position_nodes(g, root, 0.0, 0.0, util::TWO_PI, optimal_offset);
     }
 
-    /// Port of `positionNodes`: place a node in the center of a wedge and
+    /// Place a node in the center of a wedge and
     /// calculate the wedge for the next child.
     fn position_nodes(
         &mut self,

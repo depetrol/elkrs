@@ -1,4 +1,3 @@
-//! Port of `p5edges/orthogonal/HyperEdgeSegmentDependency.java`.
 //!
 //! A dependency between two `HyperEdgeSegment`s: the source segment wants to
 //! be in a lower routing slot than the target segment.
@@ -17,8 +16,6 @@ pub enum DependencyType {
     Critical,
 }
 
-/// Port of `HyperEdgeSegmentDependency` (data only; operations are free
-/// functions taking the [`SegmentStore`]).
 pub struct HyperEdgeSegmentDependency {
     /// the dependency's type.
     pub dependency_type: DependencyType,

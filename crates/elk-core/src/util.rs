@@ -2,7 +2,7 @@
 
 use elk_graph::properties::{JavaString, PropertyHolder, PropertyMap};
 
-/// Port of `IndividualSpacings`: a property holder storing spacing values
+/// A property holder storing spacing values
 /// that apply to one element only, overriding the parent's spacings.
 #[derive(Default, Clone, Debug, PartialEq)]
 pub struct IndividualSpacings {

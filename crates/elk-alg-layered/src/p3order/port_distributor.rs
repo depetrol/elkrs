@@ -1,7 +1,3 @@
-//! Port of `AbstractBarycenterPortDistributor` and its two concrete
-//! subclasses `NodeRelativePortDistributor` and `LayerTotalPortDistributor`
-//! (plus the `ISweepPortDistributor.create` factory, see
-//! [`SweepPortDistributor`]).
 //!
 //! The two subclasses only differ in `calculatePortRanks(node, rankSum,
 //! type)`, so they are merged into one struct with a `kind` discriminator.
@@ -21,7 +17,7 @@ use crate::options_gen::PortType;
 use super::greedy_port_distributor::GreedyPortDistributor;
 use super::layer_sweep::CrossMinType;
 
-/// Port of the `ISweepPortDistributor` interface: either one of the two
+/// The `ISweepPortDistributor` interface: either one of the two
 /// barycenter-based distributors or the greedy port distributor.
 pub enum SweepPortDistributor {
     /// `AbstractBarycenterPortDistributor` subclasses
@@ -31,7 +27,7 @@ pub enum SweepPortDistributor {
 }
 
 impl SweepPortDistributor {
-    /// Port of `ISweepPortDistributor.create`. Note the random consumption:
+    /// Note the random consumption:
     /// for TWO_SIDED_GREEDY_SWITCH no random boolean is drawn; for all other
     /// types one boolean is drawn during `GraphInfoHolder` construction.
     pub fn create(
@@ -68,7 +64,6 @@ impl SweepPortDistributor {
         }
     }
 
-    /// Port of `distributePortsWhileSweeping` dispatch.
     pub fn distribute_ports_while_sweeping(
         &mut self,
         a: &mut LGraphArena,
@@ -175,7 +170,6 @@ impl PortDistributor {
 
     // -------------------------------------------------- port rank assignment
 
-    /// Port of `distributePortsWhileSweeping`.
     pub fn distribute_ports_while_sweeping(
         &mut self,
         a: &mut LGraphArena,
@@ -214,7 +208,6 @@ impl PortDistributor {
         false
     }
 
-    /// Port of `calculatePortRanks(LNode[], PortType)`.
     pub fn calculate_port_ranks_layer(
         &mut self,
         a: &LGraphArena,
@@ -227,7 +220,7 @@ impl PortDistributor {
         }
     }
 
-    /// Port of the abstract `calculatePortRanks(LNode, float, PortType)`;
+    /// The abstract `calculatePortRanks(LNode, float, PortType)`;
     /// dispatches on the distributor kind.
     fn calculate_port_ranks(
         &mut self,
@@ -552,7 +545,7 @@ impl PortDistributor {
         }
     }
 
-    /// Port of `sortPorts`: sort the ports of a node using the relative
+    /// Sort the ports of a node using the relative
     /// position values as a hint for the clockwise order of ports.
     fn sort_ports(&self, a: &mut LGraphArena, node: LNodeId) {
         let mut ports = a.node(node).ports.clone();

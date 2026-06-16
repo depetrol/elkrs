@@ -1,4 +1,3 @@
-//! Port of `BetweenLayerEdgeTwoNodeCrossingsCounter`.
 //!
 //! Calculates the number of crossings for edges incident to two nodes. In
 //! the case where there is free port order and two edges go into one port,
@@ -27,7 +26,7 @@ pub struct BetweenLayerEdgeTwoNodeCrossingsCounter {
 }
 
 impl BetweenLayerEdgeTwoNodeCrossingsCounter {
-    /// Port of the constructor: sets the port positions of the neighbouring
+    /// The constructor: sets the port positions of the neighbouring
     /// layers.
     pub fn new(
         a: &LGraphArena,
@@ -213,7 +212,7 @@ fn is_below(first_port: i32, second_port: i32) -> bool {
     first_port > second_port
 }
 
-/// Port of the inner class `AdjacencyList`: the adjacency list of a node
+/// The inner class `AdjacencyList`: the adjacency list of a node
 /// holds the positions of connected ports in a neighbouring layer on the
 /// given side. The remove operation does not actually delete entries;
 /// `current_index` / `current_size` / `current_cardinality` track the

@@ -1,4 +1,3 @@
-//! Port of `p1cycles.BFSNodeOrderCycleBreaker` (BFS_NODE_ORDER).
 
 use std::collections::{BTreeMap, VecDeque};
 

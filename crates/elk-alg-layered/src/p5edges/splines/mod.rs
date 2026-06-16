@@ -1,7 +1,3 @@
-//! Port of `p5edges/splines`: `SplineEdgeRouter` (phase 5) and
-//! `SplineSegment`. The final bezier control points are computed later by the
-//! `FINAL_SPLINE_BENDPOINTS_CALCULATOR` intermediate processor (see
-//! `processors/final_spline_bendpoints_calculator.rs`).
 //!
 //! Java attaches shared, mutable `SplineSegment` objects to edges via the
 //! `SPLINE_ROUTE_START` property. Here all segments live in a

@@ -1,4 +1,3 @@
-//! Port of `ScanlineConstraintCalculator` and the `Scanline` scaffold.
 
 use std::cmp::Ordering;
 

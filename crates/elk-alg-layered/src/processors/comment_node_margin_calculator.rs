@@ -1,4 +1,4 @@
-//! Port of `CommentNodeMarginCalculator`: computes and sets the node margins
+//! Computes and sets the node margins
 //! required to place comment boxes.
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId};

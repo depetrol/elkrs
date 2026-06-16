@@ -1,4 +1,4 @@
-//! Port of `HierarchicalPortOrthogonalEdgeRouter`: routes edges connected to
+//! Routes edges connected to
 //! hierarchical ports and fixes external port dummy coordinates.
 
 use elk_core::javacompat::JavaRandom;

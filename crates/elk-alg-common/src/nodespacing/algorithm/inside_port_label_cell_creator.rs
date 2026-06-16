@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.InsidePortLabelCellCreator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{PortLabelPlacement, PortSide};
@@ -6,7 +5,7 @@ use elk_core::options::{PortLabelPlacement, PortSide};
 use crate::nodespacing::cellsystem::{CellId, ContainerArea};
 use crate::nodespacing::internal::NodeContext;
 
-/// Port of `InsidePortLabelCellCreator.createInsidePortLabelCells`. These are
+/// These are
 /// set up even when there are no inside port labels since they also determine
 /// how much space we need to place ports along the node borders.
 pub fn create_inside_port_label_cells<G: AdapterGraph>(node_context: &mut NodeContext<G>) {
@@ -33,7 +32,6 @@ pub fn create_inside_port_label_cells<G: AdapterGraph>(node_context: &mut NodeCo
     setup_east_or_west_port_label_cell(node_context, PortSide::WEST);
 }
 
-/// Port of `InsidePortLabelCellCreator.createInsidePortLabelCell`.
 fn create_inside_port_label_cell<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     container: CellId,
@@ -45,7 +43,6 @@ fn create_inside_port_label_cell<G: AdapterGraph>(
     node_context.inside_port_label_cells[port_side as usize] = Some(port_label_cell);
 }
 
-/// Port of `InsidePortLabelCellCreator.setupNorthOrSouthPortLabelCell`.
 fn setup_north_or_south_port_label_cell<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     port_side: PortSide,
@@ -78,7 +75,6 @@ fn setup_north_or_south_port_label_cell<G: AdapterGraph>(
     padding.right = surrounding.right;
 }
 
-/// Port of `InsidePortLabelCellCreator.setupEastOrWestPortLabelCell`.
 fn setup_east_or_west_port_label_cell<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     port_side: PortSide,
@@ -92,7 +88,6 @@ fn setup_east_or_west_port_label_cell<G: AdapterGraph>(
     setup_top_and_bottom_padding(node_context, port_side);
 }
 
-/// Port of `InsidePortLabelCellCreator.calculateWidthDueToLabels`.
 fn calculate_width_due_to_labels<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     port_side: PortSide,
@@ -133,7 +128,6 @@ fn calculate_width_due_to_labels<G: AdapterGraph>(
     }
 }
 
-/// Port of `InsidePortLabelCellCreator.setupTopAndBottomPadding`.
 fn setup_top_and_bottom_padding<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     port_side: PortSide,

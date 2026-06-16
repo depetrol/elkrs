@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.common.nodespacing.cellsystem`.
 //!
 //! Java models the cell system as an object graph with shared mutable cells;
 //! here all cells live in a [`CellSystem`] arena and are referenced by
@@ -7,7 +6,6 @@
 use elk_core::adapters::AdapterGraph;
 use elk_graph::math::{ElkPadding, ElkRectangle, KVector};
 
-/// Port of `ContainerArea`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum ContainerArea {
     /// The top row or left column of the container.
@@ -31,7 +29,6 @@ impl ContainerArea {
     }
 }
 
-/// Port of `HorizontalLabelAlignment`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum HorizontalLabelAlignment {
     Left,
@@ -39,7 +36,6 @@ pub enum HorizontalLabelAlignment {
     Right,
 }
 
-/// Port of `VerticalLabelAlignment`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum VerticalLabelAlignment {
     Top,
@@ -47,7 +43,6 @@ pub enum VerticalLabelAlignment {
     Bottom,
 }
 
-/// Port of `StripContainerCell.Strip`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Strip {
     /// In a vertical strip, the container's child cells are its rows.
@@ -119,7 +114,7 @@ pub enum CellKind<L> {
     Grid(GridData),
 }
 
-/// Port of `Cell`: padding, rectangle, contribution flags, plus the
+/// Padding, rectangle, contribution flags, plus the
 /// kind-specific payload.
 pub struct CellData<L> {
     /// A cell has a padding.
@@ -299,54 +294,45 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `StripContainerCell.setCell`.
     pub fn strip_set_cell(&mut self, id: CellId, area: ContainerArea, cell: CellId) {
         self.strip_mut(id).cells[area.ordinal()] = Some(cell);
     }
 
-    /// Port of `StripContainerCell.getCell`.
     pub fn strip_get_cell(&self, id: CellId, area: ContainerArea) -> Option<CellId> {
         self.strip(id).cells[area.ordinal()]
     }
 
-    /// Port of `StripContainerCell.getGap`.
     pub fn strip_gap(&self, id: CellId) -> f64 {
         self.strip(id).gap
     }
 
-    /// Port of `GridContainerCell.setCell`.
     pub fn grid_set_cell(&mut self, id: CellId, row: ContainerArea, col: ContainerArea, cell: CellId) {
         self.grid_mut(id).cells[row.ordinal()][col.ordinal()] = Some(cell);
     }
 
-    /// Port of `GridContainerCell.getCell`.
     pub fn grid_get_cell(&self, id: CellId, row: ContainerArea, col: ContainerArea) -> Option<CellId> {
         self.grid(id).cells[row.ordinal()][col.ordinal()]
     }
 
-    /// Port of `GridContainerCell.getGap`.
     pub fn grid_gap(&self, id: CellId) -> f64 {
         self.grid(id).gap
     }
 
-    /// Port of `GridContainerCell.setCenterCellMinimumSize`.
     pub fn grid_set_center_cell_minimum_size(&mut self, id: CellId, minimum_size: KVector) {
         self.grid_mut(id).center_cell_minimum_size = Some(minimum_size);
     }
 
-    /// Port of `GridContainerCell.setOnlyCenterCellContributesToMinimumSize`.
     pub fn grid_set_only_center_cell_contributes(&mut self, id: CellId, contribution: bool) {
         self.grid_mut(id).only_center_cell_contributes_to_minimum_size = contribution;
     }
 
-    /// Port of `GridContainerCell.getCenterCellRectangle`.
     pub fn grid_center_cell_rectangle(&self, id: CellId) -> ElkRectangle {
         self.grid(id).center_cell_rect
     }
 
     // -------------------------------------------------------------- LabelCell
 
-    /// Port of `LabelCell.addLabel`. The label's size must be passed in since
+    /// The label's size must be passed in since
     /// the arena has no access to the graph adapter.
     pub fn label_add_label(&mut self, id: CellId, label: L, label_size: KVector) {
         let data = self.label_mut(id);
@@ -371,14 +357,12 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `LabelCell.hasLabels`.
     pub fn label_has_labels(&self, id: CellId) -> bool {
         !self.label(id).labels.is_empty()
     }
 
     // ---------------------------------------------------------- minimum size
 
-    /// Port of `Cell.getMinimumWidth` (dispatching on the cell kind).
     pub fn min_width(&self, id: CellId) -> f64 {
         let cell = &self.cells[id];
         let padding = cell.padding;
@@ -445,7 +429,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `Cell.getMinimumHeight` (dispatching on the cell kind).
     pub fn min_height(&self, id: CellId) -> f64 {
         let cell = &self.cells[id];
         let padding = cell.padding;
@@ -501,7 +484,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `ContainerCell.minWidthOfCell`.
     fn min_width_of_cell(&self, cell: Option<CellId>, respect_contribution_flag: bool) -> f64 {
         // If there's no cell, there's no minimum width
         let Some(id) = cell else { return 0.0 };
@@ -521,7 +503,6 @@ impl<L: Copy> CellSystem<L> {
         self.min_width(id)
     }
 
-    /// Port of `ContainerCell.minHeightOfCell`.
     fn min_height_of_cell(&self, cell: Option<CellId>, respect_contribution_flag: bool) -> f64 {
         let Some(id) = cell else { return 0.0 };
 
@@ -538,7 +519,6 @@ impl<L: Copy> CellSystem<L> {
         self.min_height(id)
     }
 
-    /// Port of `ContainerCell.applyHorizontalLayout`.
     fn apply_horizontal_layout(&mut self, cell: Option<CellId>, x: f64, width: f64) {
         if let Some(id) = cell {
             let rect = &mut self.cells[id].rect;
@@ -547,7 +527,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `ContainerCell.applyVerticalLayout`.
     fn apply_vertical_layout(&mut self, cell: Option<CellId>, y: f64, height: f64) {
         if let Some(id) = cell {
             let rect = &mut self.cells[id].rect;
@@ -558,7 +537,6 @@ impl<L: Copy> CellSystem<L> {
 
     // -------------------------------------------- StripContainerCell layout
 
-    /// Port of `StripContainerCell.minCellWidths`.
     fn strip_min_cell_widths(&self, id: CellId, respect_contribution_flag: bool) -> [f64; 3] {
         let s = self.strip(id);
         let mut cell_widths = [
@@ -574,7 +552,6 @@ impl<L: Copy> CellSystem<L> {
         cell_widths
     }
 
-    /// Port of `StripContainerCell.minCellHeights`.
     fn strip_min_cell_heights(&self, id: CellId, respect_contribution_flag: bool) -> [f64; 3] {
         let s = self.strip(id);
         let mut cell_heights = [
@@ -589,8 +566,6 @@ impl<L: Copy> CellSystem<L> {
         cell_heights
     }
 
-    /// Port of `ContainerCell.layoutChildrenHorizontally` (dispatches on the
-    /// container kind; only container cells may be passed).
     pub fn layout_children_horizontally(&mut self, id: CellId) {
         match &self.cells[id].kind {
             CellKind::Strip(_) => self.strip_layout_children_horizontally(id),
@@ -599,7 +574,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `ContainerCell.layoutChildrenVertically`.
     pub fn layout_children_vertically(&mut self, id: CellId) {
         match &self.cells[id].kind {
             CellKind::Strip(_) => self.strip_layout_children_vertically(id),
@@ -612,7 +586,6 @@ impl<L: Copy> CellSystem<L> {
         matches!(self.cells[id].kind, CellKind::Strip(_) | CellKind::Grid(_))
     }
 
-    /// Port of `StripContainerCell.layoutChildrenHorizontally`.
     fn strip_layout_children_horizontally(&mut self, id: CellId) {
         let cell_rectangle = self.cells[id].rect;
         let cell_padding = self.cells[id].padding;
@@ -682,7 +655,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `StripContainerCell.layoutChildrenVertically`.
     fn strip_layout_children_vertically(&mut self, id: CellId) {
         let cell_rectangle = self.cells[id].rect;
         let cell_padding = self.cells[id].padding;
@@ -753,7 +725,6 @@ impl<L: Copy> CellSystem<L> {
 
     // --------------------------------------------- GridContainerCell layout
 
-    /// Port of `GridContainerCell.minColumnWidths`.
     fn grid_min_column_widths(
         &self,
         id: CellId,
@@ -774,7 +745,6 @@ impl<L: Copy> CellSystem<L> {
         col_widths
     }
 
-    /// Port of `GridContainerCell.minWidthOfColumn`.
     fn grid_min_width_of_column(
         &self,
         id: CellId,
@@ -814,7 +784,6 @@ impl<L: Copy> CellSystem<L> {
         max_min_width
     }
 
-    /// Port of `GridContainerCell.minRowHeights`.
     fn grid_min_row_heights(&self, id: CellId, respect_contribution_flag: bool) -> [f64; 3] {
         let g = self.grid(id);
         let mut row_heights = [
@@ -829,7 +798,6 @@ impl<L: Copy> CellSystem<L> {
         row_heights
     }
 
-    /// Port of `GridContainerCell.minHeightOfRow`.
     fn grid_min_height_of_row(
         &self,
         id: CellId,
@@ -854,7 +822,6 @@ impl<L: Copy> CellSystem<L> {
         max_min_height
     }
 
-    /// Port of `GridContainerCell.layoutChildrenHorizontally`.
     fn grid_layout_children_horizontally(&mut self, id: CellId) {
         // How we're going to do this depends on whether we're in tabular mode or
         // not. If so, the column widths across all rows are locked
@@ -871,7 +838,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `GridContainerCell.layoutChildrenVertically`.
     fn grid_layout_children_vertically(&mut self, id: CellId) {
         let cell_rectangle = self.cells[id].rect;
         let cell_padding = self.cells[id].padding;
@@ -930,7 +896,6 @@ impl<L: Copy> CellSystem<L> {
         );
     }
 
-    /// Port of `GridContainerCell.applyWidthsToRow`.
     fn grid_apply_widths_to_row(&mut self, id: CellId, row: ContainerArea, mut col_widths: [f64; 3]) {
         let cell_rectangle = self.cells[id].rect;
         let cell_padding = self.cells[id].padding;
@@ -991,7 +956,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `GridContainerCell.applyWidthToColumn`.
     fn grid_apply_width_to_column(
         &mut self,
         id: CellId,
@@ -1005,7 +969,6 @@ impl<L: Copy> CellSystem<L> {
         }
     }
 
-    /// Port of `GridContainerCell.applyHeightToRow`.
     fn grid_apply_height_to_row(
         &mut self,
         id: CellId,
@@ -1020,7 +983,6 @@ impl<L: Copy> CellSystem<L> {
     }
 }
 
-/// Port of `GridContainerCell.sumWithGaps`.
 fn sum_with_gaps(values: &[f64; 3], gap: f64) -> f64 {
     let mut sum = 0.0;
     let mut active_components = 0;
@@ -1036,7 +998,7 @@ fn sum_with_gaps(values: &[f64; 3], gap: f64) -> f64 {
     sum
 }
 
-/// Port of `LabelCell.applyLabelLayout`: assigns positions to the labels of
+/// Assigns positions to the labels of
 /// the given label cell based on its cell rectangle.
 pub fn apply_label_layout<G: AdapterGraph>(cs: &CellSystem<G::L>, id: CellId, g: &mut G) {
     let data = cs.label(id);
@@ -1047,7 +1009,6 @@ pub fn apply_label_layout<G: AdapterGraph>(cs: &CellSystem<G::L>, id: CellId, g:
     }
 }
 
-/// Port of `LabelCell.applyHorizontalModeLabelLayout`.
 fn apply_horizontal_mode_label_layout<G: AdapterGraph>(cs: &CellSystem<G::L>, id: CellId, g: &mut G) {
     let cell_rect = cs.rect(id);
     let cell_padding = cs.padding(id);
@@ -1089,7 +1050,6 @@ fn apply_horizontal_mode_label_layout<G: AdapterGraph>(cs: &CellSystem<G::L>, id
     }
 }
 
-/// Port of `LabelCell.applyVerticalModeLabelLayout`.
 fn apply_vertical_mode_label_layout<G: AdapterGraph>(cs: &CellSystem<G::L>, id: CellId, g: &mut G) {
     let cell_rect = cs.rect(id);
     let cell_padding = cs.padding(id);

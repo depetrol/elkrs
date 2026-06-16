@@ -1,4 +1,4 @@
-//! Port of `SelfLoopPortRestorer`: restores self loop ports and computes
+//! Restores self loop ports and computes
 //! self loop types. Does not restore the self loops themselves.
 
 use elk_core::options::PortConstraints;

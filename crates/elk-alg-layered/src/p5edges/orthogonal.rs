@@ -1,5 +1,3 @@
-//! Port of `p5edges/OrthogonalEdgeRouter.java` (the `process` method; the
-//! processor configuration lives in `p5edges/mod.rs`).
 //!
 //! Edge routing implementation that creates orthogonal bend points.
 //!
@@ -133,7 +131,7 @@ fn is_external_west_or_east_port(a: &LGraphArena, node: LNodeId) -> bool {
         && (ext_port_side == PortSide::WEST || ext_port_side == PortSide::EAST)
 }
 
-/// Port of `LGraphUtil.placeNodesHorizontally`: places the nodes of the given
+/// Places the nodes of the given
 /// layer, aligning them based on their alignment options or port counts.
 /// (Also used by the polyline and spline edge routers.)
 pub(crate) fn place_nodes_horizontally(a: &mut LGraphArena, layer: LayerId, xoffset: f64) {

@@ -16,7 +16,6 @@ use elk_graph::math::{ElkPadding, Spacing};
 use elk_graph::properties::Property;
 
 elk_enum! {
-    /// Port of `disco.options.CompactionStrategy`.
     pub enum CompactionStrategy {
         POLYOMINO,
     }

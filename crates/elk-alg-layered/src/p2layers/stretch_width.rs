@@ -1,4 +1,3 @@
-//! Port of `StretchWidthLayerer` (`org.eclipse.elk.alg.layered.p2layers`).
 //!
 //! StretchWidth layering algorithm (Nikolov, Tarassov, Branke), designed to
 //! create a layering as narrow as possible.
@@ -6,7 +5,6 @@
 use crate::graph::{LGraphArena, LGraphId, LNodeId, NodeType};
 use crate::options_gen as lopts;
 
-/// Port of `StretchWidthLayerer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // if no nodes need to be placed we can stop right here
     if a.graph(graph).layerless_nodes.is_empty() {
@@ -158,7 +156,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `getRank(LNode)`: max(d⁺(v), max(d⁺(u) : (u,v) ∈ E)).
+/// Max(d⁺(v), max(d⁺(u) : (u,v) ∈ E)).
 fn get_rank(a: &LGraphArena, node: LNodeId) -> i32 {
     let mut max = a.node_outgoing_edges(node).len() as i32;
     for pre_edge in a.node_incoming_edges(node) {
@@ -169,7 +167,6 @@ fn get_rank(a: &LGraphArena, node: LNodeId) -> i32 {
     max
 }
 
-/// Port of `getAverageOutDegree()`; Java accumulates and divides in `float`.
 fn get_average_out_degree(a: &LGraphArena, graph: LGraphId) -> f32 {
     let mut all_out = 0f32;
     for &node in &a.graph(graph).layerless_nodes {
@@ -178,7 +175,6 @@ fn get_average_out_degree(a: &LGraphArena, graph: LGraphId) -> f32 {
     all_out / a.graph(graph).layerless_nodes.len() as f32
 }
 
-/// Port of `updateOutGoing(Layer)`.
 fn update_out_going(
     a: &LGraphArena,
     current_layer: crate::graph::LayerId,

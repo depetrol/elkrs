@@ -1,4 +1,4 @@
-//! Port of `NorthSouthPortPostprocessor`: removes the dummy nodes created by
+//! Removes the dummy nodes created by
 //! the `NorthSouthPortPreprocessor` and routes the edges properly.
 
 use elk_core::options::{EdgeRouting, PortSide};

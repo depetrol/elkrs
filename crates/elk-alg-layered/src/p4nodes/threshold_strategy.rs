@@ -1,4 +1,4 @@
-//! Port of `p4nodes/bk/ThresholdStrategy.java`: threshold calculation used by
+//! Threshold calculation used by
 //! the BK compactor to favor additional straight edges over compactness.
 //!
 //! Java models this as an abstract class with `NullThresholdStrategy` and
@@ -117,7 +117,7 @@ impl ThresholdStrategy {
         }
     }
 
-    /// Port of `SimpleThresholdStrategy.pickEdge`. Mutates `pp`: if no valid
+    /// Mutates `pp`: if no valid
     /// edge was picked, `pp.edge` is `None` and `pp.has_edges` indicates if
     /// there are possible candidate edges that might become valid later.
     fn pick_edge(&self, a: &LGraphArena, bal: &BKAlignedLayout, pp: &mut Postprocessable) {
@@ -168,7 +168,7 @@ impl ThresholdStrategy {
         pp.edge = None;
     }
 
-    /// Port of `SimpleThresholdStrategy.getBound`. Only regards root and last
+    /// Only regards root and last
     /// nodes of a block.
     fn get_bound(
         &mut self,
@@ -281,7 +281,6 @@ impl ThresholdStrategy {
         }
     }
 
-    /// Port of `SimpleThresholdStrategy.process`.
     fn process_postprocessable(
         a: &LGraphArena,
         ni: &NeighborhoodInformation,

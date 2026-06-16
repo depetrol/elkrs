@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.common.compaction.oned` (and the `Scanline`
-//! scaffold from `org.eclipse.elk.alg.common.compaction`). Implements a
-//! one-dimensional constraint-graph compaction of a set of rectangles.
 //!
 //! The Java object graph (CNode <-> CGroup <-> CGraph with bidirectional
 //! references) is modelled here with index-based arenas held inside [`CGraph`].

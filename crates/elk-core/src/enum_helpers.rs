@@ -108,24 +108,21 @@ impl PortConstraints {
 }
 
 impl PortLabelPlacement {
-    /// Port of `PortLabelPlacement.inside()`.
     pub fn inside() -> EnumSet<PortLabelPlacement> {
         EnumSet::of(&[PortLabelPlacement::INSIDE])
     }
 
-    /// Port of `PortLabelPlacement.outside()`.
     pub fn outside() -> EnumSet<PortLabelPlacement> {
         EnumSet::of(&[PortLabelPlacement::OUTSIDE])
     }
 
-    /// Port of `PortLabelPlacement.isFixed(Set)`: neither INSIDE nor OUTSIDE
+    /// Neither INSIDE nor OUTSIDE
     /// is included.
     pub fn is_fixed(placement: EnumSet<PortLabelPlacement>) -> bool {
         !placement.contains(PortLabelPlacement::INSIDE)
             && !placement.contains(PortLabelPlacement::OUTSIDE)
     }
 
-    /// Port of `PortLabelPlacement.isValid(Set)`.
     pub fn is_valid(placement: EnumSet<PortLabelPlacement>) -> bool {
         let inside_outside = [PortLabelPlacement::INSIDE, PortLabelPlacement::OUTSIDE];
         if inside_outside.iter().filter(|&&v| placement.contains(v)).count() > 1 {
@@ -144,7 +141,6 @@ impl PortLabelPlacement {
 }
 
 impl NodeLabelPlacement {
-    /// Port of `NodeLabelPlacement.isValid(Set)`.
     pub fn is_valid(placement: EnumSet<NodeLabelPlacement>) -> bool {
         let inside_outside = [NodeLabelPlacement::INSIDE, NodeLabelPlacement::OUTSIDE];
         if inside_outside.iter().filter(|&&v| placement.contains(v)).count() > 1 {

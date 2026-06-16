@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.intermediate.compaction.VerticalSegment`.
 //!
 //! Represents a vertical segment on a single `LEdge` that is merged with
 //! intersecting `VerticalSegment`s. Mirrors the Java mutable struct; ELK's
@@ -30,7 +29,6 @@ pub struct JpRef {
     pub index: usize,
 }
 
-/// Port of `VerticalSegment` (a `Comparable`).
 #[derive(Clone, Debug)]
 pub struct VerticalSegment {
     /// Nodes that may become the parent of the CNode representing this segment

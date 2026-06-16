@@ -1,4 +1,3 @@
-//! Port of `ReversedEdgeRestorer`.
 
 use crate::graph::{LGraphArena, LGraphId};
 use crate::internal_properties as iprops;

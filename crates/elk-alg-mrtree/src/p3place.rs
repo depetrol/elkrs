@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.p3place.NodePlacer`: the
+//! The
 //! node-positioning algorithm for general trees by John Q. Walker II.
 
 use elk_core::options_gen::Direction;
@@ -41,7 +41,6 @@ struct NodePlacer {
     y_top_adjustment: f64,
 }
 
-/// Port of `NodePlacer.process`.
 pub fn process(arena: &mut TArena, graph: &mut TGraph) {
     // set the settings according to the user inputs
     let spacing: f64 = graph.properties.get(&options::SPACING_NODE_NODE);
@@ -74,7 +73,6 @@ pub fn process(arena: &mut TArena, graph: &mut TGraph) {
 }
 
 impl NodePlacer {
-    /// Port of `NodePlacer.firstWalk`.
     fn first_walk(&self, arena: &mut TArena, c_n: TNodeId, level: i32) {
         arena.node_mut(c_n).modifier = 0.0;
         let l_s = arena.node(c_n).left_sibling;
@@ -115,7 +113,6 @@ impl NodePlacer {
         }
     }
 
-    /// Port of `NodePlacer.apportion`.
     fn apportion(&self, arena: &mut TArena, c_n: TNodeId, _level: i32) {
         // initialize the leftmost and neighbor corresponding to the root of
         // the subtree
@@ -192,7 +189,6 @@ impl NodePlacer {
         }
     }
 
-    /// Port of `NodePlacer.meanNodeWidth`.
     fn mean_node_width(
         &self,
         arena: &TArena,
@@ -217,7 +213,6 @@ impl NodePlacer {
         node_width
     }
 
-    /// Port of `NodePlacer.secondWalk`.
     fn second_walk(&self, arena: &mut TArena, t_node: Option<TNodeId>, y_coor: f64, modsum: f64) {
         if let Some(t_node) = t_node {
             // the x-position is the sum of the preliminary coordinate and

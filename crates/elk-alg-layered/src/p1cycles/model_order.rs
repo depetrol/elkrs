@@ -1,4 +1,3 @@
-//! Port of `p1cycles.ModelOrderCycleBreaker` (CYCLE_BREAKING_STRATEGY = MODEL_ORDER).
 //!
 //! Reverses all edges that go against the (group) model order, i.e. edges from
 //! high model order to low model order.

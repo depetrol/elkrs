@@ -1,8 +1,7 @@
-//! Port of `org.eclipse.elk.alg.common.utils.Utils`.
 
 use elk_graph::math::{ElkRectangle, KVector};
 
-/// Port of `Utils.overlap`: the factor by which the line connecting the two
+/// The factor by which the line connecting the two
 /// rectangle centers has to be stretched so that the rectangles just touch.
 pub fn overlap(r1: &ElkRectangle, r2: &ElkRectangle) -> f64 {
     let horizontal_overlap = f64::min(
@@ -38,7 +37,7 @@ pub fn overlap(r1: &ElkRectangle, r2: &ElkRectangle) -> f64 {
     ) + 1.0
 }
 
-/// Port of `Utils.getRectEdges`: the four edges of a rectangle, in Java's
+/// The four edges of a rectangle, in Java's
 /// order.
 pub fn get_rect_edges(r: &ElkRectangle) -> [(KVector, KVector); 4] {
     [

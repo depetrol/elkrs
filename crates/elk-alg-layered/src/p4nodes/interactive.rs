@@ -1,4 +1,3 @@
-//! Port of `InteractiveNodePlacer`.
 //!
 //! A node placer that keeps the pre-existing y coordinates of nodes. As far as
 //! dummy nodes are concerned, the interactive node placer tries to compute

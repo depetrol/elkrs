@@ -1,4 +1,4 @@
-//! Port of `CrossingMatrixFiller`: manages the crossing matrix and fills it
+//! Manages the crossing matrix and fills it
 //! on demand. It needs to be reinitialized for each free layer. For each
 //! layer the `node.id` fields MUST be set from 0 to `layer.size() - 1`!
 

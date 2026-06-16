@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.radial.intermediate.optimization`
-//! (`IEvaluation`, `EdgeLengthOptimization`, `EdgeLengthPositionOptimization`,
-//! `CrossingMinimizationPosition`).
 
 use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::math::KVector;
@@ -10,9 +7,6 @@ use crate::p2routing::clip_vector;
 use crate::util;
 
 impl RadialTranslationStrategy {
-    /// Port of `RadialTranslationStrategy.create`; `NONE` maps to Java's
-    /// `null`. The strategies are stateless, so the enum itself acts as the
-    /// `IEvaluation` instance.
     pub fn create(self) -> Option<RadialTranslationStrategy> {
         match self {
             RadialTranslationStrategy::NONE => None,
@@ -20,7 +14,6 @@ impl RadialTranslationStrategy {
         }
     }
 
-    /// Port of `IEvaluation.evaluate`.
     pub fn evaluate(self, g: &ElkGraph, root: NodeId) -> f64 {
         match self {
             RadialTranslationStrategy::NONE => unreachable!(),
@@ -33,7 +26,7 @@ impl RadialTranslationStrategy {
     }
 }
 
-/// Port of `EdgeLengthOptimization.evaluate`: sum of the clipped length of
+/// Sum of the clipped length of
 /// each outgoing edge of the root.
 fn edge_length(g: &ElkGraph, root: NodeId) -> f64 {
     let mut edge_length = 0.0;
@@ -73,7 +66,7 @@ fn edge_length(g: &ElkGraph, root: NodeId) -> f64 {
     edge_length
 }
 
-/// Port of `EdgeLengthPositionOptimization.evaluate`. Java NPEs when the
+/// Java NPEs when the
 /// target's `POSITION` is unset; here the unset case yields `(0, 0)`.
 fn edge_length_position(g: &ElkGraph, root: NodeId) -> f64 {
     let mut edge_length = 0.0;
@@ -96,7 +89,6 @@ fn edge_length_position(g: &ElkGraph, root: NodeId) -> f64 {
     edge_length
 }
 
-/// Port of `CrossingMinimizationPosition.evaluate`.
 fn crossing_minimization(g: &ElkGraph, root: NodeId) -> f64 {
     let mut crossings = 0;
     let nodes = util::get_successors(g, root);
@@ -113,9 +105,6 @@ fn crossing_minimization(g: &ElkGraph, root: NodeId) -> f64 {
     crossings as f64
 }
 
-/// Port of `CrossingMinimizationPosition.isCrossing`, including its quirks:
-/// `rootY` is computed from the root's x/width (Java bug preserved), and the
-/// `POSITION` property is mutated in place, accumulating across calls.
 fn is_crossing(g: &ElkGraph, root: NodeId, node1: NodeId, node2: NodeId) -> bool {
     let root_shape = &g.node(root).shape;
     let root_x = root_shape.x + root_shape.width / 2.0;

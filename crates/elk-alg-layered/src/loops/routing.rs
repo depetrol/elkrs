@@ -1,7 +1,3 @@
-//! Port of `intermediate.loops.routing`: `RoutingDirector`, `LabelPlacer`,
-//! `RoutingSlotAssigner`, `OrthogonalSelfLoopRouter` and its subclasses
-//! `PolylineSelfLoopRouter` and `SplineSelfLoopRouter` (which reuse the
-//! orthogonal bend points and merely modify them).
 
 use std::collections::VecDeque;
 
@@ -35,7 +31,7 @@ fn l_port_id(a: &LGraphArena, sl_holder: &SelfLoopHolder, sl_port: SlPortIdx) ->
     a.port(sl_holder.sl_ports[sl_port].l_port).id
 }
 
-/// Port of `RoutingDirector.determineLoopRoutes`: sets the leftmost and
+/// Sets the leftmost and
 /// rightmost ports of each hyper loop in the given holder.
 pub fn determine_loop_routes(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     // Start by giving IDs to all ports according to their order in the port list
@@ -324,7 +320,7 @@ fn compute_penalties(a: &LGraphArena, sl_holder: &SelfLoopHolder) -> Vec<i32> {
 // ---------------------------------------------------------------------------
 // LabelPlacer
 
-/// Port of `LabelPlacer.placeLabels`. Label management is not ported; it only
+/// Label management is not ported; it only
 /// runs in Java when a label manager is configured on the graph.
 pub fn place_labels(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder) {
     assign_side_and_alignment(a, sl_holder);
@@ -678,7 +674,7 @@ fn compute_coordinates(a: &LGraphArena, sl_holder: &mut SelfLoopHolder, sl_loop:
 // ---------------------------------------------------------------------------
 // RoutingSlotAssigner
 
-/// Port of `RoutingSlotAssigner.assignRoutingSlots`: assigns routing slots to
+/// Assigns routing slots to
 /// all self loops per port side they span.
 pub fn assign_routing_slots(
     a: &mut LGraphArena,
@@ -1085,7 +1081,7 @@ fn labels_overlap_by_matrix(
 // ---------------------------------------------------------------------------
 // OrthogonalSelfLoopRouter
 
-/// Port of `OrthogonalSelfLoopRouter.EdgeRoutingDirection`: the direction in
+/// The direction in
 /// which an edge goes around a node in its quest to reach its target.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum EdgeRoutingDirection {
@@ -1103,8 +1099,6 @@ pub enum SelfLoopRouterKind {
     Spline,
 }
 
-/// Port of `OrthogonalSelfLoopRouter.routeSelfLoops` (incl. the subclasses'
-/// `modifyBendPoints` overrides, selected via `kind`).
 pub fn route_self_loops(a: &mut LGraphArena, sl_holder: &mut SelfLoopHolder, kind: SelfLoopRouterKind) {
     let l_node = sl_holder.l_node;
 

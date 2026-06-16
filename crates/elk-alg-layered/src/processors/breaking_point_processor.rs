@@ -1,4 +1,4 @@
-//! Port of `BreakingPointProcessor`: performs the actual 'wrapping' of the
+//! Performs the actual 'wrapping' of the
 //! graph by relocating layers following a breaking point start dummy.
 
 use crate::graph::{LEdgeId, LGraphArena, LGraphId, LNodeId, NodeType};
@@ -39,17 +39,14 @@ fn bpi_of(a: &LGraphArena, n: LNodeId) -> Option<BPInfoId> {
     a.node(n).properties.try_get(&iprops::BREAKING_POINT_INFO)
 }
 
-/// Port of `BPInfo.isStart`.
 fn is_start(a: &LGraphArena, store: &BPInfoStore, n: LNodeId) -> bool {
     bpi_of(a, n).map(|id| store.get(id).start == n).unwrap_or(false)
 }
 
-/// Port of `BPInfo.isEnd`.
 fn is_end(a: &LGraphArena, store: &BPInfoStore, n: LNodeId) -> bool {
     bpi_of(a, n).map(|id| store.get(id).end == n).unwrap_or(false)
 }
 
-/// Port of `BreakingPointProcessor.performWrapping`.
 fn perform_wrapping(a: &mut LGraphArena, graph: LGraphId, store: &mut BPInfoStore) {
     // add initial empty layer to account for break point start dummies
     let initial = a.create_layer(graph);
@@ -115,7 +112,6 @@ fn perform_wrapping(a: &mut LGraphArena, graph: LGraphId, store: &mut BPInfoStor
     a.graph_mut(graph).layers = kept;
 }
 
-/// Port of `BreakingPointProcessor.improveMultiCutIndexEdges`.
 fn improve_multi_cut_index_edges(a: &mut LGraphArena, graph: LGraphId, store: &mut BPInfoStore) {
     let layers = a.graph(graph).layers.clone();
     for l in layers {
@@ -180,7 +176,6 @@ fn improve_multi_cut_index_edges(a: &mut LGraphArena, graph: LGraphId, store: &m
     }
 }
 
-/// Port of `BreakingPointProcessor.improveUnneccesarilyLongEdges`.
 fn improve_unnecessarily_long_edges(
     a: &mut LGraphArena,
     graph: LGraphId,
@@ -221,7 +216,6 @@ fn improve_unnecessarily_long_edges(
     }
 }
 
-/// Port of `BreakingPointProcessor.dropDummies`.
 fn drop_dummies(
     a: &mut LGraphArena,
     _store: &mut BPInfoStore,
@@ -276,7 +270,6 @@ fn drop_dummies(
     didsome
 }
 
-/// Port of `BreakingPointProcessor.isAdjacentOrSeparatedByBreakingpoints`.
 fn is_adjacent_or_separated_by_breakingpoints(
     a: &LGraphArena,
     dummy1: LNodeId,
@@ -300,7 +293,6 @@ fn is_adjacent_or_separated_by_breakingpoints(
     true
 }
 
-/// Port of `BreakingPointProcessor.nextLongEdgeDummy`.
 fn next_long_edge_dummy(a: &LGraphArena, start: LNodeId, forwards: bool) -> Option<LNodeId> {
     let edges = if forwards {
         a.node_outgoing_edges(start)
@@ -317,7 +309,6 @@ fn next_long_edge_dummy(a: &LGraphArena, start: LNodeId, forwards: bool) -> Opti
     None
 }
 
-/// Port of `LEdge.getOther(node)`.
 fn edge_other(a: &LGraphArena, e: LEdgeId, node: LNodeId) -> LNodeId {
     let src = a.edge_source_node(e);
     if src == node {
@@ -327,7 +318,6 @@ fn edge_other(a: &LGraphArena, e: LEdgeId, node: LNodeId) -> LNodeId {
     }
 }
 
-/// Port of `BreakingPointProcessor.isInLayerDummy`.
 fn is_in_layer_dummy(a: &LGraphArena, node: LNodeId) -> bool {
     if a.node(node).node_type == NodeType::LONG_EDGE {
         for e in a.node_connected_edges(node) {
@@ -340,7 +330,6 @@ fn is_in_layer_dummy(a: &LGraphArena, node: LNodeId) -> bool {
     false
 }
 
-/// Port of `BreakingPointProcessor.updateIndexesAfter`.
 fn update_indexes_after(a: &mut LGraphArena, node: LNodeId) {
     let layer = a.node(node).layer.unwrap();
     let start = a.node(node).id + 1;

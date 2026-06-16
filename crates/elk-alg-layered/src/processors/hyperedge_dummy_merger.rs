@@ -1,4 +1,4 @@
-//! Port of `HyperedgeDummyMerger`: merges adjacent long edge dummy nodes that
+//! Merges adjacent long edge dummy nodes that
 //! belong to the same hyperedge (sharing a port) so that edges originating from
 //! or going into the same port are joined. Runs after crossing minimization,
 //! before phase 4.

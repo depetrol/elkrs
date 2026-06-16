@@ -1,5 +1,3 @@
-//! Port of `intermediate.preserveorder.ModelOrderNodeComparator`,
-//! `ModelOrderPortComparator` and `CMGroupModelOrderCalculator`.
 //!
 //! The Java comparators carry mutable transitive-ordering state
 //! (`biggerThan` / `smallerThan`) that is updated during the sort, so they
@@ -52,7 +50,6 @@ impl Elem {
     }
 }
 
-/// Port of `CMGroupModelOrderCalculator.calculateModelOrderOrGroupModelOrder`.
 pub fn calculate_model_order_or_group_model_order(
     a: &LGraphArena,
     parent: crate::graph::LGraphId,
@@ -88,7 +85,6 @@ pub fn calculate_model_order_or_group_model_order(
 // ModelOrderNodeComparator
 // ===========================================================================
 
-/// Port of `ModelOrderNodeComparator`.
 pub struct ModelOrderNodeComparator<'a> {
     a: &'a LGraphArena,
     graph: crate::graph::LGraphId,
@@ -488,7 +484,6 @@ impl<'a> ModelOrderNodeComparator<'a> {
 // ModelOrderPortComparator
 // ===========================================================================
 
-/// Port of `ModelOrderPortComparator`.
 pub struct ModelOrderPortComparator<'a> {
     a: &'a LGraphArena,
     graph: crate::graph::LGraphId,

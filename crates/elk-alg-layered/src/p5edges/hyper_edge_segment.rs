@@ -1,4 +1,3 @@
-//! Port of `p5edges/orthogonal/HyperEdgeSegment.java`.
 //!
 //! Instances of this struct represent the "trunk" of a hyper edge. Java uses
 //! an object graph; here segments and their dependencies live in a
@@ -16,8 +15,6 @@ pub type SegmentId = usize;
 /// Index of a dependency in the [`SegmentStore`].
 pub type DependencyId = usize;
 
-/// Port of `HyperEdgeSegment` (the fields; behavior lives on [`SegmentStore`]
-/// where other segments/dependencies are involved).
 pub struct HyperEdgeSegment {
     /// ports represented by this hypernode.
     pub ports: Vec<LPortId>,

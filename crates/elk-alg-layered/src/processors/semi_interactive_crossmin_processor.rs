@@ -1,5 +1,3 @@
-//! Port of `intermediate.SemiInteractiveCrossMinProcessor`
-//! (SEMI_INTERACTIVE_CROSSMIN_PROCESSOR).
 //!
 //! Introduces pair-wise in-layer successor constraints between NORMAL nodes
 //! that carry an explicit `POSITION`, ordered by ascending y-coordinate.

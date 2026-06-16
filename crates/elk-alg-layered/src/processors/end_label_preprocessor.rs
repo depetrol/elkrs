@@ -1,4 +1,4 @@
-//! Port of `EndLabelPreprocessor`: puts all edge end (head/tail) labels into
+//! Puts all edge end (head/tail) labels into
 //! label cells stored per node via the `END_LABELS` internal property, and
 //! enlarges node margins accordingly.
 //!
@@ -19,9 +19,6 @@ use crate::options_gen as lopts;
 
 // ---------------------------------------------------------------- LabelCell
 
-/// Port of `org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell`,
-/// restricted to what the end label processors use (the cell never gets a
-/// padding here, so padding is omitted and treated as zero).
 #[derive(Clone, Debug, PartialEq)]
 pub struct LabelCell {
     /// Whether we operate in horizontal or vertical layout mode.
@@ -295,7 +292,7 @@ fn create_configured_label_cell(
 /// Special value to indicate that there are no edges incident to a port.
 const NO_INCIDENT_EDGE_THICKNESS: f64 = -1.0;
 
-/// Port of the static `EndLabelPreprocessor.gatherLabels(LPort)` (also used
+/// The static `EndLabelPreprocessor.gatherLabels(LPort)` (also used
 /// by `LabelSideSelector`). Returns the end labels to be placed at the given
 /// port (`Some`, possibly empty) or `None` if there are no incident edges.
 pub fn gather_labels(a: &mut LGraphArena, port: LPortId) -> Option<Vec<LLabelId>> {

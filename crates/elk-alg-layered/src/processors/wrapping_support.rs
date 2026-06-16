@@ -13,7 +13,7 @@ use crate::internal_properties::Origin;
 use crate::options_gen as lopts;
 use crate::options_gen::CuttingStrategy;
 
-/// Port of `GraphStats`. Lazily computed values are eagerly computed here
+/// Lazily computed values are eagerly computed here
 /// (the cost is negligible and avoids interior mutability).
 pub struct GraphStats {
     pub dar: f64,
@@ -151,7 +151,6 @@ impl GraphStats {
         self.cuts_allowed = cuts_allowed;
     }
 
-    /// Port of `GraphStats.isCutAllowed(Layer)`.
     fn is_cut_allowed_layer(a: &LGraphArena, layer: LayerId) -> bool {
         let mut n1: Option<LNodeId> = None;
         let mut n2: Option<LNodeId> = None;
@@ -172,13 +171,11 @@ impl GraphStats {
     }
 }
 
-/// Port of `ICutIndexCalculator`.
 pub trait CutIndexCalculator {
     fn get_cut_indexes(&self, a: &LGraphArena, graph: LGraphId, gs: &GraphStats) -> Vec<i32>;
     fn guarantee_valid(&self) -> bool;
 }
 
-/// Port of `ICutIndexCalculator.ManualCutIndexCalculator`.
 pub struct ManualCutIndexCalculator;
 impl CutIndexCalculator for ManualCutIndexCalculator {
     fn get_cut_indexes(&self, a: &LGraphArena, graph: LGraphId, _gs: &GraphStats) -> Vec<i32> {
@@ -189,10 +186,8 @@ impl CutIndexCalculator for ManualCutIndexCalculator {
     }
 }
 
-/// Port of `ARDCutIndexHeuristic`.
 pub struct ArdCutIndexHeuristic;
 impl ArdCutIndexHeuristic {
-    /// Port of `ARDCutIndexHeuristic.getChunkCount`.
     pub fn get_chunk_count(gs: &GraphStats) -> i32 {
         let rowsd = (gs.get_sum_width() / (gs.dar * gs.get_max_height())).sqrt();
         let mut rows = java_round(rowsd) as i32;
@@ -215,7 +210,6 @@ impl CutIndexCalculator for ArdCutIndexHeuristic {
     }
 }
 
-/// Port of `MSDCutIndexHeuristic`.
 pub struct MsdCutIndexHeuristic;
 impl CutIndexCalculator for MsdCutIndexHeuristic {
     fn get_cut_indexes(&self, a: &LGraphArena, graph: LGraphId, gs: &GraphStats) -> Vec<i32> {
@@ -298,7 +292,6 @@ pub fn java_round(x: f64) -> i64 {
     (x + 0.5).floor() as i64
 }
 
-/// Port of `SingleEdgeGraphWrapper.validifyIndexesGreedily`.
 pub fn validify_indexes_greedily(gs: &GraphStats, cuts: &[i32]) -> Vec<i32> {
     let mut valid_cuts = Vec::new();
     let mut offset = 0i32;
@@ -317,7 +310,6 @@ pub fn validify_indexes_greedily(gs: &GraphStats, cuts: &[i32]) -> Vec<i32> {
     valid_cuts
 }
 
-/// Port of `SingleEdgeGraphWrapper.validifyIndexesLookingBack(gs, cuts)`.
 pub fn validify_indexes_looking_back(gs: &GraphStats, desired_cuts: &[i32]) -> Vec<i32> {
     if desired_cuts.is_empty() {
         return Vec::new();
@@ -366,7 +358,7 @@ fn validify_indexes_looking_back_inner(desired_cuts: &[i32], valid_cuts: &[i32])
     final_cuts
 }
 
-/// Port of `CuttingUtils.insertDummies`. Returns the chain of created edges.
+/// Returns the chain of created edges.
 pub fn insert_dummies(
     a: &mut LGraphArena,
     graph: LGraphId,
@@ -442,7 +434,6 @@ pub fn insert_dummies(
     created_edges
 }
 
-/// Port of `CuttingUtils.setDummyProperties` (a copy of LongEdgeSplitter's).
 fn set_dummy_properties(a: &mut LGraphArena, dummy: LNodeId, in_edge: LEdgeId, out_edge: LEdgeId) {
     let in_edge_source_node = a.edge_source_node(in_edge);
     if a.node(in_edge_source_node).node_type == NodeType::LONG_EDGE {

@@ -1,4 +1,4 @@
-//! Port of `PortListSorter`: sorts each node's port list clockwise (north,
+//! Sorts each node's port list clockwise (north,
 //! east, south, west) and caches the side index ranges.
 
 use std::cmp::Ordering;
@@ -115,9 +115,6 @@ fn real_degree(a: &LGraphArena, p: LPortId, incoming: bool) -> i32 {
         .count() as i32
 }
 
-/// Port of `reverseWestAndSouthSide`, including its Java quirks (the second
-/// range scan reads `lowIdx` instead of `highIdx`, and ranges of size <= 2
-/// are not reversed).
 fn reverse_west_and_south_side(a: &LGraphArena, ports: &mut [LPortId]) {
     if ports.len() <= 1 {
         return;

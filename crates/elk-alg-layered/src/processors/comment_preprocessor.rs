@@ -1,4 +1,4 @@
-//! Port of `CommentPreprocessor`: removes comment boxes that have exactly
+//! Removes comment boxes that have exactly
 //! one connection to a normal node from the graph and stores them on the
 //! connected node for later processing by the `CommentPostprocessor`.
 

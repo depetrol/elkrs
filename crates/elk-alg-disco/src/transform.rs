@@ -46,7 +46,7 @@ fn target_port(g: &ElkGraph, edge: EdgeId) -> Option<PortId> {
     g.shape_port(g.edge(edge).targets[0])
 }
 
-/// Port of `ElkGraphComponentsProcessor.split`: connected components via
+/// Connected components via
 /// depth-first search. (Java stores adjacency in identity-hashed sets whose
 /// iteration order is nondeterministic; only component membership matters
 /// for the result, which is identical here.)
@@ -131,7 +131,6 @@ pub fn split(g: &ElkGraph, graph: NodeId) -> Vec<Vec<NodeId>> {
     components
 }
 
-/// Port of `getInnerNeighborsOfPort`.
 fn inner_neighbors_of_port(g: &ElkGraph, port: PortId) -> Vec<NodeId> {
     let port_parent = g.port(port).parent.unwrap();
     let mut all_edges: Vec<EdgeId> = g.port(port).incoming_edges.clone();
@@ -178,7 +177,6 @@ pub enum ElementKey {
     Edge(EdgeId),
 }
 
-/// Port of `ElkGraphTransformer`.
 pub struct ElkGraphTransformer {
     parent: NodeId,
     /// element -> DCElement index (insertion-ordered; Java uses an
@@ -207,7 +205,6 @@ impl ElkGraphTransformer {
             .map(|(_, v)| *v)
     }
 
-    /// Port of `importGraph`.
     pub fn import_graph(&mut self, g: &mut ElkGraph, graph: NodeId) -> DCGraph {
         self.parent = graph;
         let components = split(&*g, graph);
@@ -293,7 +290,6 @@ impl ElkGraphTransformer {
         transformed_graph
     }
 
-    /// Port of `importElkShape` for the rectangle of any shape.
     fn import_shape(
         &mut self,
         elements: &mut Vec<DCElement>,
@@ -324,7 +320,6 @@ impl ElkGraphTransformer {
         idx
     }
 
-    /// Port of `importElkEdges`.
     fn import_elk_edges(
         &mut self,
         g: &mut ElkGraph,
@@ -358,7 +353,6 @@ impl ElkGraphTransformer {
         }
     }
 
-    /// Port of `importElkEdge`.
     fn import_elk_edge(
         &mut self,
         g: &mut ElkGraph,
@@ -391,7 +385,6 @@ impl ElkGraphTransformer {
         }
     }
 
-    /// Port of `importExtension`.
     fn import_extension(
         &mut self,
         g: &mut ElkGraph,
@@ -468,7 +461,6 @@ impl ElkGraphTransformer {
         }
     }
 
-    /// Port of `applyLayout`.
     pub fn apply_layout(&mut self, g: &mut ElkGraph, graph: &DCGraph) {
         let graph_dimensions = graph.dimensions;
         let new_width = graph_dimensions.x;
@@ -576,7 +568,6 @@ fn points_last(chain: &KVectorChain) -> KVector {
     chain.last()
 }
 
-/// Port of `adjustRelatedPort`.
 fn adjust_related_port(g: &mut ElkGraph, port: PortId, edge_point: KVector, dir: DCDirection) {
     let s = &mut g.port_mut(port).shape;
     if dir.is_horizontal() {
@@ -586,7 +577,6 @@ fn adjust_related_port(g: &mut ElkGraph, port: PortId, edge_point: KVector, dir:
     }
 }
 
-/// Port of `adjustFirstSegment`.
 fn adjust_first_segment(
     g: &ElkGraph,
     source: NodeId,
@@ -604,7 +594,6 @@ fn adjust_first_segment(
     chain
 }
 
-/// Port of `nearestSide`.
 fn nearest_side(g: &ElkGraph, point: KVector, node: NodeId) -> DCDirection {
     let mut result = DCDirection::North;
     // NORTHVALUE
@@ -629,7 +618,6 @@ fn nearest_side(g: &ElkGraph, point: KVector, node: NodeId) -> DCDirection {
     result
 }
 
-/// Port of `getOrthogonalPoints`.
 fn get_orthogonal_points(cur_x: f64, cur_y: f64, nxt_x: f64, nxt_y: f64, radius: f64) -> [KVector; 2] {
     let dif_x = nxt_x - cur_x;
     let dif_y = nxt_y - cur_y;
@@ -646,7 +634,6 @@ fn get_orthogonal_points(cur_x: f64, cur_y: f64, nxt_x: f64, nxt_y: f64, radius:
     [KVector::new(x_ccw, y_ccw), KVector::new(x_cw, y_cw)]
 }
 
-/// Port of `computeIntersection` (might return +-inf or NaN).
 fn compute_intersection(p1: KVector, p2: KVector, p3: KVector, p4: KVector) -> KVector {
     let (x1, y1) = (p1.x, p1.y);
     let (x2, y2) = (p2.x, p2.y);
@@ -663,7 +650,6 @@ fn compute_intersection(p1: KVector, p2: KVector, p3: KVector, p4: KVector) -> K
     KVector::new(x, y)
 }
 
-/// Port of `getContour`.
 fn get_contour(edge_points: &[KVector], thickness: f64) -> KVectorChain {
     let mut ccw_points: Vec<KVector> = Vec::new();
     let mut cw_points: Vec<KVector> = Vec::new();

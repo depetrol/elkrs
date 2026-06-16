@@ -1,4 +1,3 @@
-//! Port of `p1cycles.DFSNodeOrderCycleBreaker` (DFS_NODE_ORDER).
 
 use std::collections::BTreeMap;
 

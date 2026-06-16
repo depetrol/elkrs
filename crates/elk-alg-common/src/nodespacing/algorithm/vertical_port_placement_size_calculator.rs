@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.VerticalPortPlacementSizeCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::elkutil;
@@ -8,7 +7,6 @@ use crate::nodespacing::algorithm::horizontal_port_placement_size_calculator::mi
 use crate::nodespacing::algorithm::port_placement_calculator::PORT_RATIO_OR_POSITION;
 use crate::nodespacing::internal::NodeContext;
 
-/// Port of `calculateVerticalPortPlacementSize`.
 pub fn calculate_vertical_port_placement_size<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -37,7 +35,6 @@ pub fn calculate_vertical_port_placement_size<G: AdapterGraph>(
     }
 }
 
-/// Port of `calculateVerticalNodeSizeRequiredByFixedPosPorts`.
 fn calculate_vertical_node_size_required_by_fixed_pos_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -59,7 +56,6 @@ fn calculate_vertical_node_size_required_by_fixed_pos_ports<G: AdapterGraph>(
     node_context.cells.atomic_min_content_area_size_mut(cell).y = bottommost_port_border;
 }
 
-/// Port of `calculateVerticalNodeSizeRequiredByFixedRatioPorts`.
 fn calculate_vertical_node_size_required_by_fixed_ratio_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -156,7 +152,6 @@ fn calculate_vertical_node_size_required_by_fixed_ratio_ports<G: AdapterGraph>(
     node_context.cells.atomic_min_content_area_size_mut(cell).y = min_height;
 }
 
-/// Port of `calculateVerticalNodeSizeRequiredByFreePorts`.
 fn calculate_vertical_node_size_required_by_free_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -193,7 +188,6 @@ fn calculate_vertical_node_size_required_by_free_ports<G: AdapterGraph>(
     node_context.cells.atomic_min_content_area_size_mut(cell).y = height;
 }
 
-/// Port of `setupPortMargins`.
 fn setup_port_margins<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>, port_side: PortSide) {
     let range = node_context.ports_on_side(port_side);
 
@@ -253,7 +247,6 @@ fn setup_port_margins<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>,
     }
 }
 
-/// Port of `computeVerticalPortMargins`.
 fn compute_vertical_port_margins<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -316,7 +309,6 @@ fn compute_vertical_port_margins<G: AdapterGraph>(
     }
 }
 
-/// Port of `unifyPortMargins`.
 fn unify_port_margins<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     range: std::ops::Range<usize>,
@@ -337,7 +329,6 @@ fn unify_port_margins<G: AdapterGraph>(
     }
 }
 
-/// Port of `portHeightPlusPortPortSpacing`.
 fn port_height_plus_port_port_spacing<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,

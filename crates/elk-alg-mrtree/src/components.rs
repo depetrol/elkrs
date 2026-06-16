@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.ComponentsProcessor`: splits a tree
+//! Splits a tree
 //! graph into connected components and packs them after layout.
 
 use elk_graph::math::KVector;
@@ -7,7 +7,6 @@ use crate::graph::{TArena, TEdgeId, TGraph, TNodeId};
 use crate::intermediate;
 use crate::options;
 
-/// Port of `ComponentsProcessor.split`.
 pub fn split(arena: &mut TArena, graph: TGraph) -> Vec<TGraph> {
     let separate: bool = graph.properties.get(&options::SEPARATE_CONNECTED_COMPONENTS);
     if separate {
@@ -48,7 +47,7 @@ pub fn split(arena: &mut TArena, graph: TGraph) -> Vec<TGraph> {
     vec![graph]
 }
 
-/// Port of `ComponentsProcessor.dfs`. Like Java, every edge ends up in the
+/// Like Java, every edge ends up in the
 /// component's edge list **twice** (once per endpoint visit); downstream code
 /// dedupes with `distinct()` where it matters.
 fn dfs(
@@ -78,7 +77,6 @@ fn dfs(
     }
 }
 
-/// Port of `ComponentsProcessor.pack`.
 pub fn pack(arena: &mut TArena, mut components: Vec<TGraph>) -> TGraph {
     if components.len() == 1 {
         let mut g = components.pop().unwrap();
@@ -184,7 +182,6 @@ fn bb_size(graph: &TGraph) -> KVector {
     size
 }
 
-/// Port of `ComponentsProcessor.applyPaddingAndNormalizePositions`.
 fn apply_padding_and_normalize_positions(arena: &mut TArena, g: &mut TGraph) {
     let padding = g.properties.get(&options::PADDING);
     g.bb_upleft = KVector::new(0.0, 0.0);
@@ -194,8 +191,6 @@ fn apply_padding_and_normalize_positions(arena: &mut TArena, g: &mut TGraph) {
     move_graph(arena, None, g, offsetx, offsety);
 }
 
-/// Port of `ComponentsProcessor.moveGraph`. `dest_graph` is `None` for the
-/// throwaway destination used by `applyPaddingAndNormalizePositions`.
 fn move_graph(
     arena: &mut TArena,
     mut dest_graph: Option<&mut TGraph>,

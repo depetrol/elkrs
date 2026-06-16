@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.LabelPlacer`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::options::{PortSide, SizeOptions};
@@ -6,7 +5,7 @@ use elk_core::options::{PortSide, SizeOptions};
 use crate::nodespacing::cellsystem::apply_label_layout;
 use crate::nodespacing::internal::{NodeContext, NodeLabelLocation};
 
-/// Port of `LabelPlacer.placeLabels`: places outer node label containers as
+/// Places outer node label containers as
 /// well as all labels. ALL OF THEM!!!
 pub fn place_labels<G: AdapterGraph>(g: &mut G, node_context: &mut NodeContext<G>) {
     // Properly place all label cells for outer node labels
@@ -28,7 +27,6 @@ pub fn place_labels<G: AdapterGraph>(g: &mut G, node_context: &mut NodeContext<G
     }
 }
 
-/// Port of `LabelPlacer.placeOuterNodeLabelContainers`.
 fn place_outer_node_label_containers<G: AdapterGraph>(node_context: &mut NodeContext<G>) {
     let outer_node_labels_overhang = node_context
         .size_options
@@ -40,7 +38,6 @@ fn place_outer_node_label_containers<G: AdapterGraph>(node_context: &mut NodeCon
     place_vertical_outer_node_label_container(node_context, outer_node_labels_overhang, PortSide::WEST);
 }
 
-/// Port of `LabelPlacer.placeHorizontalOuterNodeLabelContainer`.
 fn place_horizontal_outer_node_label_container<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     outer_node_labels_overhang: bool,
@@ -87,7 +84,6 @@ fn place_horizontal_outer_node_label_container<G: AdapterGraph>(
     node_context.cells.layout_children_vertically(node_label_container);
 }
 
-/// Port of `LabelPlacer.placeVerticalOuterNodeLabelContainer`.
 fn place_vertical_outer_node_label_container<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     outer_node_labels_overhang: bool,

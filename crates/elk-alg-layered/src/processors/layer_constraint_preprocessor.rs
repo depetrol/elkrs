@@ -1,4 +1,4 @@
-//! Port of `LayerConstraintPreprocessor`: hides FIRST_SEPARATE and
+//! Hides FIRST_SEPARATE and
 //! LAST_SEPARATE nodes before layering.
 
 use elk_graph::properties::Property;

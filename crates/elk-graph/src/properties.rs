@@ -181,7 +181,7 @@ macro_rules! elk_enum {
     };
 }
 
-/// Port of Java `EnumSet`, a bitset over an [`ElkEnum`].
+/// Java `EnumSet`, a bitset over an [`ElkEnum`].
 pub struct EnumSet<T: ElkEnum> {
     bits: u64,
     _pd: PhantomData<T>,
@@ -447,7 +447,6 @@ impl PropertyMap {
     }
 }
 
-/// Port of `IPropertyHolder`; implemented by all graph elements.
 pub trait PropertyHolder {
     fn properties(&self) -> &PropertyMap;
     fn properties_mut(&mut self) -> &mut PropertyMap;

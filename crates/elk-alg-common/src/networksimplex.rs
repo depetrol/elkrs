@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.common.networksimplex` (ELK 0.11.0):
-//! `NGraph`, `NNode`, `NEdge` and the `NetworkSimplex` algorithm.
 //!
 //! Java uses an object graph; here all nodes and edges live in arenas inside
 //! [`NGraph`] and reference each other through [`NNodeId`] / [`NEdgeId`].
@@ -20,7 +18,6 @@ pub struct NNodeId(pub u32);
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct NEdgeId(pub u32);
 
-/// Port of `NNode`.
 #[derive(Debug)]
 pub struct NNode {
     /// A public id, unused internally, use it for whatever you want.
@@ -43,7 +40,7 @@ pub struct NNode {
 }
 
 impl NNode {
-    /// Port of `getConnectedEdges()`: incoming edges first, then outgoing
+    /// Incoming edges first, then outgoing
     /// edges (the order of Java's cached union list).
     pub fn connected_edges(&self) -> Vec<NEdgeId> {
         let mut all = Vec::with_capacity(self.incoming_edges.len() + self.outgoing_edges.len());
@@ -53,7 +50,6 @@ impl NNode {
     }
 }
 
-/// Port of `NEdge`.
 #[derive(Debug)]
 pub struct NEdge {
     /// A public id, unused internally, use it for whatever you want.
@@ -77,7 +73,6 @@ pub struct NEdge {
 }
 
 impl NEdge {
-    /// Port of `getOther(NNode)`.
     pub fn other(&self, some: NNodeId) -> NNodeId {
         if some == self.source {
             self.target
@@ -89,7 +84,7 @@ impl NEdge {
     }
 }
 
-/// Port of `NGraph`: arena plus the ordered node list.
+/// Arena plus the ordered node list.
 #[derive(Default, Debug)]
 pub struct NGraph {
     /// The nodes of the network simplex graph (ordered; Java `nodes`).
@@ -116,7 +111,7 @@ impl NGraph {
         &mut self.edge_arena[id.0 as usize]
     }
 
-    /// Port of `NNode.of()...create(graph)`: creates a node and appends it to
+    /// Creates a node and appends it to
     /// the graph's node list.
     pub fn add_node(&mut self) -> NNodeId {
         let id = NNodeId(self.node_arena.len() as u32);
@@ -134,7 +129,7 @@ impl NGraph {
         id
     }
 
-    /// Port of `NEdge.of()...create()`: creates an edge and registers it with
+    /// Creates an edge and registers it with
     /// the source's outgoing and the target's incoming edge lists.
     ///
     /// Panics on self-loops (Java throws `IllegalStateException`).
@@ -158,7 +153,6 @@ impl NGraph {
         id
     }
 
-    /// Port of `NEdge.reverse()`.
     pub fn reverse_edge(&mut self, edge: NEdgeId) {
         let e = self.edge_mut(edge);
         let tmp = e.source;
@@ -173,7 +167,7 @@ impl NGraph {
         self.node_mut(source).outgoing_edges.push(edge);
     }
 
-    /// Port of `makeConnected()`: if the graph is not connected, one
+    /// If the graph is not connected, one
     /// representative per connected component is connected to a new artificial
     /// root node (zero-weight, zero-delta edges), which is returned.
     pub fn make_connected(&mut self) -> Option<NNodeId> {
@@ -188,7 +182,6 @@ impl NGraph {
         }
     }
 
-    /// Port of `createArtificialRootAndConnect(List<NNode>)`.
     fn create_artificial_root_and_connect(&mut self, nodes_to_connect: &[NNodeId]) -> NNodeId {
         let root = self.add_node();
         for &src in nodes_to_connect {
@@ -197,7 +190,6 @@ impl NGraph {
         root
     }
 
-    /// Port of `findConCompRepresentatives()`.
     fn find_con_comp_representatives(&self) -> Vec<NNodeId> {
         let mut cc_rep = Vec::new();
         let mut mark = vec![false; self.nodes.len()];
@@ -210,7 +202,6 @@ impl NGraph {
         cc_rep
     }
 
-    /// Port of `dfs(NNode, boolean[])`.
     fn dfs(&self, node: NNodeId, mark: &mut [bool]) {
         if mark[self.node(node).internal_id] {
             return;
@@ -222,7 +213,7 @@ impl NGraph {
         }
     }
 
-    /// Port of `isAcyclic()`: creates a topological ordering and checks for
+    /// Creates a topological ordering and checks for
     /// back edges.
     pub fn is_acyclic(&mut self) -> bool {
         for (id, &n) in self.nodes.clone().iter().enumerate() {
@@ -285,7 +276,7 @@ const REMOVE_SUBTREES_THRESH: usize = 40;
 /// Small value smaller than zero, to deal with double imprecision of cut values.
 const FUZZY_ST_ZERO: f64 = -1e-10;
 
-/// Port of `NetworkSimplex`: determines an optimal layering of all nodes in
+/// Determines an optimal layering of all nodes in
 /// the graph concerning a minimal weighted length of all edges (Gansner et al.).
 ///
 /// Precondition: the graph has no cycles. Postcondition: all nodes have been
@@ -325,7 +316,6 @@ pub struct NetworkSimplex<'g> {
 }
 
 impl<'g> NetworkSimplex<'g> {
-    /// Port of `NetworkSimplex.forGraph(NGraph)`.
     pub fn for_graph(graph: &'g mut NGraph) -> Self {
         NetworkSimplex {
             graph,
@@ -344,25 +334,22 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `withBalancing(boolean)`.
     pub fn with_balancing(mut self, do_balance: bool) -> Self {
         self.balance = do_balance;
         self
     }
 
-    /// Port of `withPreviousLayering(int[])`.
     pub fn with_previous_layering(mut self, consider_previous_layering: Option<Vec<i32>>) -> Self {
         self.previous_layering_node_counts = consider_previous_layering;
         self
     }
 
-    /// Port of `withIterationLimit(int)`.
     pub fn with_iteration_limit(mut self, limit: i32) -> Self {
         self.iteration_limit = limit;
         self
     }
 
-    /// Port of `execute()`: determine the optimal layering. The result is
+    /// Determine the optimal layering. The result is
     /// stored in each node's `layer` field.
     pub fn execute(mut self) {
         if self.graph.nodes.is_empty() {
@@ -410,7 +397,6 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `initialize()`.
     fn initialize(&mut self) {
         // initialize node attributes
         let num_nodes = self.graph.nodes.len();
@@ -450,7 +436,7 @@ impl<'g> NetworkSimplex<'g> {
         self.post_order = 1;
     }
 
-    /// Port of `removeSubtrees()`: recursively removes leafs from the graph
+    /// Recursively removes leafs from the graph
     /// until no more leafs are present.
     fn remove_subtrees(&mut self) {
         self.subtree_nodes_stack = Vec::new();
@@ -490,7 +476,7 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `reattachSubtrees()`: re-attaches the previously removed tree
+    /// Re-attaches the previously removed tree
     /// nodes in the opposite order than they were removed.
     fn reattach_subtrees(&mut self) {
         while let Some((node, edge)) = self.subtree_nodes_stack.pop() {
@@ -510,7 +496,7 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `feasibleTree()`: determines an initial feasible (tight)
+    /// Determines an initial feasible (tight)
     /// spanning tree of the graph and computes initial cut values.
     fn feasible_tree(&mut self) {
         // determine initial layering
@@ -544,8 +530,6 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `layeringTopologicalNumbering(List<NNode>)`, called with the
-    /// graph's source nodes as initial roots.
     fn layering_topological_numbering(&mut self) {
         // initialize the number of incident edges for each node
         let mut incident = vec![0i32; self.graph.nodes.len()];
@@ -572,7 +556,7 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `minimalSpan(NNode)`: the length of the currently shortest
+    /// The length of the currently shortest
     /// incoming (first) and outgoing (second) edge of the node, or -1 if no
     /// such edge is incident.
     fn minimal_span(&self, node: NNodeId) -> (i32, i32) {
@@ -599,7 +583,7 @@ impl<'g> NetworkSimplex<'g> {
         (min_span_in, min_span_out)
     }
 
-    /// Port of `tightTreeDFS(NNode)`: determines a DFS-subtree of the graph by
+    /// Determines a DFS-subtree of the graph by
     /// traversing tight edges only, returning the number of nodes in it.
     fn tight_tree_dfs(&mut self, node: NNodeId) -> usize {
         let mut node_count = 1;
@@ -628,7 +612,7 @@ impl<'g> NetworkSimplex<'g> {
         node_count
     }
 
-    /// Port of `minimalSlack()`: the non-tree edge incident on the tree with a
+    /// The non-tree edge incident on the tree with a
     /// minimal amount of slack, or `None` if no such edge exists.
     fn minimal_slack(&self) -> Option<NEdgeId> {
         let mut min_slack = i32::MAX;
@@ -648,7 +632,7 @@ impl<'g> NetworkSimplex<'g> {
         min_slack_edge
     }
 
-    /// Port of `postorderTraversal(NNode)`: postorder DFS-traversal assigning
+    /// Postorder DFS-traversal assigning
     /// each node a unique traversal ID (`po_id`) and the lowest ID reachable
     /// through descending paths (`lowest_po_id`).
     fn postorder_traversal(&mut self, node: NNodeId) -> i32 {
@@ -668,7 +652,7 @@ impl<'g> NetworkSimplex<'g> {
         self.lowest_po_id[nid]
     }
 
-    /// Port of `isInHead(NNode, NEdge)`: whether the node is part of the head
+    /// Whether the node is part of the head
     /// component of the given tree edge (the component containing the edge's
     /// target if the edge were removed from the tree).
     fn is_in_head(&self, node: NNodeId, edge: NEdgeId) -> bool {
@@ -696,7 +680,7 @@ impl<'g> NetworkSimplex<'g> {
         false
     }
 
-    /// Port of `cutvalues()`: determines the cut value of each tree edge.
+    /// Determines the cut value of each tree edge.
     fn cutvalues(&mut self) {
         // determine incident tree edges for each node
         let mut leafs: Vec<NNodeId> = Vec::new();
@@ -768,7 +752,7 @@ impl<'g> NetworkSimplex<'g> {
         }
     }
 
-    /// Port of `leaveEdge()`: returns a tree edge with a negative cut value,
+    /// Returns a tree edge with a negative cut value,
     /// or `None` if no such edge exists (the layering is optimal).
     fn leave_edge(&self) -> Option<NEdgeId> {
         for &edge in &self.tree_edges {
@@ -781,7 +765,7 @@ impl<'g> NetworkSimplex<'g> {
         None
     }
 
-    /// Port of `enterEdge(NEdge)`: determines a non-tree edge (going from the
+    /// Determines a non-tree edge (going from the
     /// head to the tail component of `leave`) with a minimal amount of slack
     /// to replace the given tree edge.
     fn enter_edge(&self, leave: NEdgeId) -> Option<NEdgeId> {
@@ -807,7 +791,7 @@ impl<'g> NetworkSimplex<'g> {
         replace
     }
 
-    /// Port of `exchange(NEdge, NEdge)`: exchanges the tree edge `leave` with
+    /// Exchanges the tree edge `leave` with
     /// the non-tree edge `enter` and updates all tree-based values.
     fn exchange(&mut self, leave: NEdgeId, enter: NEdgeId) {
         if !self.graph.edge(leave).tree_edge {
@@ -841,7 +825,7 @@ impl<'g> NetworkSimplex<'g> {
         self.cutvalues();
     }
 
-    /// Port of `normalize()`: shifts all layers such that the lowest assigned
+    /// Shifts all layers such that the lowest assigned
     /// layer is zero, and returns the number of nodes assigned to each layer.
     fn normalize(&mut self) -> Vec<i32> {
         // determine lowest assigned layer and layer count
@@ -872,7 +856,7 @@ impl<'g> NetworkSimplex<'g> {
         filling
     }
 
-    /// Port of `balance(int[])`: balances the layering concerning its width by
+    /// Balances the layering concerning its width by
     /// moving separate nodes to a layer with a minimal amount of currently
     /// contained nodes, retaining feasibility of the layering.
     fn balance(&mut self, filling: &mut [i32]) {

@@ -1,4 +1,3 @@
-//! Port of `p5edges/orthogonal/OrthogonalRoutingGenerator.java`.
 //!
 //! Edge routing implementation that creates orthogonal bend points, inspired
 //! by Sander's hypergraph routing and the cycle breaking from di Battista et
@@ -34,7 +33,6 @@ const CONFLICT_PENALTY: i32 = 1;
 /// weight penalty for crossings.
 const CROSSING_PENALTY: i32 = 16;
 
-/// Port of `OrthogonalRoutingGenerator`.
 pub struct OrthogonalRoutingGenerator {
     /// routing direction strategy.
     pub routing_strategy: BaseRoutingDirectionStrategy,

@@ -1,4 +1,3 @@
-//! Port of `GreedyCycleBreaker`.
 
 use std::collections::VecDeque;
 
@@ -13,7 +12,7 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId, random: &mut JavaRandom) ->
     process_impl(a, graph, random, false)
 }
 
-/// Port of `GreedyModelOrderCycleBreaker`: same as `GreedyCycleBreaker` but the
+/// Same as `GreedyCycleBreaker` but the
 /// tie-break among max-outflow nodes picks the minimum (group) model order.
 pub fn process_model_order(
     a: &mut LGraphArena,
@@ -186,9 +185,6 @@ fn process_impl(
     Ok(())
 }
 
-/// Port of `chooseNodeWithMaxOutflow` (base: random; model order: min
-/// constraint-model-order, falling back to random when no node has a model
-/// order).
 fn choose_node_with_max_outflow(
     a: &LGraphArena,
     graph: LGraphId,

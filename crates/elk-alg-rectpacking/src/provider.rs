@@ -1,6 +1,3 @@
-//! Port of `org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider` plus
-//! the intermediate processors from
-//! `org.eclipse.elk.alg.rectpacking.intermediate`.
 //!
 //! Java assembles the processor pipeline with an `AlgorithmAssembler`; the
 //! resulting order is fixed (processors in a slot are sorted by their
@@ -24,7 +21,6 @@ use crate::options::{
 use crate::util::PackArena;
 use crate::{p1widthapproximation, p2packing, p3whitespaceelimination};
 
-/// Port of `RectPackingLayoutProvider`.
 #[derive(Default)]
 pub struct RectPackingLayoutProvider;
 
@@ -206,7 +202,6 @@ impl LayoutProvider for RectPackingLayoutProvider {
     }
 }
 
-/// Port of `RectPackingLayoutProvider.applyPadding`.
 fn apply_padding(g: &mut ElkGraph, rectangles: &[NodeId], padding: &ElkPadding) {
     for &rect in rectangles {
         let s = &mut g.node_mut(rect).shape;
@@ -215,7 +210,6 @@ fn apply_padding(g: &mut ElkGraph, rectangles: &[NodeId], padding: &ElkPadding) 
     }
 }
 
-/// Port of `org.eclipse.elk.alg.common.NodeMicroLayout.execute()`.
 fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
     let mut adapter = elk_core::adapters::ElkGraphAdapter::new(g, layout_node);
     elk_alg_common::nodespacing::sort_port_lists(&mut adapter);
@@ -225,7 +219,7 @@ fn execute_node_micro_layout(g: &mut ElkGraph, layout_node: NodeId) {
 
 // ------------------------------------------------------ intermediate processors
 
-/// Port of `NodeSizeReorderer.process`: sorts the children by height,
+/// Sorts the children by height,
 /// descending (`NodeSizeComparator`), stably (`ECollections.sort`).
 fn node_size_reorderer(g: &mut ElkGraph, graph: NodeId) {
     let mut children = g.node(graph).children.clone();
@@ -239,7 +233,6 @@ fn node_size_reorderer(g: &mut ElkGraph, graph: NodeId) {
     g.node_mut(graph).children = children;
 }
 
-/// Port of `InteractiveNodeReorderer.process`.
 fn interactive_node_reorderer(g: &mut ElkGraph, graph: NodeId) {
     let mut rectangles = g.node(graph).children.clone();
     let mut fixed_nodes: Vec<NodeId> = Vec::new();
@@ -283,7 +276,6 @@ fn interactive_node_reorderer(g: &mut ElkGraph, graph: NodeId) {
     g.node_mut(graph).children = rectangles;
 }
 
-/// Port of `MinSizePreProcessor.process`.
 fn min_size_pre_processor(g: &mut ElkGraph, graph: NodeId) {
     // Get minimum size based on children.
     let mut min_size = elk_core::elkutil::effective_min_size_constraint_for(g, graph);
@@ -301,7 +293,6 @@ fn min_size_pre_processor(g: &mut ElkGraph, graph: NodeId) {
     g.node(graph).properties.set(&options::MIN_HEIGHT, min_size.y);
 }
 
-/// Port of `MinSizePostProcessor.process`.
 fn min_size_post_processor(g: &mut ElkGraph, graph: NodeId) {
     let target_width: f64 = g.node(graph).properties.get(&options::TARGET_WIDTH);
     let min_width: f64 = g.node(graph).properties.get(&options::MIN_WIDTH);

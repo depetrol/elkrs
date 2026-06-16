@@ -1,4 +1,4 @@
-//! Port of `LabelDummySwitcher`: moves label dummy nodes into an "optimal"
+//! Moves label dummy nodes into an "optimal"
 //! layer their long edges cross by switching the order of long edge dummies
 //! and label dummies.
 
@@ -10,7 +10,7 @@ use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
 use crate::options_gen::CenterEdgeLabelPlacementStrategy;
 
-/// Port of `LabelDummySwitcher.INCLUDE_LABEL`: a property to communicate with
+/// A property to communicate with
 /// the analyses that can be run on a graph.
 pub static INCLUDE_LABEL: Property<bool> =
     Property::with_default("edgelabelcenterednessanalysis.includelabel", || false);
@@ -109,7 +109,6 @@ fn calculate_layer_widths(a: &LGraphArena, graph: LGraphId, layer_widths: &mut [
     }
 }
 
-/// Port of `LGraphUtil.findMaxNonDummyNodeWidth(layer, false)`.
 fn find_max_non_dummy_node_width(a: &LGraphArena, layer: LayerId) -> f64 {
     let graph = a.layer(layer).graph.unwrap();
     if a.graph(graph)

@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.spore.graph.Graph`.
 
 use elk_alg_common::jhash::JavaHashSet;
 use elk_alg_common::spore::Node;

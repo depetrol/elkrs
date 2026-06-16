@@ -1,4 +1,4 @@
-//! Port of `HierarchicalPortPositionProcessor`: sets the y coordinate of
+//! Sets the y coordinate of
 //! east/west external port dummies.
 
 use elk_core::options::{PortConstraints, PortSide};

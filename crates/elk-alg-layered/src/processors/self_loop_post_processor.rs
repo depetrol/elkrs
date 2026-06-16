@@ -1,4 +1,4 @@
-//! Port of `SelfLoopPostProcessor`: finds regular nodes with self loops and
+//! Finds regular nodes with self loops and
 //! postprocesses those loops (restores edges and places labels).
 
 use crate::graph::{LGraphArena, LGraphId, LNodeId, NodeType};

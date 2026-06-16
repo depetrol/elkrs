@@ -1,4 +1,4 @@
-//! Port of `LGraphAdapters`: exposes the LGraph through the
+//! Exposes the LGraph through the
 //! `elk_core::adapters::AdapterGraph` trait for the node-sizing code.
 
 use elk_core::adapters::{AdapterGraph, LabelSide};
@@ -10,11 +10,10 @@ use crate::graph::{LEdgeId, LGraphArena, LGraphId, LLabelId, LNodeId, LPortId, N
 use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
 
-/// Port of `LabelSide.LABEL_SIDE` (property on labels).
 pub static LABEL_SIDE: Property<LabelSide> =
     Property::with_default("org.eclipse.elk.labelSide", || LabelSide::UNKNOWN);
 
-/// Port of `LGraphAdapters.adapt`. The node filter mirrors the Java
+/// The node filter mirrors the Java
 /// predicate parameter.
 pub struct LGraphAdapter<'a> {
     pub arena: &'a mut LGraphArena,

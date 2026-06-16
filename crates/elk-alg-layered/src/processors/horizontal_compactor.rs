@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor`.
 //!
 //! Applies additional horizontal compaction to an already-routed graph by
 //! transforming it into a one-dimensional constraint graph, compacting it in

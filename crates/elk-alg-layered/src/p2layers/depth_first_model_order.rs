@@ -1,4 +1,3 @@
-//! Port of `p2layers.DepthFirstModelOrderLayerer` (LAYERING_STRATEGY = DF_MODEL_ORDER).
 
 use elk_core::javacompat::tim_sort;
 

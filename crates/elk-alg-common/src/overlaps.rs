@@ -1,9 +1,8 @@
-//! Port of `org.eclipse.elk.alg.common.overlaps`: removal of overlaps between
+//! Removal of overlaps between
 //! rectangles that have a fixed position along one dimension.
 
 use elk_graph::math::ElkRectangle;
 
-/// Port of `RectangleStripOverlapRemover.OverlapRemovalDirection`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum OverlapRemovalDirection {
     /// Remove horizontal overlaps by moving rectangles upwards.
@@ -16,7 +15,6 @@ pub enum OverlapRemovalDirection {
     Right,
 }
 
-/// Port of `RectangleStripOverlapRemover.RectangleNode`.
 struct RectangleNode {
     /// The original rectangle represented by this node (a copy of the input).
     original: ElkRectangle,
@@ -28,7 +26,7 @@ struct RectangleNode {
     overlapping: Vec<usize>,
 }
 
-/// Port of `RectangleStripOverlapRemover`. The default gap is 5 on both axes.
+/// The default gap is 5 on both axes.
 ///
 /// Usage mirrors Java: create for a direction, configure via `with_gap` /
 /// `with_start_coordinate`, add rectangles (each `add_rectangle` returns a
@@ -45,7 +43,6 @@ pub struct RectangleStripOverlapRemover {
 const DEFAULT_GAP: f64 = 5.0;
 
 impl RectangleStripOverlapRemover {
-    /// Port of `createForDirection`.
     pub fn create_for_direction(direction: OverlapRemovalDirection) -> Self {
         RectangleStripOverlapRemover {
             direction,
@@ -56,21 +53,17 @@ impl RectangleStripOverlapRemover {
         }
     }
 
-    /// Port of `withGap`.
     pub fn with_gap(mut self, horizontal_gap: f64, vertical_gap: f64) -> Self {
         self.gap_horizontal = horizontal_gap;
         self.gap_vertical = vertical_gap;
         self
     }
 
-    /// Port of `withStartCoordinate`.
     pub fn with_start_coordinate(mut self, coordinate: f64) -> Self {
         self.start_coordinate = coordinate;
         self
     }
 
-    /// Port of `addRectangle`; returns a handle for retrieving the moved
-    /// rectangle after `remove_overlaps`.
     pub fn add_rectangle(&mut self, rectangle: ElkRectangle) -> usize {
         let imported = self.import_rectangle(&rectangle);
         self.nodes.push(RectangleNode { original: rectangle, rect: imported, overlapping: Vec::new() });
@@ -83,7 +76,6 @@ impl RectangleStripOverlapRemover {
         self.nodes[handle].original
     }
 
-    /// Port of `importRectangle`.
     fn import_rectangle(&self, rectangle: &ElkRectangle) -> ElkRectangle {
         match self.direction {
             OverlapRemovalDirection::Up | OverlapRemovalDirection::Down => *rectangle,
@@ -93,7 +85,7 @@ impl RectangleStripOverlapRemover {
         }
     }
 
-    /// Port of `exportRectangle`. In Java, the transformed rectangle aliases
+    /// In Java, the transformed rectangle aliases
     /// the original for UP/DOWN, so the strategy's `rect.y` is already stored
     /// in the original's y before the export applies the start coordinate; we
     /// replicate the resulting arithmetic here.
@@ -116,7 +108,7 @@ impl RectangleStripOverlapRemover {
         }
     }
 
-    /// Port of `removeOverlaps`. Returns the size of the resulting strip.
+    /// Returns the size of the resulting strip.
     pub fn remove_overlaps(&mut self) -> f64 {
         // Sort the list of rectangles by left border (stable, like Java's
         // List.sort). We sort indices to keep handles valid.
@@ -135,7 +127,7 @@ impl RectangleStripOverlapRemover {
         strip_size
     }
 
-    /// Port of `computeOverlaps`. Java uses a `TreeSet` ordered by right
+    /// Java uses a `TreeSet` ordered by right
     /// border coordinate; note that a TreeSet drops elements that compare
     /// equal, so a rectangle whose right border coincides exactly with an
     /// already-present rectangle's right border is never added to the set of
@@ -189,7 +181,7 @@ impl RectangleStripOverlapRemover {
         }
     }
 
-    /// Port of `GreedyRectangleStripOverlapRemover.removeOverlaps`: greedily
+    /// Greedily
     /// chooses the smallest y position that won't cause overlaps.
     fn greedy_remove_overlaps(&mut self, order: &[usize]) -> f64 {
         let vertical_gap = self.gap_vertical;

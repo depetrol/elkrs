@@ -1,4 +1,4 @@
-//! Port of `LayeredLayoutProvider`: hooks ELK Layered into the core engine.
+//! Hooks ELK Layered into the core engine.
 
 use elk_core::options::HierarchyHandling;
 use elk_core::registry::{AlgorithmData, AlgorithmRegistry, GraphFeature, LayoutProvider};

@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.layered.graph.LGraphUtil` (subset; grows as
-//! more of the algorithm is ported).
 
 use elk_core::options::{Direction, PortConstraints, PortSide, SizeConstraint};
 use elk_graph::math::KVector;
@@ -10,7 +8,6 @@ use crate::internal_properties as iprops;
 use crate::options_gen::{EdgeConstraint, GraphProperties, InLayerConstraint, LayerConstraint, PortType};
 use crate::options_gen as lopts;
 
-/// Port of `LGraphUtil.getDirection`.
 pub fn get_direction(a: &LGraphArena, graph: LGraphId) -> Direction {
     let direction = a.graph(graph).properties.get(&lopts::DIRECTION);
     if direction == Direction::UNDEFINED {
@@ -25,7 +22,6 @@ pub fn get_direction(a: &LGraphArena, graph: LGraphId) -> Direction {
     }
 }
 
-/// Port of `LGraphUtil.calcPortSide` (operates on LPort geometry).
 pub fn calc_port_side(a: &LGraphArena, port: LPortId, direction: Direction) -> PortSide {
     let node = a.port(port).node.expect("port without node");
     let node_width = a.node(node).size.x;
@@ -68,7 +64,6 @@ pub fn calc_port_side(a: &LGraphArena, port: LPortId, direction: Direction) -> P
     }
 }
 
-/// Port of `LGraphUtil.calcPortOffset`.
 pub fn calc_port_offset(a: &LGraphArena, port: LPortId, side: PortSide) -> f64 {
     let node = a.port(port).node.expect("port without node");
     let p = a.port(port);
@@ -82,7 +77,6 @@ pub fn calc_port_offset(a: &LGraphArena, port: LPortId, side: PortSide) -> f64 {
     }
 }
 
-/// Port of `LGraphUtil.centerPoint`.
 pub fn center_point(point: &mut KVector, boundary: KVector, side: PortSide) {
     match side {
         PortSide::NORTH => {
@@ -105,7 +99,6 @@ pub fn center_point(point: &mut KVector, boundary: KVector, side: PortSide) {
     }
 }
 
-/// Port of `LGraphUtil.provideCollectorPort`.
 pub fn provide_collector_port(
     a: &mut LGraphArena,
     _graph: LGraphId,
@@ -144,8 +137,6 @@ pub fn provide_collector_port(
     port
 }
 
-/// Port of `LGraphUtil.createPort` (used by the importer when an edge end
-/// has no explicit port).
 pub fn create_port(
     a: &mut LGraphArena,
     node: LNodeId,
@@ -216,7 +207,6 @@ pub fn create_port(
     }
 }
 
-/// Port of `LGraphUtil.initializePort`.
 pub fn initialize_port(
     a: &mut LGraphArena,
     port: LPortId,
@@ -309,7 +299,7 @@ impl<'h> PortPropertyHolder<'h> {
     }
 }
 
-/// Port of `LGraphUtil.createExternalPortDummy`. Creates a dummy node (with
+/// Creates a dummy node (with
 /// one port) for an external port; see the Java documentation for the
 /// decorations applied. The dummy is NOT added to the graph's node list.
 #[allow(clippy::too_many_arguments)]
@@ -505,7 +495,7 @@ pub fn create_external_port_dummy(
     dummy
 }
 
-/// Port of `LGraphUtil.getExternalPortPosition`: calculates the position of
+/// Calculates the position of
 /// the external port's top left corner from the position of the given dummy
 /// node that represents the port. Also adjusts the dummy node's position.
 pub fn get_external_port_position(
@@ -555,7 +545,7 @@ pub fn get_external_port_position(
     port_position
 }
 
-/// Port of `LGraphUtil.resizeNode` (LGraph variant): resizes a node to the
+/// Resizes a node to the
 /// given width and height, adjusting port and label positions if needed.
 pub fn resize_node(
     a: &mut LGraphArena,
@@ -640,7 +630,6 @@ pub fn resize_node(
         .set(&lopts::NODE_SIZE_CONSTRAINTS, EnumSet::<SizeConstraint>::none());
 }
 
-/// Port of `LGraphUtil.isDescendant` (LGraph hierarchy).
 pub fn is_descendant(a: &LGraphArena, child: LNodeId, parent: LNodeId) -> bool {
     let mut current = child;
     let mut next = a.graph(a.node_graph(current)).parent_node;
@@ -654,7 +643,7 @@ pub fn is_descendant(a: &LGraphArena, child: LNodeId, parent: LNodeId) -> bool {
     false
 }
 
-/// Port of `LGraphUtil.changeCoordSystem`: converts the given point from the
+/// Converts the given point from the
 /// coordinate system of `old_graph` to that of `new_graph`.
 pub fn change_coord_system(
     a: &LGraphArena,
@@ -698,7 +687,6 @@ pub fn change_coord_system(
     }
 }
 
-/// Port of `LEdge.reverse`.
 pub fn edge_reverse(
     a: &mut LGraphArena,
     graph: LGraphId,

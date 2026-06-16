@@ -1,4 +1,3 @@
-//! Port of `p5edges/orthogonal/HyperEdgeSegmentSplitter.java`.
 //!
 //! Responsible for splitting hyperedge segments in order to avoid overlaps,
 //! given a set of critical dependencies whose removal will break critical

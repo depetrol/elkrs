@@ -13,7 +13,6 @@ use elk_graph::math::{ElkPadding, Spacing};
 use elk_graph::properties::Property;
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.mrtree.options.OrderWeighting`.
     pub enum OrderWeighting {
         MODEL_ORDER,
         DESCENDANTS,
@@ -23,7 +22,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.mrtree.options.TreeifyingOrder`.
     pub enum TreeifyingOrder {
         DFS,
         BFS,
@@ -31,7 +29,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.mrtree.options.EdgeRoutingMode`.
     pub enum EdgeRoutingMode {
         NONE,
         MIDDLE_TO_MIDDLE,
@@ -40,7 +37,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.mrtree.options.CompactionMode`.
     /// (Declared in Java but not referenced by the algorithm; the
     /// `compaction` option is a plain boolean.)
     pub enum CompactionMode {

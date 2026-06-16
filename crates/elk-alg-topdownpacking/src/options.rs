@@ -9,14 +9,12 @@ use elk_graph::properties::Property;
 pub const ALGORITHM_ID: &str = "org.eclipse.elk.topdownpacking";
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.topdownpacking.NodeArrangementStrategy`.
     pub enum NodeArrangementStrategy {
         LEFT_RIGHT_TOP_DOWN_NODE_PLACER,
     }
 }
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.topdownpacking.WhitespaceEliminationStrategy`.
     pub enum WhitespaceEliminationStrategy {
         BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR,
     }

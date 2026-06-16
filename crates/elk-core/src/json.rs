@@ -26,9 +26,6 @@ fn id_string(v: &Value) -> Option<String> {
     }
 }
 
-/// Port of `JsonAdapter.getId`/`asId`: every element (node, port, edge, edge
-/// section) must have an id, and the id must be a string or an integer
-/// (`d % 1 == 0`); anything else is a `JsonImportException`.
 fn require_id(obj: &Map<String, Value>) -> Result<String, String> {
     let idv = obj
         .get("id")
@@ -63,7 +60,6 @@ impl<'r> JsonImporter<'r> {
         JsonImporter { registry, node_ids: IndexMap::new(), port_ids: IndexMap::new() }
     }
 
-    /// Port of `JsonImporter.transform`.
     pub fn import_graph(&mut self, json: &Value) -> Result<ElkGraph, String> {
         let mut g = ElkGraph::new();
         let root_obj = json
@@ -444,9 +440,6 @@ impl<'r> JsonImporter<'r> {
         Ok(())
     }
 
-    /// Port of `transformProperties` + `setOption`: resolve each key through
-    /// the metadata service by suffix; drop unknown options or unparseable
-    /// values silently.
     fn transform_properties(&self, props: &mut PropertyMap, obj: &Map<String, Value>) {
         let opts = obj
             .get("layoutOptions")
@@ -501,8 +494,6 @@ fn json_value_to_string(v: &Value) -> String {
 //  Export
 // --------------------------------------------------------------------------
 
-/// Port of `JsonExporter` with the oracle's flag set:
-/// `omitZeroPositions(false).omitZeroDimension(false).shortLayoutOptionKeys(false)`.
 pub struct JsonExporter<'r> {
     pub registry: &'r LayoutMetaDataRegistry,
     pub omit_zero_pos: bool,

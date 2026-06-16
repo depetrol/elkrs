@@ -1,4 +1,4 @@
-//! Port of `HierarchicalPortConstraintProcessor`: handles ordering constraints
+//! Handles ordering constraints
 //! for east/west hierarchical port dummies and replaces north/south
 //! hierarchical port dummies by temporary per-layer dummies.
 

@@ -1,4 +1,4 @@
-//! Port of `LabelDummyInserter`: inserts dummy nodes into edges that have
+//! Inserts dummy nodes into edges that have
 //! center labels to reserve space for them.
 
 use elk_core::options::{Direction, EdgeLabelPlacement, PortConstraints};
@@ -141,8 +141,6 @@ fn create_label_dummy(
     dummy_node
 }
 
-/// Port of `LNode.isInlineEdgeLabel` (also used by `LabelSideSelector` and
-/// `LabelDummyRemover`).
 pub fn is_inline_edge_label(a: &LGraphArena, node: LNodeId) -> bool {
     a.node(node).node_type == NodeType::LABEL
         && a.node(node)

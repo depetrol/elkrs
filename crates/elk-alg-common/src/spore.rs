@@ -11,7 +11,7 @@ use crate::utils::get_rect_edges;
 /// `InternalProperties.FUZZINESS`.
 pub const FUZZINESS: f64 = 0.0001;
 
-/// Port of `spore.Node`: a rectangle plus center point. Identity (Java
+/// A rectangle plus center point. Identity (Java
 /// object identity) is the index into the owning `Vec<Node>`.
 #[derive(Clone, Debug)]
 pub struct Node {
@@ -40,7 +40,6 @@ impl Node {
         self.translate(d);
     }
 
-    /// Port of `Node.underlap`.
     pub fn underlap(&self, other: &Node) -> f64 {
         let horizontal_center_distance = (self.rect.center().x - other.rect.center().x).abs();
         let vertical_center_distance = (self.rect.center().y - other.rect.center().y).abs();
@@ -67,7 +66,7 @@ impl Node {
                 .sqrt()
     }
 
-    /// Port of `Node.distance`: how far `other` can be moved in direction `v`
+    /// How far `other` can be moved in direction `v`
     /// without colliding with this node.
     pub fn distance(&self, other: &Node, v: KVector) -> f64 {
         let mut result = f64::INFINITY;
@@ -80,7 +79,6 @@ impl Node {
         result
     }
 
-    /// Port of `Node.touches`.
     pub fn touches(&self, other: &Node) -> bool {
         fuzzy_compare(self.rect.x, other.rect.x + other.rect.width, FUZZINESS) <= 0
             && fuzzy_compare(other.rect.x, self.rect.x + self.rect.width, FUZZINESS) <= 0
@@ -91,9 +89,6 @@ impl Node {
 
 // --------------------------------------------------- ScanlineOverlapCheck
 
-/// Port of `ScanlineOverlapCheck` + `compaction.Scanline`. Calls `handler`
-/// with the indices of every overlapping node pair found during one sweep,
-/// in Java's order.
 pub fn scanline_overlap_check(nodes: &[Node], mut handler: impl FnMut(usize, usize)) {
     struct Timestamp {
         node: usize,
@@ -184,7 +179,6 @@ pub fn scanline_overlap_check(nodes: &[Node], mut handler: impl FnMut(usize, usi
 
 // --------------------------------------------------- DepthFirstCompaction
 
-/// Port of `DepthFirstCompaction.compact`.
 pub fn depth_first_compact(tree: &Forest<usize>, nodes: &mut [Node], orthogonal: bool) {
     compact_tree(tree, tree.root, tree.root, nodes, orthogonal);
 }

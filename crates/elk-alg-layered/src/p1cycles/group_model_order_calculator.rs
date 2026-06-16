@@ -1,4 +1,3 @@
-//! Port of `p1cycles.GroupModelOrderCalculator`.
 
 use crate::graph::{LGraphArena, LNodeId};
 use crate::internal_properties as iprops;
@@ -17,7 +16,6 @@ impl GroupModelOrderCalculator {
         Self::default()
     }
 
-    /// Port of `computeConstraintModelOrder`.
     pub fn compute_constraint_model_order(
         &mut self,
         a: &LGraphArena,
@@ -32,7 +30,6 @@ impl GroupModelOrderCalculator {
         model_order
     }
 
-    /// Port of `computeConstraintGroupModelOrder`.
     pub fn compute_constraint_group_model_order(
         &mut self,
         a: &LGraphArena,

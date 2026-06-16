@@ -1,4 +1,3 @@
-//! Port of `internal.algorithm.HorizontalPortPlacementSizeCalculator`.
 
 use elk_core::adapters::AdapterGraph;
 use elk_core::elkutil;
@@ -7,7 +6,7 @@ use elk_core::options::{PortAlignment, PortConstraints, PortLabelPlacement, Port
 use crate::nodespacing::algorithm::port_placement_calculator::PORT_RATIO_OR_POSITION;
 use crate::nodespacing::internal::NodeContext;
 
-/// Port of `calculateHorizontalPortPlacementSize`: calculates the space
+/// Calculates the space
 /// required for horizontal port placements. If the port placement is not
 /// fixed, this will also setup the left and right padding of the inside port
 /// label placement cells.
@@ -39,7 +38,6 @@ pub fn calculate_horizontal_port_placement_size<G: AdapterGraph>(
     }
 }
 
-/// Port of `calculateHorizontalNodeSizeRequiredByFixedPosPorts`.
 fn calculate_horizontal_node_size_required_by_fixed_pos_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -61,7 +59,6 @@ fn calculate_horizontal_node_size_required_by_fixed_pos_ports<G: AdapterGraph>(
     node_context.cells.atomic_min_content_area_size_mut(cell).x = rightmost_port_border;
 }
 
-/// Port of `calculateHorizontalNodeSizeRequiredByFixedRatioPorts`.
 fn calculate_horizontal_node_size_required_by_fixed_ratio_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -161,12 +158,11 @@ fn calculate_horizontal_node_size_required_by_fixed_ratio_ports<G: AdapterGraph>
 /// Fuzzyness allowed to still consider two double values to be equal.
 const EQUALITY_TOLERANCE: f64 = 0.01;
 
-/// Port of Guava's `DoubleMath.fuzzyEquals`.
+/// Guava's `DoubleMath.fuzzyEquals`.
 fn fuzzy_equals(a: f64, b: f64, tolerance: f64) -> bool {
     (a - b).abs() <= tolerance || a == b || (a.is_nan() && b.is_nan())
 }
 
-/// Port of `minSizeRequiredToRespectSpacing`.
 pub fn min_size_required_to_respect_spacing(spacing: f64, first_ratio: f64, second_ratio: f64) -> f64 {
     // Java asserts second_ratio >= first_ratio (disabled at runtime)
 
@@ -178,7 +174,6 @@ pub fn min_size_required_to_respect_spacing(spacing: f64, first_ratio: f64, seco
     }
 }
 
-/// Port of `calculateHorizontalNodeSizeRequiredByFreePorts`.
 fn calculate_horizontal_node_size_required_by_free_ports<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -215,7 +210,6 @@ fn calculate_horizontal_node_size_required_by_free_ports<G: AdapterGraph>(
     node_context.cells.atomic_min_content_area_size_mut(cell).x = width;
 }
 
-/// Port of `setupPortMargins`.
 fn setup_port_margins<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>, port_side: PortSide) {
     let range = node_context.ports_on_side(port_side);
 
@@ -275,7 +269,6 @@ fn setup_port_margins<G: AdapterGraph>(g: &G, node_context: &mut NodeContext<G>,
     }
 }
 
-/// Port of `computeHorizontalPortMargins`.
 fn compute_horizontal_port_margins<G: AdapterGraph>(
     g: &G,
     node_context: &mut NodeContext<G>,
@@ -323,7 +316,7 @@ fn compute_horizontal_port_margins<G: AdapterGraph>(
     }
 }
 
-/// Port of `unifyPortMargins`: sets all port margins to the maximum margins.
+/// Sets all port margins to the maximum margins.
 fn unify_port_margins<G: AdapterGraph>(
     node_context: &mut NodeContext<G>,
     range: std::ops::Range<usize>,
@@ -344,7 +337,6 @@ fn unify_port_margins<G: AdapterGraph>(
     }
 }
 
-/// Port of `portWidthPlusPortPortSpacing`.
 fn port_width_plus_port_port_spacing<G: AdapterGraph>(
     g: &G,
     node_context: &NodeContext<G>,

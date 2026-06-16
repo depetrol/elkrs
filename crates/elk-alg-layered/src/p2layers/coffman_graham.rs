@@ -1,4 +1,3 @@
-//! Port of `CoffmanGrahamLayerer` (`org.eclipse.elk.alg.layered.p2layers`).
 //!
 //! A layering algorithm that places nodes in layers subject to a bound on the
 //! maximum number of (original) nodes per layer (Coffman & Graham 1972).
@@ -25,7 +24,6 @@ impl JavaPq {
         JavaPq { heap: Vec::new() }
     }
 
-    /// Port of `PriorityQueue.add` / `siftUpUsingComparator`.
     fn add(&mut self, x: LNodeId, cmp: &mut dyn FnMut(LNodeId, LNodeId) -> Ordering) {
         let mut k = self.heap.len();
         self.heap.push(x);
@@ -40,7 +38,6 @@ impl JavaPq {
         self.heap[k] = x;
     }
 
-    /// Port of `PriorityQueue.poll` / `siftDownUsingComparator`.
     fn poll(&mut self, cmp: &mut dyn FnMut(LNodeId, LNodeId) -> Ordering) -> Option<LNodeId> {
         if self.heap.is_empty() {
             return None;
@@ -70,7 +67,6 @@ impl JavaPq {
     }
 }
 
-/// Port of `CoffmanGrahamLayerer.process(LGraph, IElkProgressMonitor)`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     if a.graph(graph).layerless_nodes.is_empty() {
         return Ok(());
@@ -260,10 +256,6 @@ fn create_layer(a: &mut LGraphArena, graph: LGraphId, layers: &mut Vec<LayerId>)
     layer
 }
 
-/// Port of `compareNodesInTopo(LNode, LNode)`, replicating two Java quirks:
-///
-/// 1. The values are compared as boxed `Integer`s with `!=` (reference
-///    comparison). Equal values within the `Integer` cache range (<= 127)
 ///    are the same object, so the loop continues; equal values >= 128 are
 ///    distinct objects, so Java enters the branch and `Integer.compare`
 ///    returns 0 immediately.
@@ -313,7 +305,6 @@ fn compare_nodes_in_topo(
     }
 }
 
-/// Port of `dfs(LNode, LNode)` (transitive reduction).
 fn dfs(
     a: &LGraphArena,
     start: LNodeId,

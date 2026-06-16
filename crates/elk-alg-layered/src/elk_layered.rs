@@ -1,4 +1,4 @@
-//! Port of `ElkLayered`: the algorithm driver (flat layout only for now).
+//! The algorithm driver (flat layout only for now).
 
 use elk_core::javacompat::JavaRandom;
 use elk_core::options::{ContentAlignment, PortSide, SizeConstraint, SizeOptions};
@@ -14,7 +14,6 @@ use crate::options_gen::GraphProperties;
 use crate::phases::PipelineStep;
 use crate::processors;
 
-/// Port of `ElkLayered.doLayout`.
 pub fn do_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     // the random number generator (Java: stored in the RANDOM property)
     let mut random = make_random(a, lgraph);
@@ -42,7 +41,6 @@ fn make_random(a: &LGraphArena, lgraph: LGraphId) -> JavaRandom {
     }
 }
 
-/// Port of `ElkLayered.doCompoundLayout`.
 pub fn do_compound_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     // Preprocess the compound graph by splitting cross-hierarchy edges.
     crate::compound::preprocess(a, lgraph)?;
@@ -55,7 +53,6 @@ pub fn do_compound_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), S
     Ok(())
 }
 
-/// Port of `ElkLayered.hierarchicalLayout`.
 fn hierarchical_layout(a: &mut LGraphArena, lgraph: LGraphId) -> Result<(), String> {
     // Perform a reversed breadth first search: the graphs in the lowest
     // hierarchy come first.
@@ -151,7 +148,7 @@ fn run_step(
     }
 }
 
-/// Port of `ElkLayered.collectAllGraphsBottomUp`: breadth-first search in the
+/// Breadth-first search in the
 /// compound graph with reversed order (innermost graphs first).
 fn collect_all_graphs_bottom_up(a: &LGraphArena, root: LGraphId) -> Vec<LGraphId> {
     // collectedGraphs and continueSearching are ArrayDeques used as stacks
@@ -172,7 +169,6 @@ fn collect_all_graphs_bottom_up(a: &LGraphArena, root: LGraphId) -> Vec<LGraphId
     collected.into_iter().collect()
 }
 
-/// Port of `ElkLayered.reviewAndCorrectHierarchicalProcessors`.
 fn review_and_correct_hierarchical_processors(
     a: &mut LGraphArena,
     root: LGraphId,
@@ -206,7 +202,6 @@ fn review_and_correct_hierarchical_processors(
     Ok(())
 }
 
-/// Port of `ElkLayered.layout` (single component).
 fn layout(
     a: &mut LGraphArena,
     lgraph: LGraphId,
@@ -242,7 +237,6 @@ fn layout(
     Ok(())
 }
 
-/// Port of `ElkLayered.resizeGraph`.
 fn resize_graph(a: &mut LGraphArena, lgraph: LGraphId) {
     let size_constraint: EnumSet<SizeConstraint> =
         a.graph(lgraph).properties.get(&lopts::NODE_SIZE_CONSTRAINTS);
@@ -271,7 +265,6 @@ fn resize_graph(a: &mut LGraphArena, lgraph: LGraphId) {
     }
 }
 
-/// Port of `resizeGraphNoReallyIMeanIt`.
 fn resize_graph_no_really_i_mean_it(
     a: &mut LGraphArena,
     lgraph: LGraphId,

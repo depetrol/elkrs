@@ -6,7 +6,6 @@ use elk_graph::graph::{ElkGraph, NodeId};
 use elk_graph::properties::EnumSet;
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.graph.properties.GraphFeature`.
     pub enum GraphFeature {
         SELF_LOOPS,
         INSIDE_SELF_LOOPS,
@@ -25,7 +24,6 @@ pub trait LayoutProvider {
     fn layout(&mut self, g: &mut ElkGraph, node: NodeId) -> Result<(), String>;
 }
 
-/// Port of `LayoutAlgorithmData`.
 pub struct AlgorithmData {
     pub id: &'static str,
     pub name: &'static str,
@@ -48,7 +46,6 @@ impl AlgorithmRegistry {
         self.algorithms.iter().find(|a| a.id == id)
     }
 
-    /// Port of `LayoutMetaDataService.getAlgorithmDataBySuffix`.
     pub fn by_suffix(&self, suffix: &str) -> Option<&AlgorithmData> {
         if suffix.is_empty() {
             return None;

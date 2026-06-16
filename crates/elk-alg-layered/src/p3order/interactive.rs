@@ -1,4 +1,3 @@
-//! Port of `InteractiveCrossingMinimizer`.
 //!
 //! A crossing minimizer that allows user interaction by respecting previous
 //! node positions.

@@ -1,4 +1,4 @@
-//! Port of `AlternatingLayerUnzipper`: divides nodes up between sub-layers to
+//! Divides nodes up between sub-layers to
 //! create a more compact layout (layerUnzipping.strategy = ALTERNATING).
 
 use elk_core::options::PortConstraints;
@@ -99,7 +99,6 @@ pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     Ok(())
 }
 
-/// Port of `getLayerSplitProperty`.
 fn get_layer_split_property(a: &LGraphArena, layer: LayerId) -> i32 {
     let mut layer_split = i32::MAX;
     let mut property_unset = true;
@@ -117,7 +116,6 @@ fn get_layer_split_property(a: &LGraphArena, layer: LayerId) -> i32 {
     layer_split
 }
 
-/// Port of `getResetOnLongEdgesProperty`.
 fn get_reset_on_long_edges_property(a: &LGraphArena, layer: LayerId) -> bool {
     for &node in &a.layer(layer).nodes {
         if a.node(node).properties.has(&lopts::LAYER_UNZIPPING_RESET_ON_LONG_EDGES)
@@ -129,7 +127,6 @@ fn get_reset_on_long_edges_property(a: &LGraphArena, layer: LayerId) -> bool {
     true
 }
 
-/// Port of `getMinimizeEdgeLengthProperty`.
 fn get_minimize_edge_length_property(a: &LGraphArena, layer: LayerId) -> bool {
     for &node in &a.layer(layer).nodes {
         if a.node(node).properties.has(&lopts::LAYER_UNZIPPING_MINIMIZE_EDGE_LENGTH)
@@ -141,7 +138,6 @@ fn get_minimize_edge_length_property(a: &LGraphArena, layer: LayerId) -> bool {
     false
 }
 
-/// Port of `AlternatingLayerUnzipper.shiftNode`.
 fn shift_node(
     a: &mut LGraphArena,
     graph: LGraphId,
@@ -231,7 +227,6 @@ fn shift_node(
     }
 }
 
-/// Port of `AlternatingLayerUnzipper.createDummyNode`.
 fn create_dummy_node(a: &mut LGraphArena, graph: LGraphId, next_edge_to_split: LEdgeId) -> LNodeId {
     let dummy_node = a.create_node(graph);
     a.node_mut(dummy_node).node_type = NodeType::LONG_EDGE;

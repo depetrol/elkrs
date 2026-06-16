@@ -1,4 +1,4 @@
-//! Port of `EndLabelPostprocessor`: offsets the label cells computed by the
+//! Offsets the label cells computed by the
 //! `EndLabelPreprocessor` by the final node coordinates and applies label
 //! positions.
 

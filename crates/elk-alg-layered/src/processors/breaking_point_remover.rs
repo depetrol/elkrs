@@ -1,4 +1,4 @@
-//! Port of `BreakingPointRemover`: removes BREAKING_POINT dummies and
+//! Removes BREAKING_POINT dummies and
 //! transfers the split edge route back to the original edge.
 
 use elk_core::options::EdgeRouting;
@@ -36,7 +36,6 @@ fn is_end(a: &LGraphArena, store: &BPInfoStore, n: LNodeId) -> bool {
     bpi_of(a, n).map(|id| store.get(id).end == n).unwrap_or(false)
 }
 
-/// Port of `BreakingPointRemover.remove` (recursive over `prev`).
 fn remove(a: &mut LGraphArena, store: &BPInfoStore, bpi_id: BPInfoId, edge_routing: EdgeRouting) {
     let bpi: BPInfo = store.get(bpi_id).clone();
 

@@ -438,8 +438,6 @@ impl<'a> IntoIterator for &'a KVectorChain {
     }
 }
 
-/// Port of `Spacing`; `ElkMargin` and `ElkPadding` are identical in shape, so
-/// both are aliases of this struct.
 #[derive(Clone, Copy, Default, PartialEq, Debug)]
 pub struct Spacing {
     pub top: f64,
@@ -479,7 +477,7 @@ impl Spacing {
         self.top + self.bottom
     }
 
-    /// Port of Java `Spacing.parse`: expects a list of `key=value` pairs
+    /// Java `Spacing.parse`: expects a list of `key=value` pairs
     /// (unknown keys are ignored; an empty string yields all zeros).
     pub fn parse(string: &str) -> Result<Spacing, String> {
         let is_delim = |c: char, delims: &str| delims.contains(c);
@@ -533,7 +531,6 @@ impl fmt::Display for Spacing {
     }
 }
 
-/// Port of `ElkRectangle`.
 #[derive(Clone, Copy, Default, PartialEq, Debug)]
 pub struct ElkRectangle {
     pub x: f64,

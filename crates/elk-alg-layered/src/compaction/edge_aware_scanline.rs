@@ -1,4 +1,3 @@
-//! Port of `EdgeAwareScanlineConstraintCalculation`.
 //!
 //! Extends the common `ScanlineConstraintCalculator` (a plain sweep) with the
 //! special spacing handling between LGraph nodes and edge segments. The Java

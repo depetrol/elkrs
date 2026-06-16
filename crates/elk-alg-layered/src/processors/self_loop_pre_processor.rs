@@ -1,4 +1,4 @@
-//! Port of `SelfLoopPreProcessor`: finds regular nodes with self loops and
+//! Finds regular nodes with self loops and
 //! preprocesses those loops.
 //!
 //! Postconditions: each node with self loops has a `SelfLoopHolder` stored in

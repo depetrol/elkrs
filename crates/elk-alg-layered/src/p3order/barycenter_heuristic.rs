@@ -1,4 +1,3 @@
-//! Port of `BarycenterHeuristic` (including the nested `BarycenterState`).
 //!
 //! In Java the heuristic holds references to the constraint resolver's
 //! barycenter state array and the port distributor's port rank array; here
@@ -19,7 +18,7 @@ use super::port_distributor::PortDistributor;
 /// the amount of random value to add to each calculated barycenter.
 const RANDOM_AMOUNT: f32 = 0.07f32;
 
-/// Port of `BarycenterHeuristic.BarycenterState`: the current barycenter
+/// The current barycenter
 /// state of a node.
 #[derive(Clone, Debug)]
 pub struct BarycenterState {
@@ -54,8 +53,6 @@ fn state_indices(a: &LGraphArena, node: LNodeId) -> (usize, usize) {
     (a.layer(layer).id as usize, a.node(node).id as usize)
 }
 
-/// Port of `BarycenterHeuristic.minimizeCrossings(LNode[][], int, boolean,
-/// boolean)`. Always returns `false` (does not always improve).
 #[allow(clippy::too_many_arguments)]
 pub fn minimize_crossings_in_sweep(
     a: &LGraphArena,
@@ -84,7 +81,6 @@ pub fn minimize_crossings_in_sweep(
     false // Does not always improve.
 }
 
-/// Port of `BarycenterHeuristic.setFirstLayerOrder`.
 #[allow(clippy::too_many_arguments)]
 pub fn set_first_layer_order(
     a: &LGraphArena,
@@ -105,7 +101,7 @@ pub fn set_first_layer_order(
     false // Does not always improve
 }
 
-/// Port of the package-visible `minimizeCrossings(List<LNode>, boolean,
+/// The package-visible `minimizeCrossings(List<LNode>, boolean,
 /// boolean, boolean)`.
 #[allow(clippy::too_many_arguments)]
 pub fn minimize_crossings_list(
@@ -172,7 +168,6 @@ pub fn minimize_crossings_list(
     }
 }
 
-/// Port of `ModelOrderBarycenterHeuristic.insertionSort`.
 fn insertion_sort_model_order(
     a: &LGraphArena,
     layer: &mut [LNodeId],
@@ -190,7 +185,6 @@ fn insertion_sort_model_order(
     }
 }
 
-/// Port of `randomizeBarycenters`.
 fn randomize_barycenters(
     a: &LGraphArena,
     nodes: &[LNodeId],
@@ -208,7 +202,6 @@ fn randomize_barycenters(
     }
 }
 
-/// Port of `fillInUnknownBarycenters`.
 fn fill_in_unknown_barycenters(
     a: &LGraphArena,
     nodes: &[LNodeId],
@@ -275,7 +268,6 @@ fn fill_in_unknown_barycenters(
     }
 }
 
-/// Port of `calculateBarycenters`.
 fn calculate_barycenters(
     a: &LGraphArena,
     nodes: &[LNodeId],
@@ -296,7 +288,7 @@ fn calculate_barycenters(
     }
 }
 
-/// Port of the recursive `calculateBarycenter`. Handles in-layer edges; may
+/// The recursive `calculateBarycenter`. Handles in-layer edges; may
 /// give incorrect results if the in-layer edges form a cycle (just like the
 /// Java original).
 fn calculate_barycenter(

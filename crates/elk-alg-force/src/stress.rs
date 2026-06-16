@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.force.stress`: `StressMajorization` and
-//! `StressLayoutProvider`.
 
 use elk_core::registry::LayoutProvider;
 use elk_graph::graph::{ElkGraph, NodeId};
@@ -10,7 +8,6 @@ use crate::options::{self, Dimension};
 use crate::provider::{execute_node_micro_layout, force_layout};
 use crate::{components, importer};
 
-/// Port of `StressLayoutProvider`.
 #[derive(Default)]
 pub struct StressLayoutProvider;
 
@@ -63,8 +60,6 @@ impl LayoutProvider for StressLayoutProvider {
     }
 }
 
-/// Port of `StressMajorization` (Gansner, Koren, North: "Graph drawing by
-/// stress majorization").
 #[derive(Default)]
 pub struct StressMajorization {
     /// All pairs shortest path matrix, indexed by `FNode.id`.
@@ -84,7 +79,6 @@ pub struct StressMajorization {
 }
 
 impl StressMajorization {
-    /// Port of `StressMajorization.initialize`.
     pub fn initialize(&mut self, arena: &FArena, graph: &FGraph) {
         if graph.nodes.len() <= 1 {
             return;
@@ -124,7 +118,6 @@ impl StressMajorization {
         }
     }
 
-    /// Port of `StressMajorization.execute`.
     pub fn execute(&mut self, arena: &mut FArena, graph: &FGraph) {
         if graph.nodes.len() <= 1 {
             return;
@@ -162,8 +155,6 @@ impl StressMajorization {
         }
     }
 
-    /// Port of `StressMajorization.dijkstra` (including `java.util.PriorityQueue`
-    /// heap semantics).
     fn dijkstra(&self, arena: &FArena, graph: &FGraph, source: FNodeId, dist: &mut [f64]) {
         let mut queue = JavaPriorityQueue::default();
         let mut mark = vec![false; graph.nodes.len()];
@@ -205,14 +196,12 @@ impl StressMajorization {
         }
     }
 
-    /// Port of `StressMajorization.done`.
     fn done(&self, count: i32, prev_stress: f64, cur_stress: f64) -> bool {
         prev_stress == 0.0
             || ((prev_stress - cur_stress) / prev_stress) < self.epsilon
             || count >= self.iteration_limit
     }
 
-    /// Port of `StressMajorization.computeStress`.
     fn compute_stress(&self, arena: &FArena, graph: &FGraph) -> f64 {
         let mut stress = 0.0;
         let nodes = &graph.nodes;
@@ -230,8 +219,6 @@ impl StressMajorization {
         stress
     }
 
-    /// Port of `StressMajorization.computeNewPosition` (Section 2.3 of the
-    /// paper, localized optimization).
     fn compute_new_position(&self, arena: &FArena, graph: &FGraph, u: FNodeId) -> KVector {
         let mut weight_sum = 0.0;
         let mut x_disp = 0.0;
@@ -275,7 +262,6 @@ impl StressMajorization {
     }
 }
 
-/// Port of `StressMajorization.getOther`.
 fn get_other(arena: &FArena, edge: FEdgeId, one: FNodeId) -> FNodeId {
     let e = arena.edge(edge);
     if e.source == one {

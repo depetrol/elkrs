@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.components`: splitting a graph into
+//! Splitting a graph into
 //! connected components and recombining them after layout.
 //!
 //! Currently includes the `SimpleRowGraphPlacer`; the component-group placers
@@ -14,16 +14,13 @@ use crate::internal_properties as iprops;
 use crate::options_gen as lopts;
 use crate::options_gen::{ComponentOrderingStrategy, GraphProperties};
 
-/// Port of `PortSide.SIDES_*` constants (each a `Set<PortSide>`).
 fn sides(parts: &[PortSide]) -> EnumSet<PortSide> {
     EnumSet::of(parts)
 }
 
-/// Port of `ComponentsProcessor` (split + combine via SimpleRowGraphPlacer).
 pub struct ComponentsProcessor;
 
 impl ComponentsProcessor {
-    /// Port of `split`.
     pub fn split(a: &mut LGraphArena, graph: LGraphId) -> Result<Vec<LGraphId>, String> {
         let separate: bool = a
             .graph(graph)
@@ -89,7 +86,7 @@ impl ComponentsProcessor {
         Ok(result)
     }
 
-    /// Port of the recursive `dfs`; same traversal order (per node: ports in
+    /// The recursive `dfs`; same traversal order (per node: ports in
     /// order, per port predecessors then successors).
     fn dfs(
         a: &mut LGraphArena,
@@ -128,7 +125,7 @@ impl ComponentsProcessor {
         }
     }
 
-    /// Port of `ComponentsProcessor.combine`: dispatch on whether the graph has
+    /// Dispatch on whether the graph has
     /// external ports. Java caches the chosen placer in `split`; we re-derive
     /// the same decision from the target graph's properties (when there are
     /// external ports and the model-order strategy is `NONE`, the
@@ -150,7 +147,6 @@ impl ComponentsProcessor {
         Self::combine_simple_row(a, components, target)
     }
 
-    /// Port of `SimpleRowGraphPlacer.combine`.
     fn combine_simple_row(
         a: &mut LGraphArena,
         components: &mut Vec<LGraphId>,
@@ -212,7 +208,6 @@ impl ComponentsProcessor {
         Ok(())
     }
 
-    /// Port of `SimpleRowGraphPlacer.sortComponents`.
     fn sort_components(a: &mut LGraphArena, components: &mut [LGraphId], target: LGraphId) {
         if a.graph(target)
             .properties
@@ -243,7 +238,6 @@ impl ComponentsProcessor {
         }
     }
 
-    /// Port of `SimpleRowGraphPlacer.placeComponents`.
     fn place_components(
         a: &mut LGraphArena,
         components: &[LGraphId],
@@ -273,7 +267,6 @@ impl ComponentsProcessor {
         a.graph_mut(target).size.y = ypos + highest_box;
     }
 
-    /// Port of `ComponentGroupGraphPlacer.combine`.
     fn combine_component_groups(
         a: &mut LGraphArena,
         components: &[LGraphId],
@@ -343,7 +336,6 @@ impl ComponentsProcessor {
         Ok(())
     }
 
-    /// Port of `ComponentGroupGraphPlacer.addComponent`.
     fn add_component(
         a: &LGraphArena,
         groups: &mut Vec<ComponentGroup>,
@@ -360,7 +352,6 @@ impl ComponentsProcessor {
         groups.push(group);
     }
 
-    /// Port of `ComponentGroupGraphPlacer.placeComponents`.
     fn place_group(a: &mut LGraphArena, group: &ComponentGroup, spacing: f64) -> KVector {
         let size_c = Self::place_in_rows(a, group.get(sides(&[])), spacing);
         let size_n = Self::place_horizontally(a, group.get(sides(&[PortSide::NORTH])), spacing);
@@ -537,7 +528,6 @@ impl ComponentsProcessor {
         component_size
     }
 
-    /// Port of `ComponentGroupGraphPlacer.placeComponentsHorizontally`.
     fn place_horizontally(a: &mut LGraphArena, components: &[LGraphId], spacing: f64) -> KVector {
         let mut size = KVector::default();
         for &component in components {
@@ -552,7 +542,6 @@ impl ComponentsProcessor {
         size
     }
 
-    /// Port of `ComponentGroupGraphPlacer.placeComponentsVertically`.
     fn place_vertically(a: &mut LGraphArena, components: &[LGraphId], spacing: f64) -> KVector {
         let mut size = KVector::default();
         for &component in components {
@@ -567,7 +556,6 @@ impl ComponentsProcessor {
         size
     }
 
-    /// Port of `ComponentGroupGraphPlacer.placeComponentsInRows`.
     fn place_in_rows(a: &mut LGraphArena, components: &[LGraphId], spacing: f64) -> KVector {
         if components.is_empty() {
             return KVector::default();
@@ -602,14 +590,12 @@ impl ComponentsProcessor {
         KVector::new(broadest_row + spacing, ypos + highest_box + spacing)
     }
 
-    /// Port of `AbstractGraphPlacer.offsetGraphs`.
     fn offset_graphs(a: &mut LGraphArena, graphs: &[LGraphId], offsetx: f64, offsety: f64) {
         for &graph in graphs {
             Self::offset_graph(a, graph, offsetx, offsety);
         }
     }
 
-    /// Port of `AbstractGraphPlacer.moveGraph`.
     fn move_graph(
         a: &mut LGraphArena,
         dest_graph: LGraphId,
@@ -647,7 +633,6 @@ impl ComponentsProcessor {
         }
     }
 
-    /// Port of `AbstractGraphPlacer.offsetGraph`.
     fn offset_graph(a: &mut LGraphArena, graph: LGraphId, offsetx: f64, offsety: f64) {
         let graph_offset = elk_graph::math::KVector::new(offsetx, offsety);
         let nodes = a.graph(graph).layerless_nodes.clone();
@@ -673,7 +658,7 @@ impl ComponentsProcessor {
     }
 }
 
-/// Port of `ElkMath.maxd`: the maximum of the given values.
+/// The maximum of the given values.
 fn maxd(values: &[f64]) -> f64 {
     let mut max = values[0];
     for &v in &values[1..] {
@@ -684,7 +669,7 @@ fn maxd(values: &[f64]) -> f64 {
     max
 }
 
-/// Port of `ComponentGroup`: a group of connected components, keyed by the set
+/// A group of connected components, keyed by the set
 /// of external-port sides each connects to (Java `Multimap<Set<PortSide>,
 /// LGraph>`, an `ArrayListMultimap` that preserves insertion order). Keyed here
 /// by the `EnumSet` bit pattern via an `IndexMap` to keep insertion order.
@@ -700,7 +685,6 @@ impl ComponentGroup {
         }
     }
 
-    /// Port of `ComponentGroup.add` (returns whether the component was added).
     fn add(&mut self, _a: &LGraphArena, component: LGraphId, conn: EnumSet<PortSide>) -> bool {
         if self.can_add(conn) {
             self.components.entry(key(conn)).or_default().push(component);
@@ -710,7 +694,6 @@ impl ComponentGroup {
         }
     }
 
-    /// Port of `ComponentGroup.canAdd`.
     fn can_add(&self, candidate_sides: EnumSet<PortSide>) -> bool {
         for &constraint in constraints_for(candidate_sides) {
             if let Some(list) = self.components.get(&constraint) {
@@ -722,7 +705,7 @@ impl ComponentGroup {
         true
     }
 
-    /// Port of `ComponentGroup.getComponents(connections)`. Returns an empty
+    /// Returns an empty
     /// slice when no components are registered for the given side set.
     fn get(&self, connections: EnumSet<PortSide>) -> &[LGraphId] {
         match self.components.get(&key(connections)) {
@@ -731,8 +714,6 @@ impl ComponentGroup {
         }
     }
 
-    /// Port of `ComponentGroup.getComponents()` (all components, in insertion
-    /// order of side sets then components).
     fn all_components(&self) -> impl Iterator<Item = &LGraphId> {
         self.components.values().flat_map(|v| v.iter())
     }
@@ -747,7 +728,7 @@ fn key(set: EnumSet<PortSide>) -> u64 {
     bits
 }
 
-/// Port of `ComponentGroup.CONSTRAINTS`: for a candidate set of external-port
+/// For a candidate set of external-port
 /// sides, the side sets that must not already exist in the group. Returns the
 /// list of constraint keys to check.
 fn constraints_for(candidate: EnumSet<PortSide>) -> &'static [u64] {

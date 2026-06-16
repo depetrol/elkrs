@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.common.nodespacing`: node size calculation,
+//! Node size calculation,
 //! node/port label placement, and node margin calculation.
 
 pub mod algorithm;
@@ -25,10 +25,6 @@ pub use node_margin_calculator::NodeMarginCalculator;
 // ---------------------------------------------------------------------------
 // NodeDimensionCalculation (entry points)
 
-/// Port of `NodeDimensionCalculation.calculateLabelAndNodeSizes(GraphAdapter)`
-/// with a node filter (Java overload with `Predicate`): calculates label
-/// sizes and node sizes also considering ports. Make sure that the port lists
-/// are sorted properly.
 pub fn calculate_label_and_node_sizes<G: AdapterGraph>(
     g: &mut G,
     node_filter: impl Fn(&G, G::N) -> bool,
@@ -41,9 +37,6 @@ pub fn calculate_label_and_node_sizes<G: AdapterGraph>(
     }
 }
 
-/// Port of `NodeDimensionCalculation.getNodeMarginCalculator(adapter)` plus
-/// the option chain used in practice: calculates node margins for the nodes
-/// of the passed graph, optionally excluding edge head/tail labels.
 pub fn calculate_node_margins<G: AdapterGraph>(g: &mut G, exclude_edge_head_tail_labels: bool) {
     let mut calculator = NodeMarginCalculator::new();
     if exclude_edge_head_tail_labels {
@@ -52,7 +45,7 @@ pub fn calculate_node_margins<G: AdapterGraph>(g: &mut G, exclude_edge_head_tail
     calculator.process(g);
 }
 
-/// Port of `NodeDimensionCalculation.sortPortLists(GraphAdapter)`: sorts the
+/// Sorts the
 /// port lists of all nodes of the graph clockwise.
 pub fn sort_port_lists<G: AdapterGraph>(g: &mut G) {
     // Iterate through the nodes of all layers
@@ -64,9 +57,6 @@ pub fn sort_port_lists<G: AdapterGraph>(g: &mut G) {
 // ---------------------------------------------------------------------------
 // NodeLabelAndSizeCalculator
 
-/// Port of `NodeLabelAndSizeCalculator.process(graph, node, applyStuff,
-/// ignoreInsidePortLabels)`. Processes the given node, which is assumed to be
-/// a child of the graph viewed by `g`.
 ///
 /// * `apply_stuff` — if `true`, the node is actually resized and has its
 ///   ports and labels positioned; if `false`, only the size that would be
@@ -166,8 +156,6 @@ pub fn process_node_size<G: AdapterGraph>(
     node_context.node_size
 }
 
-/// Port of `NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding`:
-/// computes the padding required to place inside non-center node labels.
 ///
 /// Java passes a `null` graph to the node context here and the spacing
 /// lookups go through `node.getGraph()`; with our adapter that parent graph

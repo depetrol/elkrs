@@ -1,4 +1,4 @@
-//! Port of the reachable subset of `p5edges/splines/SplinesMath.java` plus the
+//! The reachable subset of `p5edges/splines/SplinesMath.java` plus the
 //! pieces of `org.eclipse.elk.core.math.ElkMath` used by the spline routing
 //! code (bezier approximation, rectangle/line intersection tests).
 

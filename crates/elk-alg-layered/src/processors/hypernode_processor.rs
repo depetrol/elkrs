@@ -1,4 +1,4 @@
-//! Port of `HypernodesProcessor`: improves the placement of hypernodes by
+//! Improves the placement of hypernodes by
 //! moving them such that they replace the join points of connected edges.
 //! Runs after phase 5.
 

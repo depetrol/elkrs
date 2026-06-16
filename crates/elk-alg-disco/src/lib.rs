@@ -24,7 +24,6 @@ pub fn register(options: &mut LayoutMetaDataRegistry, algorithms: &mut Algorithm
     });
 }
 
-/// Port of `DisCoLayoutProvider`.
 #[derive(Default)]
 pub struct DisCoLayoutProvider;
 

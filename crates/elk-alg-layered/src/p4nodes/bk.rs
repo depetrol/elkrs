@@ -1,4 +1,4 @@
-//! Port of `p4nodes/bk/BKNodePlacer.java`: the Brandes & Köpf node placement
+//! The Brandes & Köpf node placement
 //! phase (extended by ELK to cope with ports, node sizes and node margins).
 
 use std::collections::HashSet;
@@ -14,7 +14,6 @@ use super::bk_aligner;
 use super::bk_compactor::BKCompactor;
 use super::neighborhood_information::{lid, nid, NeighborhoodInformation};
 
-/// Port of `BKNodePlacer.process`.
 pub fn process(a: &mut LGraphArena, graph: LGraphId) -> Result<(), String> {
     // Precalculate some information that we require during the following
     // processes.
@@ -345,7 +344,7 @@ fn create_balanced_layout(
 /////////////////////////////////////////////////////////////////////////////
 // Utility Methods
 
-/// Port of `BKNodePlacer.getEdge`: find an edge between two given nodes, or
+/// Find an edge between two given nodes, or
 /// `None` if there is none.
 pub fn get_edge(a: &LGraphArena, source: LNodeId, target: LNodeId) -> Option<LEdgeId> {
     for edge in a.node_connected_edges(source) {
@@ -356,7 +355,7 @@ pub fn get_edge(a: &LGraphArena, source: LNodeId, target: LNodeId) -> Option<LEd
     None
 }
 
-/// Port of `BKNodePlacer.getBlocks`: finds all blocks of a given layout,
+/// Finds all blocks of a given layout,
 /// mapped from root node to block contents (keys in first-discovery order,
 /// matching Java's `LinkedHashMap`).
 pub fn get_blocks(

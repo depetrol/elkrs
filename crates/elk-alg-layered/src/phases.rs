@@ -5,7 +5,6 @@
 use elk_graph::elk_enum;
 
 elk_enum! {
-    /// Port of `LayeredPhases`.
     pub enum LayeredPhases {
         P1_CYCLE_BREAKING,
         P2_LAYERING,
@@ -16,7 +15,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `IntermediateProcessorStrategy` (0.11.0 declaration order).
     pub enum IntermediateProcessorStrategy {
         DIRECTION_PREPROCESSOR,
         COMMENT_PREPROCESSOR,
@@ -91,7 +89,7 @@ pub enum PipelineStep {
     EdgeRouting(elk_core::options::EdgeRouting),
 }
 
-/// Port of `LayoutProcessorConfiguration`: per-slot sets of intermediate
+/// Per-slot sets of intermediate
 /// processors. Slot `i` is "before phase i" for `i < 5`; slot 5 is
 /// "after P5".
 #[derive(Default, Clone, Debug)]

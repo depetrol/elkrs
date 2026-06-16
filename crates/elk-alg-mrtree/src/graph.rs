@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.mrtree.graph`: the tree algorithm's internal
+//! The tree algorithm's internal
 //! graph model (TGraph, TNode, TEdge).
 //!
 //! Java uses an object graph; here all elements live in arenas inside
@@ -38,9 +38,6 @@ macro_rules! id_type {
 id_type!(TNodeId);
 id_type!(TEdgeId);
 
-/// Port of `TNode`. `pos` is the node's center point until
-/// `NodePositionProcessor` shifts every node by `-size/2` (after which it is
-/// the top-left corner, exactly like the Java algorithm's lifecycle).
 #[derive(Default, Debug)]
 pub struct TNode {
     /// Java's public `id` field (reassigned by several processors; the
@@ -91,8 +88,6 @@ pub struct TNode {
     pub compact_constraints: Vec<TNodeId>,
 }
 
-/// Port of `TEdge`. (`TLabel` is omitted: the Java importer never creates
-/// edge labels — "TODO transform the edge's labels".)
 #[derive(Debug)]
 pub struct TEdge {
     pub source: TNodeId,
@@ -147,7 +142,6 @@ impl TArena {
         eid
     }
 
-    /// Port of `TNode.toString()`.
     pub fn node_string(&self, n: TNodeId) -> String {
         let node = self.node(n);
         if node.label.is_empty() {
@@ -157,29 +151,24 @@ impl TArena {
         }
     }
 
-    /// Port of `TEdge.toString()` (source and target are always non-null).
     pub fn edge_string(&self, e: TEdgeId) -> String {
         let edge = self.edge(e);
         format!("{}->{}", self.node_string(edge.source), self.node_string(edge.target))
     }
 
-    /// Port of `TNode.getParent()`: source of the first incoming edge.
+    /// Source of the first incoming edge.
     pub fn parent(&self, n: TNodeId) -> Option<TNodeId> {
         self.node(n).incoming.first().map(|&e| self.edge(e).source)
     }
 
-    /// Port of `TNode.getChildrenCopy()` / iteration over `getChildren()`:
-    /// targets of the outgoing edges, in order (duplicates kept).
     pub fn children(&self, n: TNodeId) -> Vec<TNodeId> {
         self.node(n).outgoing.iter().map(|&e| self.edge(e).target).collect()
     }
 
-    /// Port of `TNode.isLeaf()`.
     pub fn is_leaf(&self, n: TNodeId) -> bool {
         self.node(n).outgoing.is_empty()
     }
 
-    /// Port of `MrTreeOptions.TREE_LEVEL` reads (default 0).
     pub fn tree_level(&self, n: TNodeId) -> i32 {
         self.node(n).properties.get(&options::TREE_LEVEL)
     }
@@ -189,7 +178,7 @@ impl TArena {
     }
 }
 
-/// Port of `TGraph`: element id lists into a shared [`TArena`] plus the
+/// Element id lists into a shared [`TArena`] plus the
 /// graph-level internal properties as fields.
 #[derive(Default, Debug)]
 pub struct TGraph {
@@ -212,7 +201,7 @@ pub struct TGraph {
     pub priority: i32,
 }
 
-/// Port of `TNode.addChild(child)`: creates a dummy edge in the graph.
+/// Creates a dummy edge in the graph.
 pub fn add_child(arena: &mut TArena, graph: &mut TGraph, parent: TNodeId, child: TNodeId) {
     let new_edge = arena.create_edge(parent, child);
     arena.edge_mut(new_edge).dummy = true;

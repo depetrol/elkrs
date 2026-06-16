@@ -1,5 +1,3 @@
-//! Port of `org.eclipse.elk.alg.disco.graph` (`DCGraph`, `DCComponent`,
-//! `DCElement`, `DCExtension`, `DCDirection`).
 //!
 //! Elements and components live in arenas on the [`DCGraph`]; Java object
 //! identity maps to indices.
@@ -8,7 +6,6 @@ use elk_alg_common::elkmath;
 use elk_graph::math::{ElkRectangle, KVector, KVectorChain};
 use elk_graph::properties::PropertyMap;
 
-/// Port of `DCDirection`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum DCDirection {
     North,
@@ -23,7 +20,7 @@ impl DCDirection {
     }
 }
 
-/// Port of `DCExtension`: a semi-infinite strip attached to a `DCElement`.
+/// A semi-infinite strip attached to a `DCElement`.
 #[derive(Clone, Debug)]
 pub struct DCExtension {
     pub direction: DCDirection,
@@ -33,7 +30,7 @@ pub struct DCExtension {
 }
 
 impl DCExtension {
-    /// Port of the `DCExtension` constructor (the caller adds the result to
+    /// The `DCExtension` constructor (the caller adds the result to
     /// the element's extension list).
     pub fn new(
         parent_bounds: &ElkRectangle,
@@ -53,7 +50,7 @@ impl DCExtension {
     }
 }
 
-/// Port of `DCElement`: a polygon (plus extensions).
+/// A polygon (plus extensions).
 pub struct DCElement {
     /// Closed polygonal path of this element's shape.
     pub shape: KVectorChain,
@@ -90,14 +87,13 @@ impl DCElement {
         }
     }
 
-    /// Port of `DCElement.intersects`.
     pub fn intersects(&self, rect: &ElkRectangle) -> bool {
         elkmath::rect_intersects_path(rect, &self.shape)
             || elkmath::rect_contains_path(rect, &self.shape)
     }
 }
 
-/// Port of `DCComponent`: a connected component of the `DCGraph`.
+/// A connected component of the `DCGraph`.
 pub struct DCComponent {
     /// Offset from the original position, set by the compactor.
     pub offset: KVector,
@@ -112,8 +108,6 @@ impl DCComponent {
         DCComponent { offset: KVector::default(), elements: Vec::new(), id: -1 }
     }
 
-    /// Port of `DCComponent.update` + `getDimensionsOfBoundingRectangle` /
-    /// `getMinCorner`. Returns (bounds, min corner).
     fn compute(&self, elements: &[DCElement]) -> (KVector, KVector) {
         let mut min_x = f64::INFINITY;
         let mut max_x = f64::NEG_INFINITY;
@@ -156,7 +150,6 @@ impl DCComponent {
         self.compute(elements).1
     }
 
-    /// Port of `DCComponent.intersects`.
     pub fn intersects(&self, rect: &ElkRectangle, elements: &[DCElement]) -> bool {
         for &e in &self.elements {
             if elements[e].intersects(rect) {
@@ -167,7 +160,6 @@ impl DCComponent {
     }
 }
 
-/// Port of `DCGraph`.
 pub struct DCGraph {
     /// Arena of all elements.
     pub elements: Vec<DCElement>,
@@ -181,7 +173,7 @@ pub struct DCGraph {
 }
 
 impl DCGraph {
-    /// Port of the `DCGraph` constructor: each inner list of element indices
+    /// The `DCGraph` constructor: each inner list of element indices
     /// becomes one component.
     pub fn new(elements: Vec<DCElement>, components: Vec<Vec<usize>>) -> Self {
         let mut graph = DCGraph {

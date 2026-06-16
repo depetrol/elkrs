@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.alg.layered.intermediate.loops`: the self loop
+//! The self loop
 //! model (`SelfLoopHolder`, `SelfHyperLoop`, `SelfLoopEdge`, `SelfLoopPort`,
 //! `SelfHyperLoopLabels`, `SelfLoopType`).
 //!
@@ -32,7 +32,7 @@ pub const PORT_SIDE_COUNT: usize = 5;
 // ---------------------------------------------------------------------------
 // SelfLoopType
 
-/// Port of `SelfLoopType`: the different types of self loops.
+/// The different types of self loops.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum SelfLoopType {
     /// Connects ports that are all on the same side.
@@ -75,7 +75,7 @@ impl SelfLoopType {
 // ---------------------------------------------------------------------------
 // SelfLoopPort
 
-/// Port of `SelfLoopPort`: a port which is an end point of at least one self
+/// A port which is an end point of at least one self
 /// loop.
 #[derive(Debug)]
 pub struct SelfLoopPort {
@@ -101,7 +101,7 @@ impl SelfLoopPort {
 // ---------------------------------------------------------------------------
 // SelfLoopEdge
 
-/// Port of `SelfLoopEdge`: a single self loop edge.
+/// A single self loop edge.
 #[derive(Debug)]
 pub struct SelfLoopEdge {
     /// The edge represented by this instance.
@@ -127,7 +127,6 @@ impl SelfLoopEdge {
 // ---------------------------------------------------------------------------
 // SelfHyperLoopLabels
 
-/// Port of `SelfHyperLoopLabels.Alignment`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Alignment {
     /// A northern or southern centered label.
@@ -140,7 +139,7 @@ pub enum Alignment {
     Top,
 }
 
-/// Port of `SelfHyperLoopLabels`: the labels associated with a
+/// The labels associated with a
 /// [`SelfHyperLoop`].
 #[derive(Debug)]
 pub struct SelfHyperLoopLabels {
@@ -276,7 +275,7 @@ impl SelfHyperLoopLabels {
 // ---------------------------------------------------------------------------
 // SelfHyperLoop
 
-/// Port of `SelfHyperLoop`: a self loop hyperedge consisting of at least one
+/// A self loop hyperedge consisting of at least one
 /// self loop edge.
 #[derive(Debug)]
 pub struct SelfHyperLoop {
@@ -345,7 +344,7 @@ const UNVISITED: i32 = 0;
 /// ID of a port that has already been visited.
 const VISITED: i32 = 1;
 
-/// Port of `SelfLoopHolder`: holds all the information required to route self
+/// Holds all the information required to route self
 /// loops of a particular node.
 #[derive(Debug)]
 pub struct SelfLoopHolder {
@@ -564,9 +563,6 @@ impl SelfLoopHolder {
 // ---------------------------------------------------------------------------
 // Utilities
 
-/// Port of `LGraphUtil.getIndividualOrInherited` for `f64` properties: the
-/// node's individual spacing override if present, otherwise the property
-/// value of the graph the node is part of.
 pub(crate) fn get_individual_or_inherited(
     a: &LGraphArena,
     node: LNodeId,

@@ -1,4 +1,3 @@
-//! Port of `org.eclipse.elk.alg.common.nodespacing.internal.algorithm`.
 
 pub mod cell_system_configurator;
 pub mod horizontal_port_placement_size_calculator;

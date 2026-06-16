@@ -1,4 +1,3 @@
-//! Port of `InteractiveLayerer`.
 //!
 //! A node layerer that allows user interaction by respecting previous node
 //! positions. These positions could be contrary to edge directions, so the

@@ -1,4 +1,3 @@
-//! Port of `DepthFirstCycleBreaker`.
 
 use crate::graph::{LEdgeId, LGraphArena, LGraphId, LNodeId};
 use crate::internal_properties as iprops;

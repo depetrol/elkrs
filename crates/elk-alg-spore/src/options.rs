@@ -8,14 +8,12 @@ use elk_graph::math::{ElkPadding, Spacing};
 use elk_graph::properties::Property;
 
 elk_enum! {
-    /// Port of `StructureExtractionStrategy`.
     pub enum StructureExtractionStrategy {
         DELAUNAY_TRIANGULATION,
     }
 }
 
 elk_enum! {
-    /// Port of `TreeConstructionStrategy`.
     pub enum TreeConstructionStrategy {
         MINIMUM_SPANNING_TREE,
         MAXIMUM_SPANNING_TREE,
@@ -23,7 +21,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `SpanningTreeCostFunction`.
     pub enum SpanningTreeCostFunction {
         CENTER_DISTANCE,
         CIRCLE_UNDERLAP,
@@ -34,7 +31,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `RootSelection`.
     pub enum RootSelection {
         FIXED,
         CENTER_NODE,
@@ -42,7 +38,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `options.CompactionStrategy`.
     pub enum CompactionStrategy {
         DEPTH_FIRST,
     }

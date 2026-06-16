@@ -1,4 +1,4 @@
-//! Port of `LabelDummyRemover`: removes the inserted center label dummies
+//! Removes the inserted center label dummies
 //! and places the labels on their position.
 
 use elk_core::adapters::LabelSide;

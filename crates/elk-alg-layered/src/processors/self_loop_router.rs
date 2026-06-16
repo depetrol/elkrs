@@ -1,4 +1,4 @@
-//! Port of `SelfLoopRouter`: computes bend points for self loops and places
+//! Computes bend points for self loops and places
 //! self loop labels.
 
 use elk_core::javacompat::JavaRandom;

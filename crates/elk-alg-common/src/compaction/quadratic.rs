@@ -1,4 +1,3 @@
-//! Port of `QuadraticConstraintCalculation`.
 
 use super::compare_fuzzy;
 use super::one_dimensional_compactor::OneDimensionalCompactor;

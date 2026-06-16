@@ -11,7 +11,6 @@ use elk_graph::properties::Property;
 pub const ALGORITHM_ID: &str = "org.eclipse.elk.rectpacking";
 
 elk_enum! {
-    /// Port of `org.eclipse.elk.alg.rectpacking.options.OptimizationGoal`.
     pub enum OptimizationGoal {
         ASPECT_RATIO_DRIVEN,
         MAX_SCALE_DRIVEN,
@@ -20,7 +19,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `p1widthapproximation.WidthApproximationStrategy`.
     pub enum WidthApproximationStrategy {
         GREEDY,
         TARGET_WIDTH,
@@ -28,7 +26,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `p2packing.PackingStrategy`.
     pub enum PackingStrategy {
         COMPACTION,
         SIMPLE,
@@ -37,7 +34,6 @@ elk_enum! {
 }
 
 elk_enum! {
-    /// Port of `p3whitespaceelimination.WhiteSpaceEliminationStrategy`.
     pub enum WhiteSpaceEliminationStrategy {
         EQUAL_BETWEEN_STRUCTURES,
         TO_ASPECT_RATIO,

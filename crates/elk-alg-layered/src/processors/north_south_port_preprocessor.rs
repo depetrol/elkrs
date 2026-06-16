@@ -1,4 +1,4 @@
-//! Port of `NorthSouthPortPreprocessor`: inserts NORTH_SOUTH_PORT dummy
+//! Inserts NORTH_SOUTH_PORT dummy
 //! nodes for ports on the northern and southern node sides, including the
 //! special self-loop cases, and sets layout units, in-layer successor
 //! constraints and barycenter associates.
@@ -289,9 +289,6 @@ fn sort_port_list(a: &mut LGraphArena, node: LNodeId) {
     a.node_mut(node).ports = sorted;
 }
 
-/// Port of `modelOrderNorthSouthInputReversing`, including the Java quirk:
-/// `Lists.reverse(incoming).addAll(outgoing)` prepends the outgoing ports in
-/// reversed order to the (non-reversed) incoming list, which is returned.
 fn model_order_north_south_input_reversing(
     a: &LGraphArena,
     port_list: Vec<LPortId>,

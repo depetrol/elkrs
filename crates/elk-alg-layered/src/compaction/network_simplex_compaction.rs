@@ -1,4 +1,3 @@
-//! Port of `NetworkSimplexCompaction` (the `EDGE_LENGTH` compaction strategy).
 //!
 //! Unlike the other strategies this one minimises total edge length rather than
 //! width, by modelling the constraint graph as a network-simplex problem. It

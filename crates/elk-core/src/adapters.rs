@@ -1,4 +1,4 @@
-//! Port of `org.eclipse.elk.core.util.adapters.GraphAdapters`: a uniform,
+//! A uniform,
 //! mutable view over a graph model, used by the node-sizing code in
 //! elk-alg-common so it can operate on both `ElkGraph` and the layered
 //! algorithm's `LGraph`.
@@ -13,7 +13,6 @@ use elk_graph::properties::PropertyMap;
 use crate::options::PortSide;
 
 elk_graph::elk_enum! {
-    /// Port of `org.eclipse.elk.core.options.LabelSide`.
     pub enum LabelSide {
         UNKNOWN,
         ABOVE,
@@ -80,7 +79,7 @@ pub trait AdapterGraph {
     fn edge_labels(&self, e: Self::E) -> Vec<Self::L>;
 }
 
-/// Port of `ElkGraphAdapters`: adapter over the original `ElkGraph`, viewing
+/// Adapter over the original `ElkGraph`, viewing
 /// the children of `parent` as the graph's nodes.
 pub struct ElkGraphAdapter<'g> {
     pub elk: &'g mut ElkGraph,
@@ -98,8 +97,6 @@ impl<'g> ElkGraphAdapter<'g> {
         ElkGraphAdapter { elk, parent, null_graph_properties: None }
     }
 
-    /// Port of `ElkGraphAdapters.adaptSingleNode(node)`:
-    /// `new ElkNodeAdapter(node.getParent() == null ? null : adapt(node.getParent()), node)`.
     pub fn adapt_single_node(elk: &'g mut ElkGraph, node: NodeId) -> Self {
         match elk.node(node).parent {
             Some(parent) => Self::new(elk, parent),
@@ -167,7 +164,7 @@ impl<'g> AdapterGraph for ElkGraphAdapter<'g> {
         edges
     }
     fn sort_port_list(&mut self, n: NodeId) {
-        // Port of ElkGraphAdapters.ElkNodeAdapter.sortPortList: sorts by
+        // ElkGraphAdapters.ElkNodeAdapter.sortPortList: sorts by
         // side (N, E, S, W) and position, with the DEFAULT_PORT_COMPARATOR.
         let elk: &ElkGraph = self.elk;
         let mut ports = elk.node(n).ports.clone();
@@ -232,7 +229,7 @@ impl<'g> AdapterGraph for ElkGraphAdapter<'g> {
         self.elk.port(p).outgoing_edges.clone()
     }
     fn port_has_compound_connections(&self, p: PortId) -> bool {
-        // Port of ElkGraphAdapters.ElkPortAdapter.hasCompoundConnections
+        // ElkGraphAdapters.ElkPortAdapter.hasCompoundConnections
         let port_parent = self.elk.port(p).parent.unwrap();
         for &edge in &self.elk.port(p).outgoing_edges {
             for &target in &self.elk.edge(edge).targets {
@@ -283,7 +280,6 @@ impl<'g> AdapterGraph for ElkGraphAdapter<'g> {
     }
 }
 
-/// Port of `ElkGraphAdapters.DEFAULT_PORT_COMPARATOR`.
 fn default_port_comparator(elk: &ElkGraph, p1: PortId, p2: PortId) -> std::cmp::Ordering {
     use elk_graph::properties::ElkEnum;
     let side1: PortSide = elk.port(p1).properties.get(&crate::options::PORT_SIDE);

@@ -1,4 +1,3 @@
-//! Port of `SimpleNodePlacer`.
 
 use crate::graph::{LGraphArena, LGraphId};
 use crate::spacings;

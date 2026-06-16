@@ -1,4 +1,4 @@
-//! Port of `LabelSideSelector`: decides for each edge label whether to place
+//! Decides for each edge label whether to place
 //! it above or below its respective edge.
 
 use elk_core::adapters::LabelSide;
