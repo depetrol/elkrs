@@ -5,7 +5,7 @@ Java oracle and the Rust port, and report any coordinate divergence.
 This is the strongest pixel-level-reproduction check we have: it explores the
 input space far beyond the curated golden corpus. Option combinations are
 restricted to features the Rust port claims to support, so a diff is a real
-fidelity bug (modulo the caveats in GOLDEN_NOTES.md).
+fidelity bug (modulo the caveats in README.md).
 
 Usage: fuzz_diff.py [N] [--seed S] [--algorithm A] [--keep-going]
 """
@@ -19,7 +19,7 @@ import tempfile
 from pathlib import Path
 
 # Java `Object.toString` identity-hash suffix (e.g. `DCGraph@7a8c8dcf`). This is
-# unreproducible across JVM runs — see GOLDEN_NOTES.md §2 — so we strip it from
+# unreproducible across JVM runs — see README.md (divergence 2) — so we strip it from
 # oracle output before comparing, matching how the disco goldens are stored.
 _IDENTITY_HASH = re.compile(r"@[0-9a-f]+$")
 
@@ -96,7 +96,7 @@ def rand_graph(rng, n_nodes, n_edges, with_ports, algorithm):
 def _within_tol(a, b, tol):
     """True if every leaf numeric value in a and b matches within relative
     tolerance `tol` and all non-numeric leaves are equal. Used to confirm that
-    a fuzz "divergence" is only trig ULP noise (GOLDEN_NOTES §1), not a bug."""
+    a fuzz "divergence" is only trig ULP noise (README.md divergence 1), not a bug."""
     if isinstance(a, dict) and isinstance(b, dict):
         if a.keys() != b.keys():
             return False
