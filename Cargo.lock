@@ -3,117 +3,11 @@
 version = 4
 
 [[package]]
-name = "elk-alg-common"
-version = "0.1.0"
-dependencies = [
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-alg-disco"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-alg-force"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-alg-layered"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
- "indexmap",
-]
-
-[[package]]
-name = "elk-alg-mrtree"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
- "indexmap",
-]
-
-[[package]]
-name = "elk-alg-radial"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
- "indexmap",
-]
-
-[[package]]
-name = "elk-alg-rectpacking"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-alg-spore"
-version = "0.1.0"
-dependencies = [
- "elk-alg-common",
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-alg-topdownpacking"
-version = "0.1.0"
-dependencies = [
- "elk-core",
- "elk-graph",
-]
-
-[[package]]
-name = "elk-core"
-version = "0.1.0"
-dependencies = [
- "elk-graph",
- "indexmap",
- "serde_json",
-]
-
-[[package]]
-name = "elk-graph"
-version = "0.1.0"
-dependencies = [
- "indexmap",
-]
-
-[[package]]
 name = "elkrs"
 version = "0.1.0"
 dependencies = [
- "elk-alg-disco",
- "elk-alg-force",
- "elk-alg-layered",
- "elk-alg-mrtree",
- "elk-alg-radial",
- "elk-alg-rectpacking",
- "elk-alg-spore",
- "elk-alg-topdownpacking",
- "elk-core",
- "elk-graph",
+ "indexmap",
+ "serde",
  "serde_json",
 ]
 
@@ -176,6 +70,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
 dependencies = [
  "serde_core",
+ "serde_derive",
 ]
 
 [[package]]
