@@ -303,13 +303,13 @@ fn route_edges(
     }
 
     if !northern_source.is_empty() {
-        let mut gen = OrthogonalRoutingGenerator::new(
+        let mut generator = OrthogonalRoutingGenerator::new(
             RoutingDirection::SouthToNorth,
             edge_spacing,
             "extnorth",
         );
         let offset_y = a.graph(graph).offset.y;
-        let slots = gen.route_edges(
+        let slots = generator.route_edges(
             a,
             Some(&northern_source),
             0,
@@ -325,13 +325,13 @@ fn route_edges(
     }
 
     if !southern_source.is_empty() {
-        let mut gen = OrthogonalRoutingGenerator::new(
+        let mut generator = OrthogonalRoutingGenerator::new(
             RoutingDirection::NorthToSouth,
             edge_spacing,
             "extsouth",
         );
         let start = a.graph(graph).size.y + node_spacing - a.graph(graph).offset.y;
-        let slots = gen.route_edges(
+        let slots = generator.route_edges(
             a,
             Some(&southern_source),
             0,
