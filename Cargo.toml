@@ -1,6 +1,6 @@
 [package]
 name = "elkrs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "Apache-2.0"
 description = "Native-Rust, byte-exact reimplementation of the Eclipse Layout Kernel (ELK) graph layout algorithms, with a CLI"
