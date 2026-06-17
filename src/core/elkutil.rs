@@ -3,7 +3,7 @@
 
 use crate::graph::graph::{EdgeId, ElkGraph, NodeId, PortId, SectionId};
 use crate::graph::math::{KVector, KVectorChain};
-use crate::graph::properties::{EnumSet, PropertyHolder};
+use crate::graph::properties::EnumSet;
 
 use crate::core::options::*;
 

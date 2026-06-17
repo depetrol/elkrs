@@ -264,7 +264,6 @@ fn count_run_and_make_ascending_from<T: Clone, F: FnMut(&T, &T) -> i32>(
 }
 
 fn min_run_length(mut n: usize) -> usize {
-    debug_assert!(n >= 0);
     let mut r = 0usize;
     while n >= 32 {
         r |= n & 1;

@@ -4,7 +4,6 @@
 //! explicit non-zero seeds.
 
 use crate::graph::graph::{EdgeId, ElkGraph, NodeId, ShapeId};
-use crate::graph::properties::PropertyHolder;
 
 use crate::core::elkutil;
 use crate::core::javacompat::JavaRandom;

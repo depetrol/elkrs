@@ -37,6 +37,7 @@ fn test_property_default_idataobject() {
     // copies are independent
     let mut mutated = p.get_default().unwrap();
     mutated.x = 99.0;
+    assert_eq!(mutated.x, 99.0);
     assert_eq!(p.get_default().unwrap(), KVector::new(2.0, 3.0));
 
     let p: Property<KVectorChain> = Property::with_default("dummyKVectorChain", || {
@@ -46,6 +47,7 @@ fn test_property_default_idataobject() {
     assert_eq!(copy.len(), 2);
     let mut mutated = p.get_default().unwrap();
     mutated.add(1.0, 1.0);
+    assert_eq!(mutated.len(), 3);
     assert_eq!(p.get_default().unwrap().len(), 2);
 
     // ElkPadding / ElkMargin are both `Spacing` in the Rust port

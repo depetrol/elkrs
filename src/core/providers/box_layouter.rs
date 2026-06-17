@@ -3,7 +3,6 @@ use std::cmp::Ordering;
 
 use crate::graph::graph::{ElkGraph, NodeId};
 use crate::graph::math::{KVector, Spacing};
-use crate::graph::properties::PropertyHolder;
 
 use crate::core::elkutil;
 use crate::core::javacompat::JavaPriorityQueue;

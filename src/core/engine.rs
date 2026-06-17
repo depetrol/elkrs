@@ -1,6 +1,5 @@
 
 use crate::graph::graph::{EdgeId, ElkGraph, NodeId};
-use crate::graph::properties::PropertyHolder;
 
 use crate::core::elkutil;
 use crate::core::options::*;

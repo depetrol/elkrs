@@ -277,7 +277,6 @@ impl Preprocessor {
                             get_shallowest_edge_segment(&edge_segments)
                         }
                         crate::core::options::EdgeLabelPlacement::TAIL => 0,
-                        _ => -1,
                     };
 
                     if target_index != -1 {

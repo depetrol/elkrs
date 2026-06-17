@@ -43,7 +43,6 @@ pub fn processor_configuration(
                 .add_after(LayeredPhases::P5_EDGE_ROUTING, Ips::REVERSED_EDGE_RESTORER);
             Ok(())
         }
-        other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }
 
@@ -64,6 +63,5 @@ pub fn process(
         CycleBreakingStrategy::SCC_CONNECTIVITY => scc::process_connectivity(a, graph),
         CycleBreakingStrategy::SCC_NODE_TYPE => scc::process_node_type(a, graph),
         CycleBreakingStrategy::INTERACTIVE => interactive::process(a, graph),
-        other => Err(format!("TODO: cycle breaking strategy {other:?} is not ported yet")),
     }
 }

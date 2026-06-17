@@ -45,7 +45,6 @@ pub fn processor_configuration(
             }
             Ok(())
         }
-        other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
     }
 }
 
@@ -61,6 +60,5 @@ pub fn process(
         NodePlacementStrategy::LINEAR_SEGMENTS => linear_segments::process(a, graph),
         NodePlacementStrategy::NETWORK_SIMPLEX => network_simplex_placer::process(a, graph),
         NodePlacementStrategy::INTERACTIVE => interactive::process(a, graph),
-        other => Err(format!("TODO: node placement strategy {other:?} is not ported yet")),
     }
 }
