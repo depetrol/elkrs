@@ -3,3 +3,6 @@ target/
 tools/apache-maven-3.9.9/
 tools/elk-sources/
 oracle/target/
+
+.claude
+.vscode
